@@ -1,0 +1,91 @@
+# Sync .project/sourceTexts/ folder (source text files)
+
+# Don't sync user-specific SQLite databases
+.project/*.sqlite
+
+# Don't sync SQLite auxiliary files
+.project/*.sqlite-wal
+.project/*.sqlite-shm
+
+# Don't sync user-specific files
+.project/complete_drafts.txt
+.project/localProjectSettings.json
+copilot-messages.log
+
+# Archive formats
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.gz
+*.bz2
+*.xz
+
+# Windows executables and installers
+*.exe
+*.msi
+*.bat
+*.cmd
+*.com
+*.scr
+*.dll
+
+# macOS executables and disk images
+*.dmg
+*.pkg
+
+# Disk images and virtual machine files
+*.iso
+*.img
+*.vhd
+*.vmdk
+
+# System files
+.DS_Store
+.project/attachments/files/**
+
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+
+.DS_Store
+.thumbs.db
+node_modules
+.project
+.files
+
+# Quasar core related directories
+.quasar
+/dist
+/quasar.config.*.temporary.compiled*
+
+# Cordova related directories and files
+/src-cordova/node_modules
+/src-cordova/platforms
+/src-cordova/plugins
+/src-cordova/www
+
+# Capacitor related directories and files
+/src-capacitor/www
+/src-capacitor/node_modules
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# local .env files
+.env.local*
