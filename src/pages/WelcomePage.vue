@@ -7,7 +7,7 @@
         : 'q-pa-sm  bg-grey-2  text-center '
     "
   >
-    <q-card
+    <s-card
       class="q-pa-xl welcome-card"
       flat
       :class="
@@ -34,7 +34,7 @@
       <!-- Info Cards -->
       <div class="row q-col-gutter-md q-mb-md">
         <div class="col-3">
-          <q-card
+          <s-card
             flat
             bordered
             :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
@@ -42,11 +42,11 @@
             <q-icon name="domain" size="32px" color="primary" />
             <div class="text-subtitle2">{{ tdc('Company') }}</div>
             <div class="text-bold"><br />{{ tdc(User?.Entidade?.nome) || 'N/A' }}</div>
-          </q-card>
+          </s-card>
         </div>
 
         <div class="col-3">
-          <q-card
+          <s-card
             flat
             bordered
             :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
@@ -54,11 +54,11 @@
             <q-icon name="account_tree" size="32px" color="accent" />
             <div class="text-subtitle2">{{ tdc('Banch') }}</div>
             <div class="text-bold"><br />{{ tdc(User?.Sucursal?.nome) || 'User' }}</div>
-          </q-card>
+          </s-card>
         </div>
 
         <div class="col-3">
-          <q-card
+          <s-card
             flat
             bordered
             :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
@@ -66,11 +66,11 @@
             <q-icon name="verified_user" size="32px" color="positive" />
             <div class="text-subtitle2">{{ tdc('Role') }}</div>
             <div class="text-bold"><br />{{ tdc(User?.Grupo?.name) || 'User' }}</div>
-          </q-card>
+          </s-card>
         </div>
 
         <div class="col-3">
-          <q-card
+          <s-card
             flat
             bordered
             :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
@@ -84,7 +84,7 @@
                   User?.data?.last_login?.split('.')[0].split('T')[1] || '-'
               }}
             </div>
-          </q-card>
+          </s-card>
         </div>
       </div>
 
@@ -92,7 +92,7 @@
 
       <!-- Actions -->
       <div class="row justify-center">
-        <q-btn
+        <s-btn
           dense
           outline
           color="primary"
@@ -101,7 +101,7 @@
           @click="router.push({ name: 'home' })"
         />
         &nbsp; &nbsp;
-        <q-btn
+        <s-btn
           color="negative"
           icon="logout"
           :label="tdc('Logout')"
@@ -110,15 +110,15 @@
           @click="logout"
         />
       </div>
-    </q-card>
+    </s-card>
   </q-page>
 </template>
 
 <script setup>
-import { UserStore } from '@metano/quasar_rest_auth'
+import { UserStore } from 'quasar_resaas'
 
 import { useRouter } from 'vue-router'
-import { tdc, ds } from '@metano/quasar_rest_auth' // ✅ IMPORT DO TDC
+import { tdc, ds } from 'quasar_resaas' // ✅ IMPORT DO TDC
 
 const router = useRouter()
 const User = UserStore()

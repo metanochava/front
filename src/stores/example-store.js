@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 // import { getStorage, setStorage } from '../boot/storage'
 import { HTTPAuth, url } from '../boot/api'
 // import { tdc } from '../boot/base'
-import { buildFormFromSchema } from '@metano/quasar_rest_auth'
+import { buildFormFromSchema } from 'quasar_resaas'
 
 export const UserStore = defineStore('entidade', {
   state: () => ({

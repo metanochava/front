@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { UserStore } from '@metano/quasar_rest_auth'
+import { UserStore } from 'quasar_resaas'
 
 const User = UserStore()
 
@@ -30,3 +30,4 @@ const User = UserStore()
 // })
 // const texto = ascii(User.Entidade.nome)
 </script>
+

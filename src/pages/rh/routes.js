@@ -1,4 +1,4 @@
-import { tdc } from '@metano/quasar_rest_auth'
+import { tdc } from 'quasar_resaas'
 
 export let rhRoutes = [
   {

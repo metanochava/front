@@ -1,8 +1,8 @@
 {
   "name": "front",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Quasar App",
+  "description": "Quasar SaaS",
+  "productName": "Mytech App",
   "author": "Metano Chavana <metanochava@gmail.com>",
   "type": "module",
   "private": true,
@@ -15,12 +15,13 @@
     "postinstall": "quasar prepare"
   },
   "dependencies": {
-    "@metano/quasar_rest_auth": "github:metanochava/quasar_rest_auth",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
+    "quasar_resaas": "github:metanochava/quasar_resaas",
     "vue": "^3.5.22",
     "vue-i18n": "^11.0.0",
     "vue-router": "^4.0.0"

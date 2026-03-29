@@ -28,7 +28,7 @@
 import { onMounted } from 'vue'
 import { Notify, Dialog } from 'quasar'
 
-import { AutoForm, AutoTable, AutoCrud } from '@metano/quasar_rest_auth'
+import { AutoForm, AutoTable, AutoCrud } from 'quasar_resaas'
 import { EntidadeStore } from './EntidadeStore'
 
 const Entidade = EntidadeStore()

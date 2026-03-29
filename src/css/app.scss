@@ -1,1 +1,73 @@
 // app global css in SCSS form
+
+.gredientei {
+
+  background: linear-gradient(
+    98deg,
+    var(--q-primary) 20%,
+    var(--q-secondary) 60%,
+    var(--q-primary) 100%
+  );
+
+}
+
+.grediente2 {
+  background: linear-gradient(
+    135deg,
+    var(--q-primary) 0%,
+    rgba(255,255,255,0.1) 40%,
+    var(--q-secondary) 100%
+  );
+}
+
+.grediente3 {
+  background: linear-gradient(
+    140deg,
+    var(--q-primary) 0%,
+    rgba(255,255,255,0.3) 40%,
+    var(--q-primary) 100%,
+  );
+}
+
+
+///dotora
+.grediente4 {
+  
+  background: linear-gradient(
+    90deg,
+    #43CEA2 0%,
+    #185A9D 100%,
+  
+  );
+}
+
+////Metano
+.grediente {
+  
+  background:
+  radial-gradient(circle at 20% 20%, rgba(228, 228, 12, 0.15), transparent 40%),
+  linear-gradient(
+    135deg,
+    #43CEA2 0%,
+    #2E8BC0 45%,
+    #185A9D 90%
+  );
+}
+
+.s-input :deep(.q-field--outlined .q-field__control),
+.s-select :deep(.q-field--outlined .q-field__control),
+.s-input :deep(.q-field--filled .q-field__control),
+.s-select :deep(.q-field--filled .q-field__control),
+.s-input :deep(.q-field--standout .q-field__control),
+.s-select :deep(.q-field--standout .q-field__control) {
+  border-radius: var(--s-radius) !important;
+}
+
+.s-input :deep(.q-field__control),
+.s-select :deep(.q-field__control) {
+  border-radius: var(--s-radius) !important;
+}
+
+.q-field__control {
+  border-radius: var(--s-radius) !important;
+}

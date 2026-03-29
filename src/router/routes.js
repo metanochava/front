@@ -1,40 +1,57 @@
-import { restRoutes, authRoutes } from '@metano/quasar_rest_auth'
+import { restRoutes, authRoutes } from 'quasar_resaas'
 import { rhRoutes } from './../pages/rh/routes'
-const routes = [
-  ...authRoutes,
+import { clinicaRoutes } from './../pages/clinica/routes'
+import { amalSiteRoutes } from 'src/sites/amal/routes'
 
-  {
-    path: '/',
-    component: () => import('@metano/quasar_rest_auth/layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('src/pages/IndexPage.vue'), name: 'home' },
-      {
-        path: 'authwelcome',
-        component: () => import('src/pages/WelcomePage.vue'),
-        name: 'authwelcome',
-      },
-      {
-        path: 'crud',
-        component: () => import('@metano/quasar_rest_auth/components/auto/CrudPage.vue'),
-        name: 'crud_state',
-      },
+const host = window.location.hostname
 
-      {
-        path: 'crud/:module/:model/go',
-        component: () => import('@metano/quasar_rest_auth/components/auto/CrudPage.vue'),
-        name: 'crud_route',
-      },
-      ...restRoutes,
-      ...rhRoutes,
-    ],
-  },
+const domainRoutes = {
+  "clinicaamal.co.mz": amalSiteRoutes,
+}
+let routes = []
 
-  // Always leave this as last one,
-  // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
-]
+const siteRoutes = domainRoutes[host] || []
+
+if(siteRoutes.length !== 0 ){
+  routes = [ ...siteRoutes, {path: '/:catchAll(.*)*',component: () => import('pages/ErrorNotFound.vue'), }]
+}else{
+  routes = [
+    ...authRoutes,
+
+    {
+      path: '/',
+      component: () => import('quasar_resaas/layouts/MainLayout.vue'),
+      children: [
+        { path: '', component: () => import('src/pages/IndexPage.vue'), name: 'home' },
+        {
+          path: 'authwelcome',
+          component: () => import('src/pages/WelcomePage.vue'),
+          name: 'authwelcome',
+        },
+        {
+          path: 'crud',
+          component: () => import('quasar_resaas/components/auto/CrudPage.vue'),
+          name: 'crud_state',
+        },
+
+        {
+          path: 'crud/:module/:model/go',
+          component: () => import('quasar_resaas/components/auto/CrudPage.vue'),
+          name: 'crud_route',
+        },
+        ...restRoutes,
+        ...rhRoutes,
+        ...clinicaRoutes,
+      ],
+    },
+
+    // Always leave this as last one,
+    // but you can also remove it
+    {
+      path: '/:catchAll(.*)*',
+      component: () => import('pages/ErrorNotFound.vue'),
+    },
+  ]
+}
 
 export default routes
