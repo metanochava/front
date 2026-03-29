@@ -8,3 +8,8 @@ push:
 	read -p "Mensagem do release: $$VERSION " m; \
 	git commit -m "release: v$$VERSION - $$m"; \
 	git push origin main;  
+gitback:
+	git reset --soft HEAD~1
+gitrmc:
+	read -p "Digite o caminho do ficheiro ou pasta " m; \
+	git rm --cached $$m
