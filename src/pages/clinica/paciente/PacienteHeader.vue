@@ -80,14 +80,14 @@ import { useRoute } from 'vue-router'
 import { PacienteStore } from './pacienteStore'
 // import { useInternamentoStore } from 'src/stores/internamento'
 
-import {  tdc, UserStore} from 'quasar_resaas'
+import {  tdc,useUserStore} from 'quasar_resaas'
 import { formatDistance } from 'date-fns'
 
 import MarcarConsulta from './MarcarConsulta.vue'
 
 // ROUTE
 const route = useRoute()
-const User = UserStore()
+const User =useUserStore()
 
 
 // STORES

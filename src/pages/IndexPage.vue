@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-import { UserStore } from 'quasar_resaas'
+import {useUserStore } from 'quasar_resaas'
 
-const User = UserStore()
+const User =useUserStore()
 
 // import figlet from 'figlet'
 // import { ref, onMounted } from 'vue'

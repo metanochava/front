@@ -115,13 +115,13 @@
 </template>
 
 <script setup>
-import { UserStore } from 'quasar_resaas'
+import {useUserStore } from 'quasar_resaas'
 
 import { useRouter } from 'vue-router'
 import { tdc, ds } from 'quasar_resaas' // ✅ IMPORT DO TDC
 
 const router = useRouter()
-const User = UserStore()
+const User =useUserStore()
 
 function logout() {
   User.logout() // ❗ CORREÇÃO (antes estava errado)

@@ -169,13 +169,13 @@
 <script>
 
 import { defineComponent, ref, computed } from "vue"
-import { tdc, UserStore } from "quasar_resaas"
+import { tdc,useUserStore } from "quasar_resaas"
 
 export default defineComponent({
 
   setup () {
 
-    const User = UserStore()
+    const User =useUserStore()
 
     const ps = computed(() => User.ps || {})
 

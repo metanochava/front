@@ -17,10 +17,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 
-import { UserStore } from 'quasar_resaas'
+import {useUserStore } from 'quasar_resaas'
 
 
-const User = UserStore()
+const User =useUserStore()
 
 import { AutoForm } from 'quasar_resaas'
 

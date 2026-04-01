@@ -36,7 +36,7 @@ import BlogPage from "./BlogPage.vue"
 import ContactsPage from "./ContactsPage.vue"
 import EstiloPage from "./EstiloPage.vue"
 
-import { tdc, UserStore } from 'quasar_resaas'
+import { tdc,useUserStore } from 'quasar_resaas'
 import DepoimentoPage from './DepoimentoPage.vue'
 
 export default defineComponent({
@@ -60,7 +60,7 @@ export default defineComponent({
 
   setup(){
 
-    const User = UserStore()
+    const User =useUserStore()
 
     return{
       User

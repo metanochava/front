@@ -59,14 +59,14 @@
 
 <script>
 import { defineComponent, ref, computed } from "vue"
-import { tdc, UserStore } from "quasar_resaas"
+import { tdc,useUserStore } from "quasar_resaas"
 import foto from "./../images/13.jpeg"
 
 export default defineComponent({
 
   setup () {
 
-    const User = UserStore()
+    const User =useUserStore()
 
     const slide = ref(0)
 

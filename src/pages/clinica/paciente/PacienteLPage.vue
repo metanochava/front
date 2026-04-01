@@ -8,13 +8,13 @@
 
 // import { HTTPAuth, url } from 'quasar_resaas'
 import { AutoCrud } from 'quasar_resaas'
-import { UserStore } from 'quasar_resaas'
+import {useUserStore } from 'quasar_resaas'
 
 import { ref, watch, onMounted} from 'vue'
 import { useRoute } from 'vue-router'
 // import { tdc } from '../../boot/base'
 
-const User = UserStore()
+const User =useUserStore()
 const route = useRoute()
 const module = ref('clinica')
 const model = ref('Paciente')

@@ -122,7 +122,7 @@
 <script>
 
 import { defineComponent, computed } from "vue"
-import { tdc, UserStore } from "quasar_resaas"
+import { tdc,useUserStore } from "quasar_resaas"
 import ReviewPage from "./ReviewPage.vue"
 
 export default defineComponent({
@@ -133,7 +133,7 @@ components:{
 
 setup(){
 
-const User = UserStore()
+const User =useUserStore()
 const ps = computed(()=>User.ps || {})
 
 const counters=[

@@ -203,7 +203,7 @@ import {
   HeaderFullScreen
 } from 'quasar_resaas'
 
-import { tdc, UserStore } from 'quasar_resaas'
+import { tdc,useUserStore } from 'quasar_resaas'
 
 export default defineComponent({
 
@@ -219,7 +219,7 @@ export default defineComponent({
 
   setup(){
 
-    const User = UserStore()
+    const User =useUserStore()
 
     return{
       User

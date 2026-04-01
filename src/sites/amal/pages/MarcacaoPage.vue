@@ -167,7 +167,7 @@
 
 <script>
 import { defineComponent, reactive, computed, ref } from "vue"
-import { tdc, UserStore } from "quasar_resaas"
+import { tdc,useUserStore } from "quasar_resaas"
 import axios from "axios"
 import { Notify } from "quasar"
 
@@ -175,7 +175,7 @@ export default defineComponent({
 
   setup () {
 
-    const User = UserStore()
+    const User =useUserStore()
     const ps = computed(() => User.ps || {})
 
     const loading = ref(false)
