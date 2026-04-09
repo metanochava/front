@@ -1,5 +1,5 @@
 <template>
-  <q-card style="min-width: 500px">
+  <s-card style="min-width: 500px">
     <!-- HEADER -->
     <q-card-section class="row items-center q-pb-none">
       <div class="text-h6">Marcar Consulta</div>
@@ -88,7 +88,7 @@
         @click="submit"
       />
     </q-card-actions>
-  </q-card>
+  </s-card>
 </template>
 
 <script setup>

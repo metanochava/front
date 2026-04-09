@@ -252,7 +252,6 @@ export default defineComponent({
         {label:'Login',icon:'admin_panel_settings',route:'Login'}
 
       ]
-
     }
   },
 
