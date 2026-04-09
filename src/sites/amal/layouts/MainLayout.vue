@@ -285,15 +285,10 @@ export default defineComponent({
     go(item){
 
       if(item?.route === 'Login'){
-
         const dominio = process.env.API.replace('app','clinica')
-
         window.location.href = `${dominio}/#/auth/login?entidade=${this.Entidade?.row?.id}`
-
       }else{
-
         const el = document.querySelector(item.link)
-
         if(el){
           el.scrollIntoView({
             behavior:'smooth'
