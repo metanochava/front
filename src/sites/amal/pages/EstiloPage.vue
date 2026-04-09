@@ -13,19 +13,19 @@
 
         <div
           class="slide-overlay column flex-center text-center"
-          :style="{ borderRadius: ps.layout?.rounded ? '30px' : '6px' }"
+          :style="{ borderRadius: ps?.layout?.rounded ? '30px' : '6px' }"
         >
 
           <div
             class="text-weight-bold q-mb-md"
-            :style="{ fontSize: ps.typography?.font_size_h4 + 'px' }"
+            :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }"
           >
             {{ tdc("Texto 1") }}
           </div>
 
           <div
             class="q-mb-lg"
-            :style="{ fontSize: ps.typography?.font_size_h6 + 'px' }"
+            :style="{ fontSize: ps?.typography?.font_size_h6 + 'px' }"
           >
             {{ tdc('Descricao') }}
           </div>

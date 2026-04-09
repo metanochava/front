@@ -9,14 +9,14 @@
 
       <div
         class="text-weight-bold text-primary text-center col-12"
-        :style="{ fontSize: ps.typography?.font_size_h1 + 'px' }"
+        :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
         {{ tdc('Nossos Médicos') }}
       </div>
 
       <div
         class="text-center col-12 text-white q-mt-sm"
-        :style="{ fontSize: ps.typography?.font_size_body + 'px' }"
+        :style="{ fontSize: ps?.typography?.font_size_body + 'px' }"
       >
         {{ tdc('Especialistas qualificados com agenda disponível para marcação') }}
       </div>

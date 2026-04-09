@@ -10,7 +10,7 @@
 
       <div
         class="text-weight-bold text-primary text-center col-12"
-        :style="{ fontSize: ps.typography?.font_size_h1 + 'px' }"
+        :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
         {{ tdc('Contactos') }}
       </div>

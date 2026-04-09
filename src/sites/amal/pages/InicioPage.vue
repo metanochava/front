@@ -27,12 +27,12 @@
 
       <div
         class="q-mb-lg"
-        :style="{ fontSize: ps.typography?.font_size_h5 + 'px' }"
+        :style="{ fontSize: ps?.typography?.font_size_h5 + 'px' }"
       >
         {{ tdc('Atendimento humanizado, especialistas qualificados, tecnologia moderna e marcação simples para consultas, exames e check-ups.') }}
 
         <label
-          :style="{ fontSize: ps.typography?.font_size_h4 + 'px' }"
+          :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }"
           class="text-white"
         >
           <b>

@@ -7,12 +7,12 @@
 
     <div
       class="text-weight-bold text-primary"
-      :style="{ fontSize: ps.typography?.font_size_h1 + 'px' }"
+      :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
     >
       {{ tdc('Sobre Nós') }}
     </div>
 
-    <div class="text-subtitle1 q-mt-sm text-white " :style="{ fontSize: ps.typography?.font_size_h3 + 'px' }">
+    <div class="text-subtitle1 q-mt-sm text-white " :style="{ fontSize: ps?.typography?.font_size_h3 + 'px' }">
       {{ tdc('Cuidamos da sua saúde com excelência e dedicação') }}
     </div>
 
@@ -33,7 +33,7 @@
     </div>
 
 
-    <div class="col-md-5 col-12 items-center justify-center" :style="{ fontSize: ps.typography?.font_size_h4 + 'px' }">
+    <div class="col-md-5 col-12 items-center justify-center" :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }">
 
       <div class=" text-weight-bold q-mb-md">
         Clínica Amal

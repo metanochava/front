@@ -5,7 +5,7 @@
 
   <div
       class="text-weight-bold text-primary"
-      :style="{ fontSize: ps.typography?.font_size_h1 + 'px' }"
+      :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
     >
       {{ tdc('Depoimentos dos Pacientes') }}
     </div>
