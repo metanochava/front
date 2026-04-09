@@ -266,13 +266,9 @@ export default defineComponent({
   },
 
   async mounted(){
-
-    await this.User.setSettings()
-
+    await this.Entidade.getSettings()
     this.calculateMenu()
-
     window.addEventListener("resize",this.calculateMenu)
-
   },
 
   methods:{
