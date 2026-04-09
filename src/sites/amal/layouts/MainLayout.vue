@@ -306,21 +306,8 @@ export default defineComponent({
 
     },
 
-    async getHostname(entidade){
-
-      const domain = window.location.hostname
-
-      if(entidade.site?.toLowerCase() === domain){
-
-        this.User.Entidade = entidade
-        await this.Entidade.getLayoutSettings(this.User?.Entidade?.id)
-
-      }
-
-    }
-
   }
-  
+
 
 })
 
