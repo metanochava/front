@@ -19,7 +19,7 @@
 
         <div class="q-mt-md text-center slideoverlay">
           <q-icon name="style" size="56px" /> <br>
-          {{ lorem }}
+          {{ tdc(lorem) }}
         </div>
       </q-carousel-slide>
 
@@ -27,7 +27,7 @@
 
         <div class="q-mt-md text-center slideoverlay">
           <q-icon name="live_tv" size="56px" /><br>
-          {{ lorem }}
+          {{ tdc(lorem) }}
         </div>
       </q-carousel-slide>
 
@@ -35,7 +35,7 @@
 
         <div class="q-mt-md text-center slideoverlay">
           <q-icon name="layers" size="56px" /><br>
-          {{ lorem }}
+          {{ tdc(lorem) }}
         </div>
       </q-carousel-slide>
 
@@ -43,7 +43,7 @@
 
         <div class="q-mt-md text-center slideoverlay">
           <q-icon name="terrain" size="56px" /><br>
-          {{ lorem }}
+          {{ tdc(lorem) }}
         </div>
       </q-carousel-slide>
 
@@ -55,13 +55,13 @@
 
 <script>
 import { ref } from 'vue'
-
+import { tdc } from "quasar_resaas"
 
 export default {
   setup () {
     return {
       slide: ref('style'),
-
+      tdc,
       lorem:
         'Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque voluptatem totam.'
     }

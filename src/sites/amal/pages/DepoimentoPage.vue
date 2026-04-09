@@ -80,6 +80,7 @@
 <script>
 
 import { defineComponent, ref, computed } from "vue"
+import { tdc } from "quasar_resaas"
 
 export default defineComponent({
 
@@ -134,6 +135,7 @@ return groups
 })
 
 return{
+  tdc,
 slide,
 testimonials,
 testimonialGroups
