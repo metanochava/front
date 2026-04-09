@@ -45,8 +45,6 @@ if(siteRoutes.length !== 0 ){
       ],
     },
 
-    // Always leave this as last one,
-    // but you can also remove it
     {
       path: '/:catchAll(.*)*',
       component: () => import('pages/ErrorNotFound.vue'),

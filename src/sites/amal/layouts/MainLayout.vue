@@ -203,7 +203,7 @@ import {
   HeaderFullScreen
 } from 'quasar_resaas'
 
-import { tdc,useUserStore } from 'quasar_resaas'
+import { tdc,useUserStore, useEntidadeStore } from 'quasar_resaas'
 
 export default defineComponent({
 
@@ -219,10 +219,12 @@ export default defineComponent({
 
   setup(){
 
-    const User =useUserStore()
+    const User = useUserStore()
+    const Entidade = useEntidadeStore()
 
     return{
-      User
+      User,
+      Entidade
     }
 
   },
@@ -265,7 +267,7 @@ export default defineComponent({
 
   async mounted(){
 
-    await this.User.getSettings()
+    await this.User.setSettings()
 
     this.calculateMenu()
 
@@ -309,14 +311,14 @@ export default defineComponent({
 
     },
 
-    getHostname(entidade){
+    async getHostname(entidade){
 
       const domain = window.location.hostname
 
       if(entidade.site?.toLowerCase() === domain){
 
         this.User.Entidade = entidade
-        this.User.TipoEntidadeLayoutSettings()
+        await this.Entidade.getLayoutSettings(this.User?.Entidade?.id)
 
       }
 
