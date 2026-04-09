@@ -288,8 +288,7 @@ export default defineComponent({
 
         const dominio = process.env.API.replace('app','clinica')
 
-        window.location.href =
-          `${dominio}/#/auth/login?entidade=${this.User.Entidade?.id}`
+        window.location.href = `${dominio}/#/auth/login?entidade=${this.Entidade?.row?.id}`
 
       }else{
 
