@@ -1,7 +1,8 @@
 import { restRoutes, authRoutes } from 'quasar_resaas'
 import { rhRoutes } from './../pages/rh/routes'
-import { clinicaRoutes } from './../pages/clinica/routes'
 import { amalSiteRoutes } from 'src/sites/amal/routes'
+import { stockRoutes } from './../pages/stock/routes'
+import { saudeRoutes } from './../pages/saude/routes'
 
 const host = window.location.hostname
 
@@ -41,7 +42,8 @@ if(siteRoutes.length !== 0 ){
         },
         ...restRoutes,
         ...rhRoutes,
-        ...clinicaRoutes,
+        ...stockRoutes,
+        ...saudeRoutes
       ],
     },
 

@@ -1,3 +1,4 @@
+
 <template>
   <q-page class="q-pa-sm">
     <AutoCrud :module="module" :model="model" :can="User.can" :ignoreFields="ignoreFields" route="view_paciente"  />
@@ -6,13 +7,12 @@
 
 <script setup>
 
-// import { HTTPAuth, url } from 'quasar_resaas'
 import { AutoCrud } from 'quasar_resaas'
-import {useUserStore } from 'quasar_resaas'
+import { useUserStore } from 'quasar_resaas'
 
 import { ref, watch, onMounted} from 'vue'
 import { useRoute } from 'vue-router'
-// import { tdc } from '../../boot/base'
+
 
 const User =useUserStore()
 const route = useRoute()
@@ -33,3 +33,4 @@ watch(
   { immediate: true }
 )
 </script>
+
