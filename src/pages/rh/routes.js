@@ -1,4 +1,4 @@
-import { funcionariocargoRoutes } from './funcionariocargo/funcionariocargoRoutes'
+import { funcionario_cargoRoutes } from './funcionario_cargo/funcionario_cargoRoutes'
 import { contratoRoutes } from './contrato/contratoRoutes'
 import { funcionarioRoutes } from './funcionario/funcionarioRoutes'
 import { cargoRoutes } from './cargo/cargoRoutes'
@@ -9,5 +9,5 @@ export let rhRoutes = [
   ...cargoRoutes,
   ...funcionarioRoutes,
   ...contratoRoutes,
-  ...funcionariocargoRoutes,
+  ...funcionario_cargoRoutes,
 ]
