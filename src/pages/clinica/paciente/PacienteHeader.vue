@@ -18,21 +18,21 @@
     <q-toolbar class="bg-transparent text-grey-9">
 
       <div class="text-h5">
-        {{ paciente?.pessoa?.nome }}
-        {{ paciente?.pessoa?.nome_meio }}
-        {{ paciente?.pessoa?.apelido }}
+        {{ paciente?.person?.nome }}
+        {{ paciente?.person?.nome_meio }}
+        {{ paciente?.person?.apelido }}
         de
       </div>
 
       <div class="text-h5 q-ml-sm">
-        {{ relativeDate(paciente?.pessoa?.data_nascimento) }} de Idade
+        {{ relativeDate(paciente?.person?.data_nascimento) }} de Idade
       </div>
 
       <q-separator vertical inset />
       <q-space />
 
       <!-- MARCAR CONSULTA -->
-      <q-btn
+      <s-btn
         v-if="User.can('marcar_consulta')"
         @click="modal_add_marcacao = true"
         color="green"
@@ -40,12 +40,12 @@
       >
         <q-tooltip>
           {{ tdc('Marcar Consulta') }}<br>
-          {{ paciente?.pessoa?.nome }}
+          {{ paciente?.person?.nome }}
         </q-tooltip>
-      </q-btn>
+      </s-btn>
 
       <!-- INTERNAR -->
-      <q-btn
+      <s-btn
         v-if="!paciente?.is_internmet && route.name !== 'add_internamento'"
         color="primary"
         label="Internar"
@@ -56,7 +56,7 @@
       />
 
       <!-- INTERNADO -->
-      <q-btn
+      <s-btn
         v-if="paciente?.is_internmet"
         label="Internado"
         color="red"
