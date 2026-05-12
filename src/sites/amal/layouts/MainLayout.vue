@@ -285,7 +285,7 @@ export default defineComponent({
     go(item){
 
       if(item?.route === 'Login'){
-        const dominio = process.env.API.replace('app','clinica')
+        const dominio = process.env.API.replace('app','saude')
         window.location.href = `${dominio}/#/auth/login?entity=${this.Entity?.row?.id}`
       }else{
         const el = document.querySelector(item.link)
