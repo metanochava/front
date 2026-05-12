@@ -3,11 +3,12 @@ pull:
 npm:
 	npm i quasar_resaas;
 push:
+	npm version patch --no-git-tag-version; \
 	git add .; \
-	VERSION=$$(python -c "import tomli; print(tomli.load(open('pyproject.toml','rb'))['project']['version'])"); \
-	read -p "Mensagem do release: $$VERSION " m; \
+	VERSION=$$(node -p "require('./package.json').version"); \
+	read -p "Mensagem do release: " m; \
 	git commit -m "release: v$$VERSION - $$m"; \
-	git push origin main;  
+	git push origin main --force; 
 gitback:
 	git reset --soft HEAD~1
 gitrmc:
