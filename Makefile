@@ -1,7 +1,10 @@
-pull:
+
+gitsaas:
 	npm install git+https://github.com/metanochava/quasar_resaas.git
 npmsaas:
 	npm i quasar_resaas;
+pull:
+	git pull origin main --force;
 push:
 	npm version patch --no-git-tag-version; \
 	git add .; \
