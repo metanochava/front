@@ -3,9 +3,9 @@ import { defineStore } from 'pinia'
 // import { tdc } from '../boot/base'
 import { buildFormFromSchema, HTTPAuth, url } from 'quasar_resaas'
 
-export const EntidadeStore = defineStore('entidade', {
+export const EntityStore = defineStore('entity', {
   state: () => ({
-    url: 'saas/entidades',
+    url: 'saas/entitys',
     campos: [],
     linhas: [],
     linha: null,

@@ -1,8 +1,8 @@
 <template>
   <q-page class="flex flex-center column">
     <img
-      :alt="User?.Entidade?.nome + '  logo'"
-      :src="User?.Entidade?.logo?.url"
+      :alt="User?.Entity?.nome + '  logo'"
+      :src="User?.Entity?.logo?.url"
       style="width: 200px; height: 200px"
     />
   </q-page>
@@ -28,6 +28,6 @@ const User =useUserStore()
 //     }),
 //   )
 // })
-// const texto = ascii(User.Entidade.nome)
+// const texto = ascii(User.Entity.nome)
 </script>
 

@@ -1,7 +1,7 @@
 
 <template>
 
-  <FormSaveEdit
+  <FormTwo
     :schema="schema"
     :module="module"
     :model="model"
@@ -16,7 +16,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { FormSaveEdit, buildFormFromSchema, useUserStore, HTTPAuth, url } from 'quasar_resaas'
+import { FormTwo, buildFormFromSchema, useUserStore, HTTPAuth, url } from 'quasar_resaas'
 
 // ----------------------------------
 // STORE

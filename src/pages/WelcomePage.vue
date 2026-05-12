@@ -41,7 +41,7 @@
           >
             <q-icon name="domain" size="32px" color="primary" />
             <div class="text-subtitle2">{{ tdc('Company') }}</div>
-            <div class="text-bold"><br />{{ tdc(User?.Entidade?.nome) || 'N/A' }}</div>
+            <div class="text-bold"><br />{{ tdc(User?.Entity?.nome) || 'N/A' }}</div>
           </s-card>
         </div>
 

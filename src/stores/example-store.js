@@ -4,7 +4,7 @@
 // // import { tdc } from '../boot/base'
 // import { buildFormFromSchema } from 'quasar_resaas'
 
-// export constuseUserStore = defineStore('entidade', {
+// export constuseUserStore = defineStore('entity', {
 //   state: () => ({
 //     url: 'saas/Modelos',
 //     campos: [],

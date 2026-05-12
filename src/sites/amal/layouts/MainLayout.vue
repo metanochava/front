@@ -203,7 +203,7 @@ import {
   HeaderFullScreen
 } from 'quasar_resaas'
 
-import { tdc,useUserStore, useEntidadeStore } from 'quasar_resaas'
+import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
 
 export default defineComponent({
 
@@ -220,11 +220,11 @@ export default defineComponent({
   setup(){
 
     const User = useUserStore()
-    const Entidade = useEntidadeStore()
+    const Entity = useEntityStore()
 
     return{
       User,
-      Entidade
+      Entity
     }
 
   },
@@ -266,7 +266,7 @@ export default defineComponent({
   },
 
   async mounted(){
-    await this.Entidade.getSettings()
+    await this.Entity.getSettings()
     this.calculateMenu()
     window.addEventListener("resize",this.calculateMenu)
   },
@@ -286,7 +286,7 @@ export default defineComponent({
 
       if(item?.route === 'Login'){
         const dominio = process.env.API.replace('app','clinica')
-        window.location.href = `${dominio}/#/auth/login?entidade=${this.Entidade?.row?.id}`
+        window.location.href = `${dominio}/#/auth/login?entity=${this.Entity?.row?.id}`
       }else{
         const el = document.querySelector(item.link)
         if(el){
