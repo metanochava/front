@@ -1,9 +1,9 @@
 
-import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas' 
+import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
 export const useFuncionariotore = createBaseStore(
   'funcionario',
-  { url: 'api/rh/funcionarios', app: 'rh', model: 'Funcionario' },
+  {  app: 'rh', model: 'Funcionario' },
   {
     state: () => ({
 
@@ -19,7 +19,7 @@ export const useFuncionariotore = createBaseStore(
 
     hooks: {
       beforeLoad() {
-        
+
       },
 
       afterLoad(data) {

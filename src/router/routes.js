@@ -3,6 +3,7 @@ import { rhRoutes } from './../pages/rh/routes'
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
+import { hrRoutes } from './../pages/hr/routes'
 
 const host = window.location.hostname
 
@@ -43,7 +44,8 @@ if(siteRoutes.length !== 0 ){
         ...restRoutes,
         ...rhRoutes,
         ...stockRoutes,
-        ...saudeRoutes
+        ...saudeRoutes,
+        ...hrRoutes
       ],
     },
 

@@ -1,9 +1,9 @@
 
-import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas' 
+import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
 export const useCargotore = createBaseStore(
   'cargo',
-  { url: 'api/rh/cargos', app: 'rh', model: 'Cargo' },
+  {  app: 'rh', model: 'Cargo' },
   {
     state: () => ({
 
@@ -19,7 +19,7 @@ export const useCargotore = createBaseStore(
 
     hooks: {
       beforeLoad() {
-        
+
       },
 
       afterLoad(data) {

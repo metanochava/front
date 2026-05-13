@@ -1,9 +1,9 @@
 
-import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas' 
+import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
 export const useGuiatransferenciatore = createBaseStore(
   'guiatransferencia',
-  { url: 'api/saude/guiatransferencias', app: 'saude', model: 'Guiatransferencia' },
+  { app: 'saude', model: 'Guiatransferencia' },
   {
     state: () => ({
 
@@ -19,7 +19,7 @@ export const useGuiatransferenciatore = createBaseStore(
 
     hooks: {
       beforeLoad() {
-        
+
       },
 
       afterLoad(data) {
