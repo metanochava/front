@@ -9,7 +9,7 @@
       :config="Paciente.config"
       :actions="Paciente.actions"
       :can-do="canDo"
-      :ignore-fields="ignoreFields"
+      :ignore-fields="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :data="Paciente.form"
       @saved="onSaved"
     />
@@ -24,8 +24,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePacienteStore } from 'quasar_resaas'
-import FormTwo from 'quasar_resaas'
+import { usePacienteStore } from './pacienteStore'
+import { FormTwo } from 'quasar_resaas'
 
 // ---------------- ROUTE ----------------
 const route = useRoute()
@@ -36,14 +36,6 @@ const Paciente = usePacienteStore()
 // ---------------- STATE ----------------
 const ready = ref(false)
 
-const ignoreFields = [
-  'id',
-  'created_at',
-  'updated_at',
-  'created_by',
-  'updated_by',
-  'deleted_at'
-]
 
 // ---------------- PERMISSIONS ----------------
 function canDo(perm) {

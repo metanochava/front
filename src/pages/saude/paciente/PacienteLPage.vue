@@ -10,7 +10,7 @@
 
 <script setup>
 
-import  AutoCrud  from 'quasar_resaas'
+import { AutoCrud } from 'quasar_resaas'
 import { useUserStore } from 'quasar_resaas'
 import { ref, onMounted} from 'vue'
 

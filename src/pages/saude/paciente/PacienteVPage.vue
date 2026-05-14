@@ -7,7 +7,7 @@
     :model="model"
     :data="selectedRow"
     :can-do="User.can"
-    :ignore-fields="ignoreFields"
+    :ignore-fields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
     @saved="onSaved"
   />
 
@@ -42,12 +42,6 @@ const model = 'Saude'
 
 const schemaPath = 'fields'
 
-const ignoreFields = [
-  'created_at',
-  'updated_at',
-  'created_by',
-  'updated_by'
-]
 
 // ----------------------------------
 // LOAD DATA (EDIT)
