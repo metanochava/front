@@ -60,7 +60,7 @@ async function loadRow(id) {
   const { data } = await HTTPAuth.get(
     url({
       type: 'u',
-      url: `api/${module}/${model}s/${id}/`
+      url: `${module}/${model}s/${id}/`
     })
   )
 

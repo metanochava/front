@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url'
 import { config } from 'dotenv'
 config()
 
+// console.error(config())
+
 export default defineConfig((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -38,7 +40,7 @@ export default defineConfig((ctx) => {
     build: {
       env: {
         API: ctx.dev ? process.env.API_DEV : process.env.API_PRO,
-        API_REPORT: process.env.API_REPORT,
+        API_PREFIX: process.env.API_PREFIX,
         FRONT_END_KEY: process.env.FRONT_END_KEY,
         FRONT_END_PASSWORD: process.env.FRONT_END_PASSWORD,
       },
