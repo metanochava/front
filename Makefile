@@ -17,3 +17,7 @@ gitback:
 gitrmc:
 	read -p "Digite o caminho do ficheiro ou pasta " m; \
 	git rm --cached $$m
+deploy:
+	npm install git+https://github.com/metanochava/quasar_resaas.git; \
+	git pull origin main --force; \
+	quasar build;
