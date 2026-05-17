@@ -7,6 +7,7 @@ import { classeexamemedicoRoutes } from './classeexamemedico/classeexamemedicoRo
 import { examemedicoRoutes } from './examemedico/examemedicoRoutes'
 import { dadovitalRoutes } from './dadovital/dadovitalRoutes'
 import { pedidoexamemedicoRoutes } from './pedidoexamemedico/pedidoexamemedicoRoutes'
+import { resultadopedidoexamemedicoRoutes } from './resultadopedidoexamemedico/resultadopedidoexamemedicoRoutes'
 import { guiatransferenciaRoutes } from './guiatransferencia/guiatransferenciaRoutes'
 import { relatoriomedicoRoutes } from './relatoriomedico/relatoriomedicoRoutes'
 import { atestadomedicoRoutes } from './atestadomedico/atestadomedicoRoutes'
@@ -22,6 +23,7 @@ export let saudeRoutes = [
   ...relatoriomedicoRoutes,
   ...guiatransferenciaRoutes,
   ...pedidoexamemedicoRoutes,
+  ...resultadopedidoexamemedicoRoutes,
   ...dadovitalRoutes,
   ...examemedicoRoutes,
   ...classeexamemedicoRoutes,

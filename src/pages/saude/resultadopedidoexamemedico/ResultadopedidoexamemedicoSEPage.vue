@@ -2,12 +2,12 @@
   <q-page class="q-pa-sm">
     <PacienteHeader />
     <!-- FORM -->
-    <div v-if="Pedidoexamemedico.loading" class="flex flex-center q-pa-lg">
+    <div v-if="Resultadopedidoexamemedico.loading" class="flex flex-center q-pa-lg">
       <q-spinner size="40px" color="primary" />
     </div>
     <FormTwo
       v-else
-      :store="Pedidoexamemedico"
+      :store="Resultadopedidoexamemedico"
       :ignore-fields="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       @saved="onSaved"
     />
@@ -18,7 +18,7 @@
 <script setup>
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore'
+import { useResultadopedidoexamemedicoStore } from './resultadopedidoexamemedicoStore'
 import { FormTwo } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
@@ -26,7 +26,7 @@ import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 const route = useRoute()
 
 // ---------------- STORE ----------------
-const Pedidoexamemedico = usePedidoexamemedicoStore()
+const Resultadopedidoexamemedico = useResultadopedidoexamemedicoStore()
 
 // ---------------- STATE ----------------
 
@@ -36,24 +36,24 @@ async function load(id) {
 
   if (!id) {
 
-    Pedidoexamemedico.resetForm?.()
+    Resultadopedidoexamemedico.resetForm?.()
     return
   }
 
 
   // 🔥 evita chamadas duplicadas com comparação segura
-  if (String(Pedidoexamemedico.row?.id) === String(id)) {
-    Pedidoexamemedico.form = Pedidoexamemedico.row
+  if (String(Resultadopedidoexamemedico.row?.id) === String(id)) {
+    Resultadopedidoexamemedico.form = Resultadopedidoexamemedico.row
     return
   }
 
-  Pedidoexamemedico.row =  await Pedidoexamemedico.getById(id)
+  Resultadopedidoexamemedico.row =  await Resultadopedidoexamemedico.getById(id)
 }
 
 // ---------------- INIT ----------------
 async function init() {
   try {
-    await Pedidoexamemedico.init()
+    await Resultadopedidoexamemedico.init()
     const id = route.params.id
     await load(id)
   } catch (err) {

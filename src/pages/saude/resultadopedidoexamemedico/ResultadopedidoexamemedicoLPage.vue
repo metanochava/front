@@ -14,7 +14,7 @@ import { AutoCrud } from 'quasar_resaas'
 import { ref, onMounted} from 'vue'
 
 const app = ref('saude')
-const model = ref('Relatoriomedico')
+const model = ref('Resultadopedidoexamemedico')
 
 onMounted(async () => {
 

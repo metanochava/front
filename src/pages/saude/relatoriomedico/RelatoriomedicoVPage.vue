@@ -1,112 +1,44 @@
-
 <template>
+  <q-page class="q-pa-sm">
+    <PacienteHeader />
+    <!-- FORM -->
+    <div v-if="Relatoriomedico.loading" class="flex flex-center q-pa-lg">
+      <q-spinner size="40px" color="primary" />
+    </div>
 
-  <FormTwo
-    :schema="schema"
-    :module="module"
-    :model="model"
-    :data="selectedRow"
-    :can-do="User.can"
-    :ignore-fields="ignoreFields"
-    @saved="onSaved"
-  />
-
+    <Form
+      :store="Relatoriomedico"
+      :ignore-fields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
+    >
+    </Form>
+  </q-page>
 </template>
 
+
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { FormTwo, buildFormFromSchema, useUserStore, HTTPAuth, url } from 'quasar_resaas'
+// import { onMounted, watch } from 'vue'
+// import { useRoute } from 'vue-router'
 
-// ----------------------------------
-// STORE
-// ----------------------------------
-const User = useUserStore()
+import { useRelatoriomedicoStore } from './relatoriomedicoStore'
+// import { FormTwo } from 'quasar_resaas'
+import { Form } from 'quasar_resaas'
+import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
-// ----------------------------------
-// ROUTE
-// ----------------------------------
-const route = useRoute()
+// const route = useRoute()
 
-// ----------------------------------
-// STATE
-// ----------------------------------
-const schema = ref([])
-const selectedRow = ref(null)
+const Relatoriomedico = useRelatoriomedicoStore()
 
-// ----------------------------------
-// CONFIG
-// ----------------------------------
-const module = 'saude'
-const model = 'Saude'
+// watch(() => route.params,
+//   async () => {
 
-const schemaPath = 'fields'
+//   },
+//   { immediate: false } // init já trata o primeiro carregamento
+// )
 
-const ignoreFields = [
-  'created_at',
-  'updated_at',
-  'created_by',
-  'updated_by'
-]
 
-// ----------------------------------
-// LOAD DATA (EDIT)
-// ----------------------------------
-async function loadRow(id) {
-  if (!id) {
-    selectedRow.value = null
-    return
-  }
+// // ---------------- LIFECYCLE ----------------
+// onMounted({
 
-  const { data } = await HTTPAuth.get(
-    url({
-      type: 'u',
-      url: `${module}/${model}s/${id}/`
-    })
-  )
-
-  selectedRow.value = data
-}
-
-// ----------------------------------
-// INIT
-// ----------------------------------
-async function init() {
-  const data = await buildFormFromSchema({
-    module,
-    model,
-    schemaPath,
-  })
-
-  schema.value = data.schema
-
-  // 🔥 verifica se tem ID na rota
-  const id = route.params.id || route.query.id
-
-  await loadRow(id)
-}
-
-// ----------------------------------
-// EVENTS
-// ----------------------------------
-function onSaved() {
-  console.log('salvo')
-}
-
-// ----------------------------------
-// WATCH (se mudar rota)
-// ----------------------------------
-watch(
-  () => route.fullPath,
-  async () => {
-    await init()
-  }
-)
-
-// ----------------------------------
-// LIFECYCLE
-// ----------------------------------
-onMounted(async () => {
-  await init()
-})
+// })
 </script>
+

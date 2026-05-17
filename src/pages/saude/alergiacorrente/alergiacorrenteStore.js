@@ -1,7 +1,7 @@
 
 import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
-export const useAlergiacorrentetore = createBaseStore(
+export const useAlergiacorrenteStore = createBaseStore(
   'alergiacorrente',
   { app: 'saude', model: 'Alergiacorrente' },
   {

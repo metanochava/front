@@ -1,13 +1,15 @@
 // 🔥 aqui você controla TODOS menus do sistema
 
-import ConsultaRightMenu from './../pages/clinica/consulta/RightMenu.vue'
-import ReceitamendicaRightMenu from './../pages/clinica/receita/RightMenu.vue'
-import InternamentoRightMenu from './../pages/clinica/internamento/RightMenu.vue'
+import ConsultaRightMenu from './../pages/saude/consulta/RightMenu.vue'
+import ReceitamendicaRightMenu from './../pages/saude/receitamedica/RightMenu.vue'
+import PedidoexamemedicoRightMenu from './../pages/saude/pedidoexamemedico/RightMenu.vue'
+import ResultadopedidoexamemedicoRightMenu from './../pages/saude/resultadopedidoexamemedico/RightMenu.vue'
+import AtestadomedicoRightMenu from './../pages/saude/atestadomedico/RightMenu.vue'
+import GuiatransferenciaRightMenu from './../pages/saude/guiatransferencia/RightMenu.vue'
+import RelatoriomedicoRightMenu from './../pages/saude/relatoriomedico/RightMenu.vue'
 
-import PedidoexamemedicoRightMenu from './../pages/clinica/pedido_exame/RightMenu.vue'
-import AtestadomedicoRightMenu from './../pages/clinica/atestado/RightMenu.vue'
-import GuiatransferenciaRightMenu from './../pages/clinica/guia_transferencia/RightMenu.vue'
-import RelatoriomedicoRightMenu from './../pages/clinica/relatorio/RightMenu.vue'
+// import InternamentoRightMenu from './../pages/saude/internamento/RightMenu.vue'
+
 
 
 export function setupRightMenus(menu) {
@@ -32,13 +34,17 @@ export function setupRightMenus(menu) {
   menu.registerRightMenu('add_relatoriomedico', RelatoriomedicoRightMenu)
   menu.registerRightMenu('list_relatoriomedico', RelatoriomedicoRightMenu)
 
-  menu.registerRightMenu('view_internamento', InternamentoRightMenu)
-  menu.registerRightMenu('add_internamento', InternamentoRightMenu)
-  menu.registerRightMenu('list_internamento', InternamentoRightMenu)
-
   menu.registerRightMenu('view_pedidoexamemedico', PedidoexamemedicoRightMenu)
   menu.registerRightMenu('add_pedidoexamemedico', PedidoexamemedicoRightMenu)
   menu.registerRightMenu('list_pedidoexamemedico', PedidoexamemedicoRightMenu)
 
+
+  menu.registerRightMenu('view_resultadopedidoexamemedico', ResultadopedidoexamemedicoRightMenu)
+  menu.registerRightMenu('add_resultadopedidoexamemedico', ResultadopedidoexamemedicoRightMenu)
+  menu.registerRightMenu('list_resultadopedidoexamemedico', ResultadopedidoexamemedicoRightMenu)
+
+  // menu.registerRightMenu('view_internamento', InternamentoRightMenu)
+  // menu.registerRightMenu('add_internamento', InternamentoRightMenu)
+  // menu.registerRightMenu('list_internamento', InternamentoRightMenu)
 
 }

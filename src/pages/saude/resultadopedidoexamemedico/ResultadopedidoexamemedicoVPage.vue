@@ -2,12 +2,12 @@
   <q-page class="q-pa-sm">
     <PacienteHeader />
     <!-- FORM -->
-    <div v-if="Receitamedica.loading" class="flex flex-center q-pa-lg">
+    <div v-if="Resultadopedidoexamemedico.loading" class="flex flex-center q-pa-lg">
       <q-spinner size="40px" color="primary" />
     </div>
 
     <Form
-      :store="Receitamedica"
+      :store="Resultadopedidoexamemedico"
       :ignore-fields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
     >
     </Form>
@@ -19,14 +19,14 @@
 // import { onMounted, watch } from 'vue'
 // import { useRoute } from 'vue-router'
 
-import { useReceitamedicaStore } from './receitamedicaStore'
+import { useResultadopedidoexamemedicoStore } from './resultadopedidoexamemedicoStore'
 // import { FormTwo } from 'quasar_resaas'
 import { Form } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
 // const route = useRoute()
 
-const Receitamedica = useReceitamedicaStore()
+const Resultadopedidoexamemedico = useResultadopedidoexamemedicoStore()
 
 // watch(() => route.params,
 //   async () => {

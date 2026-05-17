@@ -1,113 +1,85 @@
-
 <template>
-
-  <FormTwo
-    :schema="schema"
-    :module="module"
-    :model="model"
-    :data="selectedRow"
-    :can-do="User.can"
-    :ignore-fields="ignoreFields"
-    @saved="onSaved"
-  />
-
+  <q-page class="q-pa-sm">
+    <PacienteHeader />
+    <!-- FORM -->
+    <div v-if="Relatoriomedico.loading" class="flex flex-center q-pa-lg">
+      <q-spinner size="40px" color="primary" />
+    </div>
+    <FormTwo
+      v-else
+      :store="Relatoriomedico"
+      :ignore-fields="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
+      @saved="onSaved"
+    />
+  </q-page>
 </template>
 
+
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { FormTwo, buildFormFromSchema, useUserStore, HTTPAuth, url } from 'quasar_resaas'
+import { useRelatoriomedicoStore } from './relatoriomedicoStore'
+import { FormTwo } from 'quasar_resaas'
+import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
-// ----------------------------------
-// STORE
-// ----------------------------------
-const User = useUserStore()
-
-// ----------------------------------
-// ROUTE
-// ----------------------------------
+// ---------------- ROUTE ----------------
 const route = useRoute()
 
-// ----------------------------------
-// STATE
-// ----------------------------------
-const schema = ref([])
-const selectedRow = ref(null)
+// ---------------- STORE ----------------
+const Relatoriomedico = useRelatoriomedicoStore()
 
-// ----------------------------------
-// CONFIG
-// ----------------------------------
-const module = 'saude'
-const model = 'Saude'
+// ---------------- STATE ----------------
 
-const schemaPath = 'fields'
 
-const ignoreFields = [
-  'created_at',
-  'updated_at',
-  'created_by',
-  'updated_by'
-]
+// ---------------- LOAD DATA ----------------
+async function load(id) {
 
-// ----------------------------------
-// LOAD DATA (EDIT)
-// ----------------------------------
-async function loadRow(id) {
   if (!id) {
-    selectedRow.value = null
+
+    Relatoriomedico.resetForm?.()
     return
   }
 
-  const { data } = await HTTPAuth.get(
-    url({
-      type: 'u',
-      url: `${module}/${model}s/${id}/`
-    })
-  )
 
-  selectedRow.value = data
-}
-
-// ----------------------------------
-// INIT
-// ----------------------------------
-async function init() {
-  const data = await buildFormFromSchema({
-    module,
-    model,
-    schemaPath,
-  })
-
-  schema.value = data.schema
-
-  // 🔥 verifica se tem ID na rota
-  const id = route.params.id || route.query.id
-
-  await loadRow(id)
-}
-
-// ----------------------------------
-// EVENTS
-// ----------------------------------
-function onSaved() {
-  console.log('salvo')
-}
-
-// ----------------------------------
-// WATCH (se mudar rota)
-// ----------------------------------
-watch(
-  () => route.fullPath,
-  async () => {
-    await init()
+  // 🔥 evita chamadas duplicadas com comparação segura
+  if (String(Relatoriomedico.row?.id) === String(id)) {
+    Relatoriomedico.form = Relatoriomedico.row
+    return
   }
+
+  Relatoriomedico.row =  await Relatoriomedico.getById(id)
+}
+
+// ---------------- INIT ----------------
+async function init() {
+  try {
+    await Relatoriomedico.init()
+    const id = route.params.id
+    await load(id)
+  } catch (err) {
+    console.error('Erro ao inicializar página:', err)
+  }
+}
+
+// ---------------- WATCH ROTA (CORRIGIDO) ----------------
+watch(
+  () => route.params,
+  async (params) => {
+    if (!params) return
+
+    const id = params.id
+
+    // 🔥 sempre carrega quando muda rota
+    await load(id)
+  },
+  { immediate: false } // init já trata o primeiro carregamento
 )
 
-// ----------------------------------
-// LIFECYCLE
-// ----------------------------------
-onMounted(async () => {
-  await init()
-})
-</script>
+// ---------------- EVENTS ----------------
+function onSaved(res) {
+  console.log('Salvo com sucesso', res)
+}
 
+// ---------------- LIFECYCLE ----------------
+onMounted(init)
+</script>

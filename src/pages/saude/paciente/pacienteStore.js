@@ -15,7 +15,7 @@ export const usePacienteStore = createBaseStore(
     },
 
     actions: {
-      async getPessoa() {
+      async getPerson() {
         const rsp = await HTTPAuth.get(url({ type: 'u', url: 'django_resaas/persons/' + this.row?.person_id, params: { } }))
         this.person = rsp.data
         return rsp.data
