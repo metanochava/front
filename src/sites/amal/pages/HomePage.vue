@@ -41,7 +41,7 @@ import DepoimentoPage from './DepoimentoPage.vue'
 
 export default defineComponent({
 
-  name:'MainLayout',
+  name:'HomePage',
 
   components:{
     InicioPage,

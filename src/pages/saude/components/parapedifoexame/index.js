@@ -1,0 +1,7 @@
+export { default as ExameCollapse } from './ExameCollapse.vue'
+export { default as ExameItem } from './ExameItem.vue'
+export { default as ExameCard } from './ExameCard.vue'
+export { default as ExameDialog } from './ExameDialog.vue'
+export { default as TipoDialog } from './TipoDialog.vue'
+export { default as ClasseDialog } from './ClasseDialog.vue'
+export { default as PedidoResumo } from './PedidoResumo.vue'

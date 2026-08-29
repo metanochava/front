@@ -1,8 +1,38 @@
-<template>
-  <div>
-    <h6>Atestado Medico</h6>
 
-    <q-btn label="Nova Receita" color="primary" />
-    <q-btn label="Ver Histórico" flat />
-  </div>
+<template>
+  <s-pdf-render
+    v-model="AtestadomedicoStore.showPdf"
+    :src="AtestadomedicoStore.pdf"
+    title="Atestado Medico"
+  />
+  <HistoryList
+    title="Atestado Medico"
+    :store="AtestadomedicoStore"
+    :actions="['pdf', 'Accao B', 'Accao C']"
+    @action="onClick"
+  />
 </template>
+
+<script setup>
+
+import HistoryList from '../components/HistoryList.vue'
+import { useAtestadomedicoStore } from './atestadomedicoStore'
+
+
+const AtestadomedicoStore = useAtestadomedicoStore()
+
+
+
+function onClick(item, action) {
+  if (action){
+    if (action == 'pdf'){
+      AtestadomedicoStore.getPdf(item.id)
+      AtestadomedicoStore.showPdf = true
+    }
+  }else{
+    AtestadomedicoStore.getPdf(item.id)
+    AtestadomedicoStore.showPdf = true
+  }
+}
+</script>
+

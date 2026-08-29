@@ -1,7 +1,7 @@
 
 <template>
   <q-page class="q-pa-sm">
-    <AutoCrud
+    <s-auto-crud
       :app="app" :model="model"
       :ignoreFields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
     />
@@ -10,7 +10,7 @@
 
 <script setup>
 
-import { AutoCrud } from 'quasar_resaas'
+
 import { ref, onMounted} from 'vue'
 
 const app = ref('saude')

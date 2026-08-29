@@ -6,11 +6,11 @@
       <q-spinner size="40px" color="primary" />
     </div>
 
-    <Form
+    <s-form
       :store="Consulta"
       :ignore-fields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
     >
-    </Form>
+    </s-form>
   </q-page>
 </template>
 
@@ -20,8 +20,6 @@
 // import { useRoute } from 'vue-router'
 
 import { useConsultaStore } from './consultaStore'
-// import { FormTwo } from 'quasar_resaas'
-import { Form } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
 // const route = useRoute()

@@ -4,6 +4,8 @@
 import { defineConfig } from '#q-app/wrappers'
 import { fileURLToPath } from 'node:url'
 
+import RESAAS_AUTO_IMPORTS from 'quasar_resaas/auto-imports'
+
 import { config } from 'dotenv'
 config()
 
@@ -86,6 +88,65 @@ export default defineConfig((ctx) => {
           },
         ],
 
+        // ==========================================
+        // AUTO IMPORT
+        // ==========================================
+
+        [
+          'unplugin-auto-import/vite',
+
+          {
+            imports: [
+
+              // ======================================
+              // VUE
+              // ======================================
+
+              'vue',
+
+              // ======================================
+              // VUE ROUTER
+              // ======================================
+
+              'vue-router',
+
+              // ======================================
+              // QUASAR
+              // ======================================
+
+              {
+                quasar: [
+                  'useQuasar',
+                  'date',
+                  'debounce',
+                  'throttle'
+                ],
+
+                // ====================================
+                // QUASAR_RESAAS
+                // ====================================
+
+                quasar_resaas: RESAAS_AUTO_IMPORTS
+              }
+            ],
+
+            // auto import também dentro do template
+            vueTemplate: true,
+
+            // ajuda o Vite com estas dependências
+            viteOptimizeDeps: true,
+
+            // gera declarações para IDE
+            dts: './src/auto-imports.d.ts',
+
+            eslintrc: {
+              enabled: true,
+              filepath: './.eslintrc-auto-import.json',
+              globalsPropValue: true
+            }
+          }
+        ],
+
         [
           'vite-plugin-checker',
           {
@@ -96,6 +157,8 @@ export default defineConfig((ctx) => {
           },
           { server: false },
         ],
+
+
       ],
     },
 

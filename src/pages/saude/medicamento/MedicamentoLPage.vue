@@ -1,20 +1,18 @@
 
 <template>
   <q-page class="q-pa-sm">
-    <AutoCrud :module="module" :model="model" :can="User.can" :ignoreFields="ignoreFields" route="view_medicamento"  />
+    <s-auto-crud :app="module" :model="model" :ignoreFields="ignoreFields" />
   </q-page>
 </template>
 
 <script setup>
 
-import { AutoCrud } from 'quasar_resaas'
-import { useUserStore } from 'quasar_resaas'
+
 
 import { ref, watch, onMounted} from 'vue'
 import { useRoute } from 'vue-router'
 
 
-const User =useUserStore()
 const route = useRoute()
 const module = ref('saude')
 const model = ref('Medicamento')

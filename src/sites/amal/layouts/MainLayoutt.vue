@@ -82,6 +82,7 @@
       <q-bar
         v-show="!$q.screen.lt.md"
         class="q-pa-0 row items-center bg-transparent text-white"
+
         style="height:50px"
       >
 
@@ -207,7 +208,7 @@ import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
 
 export default defineComponent({
 
-  name:'MainLayout',
+  name:'MainAmalLayout',
 
   components:{
     HeaderDarkMode,

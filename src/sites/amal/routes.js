@@ -3,7 +3,7 @@ import { tdc } from 'quasar_resaas'
 export let amalSiteRoutes = [
   {
     path: '/',
-    component: () => import('./layouts/MainLayout.vue'),
+    component: () => import('./layouts/MainLayoutt.vue'),
     children: [
       {
         path: '',

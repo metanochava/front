@@ -1,85 +1,311 @@
 <template>
   <q-page class="q-pa-sm">
-    <PacienteHeader />
-    <!-- FORM -->
-    <div v-if="Atestadomedico.loading" class="flex flex-center q-pa-lg">
-      <q-spinner size="40px" color="primary" />
-    </div>
-    <FormTwo
-      v-else
-      :store="Atestadomedico"
-      :ignore-fields="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
-      @saved="onSaved"
+
+    <s-pdf-render
+      v-model="Atestadomedico.showPdf"
+      :src="Atestadomedico.pdf"
+      title="Atestado Médico"
     />
+
+    <PacienteHeader />
+    <div class="prescription-banner">
+        <table width="100%">
+          <tr>
+            <td width="80" align="center">
+              <span class="rx-symbol"> ℞ </span>
+            </td>
+
+            <td align="center">
+              <div class="banner-title">
+                ATESTADO MÉDICO
+              </div>
+
+              <div class="banner-subtitle">
+                Requisição emitida por profissional de saúde habilitado
+              </div>
+            </td>
+
+            <td width="80"></td>
+          </tr>
+        </table>
+      </div>
+
+    <div
+      v-if="Atestadomedico.loading"
+      class="flex flex-center q-pa-xl"
+    >
+      <q-spinner
+        color="primary"
+        size="42px"
+      />
+    </div>
+    <s-card flat bordered>
+
+    <div class="q-pa-lg">
+
+        <div class="row q-col-gutter-lg">
+
+            <!-- FORMULÁRIO -->
+
+            <div class="col-md-8">
+
+                <div class="row q-col-gutter-md">
+
+                    <div class="col-6">
+
+                        <s-date
+                            v-model="Atestadomedico.form.data_criacao"
+                            label="Data de Emissão"
+                        />
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <s-date
+                            v-model="Atestadomedico.form.data_limite"
+                            label="Válido Até"
+                        />
+
+                    </div>
+
+                </div>
+
+                <div class="q-mt-md">
+
+                    <s-input
+                        v-model="Atestadomedico.form.comparecer"
+                        label="Comparecer"
+                    />
+
+                </div>
+
+                <div class="q-mt-md">
+
+                    <s-editor
+                        v-model="Atestadomedico.form.diagnostico"
+                        label="Diagnóstico / Fundamentação Clínica"
+                        min-height="250px"
+                    />
+
+                </div>
+
+            </div>
+
+            <!-- RESUMO -->
+
+            <div class="col-md-4">
+
+                <q-card
+                    flat
+                    bordered
+                >
+
+                    <q-card-section>
+
+                        <div class="text-subtitle1 text-weight-bold">
+                            Resumo
+                        </div>
+
+                        <q-separator class="q-my-md"/>
+
+                        <div>
+
+                            <strong>Paciente</strong>
+
+                            <br>
+
+                            {{ Paciente.row?.person?.full_name }}
+
+                        </div>
+
+                        <br>
+
+                        <div>
+
+                            <strong>NID</strong>
+
+                            <br>
+
+                            {{ Paciente.row?.nid }}
+
+                        </div>
+
+                        <br>
+
+                        <div>
+
+                            <strong>Médico</strong>
+
+                            <br>
+
+                            {{ Paciente.row?.consulta?.employee_label || '-' }}
+
+                        </div>
+
+                        <br>
+
+                        <div>
+
+                            <strong>Data</strong>
+
+                            <br>
+
+                            {{ Atestadomedico.form.data_criacao }}
+
+                        </div>
+
+                    </q-card-section>
+
+                </q-card>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <q-separator/>
+
+    <q-card-actions align="right">
+
+        <s-btn
+            flat
+            color="grey"
+            label="Cancelar"
+        />
+
+        <s-btn
+            color="primary"
+            icon="save"
+            label="Emitir Atestado"
+            :loading="Atestadomedico.saving"
+            @click="save"
+        />
+
+    </q-card-actions>
+
+</s-card>
+
+
   </q-page>
 </template>
 
+<style >
+  .prescription-banner {
+  background: #f8fbff;
+  border: 2px solid #2563eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.rx-symbol {
+  font-size: 48px;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.banner-title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2563eb;
+  letter-spacing: 2px;
+}
+
+.banner-subtitle {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+</style>
 
 <script setup>
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAtestadomedicoStore } from './atestadomedicoStore'
-import { FormTwo } from 'quasar_resaas'
+
+
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
-// ---------------- ROUTE ----------------
+import { useAtestadomedicoStore } from './atestadomedicoStore'
+import { usePacienteStore } from './../paciente/pacienteStore'
+
+const Paciente = usePacienteStore()
+
+
+
 const route = useRoute()
 
-// ---------------- STORE ----------------
 const Atestadomedico = useAtestadomedicoStore()
 
-// ---------------- STATE ----------------
+async function afterSave(item){
 
+    if(!item?.id) return
 
-// ---------------- LOAD DATA ----------------
-async function load(id) {
+    await Atestadomedico.getPdf(item.id)
 
-  if (!id) {
+    Atestadomedico.showPdf=true
 
-    Atestadomedico.resetForm?.()
-    return
-  }
+    await Atestadomedico.loadData()
 
-
-  // 🔥 evita chamadas duplicadas com comparação segura
-  if (String(Atestadomedico.row?.id) === String(id)) {
-    Atestadomedico.form = Atestadomedico.row
-    return
-  }
-
-  Atestadomedico.row =  await Atestadomedico.getById(id)
 }
 
-// ---------------- INIT ----------------
-async function init() {
-  try {
+async function save() {
+
+    Atestadomedico.form.paciente = Paciente.row.id
+    Atestadomedico.form.state = 'Active'
+
+    const data = await Atestadomedico.save()
+
+    await afterSave(data.data)
+
+}
+
+async function load(id){
+
+    if(!id){
+
+        Atestadomedico.resetForm()
+
+        return
+
+    }
+
+    if(String(Atestadomedico.row?.id)===String(id)){
+
+        Atestadomedico.form={
+            ...Atestadomedico.row
+        }
+
+        return
+
+    }
+
+    await Atestadomedico.getById(id)
+
+}
+
+async function init(){
+
     await Atestadomedico.init()
-    const id = route.params.id
-    await load(id)
-  } catch (err) {
-    console.error('Erro ao inicializar página:', err)
-  }
+
+    await load(route.params.id)
+
 }
 
-// ---------------- WATCH ROTA (CORRIGIDO) ----------------
 watch(
-  () => route.params,
-  async (params) => {
-    if (!params) return
 
-    const id = params.id
+    ()=>route.params.id,
 
-    // 🔥 sempre carrega quando muda rota
-    await load(id)
-  },
-  { immediate: false } // init já trata o primeiro carregamento
+    async(id)=>{
+
+        await load(id)
+
+    }
+
 )
 
-// ---------------- EVENTS ----------------
-function onSaved(res) {
-  console.log('Salvo com sucesso', res)
-}
 
-// ---------------- LIFECYCLE ----------------
 onMounted(init)
+
 </script>

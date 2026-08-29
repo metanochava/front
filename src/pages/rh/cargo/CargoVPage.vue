@@ -1,27 +1,20 @@
-
 <template>
-
-  <FormTwo
-    :schema="schema"
-    :module="module"
-    :model="model"
-    :data="selectedRow"
-    :can-do="User.can"
-    :ignore-fields="ignoreFields"
-    @saved="onSaved"
-  />
-
+  <q-page class="q-pa-sm">
+    <div v-if="Cargo.loading" class="flex flex-center q-pa-lg">
+      <q-spinner size="40px" color="primary" />
+    </div>
+    <s-form
+      v-else
+      :store="Cargo"
+      :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
+    />
+  </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { FormTwo, buildFormFromSchema, useUserStore, HTTPAuth, url } from 'quasar_resaas'
-
-// ----------------------------------
-// STORE
-// ----------------------------------
-const User = useUserStore()
+import { useCargoStore } from './cargoStore'
 
 // ----------------------------------
 // ROUTE
@@ -29,84 +22,39 @@ const User = useUserStore()
 const route = useRoute()
 
 // ----------------------------------
-// STATE
+// STORE
 // ----------------------------------
-const schema = ref([])
-const selectedRow = ref(null)
-
-// ----------------------------------
-// CONFIG
-// ----------------------------------
-const module = 'rh'
-const model = 'Rh'
-
-const schemaPath = 'fields'
-
-const ignoreFields = [
-  'created_at',
-  'updated_at',
-  'created_by',
-  'updated_by'
-]
+const Cargo = useCargoStore()
 
 // ----------------------------------
-// LOAD DATA (EDIT)
+// LOAD DATA
 // ----------------------------------
-async function loadRow(id) {
-  if (!id) {
-    selectedRow.value = null
-    return
-  }
-
-  const { data } = await HTTPAuth.get(
-    url({
-      type: 'u',
-      url: `${module}/${model}s/${id}/`
-    })
-  )
-
-  selectedRow.value = data
+async function load(id) {
+  if (!id) return
+  Cargo.row = await Cargo.getById(id)
 }
 
 // ----------------------------------
 // INIT
 // ----------------------------------
 async function init() {
-  const data = await buildFormFromSchema({
-    module,
-    model,
-    schemaPath,
-  })
-
-  schema.value = data.schema
-
-  // 🔥 verifica se tem ID na rota
-  const id = route.params.id || route.query.id
-
-  await loadRow(id)
-}
-
-// ----------------------------------
-// EVENTS
-// ----------------------------------
-function onSaved() {
-  console.log('salvo')
+  await Cargo.init()
+  await load(route.params.id)
 }
 
 // ----------------------------------
 // WATCH (se mudar rota)
 // ----------------------------------
 watch(
-  () => route.fullPath,
-  async () => {
-    await init()
+  () => route.params,
+  async (params) => {
+    if (!params) return
+    await load(params.id)
   }
 )
 
 // ----------------------------------
 // LIFECYCLE
 // ----------------------------------
-onMounted(async () => {
-  await init()
-})
+onMounted(init)
 </script>

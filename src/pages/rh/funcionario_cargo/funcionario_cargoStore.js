@@ -1,7 +1,7 @@
 
 import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
-export const useFuncionarioCargotore = createBaseStore(
+export const useFuncionarioCargoStore = createBaseStore(
   'funcionario_cargo',
   {  app: 'rh', model: 'FuncionarioCargo' },
   {

@@ -1,14 +1,19 @@
 <template>
   <q-page class="q-pa-sm">
+  <s-pdf-render
+      v-model="Consulta.showPdf"
+      :src="Consulta.pdf"
+      title="Consulta Medica"
+    />
     <PacienteHeader />
     <!-- FORM -->
     <div v-if="Consulta.loading" class="flex flex-center q-pa-lg">
       <q-spinner size="40px" color="primary" />
     </div>
-    <FormTwo
+    <s-form-two
       v-else
       :store="Consulta"
-      :ignore-fields="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
+      :ignore-fields="['id', 'entidade', 'branch', 'state', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       @saved="onSaved"
     />
   </q-page>
@@ -19,7 +24,7 @@
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useConsultaStore } from './consultaStore'
-import { FormTwo } from 'quasar_resaas'
+
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
 // ---------------- ROUTE ----------------
@@ -29,6 +34,12 @@ const route = useRoute()
 const Consulta = useConsultaStore()
 
 // ---------------- STATE ----------------
+
+function afterSave(item) {
+  Consulta.getPdf(item.id)
+  Consulta.showPdf = true
+  Consulta.loadData()
+}
 
 
 // ---------------- LOAD DATA ----------------
@@ -78,6 +89,7 @@ watch(
 // ---------------- EVENTS ----------------
 function onSaved(res) {
   console.log('Salvo com sucesso', res)
+  afterSave(res)
 }
 
 // ---------------- LIFECYCLE ----------------

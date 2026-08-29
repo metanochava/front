@@ -18,9 +18,9 @@ export function setupRightMenus(menu) {
   menu.registerRightMenu('add_consulta', ConsultaRightMenu)
   menu.registerRightMenu('list_consulta', ConsultaRightMenu)
 
-  menu.registerRightMenu('view_receitamendica', ReceitamendicaRightMenu)
-  menu.registerRightMenu('add_receitamendica', ReceitamendicaRightMenu)
-  menu.registerRightMenu('list_receitamendica', ReceitamendicaRightMenu)
+  menu.registerRightMenu('view_receitamedica', ReceitamendicaRightMenu)
+  menu.registerRightMenu('add_receitamedica', ReceitamendicaRightMenu)
+  menu.registerRightMenu('list_receitamedica', ReceitamendicaRightMenu)
 
   menu.registerRightMenu('view_atestadomedico', AtestadomedicoRightMenu)
   menu.registerRightMenu('add_atestadomedico', AtestadomedicoRightMenu)
