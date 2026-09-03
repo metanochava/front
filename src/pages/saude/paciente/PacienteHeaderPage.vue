@@ -10,17 +10,12 @@
       <div class="col-3 q-ml-md">
         <q-toolbar-title class="row items-center">
           <div class="col-2">
-            <q-avatar size="40px" class="q-mr-sm ">
-              <q-img :src="Paciente?.person?.profile?.url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"  />
+            <q-avatar size="40px" class="q-mr-sm" color="primary" text-color="white" icon="person">
               <q-menu class="text-16 text-center">
                 <s-card class="q-pa-sm">
-                  <q-img
-                    width="200px"
-                    height="200px"
-                    :src="Paciente?.person?.profile?.url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
-                  />
+                  <q-avatar size="80px" color="primary" text-color="white" icon="person" />
                   <br>
-                  {{Paciente?.person?.full_name}}
+                  {{ Paciente?.row?.person?.label }}
                 </s-card>
 
               </q-menu>
@@ -37,7 +32,7 @@
               overflow: hidden;
               text-overflow: ellipsis;
             ">
-            {{Paciente?.person?.full_name}}  <label class="text-primary"> {{ tdc('de') }} {{Paciente?.person?.age}} {{ tdc('anos') }}</label>
+            {{ Paciente?.row?.person?.label }}
 
           </span>
           </div>
@@ -100,7 +95,7 @@
       <div class="col-3 text-right">
 
 
-        <s-btn flat round icon="event" class="q-mr-sm">
+        <s-btn flat round icon="event" class="q-mr-sm" :disable="!Paciente?.row?.id" @click="showAgendaDialog = true">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
             {{ tdc('Agenda de Consulta') }}
           </q-tooltip>
@@ -135,6 +130,12 @@
 
     </div>
 
+    <agenda-consulta-dialog
+      v-model="showAgendaDialog"
+      :paciente-id="Paciente?.row?.id"
+      :paciente-label="Paciente?.row?.person?.label"
+    />
+
   </s-card>
 </template>
 
@@ -147,9 +148,10 @@
 
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePacienteStore } from './pacienteStore'
+import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 
 import { tdc } from 'quasar_resaas'
 
@@ -157,6 +159,7 @@ const route = useRoute()
 const router = useRouter()
 
 const Paciente = usePacienteStore()
+const showAgendaDialog = ref(false)
 
 async function load(id) {
 
@@ -182,7 +185,11 @@ async function init() {
 
   const id = route.params.id || Paciente?.row?.id
   await load(id)
-  await Paciente.getPerson()
+  // Nota: Paciente.getPerson() foi removido — chamava
+  // django_resaas/persons/<id>, que não tem view registada no
+  // pacote (não existe PersonAPIView). O nome do paciente já vem
+  // completo em Paciente.row.person.label (label da FK), que não
+  // depende desse endpoint.
 }
 
 watch(

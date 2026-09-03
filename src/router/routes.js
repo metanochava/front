@@ -1,4 +1,4 @@
-import { restRoutes, authRoutes } from 'quasar_resaas'
+import { restRoutes, authRoutes, docsRoutes } from 'quasar_resaas'
 import {  MainLayout, CrudPage } from 'quasar_resaas'
 
 
@@ -9,8 +9,9 @@ import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
 
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
-import { rhRoutes } from './../pages/rh/routes'
-import { hrRoutes } from './../pages/hr/routes'
+import { vendasRoutes } from './../pages/vendas/routes'
+
+
 
 const host = window.location.hostname
 
@@ -30,6 +31,7 @@ if(siteRoutes.length !== 0 ){
   routes = [
 
     ...authRoutes,
+    ...docsRoutes,
 
     {
       path: '/',
@@ -53,10 +55,10 @@ if(siteRoutes.length !== 0 ){
           name: 'crud_route',
         },
         ...restRoutes,
-        ...rhRoutes,
         ...stockRoutes,
         ...saudeRoutes,
-        ...hrRoutes
+        ...vendasRoutes,
+
       ],
     },
 

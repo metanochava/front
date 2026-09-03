@@ -1,6 +1,6 @@
 {
   "name": "front",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Quasar SaaS",
   "productName": "Mytech App",
   "author": "Metano Chavana <metanochava@gmail.com>",
@@ -19,6 +19,7 @@
     "axios": "^1.2.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
+    "html5-qrcode": "^2.3.8",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
     "quasar_resaas": "github:metanochava/quasar_resaas",

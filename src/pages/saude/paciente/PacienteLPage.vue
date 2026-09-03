@@ -6,21 +6,25 @@
       :ignoreFields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :ignoreFieldsFilter="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :extraActions="[
-        {action:'Marcar Consulta', permission:'pdf_paciente', icon:'event', method: 'get', position: 'l', tooltip:'Marcar Consulta', visible: true},
+        {'action':'Marcar Consulta', 'permission':'add_agenda', 'icon':'event', 'method': 'get', 'position': 'l', 'tooltip':'Marcar Consulta', 'visible': true, details:true},
        ]"
       @runaction="onRunAction"
     />
 
+    <agenda-consulta-dialog
+      v-model="showAgendaDialog"
+      :paciente-id="agendaPacienteId"
+      :paciente-label="agendaPacienteLabel"
+      @saved="onAgendaSaved"
+    />
 
     <!-- <s-auto-crud
       app="saude" model="Paciente"
       :ignoreFields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :ignoreFieldsFilter="['id', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :extraActions="[
-        {'action':'Marcar Consulta', 'icon':'event', 'method': 'get', 'position': 'l', 'role':'pdf_paciente', },
-        {'action':'pedra', 'icon':'event', 'method': 'post', 'position': 'r', 'role':'pdf_paciente'},
-        {'action':'map', 'icon':'lock', 'method': 'put', 'position': '', 'role':'pdf_paciente', tooltip:'Clica aqui para ver Pdf '},
-       ]"
+        {'action':'Marcar Consulta', 'permission':'add_agenda', 'icon':'event', 'method': 'get', 'position': 'l', 'tooltip':'Marcar Consulta', 'visible': true, details:true},
+      ]"
       @runaction="onRunAction"
     /> -->
 
@@ -28,13 +32,25 @@
 </template>
 
 <script setup>
-import { onMounted} from 'vue'
+import { onMounted, ref } from 'vue'
+import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 
- function onRunAction(obj, row ) {
-  console.log( obj, row )
-  if(obj.action=='Marcar Consulta'){
-    console.log( obj.action, row.id )
+const showAgendaDialog = ref(false)
+const agendaPacienteId = ref(null)
+const agendaPacienteLabel = ref(null)
+
+function onRunAction(obj, row) {
+  if (obj.action === 'Marcar Consulta') {
+    agendaPacienteId.value = row.id
+    agendaPacienteLabel.value = row.label
+    showAgendaDialog.value = true
   }
+}
+
+function onAgendaSaved() {
+  // o próprio HTTPAuth já mostra o alerta de sucesso da resposta —
+  // aqui só ficaria lógica extra se algum dia for preciso (ex.:
+  // refrescar uma lista de agendamentos visível nesta página).
 }
 
 onMounted(async () => {
