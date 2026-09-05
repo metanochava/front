@@ -49,6 +49,51 @@
           </q-card-section>
         </s-card>
 
+        <!-- LINHA DO TEMPO (Fase 4 - cross-entity autorizado) -->
+        <s-card flat bordered>
+          <q-card-section class="row items-center">
+            <div class="text-subtitle1 text-weight-medium">
+              <q-icon name="timeline" class="q-mr-xs" />
+              {{ tdc('Linha do Tempo Clínica') }}
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <div v-if="timeline.loading" class="flex flex-center q-pa-md">
+            <q-spinner color="primary" size="24px" />
+          </div>
+          <div v-else-if="!timeline.data.length" class="text-caption text-grey-6 q-pa-md text-center">
+            {{ tdc('Sem eventos') }}
+          </div>
+          <q-list v-else separator>
+            <q-item v-for="(e, index) in timeline.data" :key="index">
+              <q-item-section avatar>
+                <q-icon :name="timelineIcon(e.type)" color="primary" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ timelineSummary(e) }}</q-item-label>
+                <q-item-label caption>
+                  <q-badge
+                    v-if="e.is_external"
+                    color="warning"
+                    outline
+                    class="q-mr-xs"
+                  >
+                    {{ e.source_entity }} · {{ e.source_branch }}
+                  </q-badge>
+                  <span v-else class="text-grey-6">
+                    {{ e.source_branch }}
+                  </span>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-item-label caption>{{ e.date }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </s-card>
+
         <!-- CONSULTAS RECENTES -->
         <s-card flat bordered>
           <q-card-section class="row items-center">
@@ -335,6 +380,47 @@ const alergias = section([])
 const doencas = section([])
 const medicacao = section([])
 const vitais = section(null)
+const timeline = section([])
+
+const TIMELINE_ICONS = {
+  consultation: 'health_and_safety',
+  prescription: 'medication',
+  lab_request: 'science',
+}
+
+function timelineIcon(type) {
+  return TIMELINE_ICONS[type] || 'event_note'
+}
+
+function timelineSummary(e) {
+  if (e.summary) return e.summary
+  return {
+    consultation: tdc('Consulta'),
+    prescription: tdc('Receita Médica'),
+    lab_request: tdc('Pedido de Exame'),
+  }[e.type] || e.type
+}
+
+async function fetchTimeline() {
+  const personId = Paciente.row?.person?.id
+
+  if (!personId) {
+    timeline.data = []
+    return
+  }
+
+  timeline.loading = true
+  try {
+    const { data } = await HTTPAuth.get(url({
+      type: 'u',
+      url: 'saude/pacientes/timeline',
+      params: { person_id: personId },
+    }))
+    timeline.data = data.events ?? []
+  } finally {
+    timeline.loading = false
+  }
+}
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10)
@@ -411,6 +497,7 @@ function loadAllSections() {
   fetchDoencas()
   fetchMedicacao()
   fetchVitais()
+  fetchTimeline()
 }
 
 watch(
