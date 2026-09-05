@@ -67,34 +67,10 @@
               "
             >
 
-              <q-img
-                :src="
-                  Person?.form?.profile
-                    ? Person?.form?.profile?.url
-                    : User.defaultprofile
-                "
-                spinner-color="white"
-                img-class="my-custom-image"
-                style="
-                  height: 150px;
-                  max-width: 150px;
-                "
-                class="rounded-borders"
-              >
-
-                <div
-                  v-if="Person?.form?.profile"
-                  class="
-                    absolute-bottom
-                    text-subtitle1
-                    text-center
-                    bg-transparent
-                  "
-                >
-                  edit
-                </div>
-
-              </q-img>
+              <s-image-capture
+                v-model="Person.form.photo"
+                label="Foto do Paciente"
+              />
 
             </div>
 
@@ -176,7 +152,6 @@ import {
 } from 'quasar'
 
 import {
-  useUserStore,
   usePersonStore,
 } from 'quasar_resaas'
 
@@ -205,8 +180,6 @@ const route = useRoute()
 // =============================================
 // STORES
 // =============================================
-
-const User = useUserStore()
 
 const Paciente = usePacienteStore()
 
@@ -250,7 +223,10 @@ const personIgnoreFields = computed(() => [
 
   ...ignoreFields,
 
-  'user'
+  'user',
+
+  // já tem campo próprio (s-image-capture) mais acima no form
+  'photo'
 
 ])
 
