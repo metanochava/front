@@ -1,17 +1,13 @@
 import { restRoutes, authRoutes, docsRoutes } from 'quasar_resaas'
 import {  MainLayout, CrudPage } from 'quasar_resaas'
 
-
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
-
-
 
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
 import { vendasRoutes } from './../pages/vendas/routes'
-
-
+import { farmaciaRoutes } from './../pages/farmacia/routes'
 
 const host = window.location.hostname
 
@@ -58,6 +54,7 @@ if(siteRoutes.length !== 0 ){
         ...stockRoutes,
         ...saudeRoutes,
         ...vendasRoutes,
+        ...farmaciaRoutes,
 
       ],
     },
