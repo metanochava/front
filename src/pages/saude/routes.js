@@ -1,3 +1,4 @@
+import "./dashboard/dashboard.js"
 import { tdc } from 'quasar_resaas'
 
 import { alergiacorrenteRoutes } from './alergiacorrente/alergiacorrenteRoutes'
@@ -18,6 +19,7 @@ import { receitamedicaRoutes } from './receitamedica/receitamedicaRoutes'
 import { consultaRoutes } from './consulta/consultaRoutes'
 import { pacienteRoutes } from './paciente/pacienteRoutes'
 import { horariomedicoRoutes } from './horariomedico/horariomedicoRoutes'
+import { medicoRoutes } from './medico/medicoRoutes'
 
 export let saudeRoutes = [
   {
@@ -29,6 +31,17 @@ export let saudeRoutes = [
       requiresAuth: true,
       icon: 'dashboard',
       requiredRole: 'view_saude_dashboard',
+    },
+  },
+  {
+    path: '/dashboard_saude_clinica',
+    name: 'dashboard_saude_clinica',
+    component: () => import('./dashboards/ClinicaDashboardPage.vue'),
+    meta: {
+      title: tdc('Dashboard') + ' ' + tdc('Clínica'),
+      requiresAuth: true,
+      icon: 'medical_services',
+      requiredRole: 'view_dashboard_saude_clinica',
     },
   },
   {
@@ -93,4 +106,5 @@ export let saudeRoutes = [
   ...doencacorrenteRoutes,
   ...alergiacorrenteRoutes,
   ...horariomedicoRoutes,
+  ...medicoRoutes,
 ]

@@ -40,6 +40,7 @@
                 :api="pacienteSelectUrl"
                 option-label="label" option-value="value"
                 emit-value map-options
+                :page-size="0"
                 :label="tdc('Paciente')"
               />
             </div>
@@ -50,6 +51,7 @@
 
             <s-select
               v-model="form.especialidade"
+              :page-size="0"
               :api="especialidadeSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options
@@ -154,6 +156,7 @@
                 <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
                   <q-icon name="warning" class="q-mr-xs" />
                   {{ tdc('Médico sem horário configurado para este dia — a usar horário padrão (08:00–17:00).') }}
+                  <br>
                 </div>
 
                 <div v-if="!loadingSlots && !slots.length" class="text-caption text-grey-6 q-pa-md text-center">
@@ -336,7 +339,7 @@ async function loadMedicos() {
     const { data } = await HTTPAuth.get(url({
       type: 'u',
       url: 'saude/medicos',
-      params: { ativo: 'true', page_size: 200 },
+      params: { ativo: 'true', page_size: 0 },
     }))
     medicos.value = data.results ?? data
   } finally {

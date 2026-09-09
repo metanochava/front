@@ -1,33 +1,14 @@
 <template>
-  <q-page class="flex flex-center column">
-    <img
-      :alt="User?.Entity?.nome + '  logo'"
-      :src="User?.Entity?.logo?.url"
-      style="width: 200px; height: 200px"
-    />
-  </q-page>
+  <s-dashboard-home />
+  <!-- <s-dashboard-renderer name="saude" /> -->
 </template>
 
 <script setup>
-import {useUserStore } from 'quasar_resaas'
-
-const User =useUserStore()
-
-// import figlet from 'figlet'
-// import { ref, onMounted } from 'vue'
-
-// const banner = ref('')
-
-// onMounted(() => {
-//   banner.value = figlet.textSync('METANO', {
-//     font: 'Big',
-//   })
-//   console.log(
-//     figlet.textSync('METANO', {
-//       font: 'Big',
-//     }),
-//   )
-// })
-// const texto = ascii(User.Entity.nome)
+// Home automática: mostra os dashboards do motor genérico
+// (django_resaas.engine.core.dashboards) já autorizados para a
+// entity/utilizador actuais - "tipo de entidade" é resolvido no
+// backend (EntityApp), nunca aqui. Sem nenhum dashboard.py activo
+// para este tenant, cai automaticamente no mecanismo antigo
+// (<s-dashboard/>) - ver components/dashboard/HomeDashboards.vue em
+// quasar_resaas.
 </script>
-

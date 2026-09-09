@@ -1,3 +1,4 @@
+import "./dashboard/dashboard.js"
 import { tdc } from 'quasar_resaas'
 
 import { customerRoutes } from './customer/customerRoutes'
