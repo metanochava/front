@@ -126,7 +126,7 @@ const columns = [
   { name: 'motivo', label: tdc('Motivo'), field: 'motivo', align: 'left' },
 ]
 
-const pagination = reactive({
+const pagination = ref({
   page: 1,
   rowsPerPage: 15,
   rowsNumber: 0,
@@ -146,17 +146,17 @@ function tipoColor(tipo) {
 
 async function fetch() {
   await Stockmovement.loadData({
-    page: pagination.page,
-    page_size: pagination.rowsPerPage,
+    page: pagination.value.page,
+    page_size: pagination.value.rowsPerPage,
     product: filterProduct.value || undefined,
     warehouse: filterWarehouse.value || undefined,
   })
-  pagination.rowsNumber = Stockmovement.pagination.rowsNumber
+  pagination.value.rowsNumber = Stockmovement.pagination.rowsNumber
 }
 
 function onRequest(props) {
-  pagination.page = props.pagination.page
-  pagination.rowsPerPage = props.pagination.rowsPerPage
+  pagination.value.page = props.pagination.page
+  pagination.value.rowsPerPage = props.pagination.rowsPerPage
   fetch()
 }
 

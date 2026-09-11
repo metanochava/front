@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { tdc } from 'quasar_resaas'
 import { useStockitemStore } from './stockitemStore'
 
@@ -47,7 +47,7 @@ const columns = [
   { name: 'quantidade', label: tdc('Quantidade'), field: 'quantidade', align: 'right' },
 ]
 
-const pagination = reactive({
+const pagination = ref({
   page: 1,
   rowsPerPage: 10,
   rowsNumber: 0,
@@ -55,21 +55,21 @@ const pagination = reactive({
 
 async function fetch() {
   await Stockitem.loadData({
-    page: pagination.page,
-    page_size: pagination.rowsPerPage,
+    page: pagination.value.page,
+    page_size: pagination.value.rowsPerPage,
   })
-  pagination.rowsNumber = Stockitem.pagination.rowsNumber
+  pagination.value.rowsNumber = Stockitem.pagination.rowsNumber
 }
 
 function onRequest(props) {
-  pagination.page = props.pagination.page
-  pagination.rowsPerPage = props.pagination.rowsPerPage
+  pagination.value.page = props.pagination.page
+  pagination.value.rowsPerPage = props.pagination.rowsPerPage
   fetch()
 }
 
 function onSearch(value) {
   Stockitem.setSearch(value)
-  pagination.page = 1
+  pagination.value.page = 1
   fetch()
 }
 

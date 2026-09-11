@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { tdc } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
@@ -57,22 +57,22 @@ function estadoColor(estado) {
   return { rascunho: 'grey', confirmada: 'info', paga: 'positive', anulada: 'negative' }[estado] || 'grey'
 }
 
-const pagination = reactive({ page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'data', descending: true })
+const pagination = ref({ page: 1, rowsPerPage: 10, rowsNumber: 0, sortBy: 'data', descending: true })
 
 async function fetch() {
-  await Sale.loadData({ page: pagination.page, page_size: pagination.rowsPerPage })
-  pagination.rowsNumber = Sale.pagination.rowsNumber
+  await Sale.loadData({ page: pagination.value.page, page_size: pagination.value.rowsPerPage })
+  pagination.value.rowsNumber = Sale.pagination.rowsNumber
 }
 
 function onRequest(props) {
-  pagination.page = props.pagination.page
-  pagination.rowsPerPage = props.pagination.rowsPerPage
+  pagination.value.page = props.pagination.page
+  pagination.value.rowsPerPage = props.pagination.rowsPerPage
   fetch()
 }
 
 function onSearch(value) {
   Sale.setSearch(value)
-  pagination.page = 1
+  pagination.value.page = 1
   fetch()
 }
 

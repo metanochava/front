@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { tdc } from 'quasar_resaas'
 import { usePaymentStore } from './paymentStore'
 
@@ -32,7 +32,7 @@ const columns = [
   { name: 'data', label: tdc('Data'), field: 'data', align: 'left' },
 ]
 
-const pagination = reactive({
+const pagination = ref({
   page: 1,
   rowsPerPage: 10,
   rowsNumber: 0,
@@ -40,15 +40,15 @@ const pagination = reactive({
 
 async function fetch() {
   await Payment.loadData({
-    page: pagination.page,
-    page_size: pagination.rowsPerPage,
+    page: pagination.value.page,
+    page_size: pagination.value.rowsPerPage,
   })
-  pagination.rowsNumber = Payment.pagination.rowsNumber
+  pagination.value.rowsNumber = Payment.pagination.rowsNumber
 }
 
 function onRequest(props) {
-  pagination.page = props.pagination.page
-  pagination.rowsPerPage = props.pagination.rowsPerPage
+  pagination.value.page = props.pagination.page
+  pagination.value.rowsPerPage = props.pagination.rowsPerPage
   fetch()
 }
 

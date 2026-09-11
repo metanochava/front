@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { tdc, url } from 'quasar_resaas'
 import { useInventorycountStore } from './inventorycountStore'
@@ -66,16 +66,16 @@ const columns = [
   { name: 'observacao', label: tdc('Observação'), field: 'observacao', align: 'left' },
 ]
 
-const pagination = reactive({ page: 1, rowsPerPage: 10, rowsNumber: 0 })
+const pagination = ref({ page: 1, rowsPerPage: 10, rowsNumber: 0 })
 
 async function fetch() {
-  await Inventorycount.loadData({ page: pagination.page, page_size: pagination.rowsPerPage })
-  pagination.rowsNumber = Inventorycount.pagination.rowsNumber
+  await Inventorycount.loadData({ page: pagination.value.page, page_size: pagination.value.rowsPerPage })
+  pagination.value.rowsNumber = Inventorycount.pagination.rowsNumber
 }
 
 function onRequest(props) {
-  pagination.page = props.pagination.page
-  pagination.rowsPerPage = props.pagination.rowsPerPage
+  pagination.value.page = props.pagination.page
+  pagination.value.rowsPerPage = props.pagination.rowsPerPage
   fetch()
 }
 
