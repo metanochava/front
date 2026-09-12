@@ -1,143 +1,584 @@
 <template>
   <q-page
-    class="flex flex-center"
-    :class="
-      $q.dark.isActive
-        ? 'q-pa-sm  text-center bg-dark text-white'
-        : 'q-pa-sm  bg-grey-2  text-center '
-    "
+    class="welcome-page"
+    :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-grey-2'"
   >
-    <s-card
-      class="q-pa-xl welcome-card"
-      flat
-      :class="
-        $q.dark.isActive ? 'q-pa-sm  text-center bg-dark text-white' : 'q-pa-sm  text-center '
-      "
-    >
-      <!-- Avatar + Nome -->
-      <div class="text-center">
-        <q-avatar size="96px" class="q-mb-md shadow-4">
-          <img :src="User?.perfil" />
-        </q-avatar>
+    <div class="full-width q-pa-md">
 
-        <h4 class="text-primary">
-          👋 {{ tdc('Welcome') }}, <b>{{ User?.username }}</b>
-        </h4>
+      <!-- ===================================================== -->
+      <!-- WELCOME CARD -->
+      <!-- ===================================================== -->
 
-        <p class="text-grey-6 q-mt-sm">
-          {{ tdc('You are successfully logged in.') }}
-        </p>
-      </div>
+      <s-card
+        flat
+        bordered
+        class="welcome-card q-pa-lg q-mx-auto"
+        :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-white'"
+      >
 
-      <q-separator class="q-my-md" />
+        <!-- =================================================== -->
+        <!-- USER -->
+        <!-- =================================================== -->
 
-      <!-- Info Cards -->
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-3">
-          <s-card
-            flat
-            bordered
-            :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
+        <div class="text-center">
+
+          <q-avatar
+            size="96px"
+            class="q-mb-md shadow-1"
           >
-            <q-icon name="domain" size="32px" color="primary" />
-            <div class="text-subtitle2">{{ tdc('Company') }}</div>
-            <div class="text-bold"><br />{{ tdc(User?.Entity?.nome) || 'N/A' }}</div>
-          </s-card>
+            <img
+              v-if="User?.perfil"
+              :src="User.perfil"
+              :alt="User?.username || 'User'"
+            />
+
+            <q-icon
+              v-else
+              name="person"
+              size="64px"
+              color="grey-6"
+            />
+          </q-avatar>
+
+          <div class="text-h5 text-primary text-weight-medium">
+
+            👋 {{ tdc('Welcome') }},
+
+            <span class="text-weight-bold">
+              {{ User?.username || tdc('User') }}
+            </span>
+
+          </div>
+
+          <div
+            class="q-mt-sm"
+            :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'"
+          >
+            {{ tdc('You are successfully logged in.') }}
+          </div>
+
         </div>
 
-        <div class="col-3">
-          <s-card
-            flat
-            bordered
-            :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
+
+        <q-separator class="q-my-lg" />
+
+
+        <!-- =================================================== -->
+        <!-- CONTEXT INFORMATION -->
+        <!-- =================================================== -->
+
+        <div class="row q-col-gutter-md">
+
+
+          <!-- ENTITY -->
+
+          <div
+            class="
+              col-12
+              col-sm-6
+              col-md-3
+            "
           >
-            <q-icon name="account_tree" size="32px" color="accent" />
-            <div class="text-subtitle2">{{ tdc('Banch') }}</div>
-            <div class="text-bold"><br />{{ tdc(User?.Sucursal?.nome) || 'User' }}</div>
-          </s-card>
+
+            <s-card
+              flat
+              bordered
+              class="info-card q-pa-md text-center full-height"
+            >
+
+              <q-icon
+                name="domain"
+                size="32px"
+                color="primary"
+              />
+
+              <div class="text-caption text-grey-6 q-mt-sm">
+                {{ tdc('Company') }}
+              </div>
+
+              <div class="text-subtitle1 text-weight-bold q-mt-xs">
+
+                {{
+                  User?.Entity?.name
+                    ? tdc(User.Entity.name)
+                    : tdc('N/A')
+                }}
+
+              </div>
+
+            </s-card>
+
+          </div>
+
+
+          <!-- BRANCH -->
+
+          <div
+            class="
+              col-12
+              col-sm-6
+              col-md-3
+            "
+          >
+
+            <s-card
+              flat
+              bordered
+              class="info-card q-pa-md text-center full-height"
+            >
+
+              <q-icon
+                name="account_tree"
+                size="32px"
+                color="accent"
+              />
+
+              <div class="text-caption text-grey-6 q-mt-sm">
+                {{ tdc('Branch') }}
+              </div>
+
+              <div class="text-subtitle1 text-weight-bold q-mt-xs">
+
+                {{
+                  User?.Branch?.name
+                    ? tdc(User.Branch.name)
+                    : tdc('N/A')
+                }}
+
+              </div>
+
+            </s-card>
+
+          </div>
+
+
+          <!-- ROLE / GROUP -->
+
+          <div
+            class="
+              col-12
+              col-sm-6
+              col-md-3
+            "
+          >
+
+            <s-card
+              flat
+              bordered
+              class="info-card q-pa-md text-center full-height"
+            >
+
+              <q-icon
+                name="verified_user"
+                size="32px"
+                color="positive"
+              />
+
+              <div class="text-caption text-grey-6 q-mt-sm">
+                {{ tdc('Role') }}
+              </div>
+
+              <div class="text-subtitle1 text-weight-bold q-mt-xs">
+
+                {{
+                  User?.Group?.name
+                    ? tdc(User.Group.name)
+                    : tdc('User')
+                }}
+
+              </div>
+
+            </s-card>
+
+          </div>
+
+
+          <!-- LAST LOGIN -->
+
+          <div
+            class="
+              col-12
+              col-sm-6
+              col-md-3
+            "
+          >
+
+            <s-card
+              flat
+              bordered
+              class="info-card q-pa-md text-center full-height"
+            >
+
+              <q-icon
+                name="schedule"
+                size="32px"
+                color="warning"
+              />
+
+              <div class="text-caption text-grey-6 q-mt-sm">
+                {{ tdc('Last Login') }}
+              </div>
+
+              <div class="text-subtitle2 text-weight-bold q-mt-xs">
+
+                {{ lastLogin }}
+
+              </div>
+
+            </s-card>
+
+          </div>
+
         </div>
 
-        <div class="col-3">
-          <s-card
-            flat
-            bordered
-            :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
-          >
-            <q-icon name="verified_user" size="32px" color="positive" />
-            <div class="text-subtitle2">{{ tdc('Role') }}</div>
-            <div class="text-bold"><br />{{ tdc(User?.Grupo?.name) || 'User' }}</div>
-          </s-card>
-        </div>
 
-        <div class="col-3">
-          <s-card
-            flat
-            bordered
-            :class="$q.dark.isActive ? ' q-pa-sm  text-center ' : 'q-pa-sm  text-center  '"
-          >
-            <q-icon name="schedule" size="32px" color="warning" />
-            <div class="text-subtitle2">{{ tdc('Last Login') }}</div>
-            <div class="text-bold">
-              {{
-                ds(User?.data?.last_login?.split('.')[0].split('T')[0]) +
-                  ' ' +
-                  User?.data?.last_login?.split('.')[0].split('T')[1] || '-'
-              }}
+        <q-separator class="q-my-lg" />
+
+
+        <!-- =================================================== -->
+        <!-- TENANT CONTEXT -->
+        <!-- =================================================== -->
+
+        <div
+          v-if="hasTenantContext"
+          class="tenant-context q-pa-md q-mb-lg rounded-borders"
+          :class="
+            $q.dark.isActive
+              ? 'bg-grey-10'
+              : 'bg-blue-1'
+          "
+        >
+
+          <div class="row items-center">
+
+            <q-icon
+              name="hub"
+              color="primary"
+              size="24px"
+              class="q-mr-sm"
+            />
+
+            <div>
+
+              <div class="text-weight-medium">
+                {{ tdc('Active Context') }}
+              </div>
+
+              <div class="text-caption text-grey-6">
+
+                {{ activeContextLabel }}
+
+              </div>
+
             </div>
-          </s-card>
+
+          </div>
+
         </div>
-      </div>
 
-      <q-separator class="q-my-md" />
 
-      <!-- Actions -->
-      <div class="row justify-center">
-        <s-btn
-          dense
-          outline
-          color="primary"
-          icon="dashboard"
-          :label="tdc('Go to Dashboard')"
-          @click="router.push({ name: 'home' })"
-        />
-        &nbsp; &nbsp;
-        <s-btn
-          color="negative"
-          icon="logout"
-          :label="tdc('Logout')"
-          dense
-          outline
-          @click="logout"
-        />
-      </div>
-    </s-card>
+        <!-- =================================================== -->
+        <!-- ACTIONS -->
+        <!-- =================================================== -->
+
+        <div class="row q-col-gutter-sm justify-center">
+
+
+          <!-- DASHBOARD -->
+
+          <div class="col-auto">
+
+            <s-btn
+              dense
+              outline
+              color="primary"
+              icon="dashboard"
+              :label="tdc('Go to Dashboard')"
+              @click="goToDashboard"
+            />
+
+          </div>
+
+
+          <!-- LOGOUT -->
+
+          <div class="col-auto">
+
+            <s-btn
+              dense
+              outline
+              color="negative"
+              icon="logout"
+              :label="tdc('Logout')"
+              :loading="logoutLoading"
+              @click="logout"
+            />
+
+          </div>
+
+        </div>
+
+      </s-card>
+
+    </div>
   </q-page>
 </template>
 
-<script setup>
-import {useUserStore } from 'quasar_resaas'
 
-import { useRouter } from 'vue-router'
-import { tdc, ds } from 'quasar_resaas' // ✅ IMPORT DO TDC
+<script setup>
+
+import {
+  computed,
+  ref,
+} from 'vue'
+
+import {
+  useRouter,
+} from 'vue-router'
+
+import {
+  useUserStore,
+  tdc,
+  ds,
+} from 'quasar_resaas'
+
+
+// =============================================================
+// ROUTER
+// =============================================================
 
 const router = useRouter()
 
+
+// =============================================================
+// STORES
+// =============================================================
+
 const User = useUserStore()
 
-function logout() {
-  User.logout() // ❗ CORREÇÃO (antes estava errado)
-  router.push({ name: 'login' })
+
+// =============================================================
+// STATE
+// =============================================================
+
+const logoutLoading = ref(false)
+
+
+// =============================================================
+// COMPUTED
+// =============================================================
+
+const lastLogin = computed(() => {
+
+  const value = User?.data?.last_login
+
+  if (!value) {
+    return '-'
+  }
+
+  try {
+
+    const cleanValue = value.split('.')[0]
+
+    const [
+      date,
+      time,
+    ] = cleanValue.split('T')
+
+    const formattedDate = date
+      ? ds(date)
+      : ''
+
+    const formattedTime = time
+      ? time.substring(0, 8)
+      : ''
+
+    return `${formattedDate} ${formattedTime}`.trim() || '-'
+
+  } catch (error) {
+
+    console.error(
+      '[Welcome] Error formatting last login:',
+      error,
+    )
+
+    return '-'
+  }
+
+})
+
+
+const hasTenantContext = computed(() => {
+
+  return Boolean(
+    User?.Entity?.id ||
+    User?.Branch?.id ||
+    User?.Group?.id
+  )
+
+})
+
+
+const activeContextLabel = computed(() => {
+
+  const parts = []
+
+  if (User?.Entity?.name) {
+    parts.push(
+      tdc(User.Entity.name),
+    )
+  }
+
+  if (User?.Branch?.name) {
+    parts.push(
+      tdc(User.Branch.name),
+    )
+  }
+
+  if (User?.Group?.name) {
+    parts.push(
+      tdc(User.Group.name),
+    )
+  }
+
+  return parts.join(' • ')
+})
+
+
+// =============================================================
+// DASHBOARD
+// =============================================================
+
+function goToDashboard() {
+
+  /*
+   * Nesta fase continuamos compatíveis
+   * com a rota actual "home".
+   *
+   * Quando DashboardStore +
+   * DashboardRenderer estiverem integrados,
+   * esta função poderá resolver dinamicamente
+   * o dashboard autorizado.
+   */
+
+  router.push({
+    name: 'home',
+  })
+
 }
+
+
+// =============================================================
+// LOGOUT
+// =============================================================
+
+async function logout() {
+
+  if (logoutLoading.value) {
+    return
+  }
+
+  logoutLoading.value = true
+
+  try {
+
+    await User.logout()
+
+    await router.replace({
+      name: 'login',
+    })
+
+  } catch (error) {
+
+    console.error(
+      '[Welcome] Logout error:',
+      error,
+    )
+
+  } finally {
+
+    logoutLoading.value = false
+
+  }
+
+}
+
 </script>
 
+
 <style scoped>
-/* Glassmorphism SaaS style */
+
+/* ============================================================
+   PAGE
+============================================================ */
+
+.welcome-page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+
+/* ============================================================
+   MAIN CARD
+============================================================ */
+
 .welcome-card {
   width: 100%;
-  max-width: 720px;
+  max-width: 1050px;
+
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.15);
+
   backdrop-filter: blur(12px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+  box-shadow:
+    0 10px 35px
+    rgba(0, 0, 0, 0.08);
 }
+
+
+/* ============================================================
+   INFO CARDS
+============================================================ */
+
+.info-card {
+  border-radius: 14px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.info-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 18px
+    rgba(0, 0, 0, 0.08);
+}
+
+
+/* ============================================================
+   TENANT
+============================================================ */
+
+.tenant-context {
+  border-radius: 12px;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 599px) {
+
+  .welcome-card {
+    padding: 16px !important;
+    border-radius: 14px;
+  }
+
+}
+
 </style>

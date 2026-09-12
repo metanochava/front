@@ -1,4 +1,5 @@
 <template>
+  <s-dashboard/>
   <s-dashboard-home />
   <!-- <s-dashboard-renderer name="saude" /> -->
 </template>
@@ -10,5 +11,13 @@
 // backend (EntityApp), nunca aqui. Sem nenhum dashboard.py activo
 // para este tenant, cai automaticamente no mecanismo antigo
 // (<s-dashboard/>) - ver components/dashboard/HomeDashboards.vue em
-// quasar_resaas.
+// quasar_resaas.<template>
+
+// import { getFirebase } from 'quasar_resaas'
+
+// const { fireDataBase } = getFirebase()
+
+// fireDataBase.ref('Clinica').once('value', snapshot => {
+//   console.log(snapshot.val())
+// })
 </script>

@@ -33,7 +33,11 @@ if(siteRoutes.length !== 0 ){
       path: '/',
       component: MainLayout,
       children: [
-        { path: '', component: () => import('src/pages/IndexPage.vue'), name: 'home' },
+        {
+          path: '',
+          component: () => import('src/pages/IndexPage.vue'),
+          name: 'home'
+        },
         {
           path: 'authwelcome',
           component: () => import('src/pages/WelcomePage.vue'),
