@@ -22,3 +22,14 @@ deploy:
 	npm install git+https://github.com/metanochava/quasar_resaas.git; \
 	git pull origin main --force; \
 	quasar build;
+
+
+kill:
+	@read -p "Port: " port; \
+	pid=$$(sudo lsof -t -i:$$port); \
+	if [ -n "$$pid" ]; then \
+		echo "A terminar processo $$pid na porta $$port..."; \
+		sudo kill -9 $$pid; \
+	else \
+		echo "Nenhum processo encontrado na porta $$port."; \
+	fi

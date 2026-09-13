@@ -1,7 +1,7 @@
 <template>
   <s-dashboard/>
   <s-dashboard-home />
-  <!-- <s-dashboard-renderer name="saude" /> -->
+  <s-dashboard-renderer name="saude" />
 </template>
 
 <script setup>

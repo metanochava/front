@@ -46,6 +46,7 @@ export default defineConfig((ctx) => {
         API_PREFIX: process.env.API_PREFIX,
         FRONT_END_KEY: process.env.FRONT_END_KEY,
         FRONT_END_PASSWORD: process.env.FRONT_END_PASSWORD,
+        GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
       },
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
