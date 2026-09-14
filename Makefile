@@ -33,3 +33,6 @@ kill:
 	else \
 		echo "Nenhum processo encontrado na porta $$port."; \
 	fi
+
+dev:
+	quasar dev
