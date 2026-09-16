@@ -44,49 +44,49 @@
         <s-btn flat  icon="health_and_safety"
           :to="{ name: 'add_consulta', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Consulta')}}
+            {{ tdc('Consultation')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="medication"
           :to="{ name: 'add_receitamedica', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Receita')}}
+            {{ tdc('Prescription')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="assignment"
           :to="{ name: 'add_atestadomedico', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Atestado')}}
+            {{ tdc('Certificate')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="swap_horiz"
           :to="{ name: 'add_guiatransferencia', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Guia de Transferência')}}
+            {{ tdc('Transfer Referral')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="science"
           :to="{ name: 'add_pedidoexamemedico', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Pedido de Exames')}}
+            {{ tdc('Exam Requests')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="bar_chart"
           :to="{ name: 'list_resultadopedidoexamemedico', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Resultados')}}
+            {{ tdc('Results')}}
           </q-tooltip>
         </s-btn>
 
         <s-btn flat  icon="description"
           :to="{ name: 'add_relatoriomedico', params: { id: Paciente?.id } }">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Relatorio') }}
+            {{ tdc('Report') }}
           </q-tooltip>
         </s-btn>
       </div>
@@ -97,7 +97,7 @@
 
         <s-btn flat round icon="event" class="q-mr-sm" :disable="!Paciente?.row?.id" @click="showAgendaDialog = true">
           <q-tooltip :class="$q.dark.isActive ? 'bg-dark text-white text-16' : 'bg-primary text-white text-16'">
-            {{ tdc('Agenda de Consulta') }}
+            {{ tdc('Appointment Schedule') }}
           </q-tooltip>
         </s-btn>
         <s-btn color="primary" icon="more_vert">

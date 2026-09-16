@@ -5,7 +5,7 @@
     <div class="row items-center justify-between q-mb-md">
       <div class="text-h6 text-weight-bold row items-center">
         <q-icon name="local_pharmacy" size="28px" class="q-mr-sm text-primary" />
-        {{ tdc('Dashboard') }} — {{ tdc('Farmácia') }}
+        {{ tdc('Dashboard') }} — {{ tdc('Pharmacy') }}
       </div>
     </div>
 

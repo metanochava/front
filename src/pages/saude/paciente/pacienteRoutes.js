@@ -7,7 +7,7 @@ export let pacienteRoutes = [
     name: 'list_paciente',
     component: () => import('./PacienteLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('paciente'),
+      title: tdc('View of') + ' ' + tdc('patient'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_paciente',
@@ -18,7 +18,7 @@ export let pacienteRoutes = [
     name: 'add_paciente',
     component: () => import('./PacienteSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('paciente'),
+      title: tdc('Add') + ' ' + tdc('patient'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_paciente',
@@ -29,7 +29,7 @@ export let pacienteRoutes = [
     name: 'change_paciente',
     component: () => import('./PacienteSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('paciente'),
+      title: tdc('Edit') + ' ' + tdc('patient'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_paciente',
@@ -40,7 +40,7 @@ export let pacienteRoutes = [
     name: 'view_paciente',
     component: () => import('./PacienteVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('paciente'),
+      title: tdc('View') + ' ' + tdc('patient'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_paciente',

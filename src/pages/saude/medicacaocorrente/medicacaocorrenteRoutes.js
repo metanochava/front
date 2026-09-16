@@ -7,7 +7,7 @@ export let medicacaocorrenteRoutes = [
     name: 'list_medicacaocorrente',
     component: () => import('./MedicacaocorrenteLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('medicacaocorrente'),
+      title: tdc('View of') + ' ' + tdc('current medication'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_medicacaocorrente',
@@ -18,7 +18,7 @@ export let medicacaocorrenteRoutes = [
     name: 'add_medicacaocorrente',
     component: () => import('./MedicacaocorrenteSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('medicacaocorrente'),
+      title: tdc('Add') + ' ' + tdc('current medication'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_medicacaocorrente',
@@ -29,7 +29,7 @@ export let medicacaocorrenteRoutes = [
     name: 'change_medicacaocorrente',
     component: () => import('./MedicacaocorrenteSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('medicacaocorrente'),
+      title: tdc('Edit') + ' ' + tdc('current medication'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_medicacaocorrente',
@@ -40,7 +40,7 @@ export let medicacaocorrenteRoutes = [
     name: 'view_medicacaocorrente',
     component: () => import('./MedicacaocorrenteVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('medicacaocorrente'),
+      title: tdc('View') + ' ' + tdc('current medication'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_medicacaocorrente',

@@ -7,7 +7,7 @@ export let medicoRoutes = [
     name: 'list_medico',
     component: () => import('./MedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('medico'),
+      title: tdc('View of') + ' ' + tdc('doctor'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_medico',
@@ -18,7 +18,7 @@ export let medicoRoutes = [
     name: 'add_medico',
     component: () => import('./MedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('medico'),
+      title: tdc('Add') + ' ' + tdc('doctor'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_medico',
@@ -29,7 +29,7 @@ export let medicoRoutes = [
     name: 'change_medico',
     component: () => import('./MedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('medico'),
+      title: tdc('Edit') + ' ' + tdc('doctor'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_medico',
@@ -40,7 +40,7 @@ export let medicoRoutes = [
     name: 'view_medico',
     component: () => import('./MedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('medico'),
+      title: tdc('View') + ' ' + tdc('doctor'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_medico',

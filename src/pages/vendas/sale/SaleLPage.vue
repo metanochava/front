@@ -2,16 +2,16 @@
   <q-page class="q-pa-sm">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="point_of_sale" class="q-mr-sm" />
-      {{ tdc('Vendas') }}
+      {{ tdc('Sales') }}
       <q-space />
       <q-input
         v-model="search" dense outlined debounce="400"
-        :placeholder="tdc('Pesquisar')" style="width: 220px" class="q-mr-sm"
+        :placeholder="tdc('Search')" style="width: 220px" class="q-mr-sm"
         @update:model-value="onSearch"
       >
         <template #prepend><q-icon name="search" /></template>
       </q-input>
-      <q-btn color="primary" icon="add" :label="tdc('Nova Venda')" :to="{ name: 'add_sale' }" />
+      <q-btn color="primary" icon="add" :label="tdc('New Sale')" :to="{ name: 'add_sale' }" />
     </div>
 
     <q-table
@@ -46,11 +46,11 @@ const router = useRouter()
 const search = ref('')
 
 const columns = [
-  { name: 'data', label: tdc('Data'), field: 'data', align: 'left' },
-  { name: 'customer', label: tdc('Cliente'), field: row => row.cliente_label || row.customer?.label || tdc('Cliente Balcão'), align: 'left' },
-  { name: 'estado', label: tdc('Estado'), field: 'estado', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'customer', label: tdc('Customer'), field: row => row.cliente_label || row.customer?.label || tdc('Walk-in Customer'), align: 'left' },
+  { name: 'estado', label: tdc('Status'), field: 'estado', align: 'left' },
   { name: 'total', label: tdc('Total'), field: 'total', align: 'right' },
-  { name: 'saldo_devedor', label: tdc('Saldo em Dívida'), field: 'saldo_devedor', align: 'right' },
+  { name: 'saldo_devedor', label: tdc('Outstanding Balance'), field: 'saldo_devedor', align: 'right' },
 ]
 
 function estadoColor(estado) {

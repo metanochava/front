@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">
           <q-icon name="history_edu" class="q-mr-xs" />
-          {{ tdc('Histórico Clínico') }}
+          {{ tdc('Clinical History') }}
         </div>
       </q-card-section>
 
@@ -19,7 +19,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Doenças Correntes') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Current Conditions') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.doencas_count }}</div>
               </q-card-section>
             </s-card>
@@ -27,7 +27,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Alergias') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Allergies') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.alergias_count }}</div>
               </q-card-section>
             </s-card>
@@ -35,7 +35,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Dados Vitais Registados') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Vital Signs Recorded') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.dados_vitais_count }}</div>
               </q-card-section>
             </s-card>
@@ -45,10 +45,10 @@
         <q-card-section class="row q-col-gutter-md">
           <div class="col-12 col-md-6">
             <div class="text-subtitle2 text-weight-medium q-mb-sm">
-              {{ tdc('Doenças mais comuns') }}
+              {{ tdc('Most Common Conditions') }}
             </div>
             <div v-if="!data.top_doencas.length" class="text-caption text-grey-6">
-              {{ tdc('Sem dados') }}
+              {{ tdc('No data') }}
             </div>
             <q-list v-else separator>
               <q-item v-for="item in data.top_doencas" :key="item.nome">
@@ -59,10 +59,10 @@
           </div>
           <div class="col-12 col-md-6">
             <div class="text-subtitle2 text-weight-medium q-mb-sm">
-              {{ tdc('Alergias mais comuns') }}
+              {{ tdc('Most Common Allergies') }}
             </div>
             <div v-if="!data.top_alergias.length" class="text-caption text-grey-6">
-              {{ tdc('Sem dados') }}
+              {{ tdc('No data') }}
             </div>
             <q-list v-else separator>
               <q-item v-for="item in data.top_alergias" :key="item.nome">

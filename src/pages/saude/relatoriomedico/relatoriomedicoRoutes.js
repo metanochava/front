@@ -7,7 +7,7 @@ export let relatoriomedicoRoutes = [
     name: 'list_relatoriomedico',
     component: () => import('./RelatoriomedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('relatoriomedico'),
+      title: tdc('View of') + ' ' + tdc('medical report'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_relatoriomedico',
@@ -18,7 +18,7 @@ export let relatoriomedicoRoutes = [
     name: 'add_relatoriomedico',
     component: () => import('./RelatoriomedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('relatoriomedico'),
+      title: tdc('Add') + ' ' + tdc('medical report'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_relatoriomedico',
@@ -29,7 +29,7 @@ export let relatoriomedicoRoutes = [
     name: 'change_relatoriomedico',
     component: () => import('./RelatoriomedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('relatoriomedico'),
+      title: tdc('Edit') + ' ' + tdc('medical report'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_relatoriomedico',
@@ -40,7 +40,7 @@ export let relatoriomedicoRoutes = [
     name: 'view_relatoriomedico',
     component: () => import('./RelatoriomedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('relatoriomedico'),
+      title: tdc('View') + ' ' + tdc('medical report'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_relatoriomedico',

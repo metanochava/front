@@ -4,7 +4,7 @@
     <div class="row items-center justify-between q-mb-md">
       <div class="text-h6 text-weight-bold row items-center">
         <q-icon name="dashboard" size="28px" class="q-mr-sm text-primary" />
-        {{ tdc('Dashboard') }} — {{ tdc('Vendas') }}
+        {{ tdc('Dashboard') }} — {{ tdc('Sales') }}
       </div>
 
       <div class="row q-gutter-sm items-center">
@@ -13,10 +13,10 @@
           dense no-caps
           toggle-color="primary"
           :options="[
-            { label: tdc('Hoje'), value: 'today' },
-            { label: tdc('7 dias'), value: '7d' },
-            { label: tdc('30 dias'), value: '30d' },
-            { label: tdc('Personalizado'), value: 'custom' },
+            { label: tdc('Today'), value: 'today' },
+            { label: tdc('7 days'), value: '7d' },
+            { label: tdc('30 days'), value: '30d' },
+            { label: tdc('Custom'), value: 'custom' },
           ]"
           @update:model-value="onPresetChange"
         />
@@ -34,8 +34,8 @@
             <q-avatar :color="kpi.color" text-color="white" :icon="kpi.icon" size="42px" class="q-mr-md" />
             <div>
               <div class="text-caption text-grey-7">{{ tdc(kpi.label) }}</div>
-              <div v-if="summary.loading" class="text-caption text-grey-5">{{ tdc('a carregar...') }}</div>
-              <div v-else-if="summary.error" class="text-caption text-negative">{{ tdc('erro') }}</div>
+              <div v-if="summary.loading" class="text-caption text-grey-5">{{ tdc('loading...') }}</div>
+              <div v-else-if="summary.error" class="text-caption text-negative">{{ tdc('error') }}</div>
               <div v-else class="text-h6 text-weight-bold">{{ kpi.value() }}</div>
             </div>
           </q-card-section>
@@ -49,7 +49,7 @@
       <div class="col-12 col-md-7">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Vendas ao Longo do Tempo') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Sales Over Time') }}</div>
 
             <div v-if="timeseries.loading" class="flex flex-center q-pa-xl"><q-spinner color="primary" size="32px" /></div>
             <div v-else-if="timeseries.error" class="text-negative text-caption">{{ timeseries.error }}</div>
@@ -71,7 +71,7 @@
       <div class="col-12 col-md-5">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Vendas por Estado') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Sales by Status') }}</div>
 
             <div v-if="byEstado.loading" class="flex flex-center q-pa-xl"><q-spinner color="primary" size="32px" /></div>
             <div v-else-if="byEstado.error" class="text-negative text-caption">{{ byEstado.error }}</div>
@@ -92,7 +92,7 @@
       <div class="col-12 col-md-4">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Produtos') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Products') }}</div>
             <div v-if="topProducts.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
             <div v-else-if="topProducts.error" class="text-negative text-caption">{{ topProducts.error }}</div>
             <div v-else-if="!topProducts.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
@@ -110,7 +110,7 @@
       <div class="col-12 col-md-4">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Clientes') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Customers') }}</div>
             <div v-if="topCustomers.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
             <div v-else-if="topCustomers.error" class="text-negative text-caption">{{ topCustomers.error }}</div>
             <div v-else-if="!topCustomers.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
@@ -130,14 +130,14 @@
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-sm row items-center">
               <q-icon name="account_balance_wallet" color="negative" class="q-mr-xs" />
-              {{ tdc('Contas a Receber') }}
+              {{ tdc('Accounts Receivable') }}
             </div>
             <div v-if="receivables.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
             <div v-else-if="receivables.error" class="text-negative text-caption">{{ receivables.error }}</div>
             <template v-else>
               <div class="text-h6 text-weight-bold q-mb-sm">{{ formatCurrency(receivables.data?.total_em_divida) }}</div>
               <div class="row items-center justify-between text-caption q-py-1" v-for="(v, k) in receivables.data?.envelhecimento || {}" :key="k">
-                <span>{{ k }} {{ tdc('dias') }}</span>
+                <span>{{ k }} {{ tdc('days') }}</span>
                 <span class="text-weight-medium">{{ formatCurrency(v) }}</span>
               </div>
             </template>
@@ -151,9 +151,9 @@
       <q-card-section>
         <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Quick Access') }}</div>
           <div class="row q-gutter-sm">
-          <s-btn outline no-caps color="primary" icon="point_of_sale" :label="tdc('Vendas')" @click="router.push({ name: 'list_sale' })" />
-          <s-btn outline no-caps color="primary" icon="groups" :label="tdc('Clientes')" @click="router.push({ name: 'list_customer' })" />
-          <s-btn outline no-caps color="primary" icon="payments" :label="tdc('Pagamentos')" @click="router.push({ name: 'list_payment' })" />
+          <s-btn outline no-caps color="primary" icon="point_of_sale" :label="tdc('Sales')" @click="router.push({ name: 'list_sale' })" />
+          <s-btn outline no-caps color="primary" icon="groups" :label="tdc('Customers')" @click="router.push({ name: 'list_customer' })" />
+          <s-btn outline no-caps color="primary" icon="payments" :label="tdc('Payments')" @click="router.push({ name: 'list_payment' })" />
         </div>
       </q-card-section>
     </s-card>
@@ -222,7 +222,7 @@ async function loadCard(card, endpoint, extraParams = {}) {
     }))
     card.data = data
   } catch (e) {
-    card.error = e?.response?.data?.detail || tdc('Erro ao carregar')
+    card.error = e?.response?.data?.detail || tdc('Error loading')
   } finally {
     card.loading = false
   }

@@ -7,7 +7,7 @@ export let medicamentoRoutes = [
     name: 'list_medicamento',
     component: () => import('./MedicamentoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('medicamento'),
+      title: tdc('View of') + ' ' + tdc('medicine'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_medicamento',
@@ -18,7 +18,7 @@ export let medicamentoRoutes = [
     name: 'add_medicamento',
     component: () => import('./MedicamentoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('medicamento'),
+      title: tdc('Add') + ' ' + tdc('medicine'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_medicamento',
@@ -29,7 +29,7 @@ export let medicamentoRoutes = [
     name: 'change_medicamento',
     component: () => import('./MedicamentoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('medicamento'),
+      title: tdc('Edit') + ' ' + tdc('medicine'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_medicamento',
@@ -40,7 +40,7 @@ export let medicamentoRoutes = [
     name: 'view_medicamento',
     component: () => import('./MedicamentoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('medicamento'),
+      title: tdc('View') + ' ' + tdc('medicine'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_medicamento',

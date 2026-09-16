@@ -7,7 +7,7 @@ export let doencacorrenteRoutes = [
     name: 'list_doencacorrente',
     component: () => import('./DoencacorrenteLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('doencacorrente'),
+      title: tdc('View of') + ' ' + tdc('current condition'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_doencacorrente',
@@ -18,7 +18,7 @@ export let doencacorrenteRoutes = [
     name: 'add_doencacorrente',
     component: () => import('./DoencacorrenteSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('doencacorrente'),
+      title: tdc('Add') + ' ' + tdc('current condition'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_doencacorrente',
@@ -29,7 +29,7 @@ export let doencacorrenteRoutes = [
     name: 'change_doencacorrente',
     component: () => import('./DoencacorrenteSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('doencacorrente'),
+      title: tdc('Edit') + ' ' + tdc('current condition'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_doencacorrente',
@@ -40,7 +40,7 @@ export let doencacorrenteRoutes = [
     name: 'view_doencacorrente',
     component: () => import('./DoencacorrenteVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('doencacorrente'),
+      title: tdc('View') + ' ' + tdc('current condition'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_doencacorrente',

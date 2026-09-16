@@ -6,7 +6,7 @@ export let stockmovementRoutes = [
     name: 'list_stockmovement',
     component: () => import('./StockmovementLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Movimentos de Stock'),
+      title: tdc('View of') + ' ' + tdc('Stock Movements'),
       requiresAuth: true,
       icon: 'receipt_long',
       requiredRole: 'list_stockmovement',

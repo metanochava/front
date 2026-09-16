@@ -2,9 +2,9 @@
   <q-page class="q-pa-sm" v-if="Product.row">
     <div class="text-h6 q-mb-md row items-center">
       <q-icon name="photo_library" class="q-mr-sm" />
-      {{ tdc('Galeria') }} — {{ Product.row.nome }}
+      {{ tdc('Gallery') }} — {{ Product.row.nome }}
       <q-space />
-      <q-btn flat icon="arrow_back" :label="tdc('Voltar')" :to="{ name: 'list_product' }" />
+      <q-btn flat icon="arrow_back" :label="tdc('Back')" :to="{ name: 'list_product' }" />
     </div>
 
     <div class="row q-col-gutter-md">
@@ -13,16 +13,16 @@
       <div class="col-12 col-md-4">
         <s-card flat bordered>
           <q-card-section>
-            <div class="text-subtitle2 q-mb-sm">{{ tdc('Imagem Principal') }}</div>
+            <div class="text-subtitle2 q-mb-sm">{{ tdc('Main Image') }}</div>
             <q-img
               v-if="Product.row.imagem?.url"
               :src="Product.row.imagem.url"
               ratio="1"
               class="rounded-borders"
             />
-            <div v-else class="text-caption text-grey-6">{{ tdc('Sem imagem principal') }}</div>
+            <div v-else class="text-caption text-grey-6">{{ tdc('No main image') }}</div>
             <div class="text-caption text-grey-6 q-mt-sm">
-              {{ tdc('Para alterar, edita o produto na listagem.') }}
+              {{ tdc('To change, edit the product in the list.') }}
             </div>
           </q-card-section>
         </s-card>
@@ -32,7 +32,7 @@
       <div class="col-12 col-md-8">
         <s-card flat bordered>
           <q-card-section>
-            <div class="text-subtitle2 q-mb-sm">{{ tdc('Adicionar à Galeria') }} ({{ tdc('imagem ou vídeo') }})</div>
+            <div class="text-subtitle2 q-mb-sm">{{ tdc('Add to Gallery') }} ({{ tdc('image or video') }})</div>
 
             <s-form-two
               v-if="Productmedia.fields.length"
@@ -52,7 +52,7 @@
     <!-- GRELHA DA GALERIA -->
     <s-card flat bordered class="q-mt-md">
       <q-card-section>
-        <div class="text-subtitle2 q-mb-sm">{{ tdc('Galeria') }} ({{ Productmedia.rows.length }})</div>
+        <div class="text-subtitle2 q-mb-sm">{{ tdc('Gallery') }} ({{ Productmedia.rows.length }})</div>
 
         <div v-if="!Productmedia.rows.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
 

@@ -3,13 +3,13 @@
     <s-card style="width: 100%; max-width: 760px">
       <q-card-section class="row items-center q-pb-none">
         <q-icon name="event" class="q-mr-sm" color="primary" size="24px" />
-        <div class="text-h6">{{ isEditMode ? tdc('Editar Consulta') : tdc('Marcar Consulta') }}</div>
+        <div class="text-h6">{{ isEditMode ? tdc('Edit Consultation') : tdc('Schedule Consultation') }}</div>
         <q-space />
         <q-btn flat round dense icon="close" @click="close" />
       </q-card-section>
 
       <q-card-section v-if="pacienteId" class="q-pt-none">
-        <div class="text-caption text-grey-6">{{ tdc('Paciente') }}</div>
+        <div class="text-caption text-grey-6">{{ tdc('Patient') }}</div>
         <div class="text-subtitle1">{{ pacienteLabel || pacienteId }}</div>
       </q-card-section>
 
@@ -30,7 +30,7 @@
           <q-step
             v-if="!isEditMode"
             :name="1"
-            :title="tdc('Tipo de Consulta')"
+            :title="tdc('Consultation Type')"
             icon="category"
             :done="step > 1 && !!form.especialidade"
           >
@@ -41,12 +41,12 @@
                 option-label="label" option-value="value"
                 emit-value map-options
                 :page-size="0"
-                :label="tdc('Paciente')"
+                :label="tdc('Patient')"
               />
             </div>
 
             <div class="text-caption text-grey-6 q-mb-sm">
-              {{ tdc('Escolha o tipo de consulta para filtrar os médicos disponíveis.') }}
+              {{ tdc('Choose the consultation type to filter available doctors.') }}
             </div>
 
             <s-select
@@ -55,13 +55,13 @@
               :api="especialidadeSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options
-              :label="tdc('Tipo de Consulta / Especialidade')"
+              :label="tdc('Consultation Type / Specialty')"
               @update:model-value="onEspecialidadeChanged"
             />
 
             <div class="row justify-end q-mt-md">
               <q-btn
-                color="primary" :label="tdc('Continuar')" icon-right="arrow_forward"
+                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
                 :disable="!canLeaveStep1"
                 @click="step = 2"
               />
@@ -72,7 +72,7 @@
           <q-step
             v-if="!isEditMode"
             :name="2"
-            :title="tdc('Médico')"
+            :title="tdc('Doctor')"
             icon="medical_services"
             :done="step > 2 && !!form.medico"
           >
@@ -80,7 +80,7 @@
               <q-spinner color="primary" size="28px" />
             </div>
             <div v-else-if="!medicoOptions.length" class="text-caption text-grey-6 q-pa-md text-center">
-              {{ tdc('Nenhum médico ativo encontrado para esta especialidade.') }}
+              {{ tdc('No active doctor found for this specialty.') }}
             </div>
             <q-list v-else bordered separator class="rounded-borders">
               <q-item
@@ -103,9 +103,9 @@
             </q-list>
 
             <div class="row justify-between q-mt-md">
-              <q-btn flat :label="tdc('Voltar')" icon="arrow_back" @click="step = 1" />
+              <q-btn flat :label="tdc('Back')" icon="arrow_back" @click="step = 1" />
               <q-btn
-                color="primary" :label="tdc('Continuar')" icon-right="arrow_forward"
+                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
                 :disable="!form.medico"
                 @click="step = 3"
               />
@@ -115,12 +115,12 @@
           <!-- ============ STEP 3: DATA E HORA ============ -->
           <q-step
             :name="3"
-            :title="tdc('Data e Hora')"
+            :title="tdc('Date and Time')"
             icon="event_available"
             :done="step > 3 && !!form.hora_inicio"
           >
             <div v-if="isEditMode" class="q-mb-md">
-              <div class="text-caption text-grey-6">{{ tdc('Médico') }}</div>
+              <div class="text-caption text-grey-6">{{ tdc('Doctor') }}</div>
               <div class="text-subtitle1">{{ medicoSelecionadoLabel }}</div>
             </div>
 
@@ -142,12 +142,12 @@
                   emit-value map-options
                   dense outlined
                   class="q-mb-md"
-                  :label="tdc('Duração da Consulta')"
+                  :label="tdc('Consultation Duration')"
                   @update:model-value="buildSlots"
                 />
 
                 <div class="text-caption text-grey-6 q-mb-xs">
-                  {{ tdc('Horários Disponíveis') }} — {{ form.data }}
+                  {{ tdc('Available Times') }} — {{ form.data }}
                 </div>
 
                 <div v-if="loadingSlots" class="flex flex-center q-pa-md">
@@ -155,12 +155,12 @@
                 </div>
                 <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
                   <q-icon name="warning" class="q-mr-xs" />
-                  {{ tdc('Médico sem horário configurado para este dia — a usar horário padrão (08:00–17:00).') }}
+                  {{ tdc('Doctor has no schedule configured for this day — using default hours (08:00-17:00).') }}
                   <br>
                 </div>
 
                 <div v-if="!loadingSlots && !slots.length" class="text-caption text-grey-6 q-pa-md text-center">
-                  {{ tdc('Sem horários disponíveis neste dia.') }}
+                  {{ tdc('No available times on this day.') }}
                 </div>
 
                 <div v-else class="row q-gutter-xs slot-grid">
@@ -179,10 +179,10 @@
             </div>
 
             <div class="row justify-between q-mt-md">
-              <q-btn v-if="!isEditMode" flat :label="tdc('Voltar')" icon="arrow_back" @click="step = 2" />
+              <q-btn v-if="!isEditMode" flat :label="tdc('Back')" icon="arrow_back" @click="step = 2" />
               <div v-else />
               <q-btn
-                color="primary" :label="tdc('Continuar')" icon-right="arrow_forward"
+                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
                 :disable="!form.hora_inicio"
                 @click="step = 4"
               />
@@ -192,15 +192,15 @@
           <!-- ============ STEP 4: CONFIRMAÇÃO ============ -->
           <q-step
             :name="4"
-            :title="tdc('Confirmação')"
+            :title="tdc('Confirmation')"
             icon="fact_check"
           >
             <s-card flat bordered class="q-pa-sm q-mb-md bg-grey-1">
-              <div class="text-caption text-grey-7">{{ tdc('Resumo') }}</div>
+              <div class="text-caption text-grey-7">{{ tdc('Summary') }}</div>
               <div class="text-body2 q-mt-xs">
-                <div><b>{{ tdc('Médico') }}:</b> {{ medicoSelecionadoLabel }}</div>
-                <div><b>{{ tdc('Data') }}:</b> {{ form.data }}</div>
-                <div><b>{{ tdc('Hora') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
+                <div><b>{{ tdc('Doctor') }}:</b> {{ medicoSelecionadoLabel }}</div>
+                <div><b>{{ tdc('Date') }}:</b> {{ form.data }}</div>
+                <div><b>{{ tdc('Time') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
               </div>
             </s-card>
 
@@ -209,7 +209,7 @@
               :api="consultorioSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options clearable
-              :label="tdc('Consultório') + ' (' + tdc('opcional') + ')'"
+              :label="tdc('Consulting Room') + ' (' + tdc('optional') + ')'"
               class="q-mb-md"
             />
 
@@ -217,23 +217,23 @@
               v-model="form.estado"
               :options="estadoOptions"
               emit-value map-options
-              :label="tdc('Estado')"
+              :label="tdc('Status')"
               class="q-mb-md"
             />
 
-            <q-input v-model="form.motivo" type="textarea" autogrow :label="tdc('Motivo')" class="q-mb-md" />
+            <q-input v-model="form.motivo" type="textarea" autogrow :label="tdc('Reason')" class="q-mb-md" />
             <q-input
               v-model="form.observacao" type="textarea" autogrow
-              :label="tdc('Observação') + ' (' + tdc('opcional') + ')'"
+              :label="tdc('Observation') + ' (' + tdc('optional') + ')'"
             />
 
             <div v-if="errorMsg" class="text-negative text-caption q-mt-sm">{{ errorMsg }}</div>
 
             <div class="row justify-between q-mt-md">
-              <q-btn flat :label="tdc('Voltar')" icon="arrow_back" @click="step = 3" />
+              <q-btn flat :label="tdc('Back')" icon="arrow_back" @click="step = 3" />
               <q-btn
                 color="primary"
-                :label="isEditMode ? tdc('Guardar Alterações') : tdc('Marcar Consulta')"
+                :label="isEditMode ? tdc('Save Changes') : tdc('Schedule Consultation')"
                 icon-right="event_available"
                 :loading="saving"
                 @click="save"
@@ -272,13 +272,13 @@ const especialidadeSelectUrl = url({ type: 'u', url: 'hr/specialties', params: {
 const consultorioSelectUrl = url({ type: 'u', url: 'saude/consultorios', params: { select: 'true' } })
 
 const estadoOptions = [
-  { label: tdc('Marcada'), value: 'marcada' },
-  { label: tdc('Confirmada'), value: 'confirmada' },
-  { label: tdc('Em Espera'), value: 'em_espera' },
-  { label: tdc('Em Atendimento'), value: 'em_atendimento' },
-  { label: tdc('Concluída'), value: 'concluida' },
-  { label: tdc('Cancelada'), value: 'cancelada' },
-  { label: tdc('Faltou'), value: 'faltou' },
+  { label: tdc('Scheduled'), value: 'marcada' },
+  { label: tdc('Confirmed'), value: 'confirmada' },
+  { label: tdc('Waiting'), value: 'em_espera' },
+  { label: tdc('In Progress'), value: 'em_atendimento' },
+  { label: tdc('Completed'), value: 'concluida' },
+  { label: tdc('Cancelled'), value: 'cancelada' },
+  { label: tdc('No-show'), value: 'faltou' },
 ]
 
 const duracaoOptions = [
@@ -536,14 +536,14 @@ function extractError(e) {
     const first = Object.values(data)[0]
     return Array.isArray(first) ? first[0] : first
   }
-  return tdc('Erro ao marcar consulta.')
+  return tdc('Error scheduling consultation.')
 }
 
 async function save() {
   errorMsg.value = ''
 
   if (!form.paciente || !form.medico || !form.data || !form.hora_inicio) {
-    errorMsg.value = tdc('Paciente, médico, data e hora de início são obrigatórios.')
+    errorMsg.value = tdc('Patient, doctor, date and start time are required.')
     return
   }
 

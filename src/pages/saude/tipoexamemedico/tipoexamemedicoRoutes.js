@@ -7,7 +7,7 @@ export let tipoexamemedicoRoutes = [
     name: 'list_tipoexamemedico',
     component: () => import('./TipoexamemedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('tipoexamemedico'),
+      title: tdc('View of') + ' ' + tdc('exam type'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_tipoexamemedico',
@@ -18,7 +18,7 @@ export let tipoexamemedicoRoutes = [
     name: 'add_tipoexamemedico',
     component: () => import('./TipoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('tipoexamemedico'),
+      title: tdc('Add') + ' ' + tdc('exam type'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_tipoexamemedico',
@@ -29,7 +29,7 @@ export let tipoexamemedicoRoutes = [
     name: 'change_tipoexamemedico',
     component: () => import('./TipoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('tipoexamemedico'),
+      title: tdc('Edit') + ' ' + tdc('exam type'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_tipoexamemedico',
@@ -40,7 +40,7 @@ export let tipoexamemedicoRoutes = [
     name: 'view_tipoexamemedico',
     component: () => import('./TipoexamemedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('tipoexamemedico'),
+      title: tdc('View') + ' ' + tdc('exam type'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_tipoexamemedico',

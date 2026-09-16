@@ -7,7 +7,7 @@ export let atestadomedicoRoutes = [
     name: 'list_atestadomedico',
     component: () => import('./AtestadomedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('atestadomedico'),
+      title: tdc('View of') + ' ' + tdc('medical certificate'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_atestadomedico',
@@ -18,7 +18,7 @@ export let atestadomedicoRoutes = [
     name: 'add_atestadomedico',
     component: () => import('./AtestadomedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('atestadomedico'),
+      title: tdc('Add') + ' ' + tdc('medical certificate'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_atestadomedico',
@@ -29,7 +29,7 @@ export let atestadomedicoRoutes = [
     name: 'change_atestadomedico',
     component: () => import('./AtestadomedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('atestadomedico'),
+      title: tdc('Edit') + ' ' + tdc('medical certificate'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_atestadomedico',
@@ -40,7 +40,7 @@ export let atestadomedicoRoutes = [
     name: 'view_atestadomedico',
     component: () => import('./AtestadomedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('atestadomedico'),
+      title: tdc('View') + ' ' + tdc('medical certificate'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_atestadomedico',

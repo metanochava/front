@@ -6,7 +6,7 @@ export let paymentRoutes = [
     name: 'list_payment',
     component: () => import('./PaymentLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Pagamentos'),
+      title: tdc('View of') + ' ' + tdc('Payments'),
       requiresAuth: true,
       icon: 'payments',
       requiredRole: 'list_payment',

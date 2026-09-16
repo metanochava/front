@@ -6,7 +6,7 @@ export let warehouseRoutes = [
     name: 'list_warehouse',
     component: () => import('./WarehouseLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Armazéns'),
+      title: tdc('View of') + ' ' + tdc('Warehouses'),
       requiresAuth: true,
       icon: 'warehouse',
       requiredRole: 'list_warehouse',

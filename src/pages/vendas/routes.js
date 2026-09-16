@@ -12,7 +12,7 @@ export let vendasRoutes = [
     name: 'view_sales_dashboard',
     component: () => import('./VendasDashboard.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Vendas'),
+      title: tdc('Dashboard') + ' ' + tdc('Sales'),
       requiresAuth: true,
       icon: 'dashboard',
       requiredRole: 'view_dashboard_sales',

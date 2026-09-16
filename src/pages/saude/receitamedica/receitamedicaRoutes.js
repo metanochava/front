@@ -7,7 +7,7 @@ export let receitamedicaRoutes = [
     name: 'list_receitamedica',
     component: () => import('./ReceitamedicaLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('receitamedica'),
+      title: tdc('View of') + ' ' + tdc('prescription'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_receitamedica',
@@ -18,7 +18,7 @@ export let receitamedicaRoutes = [
     name: 'add_receitamedica',
     component: () => import('./ReceitamedicaSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('receitamedica'),
+      title: tdc('Add') + ' ' + tdc('prescription'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_receitamedica',
@@ -29,7 +29,7 @@ export let receitamedicaRoutes = [
     name: 'change_receitamedica',
     component: () => import('./ReceitamedicaSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('receitamedica'),
+      title: tdc('Edit') + ' ' + tdc('prescription'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_receitamedica',
@@ -40,7 +40,7 @@ export let receitamedicaRoutes = [
     name: 'view_receitamedica',
     component: () => import('./ReceitamedicaVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('receitamedica'),
+      title: tdc('View') + ' ' + tdc('prescription'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_receitamedica',

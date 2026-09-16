@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">
           <q-icon name="assignment" class="q-mr-xs" />
-          {{ tdc('Documentos Médicos') }}
+          {{ tdc('Medical Documents') }}
         </div>
       </q-card-section>
 
@@ -19,7 +19,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Atestados') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Certificates') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.atestados_count }}</div>
               </q-card-section>
             </s-card>
@@ -27,7 +27,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Relatórios') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Reports') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.relatorios_count }}</div>
               </q-card-section>
             </s-card>
@@ -35,7 +35,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Guias de Transferência') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Transfer Referrals') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.guias_count }}</div>
               </q-card-section>
             </s-card>
@@ -44,10 +44,10 @@
 
         <q-card-section>
           <div class="text-subtitle2 text-weight-medium q-mb-sm">
-            {{ tdc('Atestados Recentes') }}
+            {{ tdc('Recent Certificates') }}
           </div>
           <div v-if="!data.recent_atestados.length" class="text-caption text-grey-6">
-            {{ tdc('Sem dados') }}
+            {{ tdc('No data') }}
           </div>
           <q-list v-else separator>
             <q-item v-for="item in data.recent_atestados" :key="item.id">

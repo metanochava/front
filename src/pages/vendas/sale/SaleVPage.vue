@@ -2,28 +2,28 @@
   <q-page class="q-pa-sm" v-if="Sale.row">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="point_of_sale" class="q-mr-sm" />
-      {{ tdc('Venda') }} — {{ Sale.row.cliente_label || Sale.row.customer?.label || tdc('Cliente Balcão') }}
+      {{ tdc('Sale') }} — {{ Sale.row.cliente_label || Sale.row.customer?.label || tdc('Walk-in Customer') }}
       <q-badge class="q-ml-sm" :color="estadoColor">{{ Sale.row.estado?.label || estado }}</q-badge>
       <q-badge v-if="Sale.row.warehouse_id && !Sale.row.stock_tracked && estado !== 'rascunho'" class="q-ml-sm" color="warning">
-        {{ tdc('Sem controlo de stock') }}
+        {{ tdc('No stock control') }}
       </q-badge>
       <q-space />
 
       <q-btn
         v-if="estado === 'rascunho'"
-        color="positive" icon="check_circle" :label="tdc('Confirmar Venda')"
+        color="positive" icon="check_circle" :label="tdc('Confirm Sale')"
         :disable="!Saleitem.rows.length" :loading="acting" class="q-mr-sm"
         @click="confirmar"
       />
       <q-btn
         v-if="estado === 'confirmada' || estado === 'paga'"
-        color="primary" icon="payments" :label="tdc('Registar Pagamento')"
+        color="primary" icon="payments" :label="tdc('Register Payment')"
         :loading="acting" class="q-mr-sm"
         @click="showPaymentDialog = true"
       />
       <q-btn
         v-if="estado !== 'anulada'"
-        color="negative" icon="cancel" :label="tdc('Anular')"
+        color="negative" icon="cancel" :label="tdc('Void')"
         :loading="acting"
         @click="anular"
       />
@@ -42,7 +42,7 @@
       </div>
       <div class="col-12 col-sm-3">
         <s-card flat bordered><q-card-section>
-          <div class="text-caption text-grey-6">{{ tdc('Desconto') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Discount') }}</div>
           <div class="text-h6">{{ Sale.row.desconto_total }}</div>
         </q-card-section></s-card>
       </div>
@@ -54,7 +54,7 @@
       </div>
       <div class="col-12 col-sm-3">
         <s-card flat bordered><q-card-section>
-          <div class="text-caption text-grey-6">{{ tdc('Saldo em Dívida') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Outstanding Balance') }}</div>
           <div class="text-h6" :class="Number(Sale.row.saldo_devedor) > 0 ? 'text-negative' : 'text-positive'">
             {{ Sale.row.saldo_devedor }}
           </div>
@@ -65,7 +65,7 @@
     <!-- ITENS -->
     <s-card flat bordered class="q-mb-md">
       <q-card-section>
-        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Itens') }}</div>
+        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Items') }}</div>
 
         <q-table
           flat dense
@@ -78,7 +78,7 @@
           <template #body-cell-disponivel="props">
             <q-td :props="props">
               <q-badge v-if="disponibilidadeFor(props.row.product_id) === false" color="negative">
-                {{ tdc('Stock insuficiente') }}
+                {{ tdc('Insufficient stock') }}
               </q-badge>
               <q-icon v-else-if="disponibilidadeFor(props.row.product_id) === true" name="check_circle" color="positive" />
               <span v-else class="text-grey-5">—</span>
@@ -103,24 +103,24 @@
               :api="productSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options
-              :label="tdc('Produto')"
+              :label="tdc('Product')"
               @update:model-value="onProductPicked"
             />
           </div>
           <div class="col-6 col-sm-2">
-            <q-input v-model.number="newItem.quantidade" type="number" step="0.001" :label="tdc('Quantidade')" />
+            <q-input v-model.number="newItem.quantidade" type="number" step="0.001" :label="tdc('Quantity')" />
           </div>
           <div class="col-6 col-sm-2">
-            <q-input v-model.number="newItem.preco_unitario" type="number" step="0.01" :label="tdc('Preço Unitário')" />
+            <q-input v-model.number="newItem.preco_unitario" type="number" step="0.01" :label="tdc('Unit Price')" />
           </div>
           <div class="col-6 col-sm-2">
-            <q-input v-model.number="newItem.desconto_valor" type="number" step="0.01" :label="tdc('Desconto')" />
+            <q-input v-model.number="newItem.desconto_valor" type="number" step="0.01" :label="tdc('Discount')" />
           </div>
           <div class="col-6 col-sm-2">
-            <q-btn color="primary" icon="add" :label="tdc('Adicionar')" :loading="addingItem" @click="addItem" />
+            <q-btn color="primary" icon="add" :label="tdc('Add')" :loading="addingItem" @click="addItem" />
           </div>
           <div class="col-12 text-caption text-grey-6">
-            {{ tdc('Subtotal desta linha (preview local)') }}: {{ previewSubtotal }}
+            {{ tdc('Subtotal for this line (local preview)') }}: {{ previewSubtotal }}
           </div>
         </div>
       </q-card-section>
@@ -129,7 +129,7 @@
     <!-- PAGAMENTOS -->
     <s-card flat bordered>
       <q-card-section>
-        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Pagamentos') }}</div>
+        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Payments') }}</div>
         <div v-if="!Payment.rows.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
         <q-list v-else dense separator>
           <q-item v-for="p in Payment.rows" :key="p.id">
@@ -143,20 +143,20 @@
     <!-- DIALOG PAGAMENTO -->
     <q-dialog v-model="showPaymentDialog">
       <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Registar Pagamento') }}</q-card-section>
+        <q-card-section class="text-h6">{{ tdc('Register Payment') }}</q-card-section>
         <q-card-section class="q-gutter-md">
-          <q-input v-model.number="paymentForm.valor" type="number" step="0.01" :label="tdc('Valor')" />
+          <q-input v-model.number="paymentForm.valor" type="number" step="0.01" :label="tdc('Amount')" />
           <q-select
             v-model="paymentForm.forma_pagamento"
             :options="formaPagamentoOptions"
             emit-value map-options
-            :label="tdc('Forma de Pagamento')"
+            :label="tdc('Payment Method')"
           />
-          <q-input v-model="paymentForm.referencia" :label="tdc('Referência') + ' (' + tdc('opcional') + ')'" />
+          <q-input v-model="paymentForm.referencia" :label="tdc('Reference') + ' (' + tdc('optional') + ')'" />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="tdc('Cancelar')" v-close-popup />
-          <q-btn color="primary" :label="tdc('Registar')" :loading="acting" @click="pagar" />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup />
+          <q-btn color="primary" :label="tdc('Register')" :loading="acting" @click="pagar" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -188,10 +188,10 @@ const estadoColor = computed(() => (
 ))
 
 const itemColumns = [
-  { name: 'product_nome', label: tdc('Produto'), field: 'product_nome', align: 'left' },
-  { name: 'quantidade', label: tdc('Quantidade'), field: 'quantidade', align: 'right' },
-  { name: 'preco_unitario', label: tdc('Preço'), field: 'preco_unitario', align: 'right' },
-  { name: 'desconto_valor', label: tdc('Desconto'), field: 'desconto_valor', align: 'right' },
+  { name: 'product_nome', label: tdc('Product'), field: 'product_nome', align: 'left' },
+  { name: 'quantidade', label: tdc('Quantity'), field: 'quantidade', align: 'right' },
+  { name: 'preco_unitario', label: tdc('Price'), field: 'preco_unitario', align: 'right' },
+  { name: 'desconto_valor', label: tdc('Discount'), field: 'desconto_valor', align: 'right' },
   { name: 'disponivel', label: tdc('Stock'), field: 'disponivel', align: 'center' },
   { name: 'acoes', label: '', field: 'acoes', align: 'center' },
 ]
@@ -285,7 +285,7 @@ async function confirmar() {
     await Sale.confirmar(route.params.id)
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Erro ao confirmar venda.')
+    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error confirming sale.')
   } finally {
     acting.value = false
   }
@@ -298,7 +298,7 @@ async function anular() {
     await Sale.anular(route.params.id)
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Erro ao anular venda.')
+    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error voiding sale.')
   } finally {
     acting.value = false
   }
@@ -306,14 +306,14 @@ async function anular() {
 
 const showPaymentDialog = ref(false)
 const formaPagamentoOptions = [
-  { label: tdc('Numerário'), value: 'numerario' },
+  { label: tdc('Cash'), value: 'numerario' },
   { label: tdc('M-Pesa'), value: 'mpesa' },
   { label: tdc('e-Mola'), value: 'emola' },
   { label: tdc('mKesh'), value: 'mkesh' },
-  { label: tdc('Cartão (Multicaixa/POS)'), value: 'cartao' },
-  { label: tdc('Transferência Bancária'), value: 'transferencia' },
+  { label: tdc('Card (Multicaixa/POS)'), value: 'cartao' },
+  { label: tdc('Bank Transfer'), value: 'transferencia' },
   { label: tdc('Cheque'), value: 'cheque' },
-  { label: tdc('Outro'), value: 'outro' },
+  { label: tdc('Other'), value: 'outro' },
 ]
 const paymentForm = reactive({ valor: null, forma_pagamento: 'numerario', referencia: '' })
 
@@ -327,7 +327,7 @@ async function pagar() {
     paymentForm.referencia = ''
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Erro ao registar pagamento.')
+    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error registering payment.')
   } finally {
     acting.value = false
   }

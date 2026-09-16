@@ -7,7 +7,7 @@ export let itempedidoexamemedicoRoutes = [
     name: 'list_itempedidoexamemedico',
     component: () => import('./ItemPedidoexamemedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('itempedidoexamemedico'),
+      title: tdc('View of') + ' ' + tdc('exam request item'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_itempedidoexamemedico',
@@ -18,7 +18,7 @@ export let itempedidoexamemedicoRoutes = [
     name: 'add_itempedidoexamemedico',
     component: () => import('./ItemPedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('itempedidoexamemedico'),
+      title: tdc('Add') + ' ' + tdc('exam request item'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_itempedidoexamemedico',
@@ -29,7 +29,7 @@ export let itempedidoexamemedicoRoutes = [
     name: 'change_itempedidoexamemedico',
     component: () => import('./ItemPedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('itempedidoexamemedico'),
+      title: tdc('Edit') + ' ' + tdc('exam request item'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_itempedidoexamemedico',
@@ -40,7 +40,7 @@ export let itempedidoexamemedicoRoutes = [
     name: 'view_itempedidoexamemedico',
     component: () => import('./ItemPedidoexamemedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('itempedidoexamemedico'),
+      title: tdc('View') + ' ' + tdc('exam request item'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_itempedidoexamemedico',

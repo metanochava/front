@@ -7,7 +7,7 @@ export let resultadopedidoexamemedicoRoutes = [
     name: 'list_resultadopedidoexamemedico',
     component: () => import('./ResultadopedidoexamemedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('resultadopedidoexamemedico'),
+      title: tdc('View of') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_resultadopedidoexamemedico',
@@ -18,7 +18,7 @@ export let resultadopedidoexamemedicoRoutes = [
     name: 'add_resultadopedidoexamemedico',
     component: () => import('./ResultadopedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('resultadopedidoexamemedico'),
+      title: tdc('Add') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_resultadopedidoexamemedico',
@@ -29,7 +29,7 @@ export let resultadopedidoexamemedicoRoutes = [
     name: 'change_resultadopedidoexamemedico',
     component: () => import('./ResultadopedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('resultadopedidoexamemedico'),
+      title: tdc('Edit') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_resultadopedidoexamemedico',
@@ -40,7 +40,7 @@ export let resultadopedidoexamemedicoRoutes = [
     name: 'view_resultadopedidoexamemedico',
     component: () => import('./ResultadopedidoexamemedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('resultadopedidoexamemedico'),
+      title: tdc('View') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_resultadopedidoexamemedico',

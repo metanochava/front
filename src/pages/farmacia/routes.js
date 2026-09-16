@@ -9,7 +9,7 @@ export let farmaciaRoutes = [
     name: 'view_farmacia_dashboard',
     component: () => import('./FarmaciaDashboard.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Farmácia'),
+      title: tdc('Dashboard') + ' ' + tdc('Pharmacy'),
       requiresAuth: true,
       icon: 'dashboard',
       requiredRole: 'view_farmacia_dashboard',

@@ -2,14 +2,14 @@
   <q-page class="q-pa-sm" v-if="Inventorycount.row">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="fact_check" class="q-mr-sm" />
-      {{ tdc('Contagem') }} — {{ Inventorycount.row.warehouse?.label }}
+      {{ tdc('Count') }} — {{ Inventorycount.row.warehouse?.label }}
       <q-badge class="q-ml-sm" :color="estado === 'concluido' ? 'positive' : 'warning'">
         {{ Inventorycount.row.estado?.label || estado }}
       </q-badge>
       <q-space />
       <q-btn
         v-if="estado !== 'concluido'"
-        color="positive" icon="fact_check" :label="tdc('Finalizar Contagem')"
+        color="positive" icon="fact_check" :label="tdc('Finish Count')"
         :loading="finalizando"
         @click="finalizar"
       />
@@ -17,7 +17,7 @@
 
     <s-card flat bordered class="q-mb-md" v-if="estado !== 'concluido'">
       <q-card-section>
-        <div class="text-subtitle2 q-mb-sm">{{ tdc('Adicionar Linha') }}</div>
+        <div class="text-subtitle2 q-mb-sm">{{ tdc('Add Line') }}</div>
         <div class="row q-col-gutter-sm items-end">
           <div class="col-12 col-sm-6">
             <s-select
@@ -25,18 +25,18 @@
               :api="productSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options
-              :label="tdc('Produto')"
+              :label="tdc('Product')"
             />
           </div>
           <div class="col-8 col-sm-4">
             <q-input
               v-model.number="newLine.quantidade_contada"
               type="number" step="0.001"
-              :label="tdc('Quantidade Contada')"
+              :label="tdc('Counted Quantity')"
             />
           </div>
           <div class="col-4 col-sm-2">
-            <q-btn color="primary" icon="add" :label="tdc('Adicionar')" :loading="addingLine" @click="addLine" />
+            <q-btn color="primary" icon="add" :label="tdc('Add')" :loading="addingLine" @click="addLine" />
           </div>
         </div>
       </q-card-section>
@@ -86,10 +86,10 @@ const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { s
 const estado = computed(() => Inventorycount.row?.estado?.value || Inventorycount.row?.estado)
 
 const columns = [
-  { name: 'product', label: tdc('Produto'), field: row => row.product?.label, align: 'left' },
-  { name: 'quantidade_contada', label: tdc('Quantidade Contada'), field: 'quantidade_contada', align: 'right' },
-  { name: 'quantidade_sistema', label: tdc('Quantidade Sistema'), field: 'quantidade_sistema', align: 'right' },
-  { name: 'diferenca', label: tdc('Diferença'), field: 'diferenca', align: 'right' },
+  { name: 'product', label: tdc('Product'), field: row => row.product?.label, align: 'left' },
+  { name: 'quantidade_contada', label: tdc('Counted Quantity'), field: 'quantidade_contada', align: 'right' },
+  { name: 'quantidade_sistema', label: tdc('System Quantity'), field: 'quantidade_sistema', align: 'right' },
+  { name: 'diferenca', label: tdc('Difference'), field: 'diferenca', align: 'right' },
 ]
 
 const newLine = reactive({ product: null, quantidade_contada: null })

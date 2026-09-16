@@ -6,7 +6,7 @@ export let customercontactRoutes = [
     name: 'list_customercontact',
     component: () => import('./CustomercontactLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Contactos de Cliente'),
+      title: tdc('View of') + ' ' + tdc('Customer Contacts'),
       requiresAuth: true,
       icon: 'contact_phone',
       requiredRole: 'list_customercontact',

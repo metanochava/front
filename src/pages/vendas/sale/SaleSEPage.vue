@@ -6,15 +6,15 @@
       <s-card flat bordered style="width: 100%; max-width: 420px">
         <q-card-section class="text-center">
           <q-icon name="check_circle" color="positive" size="64px" />
-          <div class="text-h6 q-mt-sm">{{ tdc('Venda Concluída') }}</div>
-          <div class="text-caption text-grey-6">{{ tdc('Venda') }} #{{ receipt.saleId.slice(0, 8) }}</div>
+          <div class="text-h6 q-mt-sm">{{ tdc('Sale Completed') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Sale') }} #{{ receipt.saleId.slice(0, 8) }}</div>
         </q-card-section>
 
         <q-separator />
 
         <q-card-section>
           <div class="row justify-between q-py-xs">
-            <span>{{ tdc('Itens') }}</span>
+            <span>{{ tdc('Items') }}</span>
             <span>{{ receipt.numItens }}</span>
           </div>
           <div class="row justify-between q-py-xs text-h6">
@@ -25,7 +25,7 @@
           <q-separator class="q-my-sm" />
 
           <div class="text-caption text-grey-7 q-mb-xs">
-            {{ receipt.pagamentos.length > 1 ? tdc('Pagamento Dividido') : tdc('Pagamento') }}
+            {{ receipt.pagamentos.length > 1 ? tdc('Split Payment') : tdc('Payment') }}
           </div>
           <div v-for="(p, i) in receipt.pagamentos" :key="i" class="row justify-between q-py-xs">
             <span>{{ formaPagamentoLabel(p.forma_pagamento) }}</span>
@@ -35,11 +35,11 @@
           <template v-if="receipt.totalTroco > 0">
             <q-separator class="q-my-sm" />
             <div class="row justify-between q-py-xs">
-              <span>{{ tdc('Valor Recebido') }}</span>
+              <span>{{ tdc('Amount Received') }}</span>
               <span>{{ formatMoney(receipt.totalRecebido) }}</span>
             </div>
             <div class="row justify-between q-py-xs text-positive text-weight-bold">
-              <span>{{ tdc('Troco') }}</span>
+              <span>{{ tdc('Change') }}</span>
               <span>{{ formatMoney(receipt.totalTroco) }}</span>
             </div>
           </template>
@@ -48,7 +48,7 @@
         <q-card-actions class="q-pa-md">
           <q-btn
             color="primary" unelevated class="full-width" size="lg"
-            icon="qr_code_scanner" :label="tdc('Nova Venda')"
+            icon="qr_code_scanner" :label="tdc('New Sale')"
             @click="resetPOS"
           />
         </q-card-actions>
@@ -69,7 +69,7 @@
               <q-input
                 ref="barcodeRef"
                 v-model="barcodeInput"
-                :label="tdc('Ler código de barras / QR (ou digitar e Enter)')"
+                :label="tdc('Scan barcode / QR (or type and Enter)')"
                 outlined dense autofocus
                 :color="scanFeedback === 'error' ? 'negative' : scanFeedback === 'ok' ? 'positive' : 'primary'"
                 @keyup.enter="onScan"
@@ -82,7 +82,7 @@
                   <q-separator vertical inset class="q-mx-xs" />
                   <q-btn
                     flat round dense icon="photo_camera" color="primary"
-                    :title="tdc('Ler com a câmara')"
+                    :title="tdc('Scan with camera')"
                     @click="showCameraScanner = true"
                   />
                 </template>
@@ -96,7 +96,7 @@
                 :api="productSelectUrl"
                 option-label="label" option-value="value"
                 emit-value map-options
-                :label="tdc('Ou pesquisar produto por nome')"
+                :label="tdc('Or search for product by name')"
                 @update:model-value="onManualPick"
               />
             </q-card-section>
@@ -106,11 +106,11 @@
           <s-card flat bordered class="q-mb-md">
             <q-card-section>
               <div class="row items-center q-mb-sm">
-                <div class="text-subtitle2">{{ tdc('Produtos Rápidos') }}</div>
+                <div class="text-subtitle2">{{ tdc('Quick Products') }}</div>
                 <q-space />
                 <q-input
                   v-model="quickSearch" dense outlined
-                  :placeholder="tdc('Filtrar')" style="width: 160px"
+                  :placeholder="tdc('Filter')" style="width: 160px"
                   debounce="300"
                   @update:model-value="loadQuickProducts"
                 >
@@ -122,7 +122,7 @@
                 <q-spinner color="primary" size="24px" />
               </div>
               <div v-else-if="!quickProducts.length" class="text-caption text-grey-6">
-                {{ tdc('Sem produtos') }}
+                {{ tdc('No products') }}
               </div>
               <div v-else class="row q-col-gutter-sm">
                 <div v-for="p in quickProducts" :key="p.id" class="col-6 col-sm-4">
@@ -143,10 +143,10 @@
           <!-- CARRINHO -->
           <s-card flat bordered>
             <q-card-section>
-              <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Carrinho') }} ({{ cart.length }})</div>
+              <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Cart') }} ({{ cart.length }})</div>
 
               <div v-if="!cart.length" class="text-caption text-grey-6 q-pa-md text-center">
-                {{ tdc('Carrinho vazio — lê um código de barras para começar') }}
+                {{ tdc('Empty cart - scan a barcode to start') }}
               </div>
 
               <div v-else class="cart-lines">
@@ -175,7 +175,7 @@
                     v-model.number="line.desconto_valor"
                     type="number" dense outlined square
                     class="cart-desc-input"
-                    :placeholder="tdc('Desc.')"
+                    :placeholder="tdc('Disc.')"
                     step="0.01"
                     @update:model-value="recompute"
                   />
@@ -201,16 +201,16 @@
                 :api="customerSelectUrl"
                 option-label="label" option-value="value"
                 emit-value map-options clearable
-                :label="tdc('Cliente') + ' (' + tdc('opcional') + ')'"
-                :hint="tdc('Vazio = Cliente Balcão')"
+                :label="tdc('Customer') + ' (' + tdc('optional') + ')'"
+                :hint="tdc('Empty = Walk-in Customer')"
               />
               <s-select
                 v-model="warehouseId"
                 :api="warehouseSelectUrl"
                 option-label="label" option-value="value"
                 emit-value map-options clearable
-                :label="tdc('Armazém')"
-                :hint="!warehouseId ? tdc('Sem armazém, a venda não movimenta stock') : ''"
+                :label="tdc('Warehouse')"
+                :hint="!warehouseId ? tdc('Without a warehouse, the sale does not move stock') : ''"
               />
             </q-card-section>
           </s-card>
@@ -222,7 +222,7 @@
                 <span>{{ formatMoney(totals.subtotal) }}</span>
               </div>
               <div class="row justify-between text-caption q-py-xs">
-                <span>{{ tdc('Desconto') }}</span>
+                <span>{{ tdc('Discount') }}</span>
                 <span>{{ formatMoney(totals.desconto) }}</span>
               </div>
               <q-separator class="q-my-xs" />
@@ -239,7 +239,7 @@
 
           <q-btn
             color="positive" unelevated size="lg" class="full-width q-mb-sm"
-            icon="point_of_sale" :label="tdc('Finalizar Venda')"
+            icon="point_of_sale" :label="tdc('Finish Sale')"
             :disable="!cart.length"
             :loading="checkingOut"
             @click="goToCheckout"
@@ -247,7 +247,7 @@
           <q-btn
             v-if="cart.length || pendingSaleId"
             flat color="negative" class="full-width"
-            icon="cancel" :label="tdc('Cancelar Venda')"
+            icon="cancel" :label="tdc('Cancel Sale')"
             @click="cancelPOS"
           />
         </div>
@@ -258,7 +258,7 @@
     <!-- ===================== DIALOG PAGAMENTO (suporta divisão) ===================== -->
     <q-dialog v-model="showPaymentDialog" persistent>
       <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Pagamento') }}</q-card-section>
+        <q-card-section class="text-h6">{{ tdc('Payment') }}</q-card-section>
 
         <q-card-section>
           <div class="row justify-between text-caption q-py-xs">
@@ -266,12 +266,12 @@
             <span>{{ formatMoney(totals.total) }}</span>
           </div>
           <div class="row justify-between text-caption q-py-xs">
-            <span>{{ tdc('Já Pago') }}</span>
+            <span>{{ tdc('Already Paid') }}</span>
             <span>{{ formatMoney(totalJaPago) }}</span>
           </div>
           <q-separator class="q-my-xs" />
           <div class="row justify-between text-h6 text-weight-bold">
-            <span>{{ tdc('Falta Pagar') }}</span>
+            <span>{{ tdc('Amount Due') }}</span>
             <span>{{ formatMoney(saldoEmFalta) }}</span>
           </div>
 
@@ -290,41 +290,41 @@
             v-model="payment.forma_pagamento"
             :options="formaPagamentoOptions"
             emit-value map-options
-            :label="tdc('Forma de Pagamento')"
+            :label="tdc('Payment Method')"
           />
 
           <q-input
             v-model.number="payment.valorAPagar"
             type="number" step="0.01"
-            :label="tdc('Valor a Registar')"
+            :label="tdc('Amount to Register')"
           />
 
           <q-input
             v-if="payment.forma_pagamento === 'numerario'"
             v-model.number="payment.recebido"
             type="number" step="0.01"
-            :label="tdc('Valor Recebido do Cliente')"
+            :label="tdc('Amount Received from Customer')"
           />
 
           <div v-if="payment.forma_pagamento === 'numerario'" class="row justify-between text-h6">
-            <span>{{ tdc('Troco') }}</span>
+            <span>{{ tdc('Change') }}</span>
             <span :class="troco < 0 ? 'text-negative' : 'text-positive'">{{ formatMoney(troco) }}</span>
           </div>
 
           <q-input
             v-else
             v-model="payment.referencia"
-            :label="tdc('Referência') + ' (' + tdc('opcional') + ')'"
+            :label="tdc('Reference') + ' (' + tdc('optional') + ')'"
           />
 
           <div v-if="paymentError" class="text-negative text-caption">{{ paymentError }}</div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat :label="tdc('Cancelar Venda')" :disable="payingLoading" @click="showPaymentDialog = false; cancelPOS()" />
+          <q-btn flat :label="tdc('Cancel Sale')" :disable="payingLoading" @click="showPaymentDialog = false; cancelPOS()" />
           <q-btn
             color="positive"
-            :label="isLastPayment ? tdc('Finalizar') : tdc('Registar e Continuar')"
+            :label="isLastPayment ? tdc('Finish') : tdc('Register and Continue')"
             :loading="payingLoading"
             :disable="payment.forma_pagamento === 'numerario' && troco < 0"
             @click="confirmPayment"
@@ -424,11 +424,11 @@ async function lookupByCodigo(codigo) {
     }
 
     flashFeedback('error')
-    scanError.value = tdc('Produto não encontrado para o código') + ` "${codigo}"`
+    scanError.value = tdc('No product found for this code') + ` "${codigo}"`
     return false
   } catch {
     flashFeedback('error')
-    scanError.value = tdc('Erro ao procurar produto.')
+    scanError.value = tdc('Error searching for product.')
     return false
   } finally {
     scanning.value = false
@@ -552,7 +552,7 @@ async function ensureSaleAndItems() {
 function extractError(e) {
   const d = e?.response?.data?.detail
   if (Array.isArray(d)) return d[0]
-  return d || tdc('Ocorreu um erro. Tenta novamente.')
+  return d || tdc('An error occurred. Please try again.')
 }
 
 async function goToCheckout() {
@@ -590,14 +590,14 @@ function resetPaymentForm(remaining) {
 // Métodos usados em Moçambique — só "numerario" (dinheiro físico)
 // envolve troco; mobile money/cartão/transferência cobram o valor exato.
 const formaPagamentoOptions = [
-  { label: tdc('Numerário'), value: 'numerario' },
+  { label: tdc('Cash'), value: 'numerario' },
   { label: tdc('M-Pesa'), value: 'mpesa' },
   { label: tdc('e-Mola'), value: 'emola' },
   { label: tdc('mKesh'), value: 'mkesh' },
-  { label: tdc('Cartão (Multicaixa/POS)'), value: 'cartao' },
-  { label: tdc('Transferência Bancária'), value: 'transferencia' },
+  { label: tdc('Card (Multicaixa/POS)'), value: 'cartao' },
+  { label: tdc('Bank Transfer'), value: 'transferencia' },
   { label: tdc('Cheque'), value: 'cheque' },
-  { label: tdc('Outro'), value: 'outro' },
+  { label: tdc('Other'), value: 'outro' },
 ]
 
 function formaPagamentoLabel(value) {

@@ -7,7 +7,7 @@ export let horariomedicoRoutes = [
     name: 'list_horariomedico',
     component: () => import('./HorariomedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('horariomedico'),
+      title: tdc('View of') + ' ' + tdc('doctor schedule'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_horariomedico',
@@ -18,7 +18,7 @@ export let horariomedicoRoutes = [
     name: 'add_horariomedico',
     component: () => import('./HorariomedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('horariomedico'),
+      title: tdc('Add') + ' ' + tdc('doctor schedule'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_horariomedico',
@@ -29,7 +29,7 @@ export let horariomedicoRoutes = [
     name: 'change_horariomedico',
     component: () => import('./HorariomedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('horariomedico'),
+      title: tdc('Edit') + ' ' + tdc('doctor schedule'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_horariomedico',
@@ -40,7 +40,7 @@ export let horariomedicoRoutes = [
     name: 'view_horariomedico',
     component: () => import('./HorariomedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('horariomedico'),
+      title: tdc('View') + ' ' + tdc('doctor schedule'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_horariomedico',

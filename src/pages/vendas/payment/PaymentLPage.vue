@@ -2,7 +2,7 @@
   <q-page class="q-pa-sm">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="payments" class="q-mr-sm" />
-      {{ tdc('Pagamentos') }}
+      {{ tdc('Payments') }}
     </div>
 
     <q-table
@@ -25,11 +25,11 @@ import { usePaymentStore } from './paymentStore'
 const Payment = usePaymentStore()
 
 const columns = [
-  { name: 'sale', label: tdc('Venda'), field: row => row.sale?.label, align: 'left' },
-  { name: 'valor', label: tdc('Valor'), field: 'valor', align: 'right' },
-  { name: 'forma_pagamento', label: tdc('Forma de Pagamento'), field: row => row.forma_pagamento?.label || row.forma_pagamento, align: 'left' },
-  { name: 'referencia', label: tdc('Referência'), field: 'referencia', align: 'left' },
-  { name: 'data', label: tdc('Data'), field: 'data', align: 'left' },
+  { name: 'sale', label: tdc('Sale'), field: row => row.sale?.label, align: 'left' },
+  { name: 'valor', label: tdc('Amount'), field: 'valor', align: 'right' },
+  { name: 'forma_pagamento', label: tdc('Payment Method'), field: row => row.forma_pagamento?.label || row.forma_pagamento, align: 'left' },
+  { name: 'referencia', label: tdc('Reference'), field: 'referencia', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
 ]
 
 const pagination = ref({

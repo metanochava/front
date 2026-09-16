@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">
           <q-icon name="medication" class="q-mr-xs" />
-          {{ tdc('Medicação') }}
+          {{ tdc('Medication') }}
         </div>
       </q-card-section>
 
@@ -19,7 +19,7 @@
           <div class="col-6 col-md-3">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Receitas') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Prescriptions') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.total_receitas }}</div>
               </q-card-section>
             </s-card>
@@ -27,7 +27,7 @@
           <div class="col-6 col-md-3">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Medicação Corrente') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Current Medication') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.medicacao_corrente_count }}</div>
               </q-card-section>
             </s-card>
@@ -36,14 +36,14 @@
 
         <q-card-section>
           <div class="text-subtitle2 text-weight-medium q-mb-sm">
-            {{ tdc('Medicamentos mais prescritos') }}
+            {{ tdc('Most Prescribed Medicines') }}
           </div>
           <div v-if="!data.top_medicamentos.length" class="text-caption text-grey-6">
-            {{ tdc('Sem dados') }}
+            {{ tdc('No data') }}
           </div>
           <q-list v-else separator>
             <q-item v-for="item in data.top_medicamentos" :key="item.medicamento__descricao">
-              <q-item-section>{{ item.medicamento__descricao || tdc('Sem descrição') }}</q-item-section>
+              <q-item-section>{{ item.medicamento__descricao || tdc('No description') }}</q-item-section>
               <q-item-section side>
                 <q-badge color="primary">{{ item.total }}</q-badge>
               </q-item-section>

@@ -6,7 +6,7 @@ export let inventorycountRoutes = [
     name: 'list_inventorycount',
     component: () => import('./InventorycountLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Contagens Físicas'),
+      title: tdc('View of') + ' ' + tdc('Physical Counts'),
       requiresAuth: true,
       icon: 'fact_check',
       requiredRole: 'list_inventorycount',
@@ -17,7 +17,7 @@ export let inventorycountRoutes = [
     name: 'view_inventorycount',
     component: () => import('./InventorycountVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('Contagem Física'),
+      title: tdc('View') + ' ' + tdc('Physical Count'),
       requiresAuth: true,
       icon: 'fact_check',
       requiredRole: 'view_inventorycount',

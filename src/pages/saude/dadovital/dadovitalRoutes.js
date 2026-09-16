@@ -7,7 +7,7 @@ export let dadovitalRoutes = [
     name: 'list_dadovital',
     component: () => import('./DadovitalLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('dadovital'),
+      title: tdc('View of') + ' ' + tdc('vital sign'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_dadovital',
@@ -18,7 +18,7 @@ export let dadovitalRoutes = [
     name: 'add_dadovital',
     component: () => import('./DadovitalSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('dadovital'),
+      title: tdc('Add') + ' ' + tdc('vital sign'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_dadovital',
@@ -29,7 +29,7 @@ export let dadovitalRoutes = [
     name: 'change_dadovital',
     component: () => import('./DadovitalSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('dadovital'),
+      title: tdc('Edit') + ' ' + tdc('vital sign'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_dadovital',
@@ -40,7 +40,7 @@ export let dadovitalRoutes = [
     name: 'view_dadovital',
     component: () => import('./DadovitalVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('dadovital'),
+      title: tdc('View') + ' ' + tdc('vital sign'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_dadovital',

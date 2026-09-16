@@ -6,7 +6,7 @@ export let stockitemRoutes = [
     name: 'list_stockitem',
     component: () => import('./StockitemLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Saldo de Stock'),
+      title: tdc('View of') + ' ' + tdc('Stock Balance'),
       requiresAuth: true,
       icon: 'inventory',
       requiredRole: 'list_stockitem',

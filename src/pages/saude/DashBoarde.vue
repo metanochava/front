@@ -4,7 +4,7 @@
     <div class="row items-center justify-between q-mb-md">
       <div class="text-h6 text-weight-bold row items-center">
         <q-icon name="dashboard" size="28px" class="q-mr-sm text-primary" />
-        {{ tdc('Dashboard') }} — {{ tdc('Saúde') }}
+        {{ tdc('Dashboard') }} — {{ tdc('Health') }}
       </div>
       <div class="text-caption text-grey-7">{{ todayLabel }}</div>
     </div>
@@ -45,7 +45,7 @@
           <s-card flat bordered class="full-height">
             <q-card-section>
               <div class="text-subtitle1 text-weight-medium q-mb-md">
-                {{ tdc('Consultas nos últimos 7 dias') }}
+                {{ tdc('Consultations in the Last 7 Days') }}
               </div>
 
               <div v-for="(d, i) in consultasPorDia" :key="d.label + i" class="q-mb-sm">
@@ -68,7 +68,7 @@
           <s-card flat bordered class="full-height">
             <q-card-section>
               <div class="text-subtitle1 text-weight-medium q-mb-md">
-                {{ tdc('Pedidos de Exame') }}
+                {{ tdc('Exam Requests') }}
               </div>
 
               <div class="row items-center q-col-gutter-md">
@@ -111,7 +111,7 @@
           <s-card flat bordered class="full-height">
             <q-card-section>
               <div class="text-subtitle1 text-weight-medium q-mb-md">
-                {{ tdc('Exames por Classe') }}
+                {{ tdc('Exams by Class') }}
               </div>
 
               <div v-if="!examesPorClasse.length" class="text-caption text-grey-6">
@@ -138,7 +138,7 @@
           <s-card flat bordered class="full-height">
             <q-card-section>
               <div class="text-subtitle1 text-weight-medium q-mb-md">
-                {{ tdc('Consultas Recentes') }}
+                {{ tdc('Recent Consultations') }}
               </div>
 
               <q-list v-if="consultasRecentes.length" separator>
@@ -151,7 +151,7 @@
                     <q-avatar color="primary" text-color="white" icon="person" size="36px" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ c.paciente?.label || tdc('Paciente') }}</q-item-label>
+                    <q-item-label>{{ c.paciente?.label || tdc('Patient') }}</q-item-label>
                     <q-item-label caption lines="1">{{ c.diagnostico || c.dc || '—' }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -302,7 +302,7 @@ const examesPorClasse = computed(() => {
   const counts = {}
 
   exames.value.forEach(e => {
-    const name = e.classe_exame_medico?.label || tdc('Sem Classe')
+    const name = e.classe_exame_medico?.label || tdc('No Class')
     counts[name] = (counts[name] || 0) + 1
   })
 
@@ -329,7 +329,7 @@ const kpis = computed(() => [
   {
     label: 'Pedidos de Exame',
     value: Pedido.pagination.rowsNumber || 0,
-    hint: `${pedidosUrgentes.value} ${tdc('urgentes')}`,
+    hint: `${pedidosUrgentes.value} ${tdc('urgent')}`,
     icon: 'science', color: 'warning', route: 'list_pedidoexamemedico'
   },
   {

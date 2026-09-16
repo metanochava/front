@@ -14,7 +14,7 @@
       <div class="col-12 col-md-4">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Valor Total do Stock') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Total Stock Value') }}</div>
 
             <div v-if="stockValue.loading" class="flex flex-center q-pa-md">
               <q-spinner color="primary" size="32px" />
@@ -38,7 +38,7 @@
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-sm row items-center">
               <q-icon name="warning" color="warning" class="q-mr-xs" />
-              {{ tdc('Produtos Abaixo do Mínimo') }}
+              {{ tdc('Products Below Minimum') }}
             </div>
 
             <div v-if="lowStock.loading" class="flex flex-center q-pa-md">
@@ -63,7 +63,7 @@
         <s-card flat bordered class="full-height">
           <q-card-section>
             <div class="row items-center justify-between q-mb-sm">
-              <div class="text-subtitle1 text-weight-medium">{{ tdc('Stock Parado') }}</div>
+              <div class="text-subtitle1 text-weight-medium">{{ tdc('Dead Stock') }}</div>
               <q-select
                 v-model="staleDias" :options="[7, 30, 90]" dense borderless
                 style="width: 90px" @update:model-value="loadStale"
@@ -92,7 +92,7 @@
       <div class="col-12 col-md-7">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Movimentos Recentes') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Recent Movements') }}</div>
 
             <div v-if="recentMovements.loading" class="flex flex-center q-pa-md">
               <q-spinner color="primary" size="32px" />
@@ -120,7 +120,7 @@
       <div class="col-12 col-md-5">
         <s-card flat bordered class="full-height">
           <q-card-section>
-            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Divergências da Última Contagem') }}</div>
+            <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Discrepancies from Last Count') }}</div>
 
             <div v-if="countVariance.loading" class="flex flex-center q-pa-md">
               <q-spinner color="primary" size="32px" />
@@ -134,7 +134,7 @@
               >
                 {{ countVariance.data.inventory_count.warehouse }} — {{ countVariance.data.inventory_count.data }}
               </div>
-              <div v-if="!countVariance.data.linhas.length" class="text-caption text-grey-6">{{ tdc('Sem divergências') }}</div>
+              <div v-if="!countVariance.data.linhas.length" class="text-caption text-grey-6">{{ tdc('No discrepancies') }}</div>
               <q-list v-else dense separator>
                 <q-item v-for="(l, i) in countVariance.data.linhas" :key="i">
                   <q-item-section>{{ l.product__nome }}</q-item-section>
@@ -196,7 +196,7 @@ async function loadCard(card, endpoint, params = {}) {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: `inventory/${endpoint}`, params }))
     card.data = data
   } catch (e) {
-    card.error = e?.response?.data?.detail || tdc('Erro ao carregar')
+    card.error = e?.response?.data?.detail || tdc('Error loading')
   } finally {
     card.loading = false
   }

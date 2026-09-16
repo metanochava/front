@@ -6,7 +6,7 @@ export let inventorysettingRoutes = [
     name: 'list_inventorysetting',
     component: () => import('./InventorysettingLPage.vue'),
     meta: {
-      title: tdc('Configurações de Inventário'),
+      title: tdc('Inventory Settings'),
       requiresAuth: true,
       icon: 'settings',
       requiredRole: 'list_inventorysetting',

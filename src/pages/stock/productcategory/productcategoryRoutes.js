@@ -6,7 +6,7 @@ export let productcategoryRoutes = [
     name: 'list_productcategory',
     component: () => import('./ProductcategoryLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Categorias de Produto'),
+      title: tdc('View of') + ' ' + tdc('Product Categories'),
       requiresAuth: true,
       icon: 'category',
       requiredRole: 'list_productcategory',

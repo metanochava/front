@@ -7,7 +7,7 @@ export let alergiacorrenteRoutes = [
     name: 'list_alergiacorrente',
     component: () => import('./AlergiacorrenteLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('alergiacorrente'),
+      title: tdc('View of') + ' ' + tdc('current allergy'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_alergiacorrente',
@@ -18,7 +18,7 @@ export let alergiacorrenteRoutes = [
     name: 'add_alergiacorrente',
     component: () => import('./AlergiacorrenteSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('alergiacorrente'),
+      title: tdc('Add') + ' ' + tdc('current allergy'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_alergiacorrente',
@@ -29,7 +29,7 @@ export let alergiacorrenteRoutes = [
     name: 'change_alergiacorrente',
     component: () => import('./AlergiacorrenteSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('alergiacorrente'),
+      title: tdc('Edit') + ' ' + tdc('current allergy'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_alergiacorrente',
@@ -40,7 +40,7 @@ export let alergiacorrenteRoutes = [
     name: 'view_alergiacorrente',
     component: () => import('./AlergiacorrenteVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('alergiacorrente'),
+      title: tdc('View') + ' ' + tdc('current allergy'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_alergiacorrente',

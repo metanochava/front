@@ -7,7 +7,7 @@ export let dispensaRoutes = [
     name: 'list_dispensa',
     component: () => import('./DispensaLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Dispensas'),
+      title: tdc('View of') + ' ' + tdc('Dispensations'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_dispensa',
@@ -18,7 +18,7 @@ export let dispensaRoutes = [
     name: 'view_dispensa',
     component: () => import('./DispensaVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('Dispensa'),
+      title: tdc('View') + ' ' + tdc('Dispensation'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_dispensa',

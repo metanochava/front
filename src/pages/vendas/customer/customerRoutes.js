@@ -6,7 +6,7 @@ export let customerRoutes = [
     name: 'list_customer',
     component: () => import('./CustomerLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Clientes'),
+      title: tdc('View of') + ' ' + tdc('Customers'),
       requiresAuth: true,
       icon: 'groups',
       requiredRole: 'list_customer',

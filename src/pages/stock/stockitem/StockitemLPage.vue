@@ -2,11 +2,11 @@
   <q-page class="q-pa-sm">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="inventory" class="q-mr-sm" />
-      {{ tdc('Saldo de Stock') }}
+      {{ tdc('Stock Balance') }}
       <q-space />
       <q-input
         v-model="search" dense outlined debounce="400"
-        :placeholder="tdc('Pesquisar')" style="width: 260px"
+        :placeholder="tdc('Search')" style="width: 260px"
         @update:model-value="onSearch"
       >
         <template #prepend><q-icon name="search" /></template>
@@ -42,9 +42,9 @@ const Stockitem = useStockitemStore()
 const search = ref('')
 
 const columns = [
-  { name: 'product', label: tdc('Produto'), field: row => row.product?.label, align: 'left' },
-  { name: 'warehouse', label: tdc('Armazém'), field: row => row.warehouse?.label, align: 'left' },
-  { name: 'quantidade', label: tdc('Quantidade'), field: 'quantidade', align: 'right' },
+  { name: 'product', label: tdc('Product'), field: row => row.product?.label, align: 'left' },
+  { name: 'warehouse', label: tdc('Warehouse'), field: row => row.warehouse?.label, align: 'left' },
+  { name: 'quantidade', label: tdc('Quantity'), field: 'quantidade', align: 'right' },
 ]
 
 const pagination = ref({

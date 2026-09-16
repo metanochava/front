@@ -7,7 +7,7 @@ export let guiatransferenciaRoutes = [
     name: 'list_guiatransferencia',
     component: () => import('./GuiatransferenciaLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('guiatransferencia'),
+      title: tdc('View of') + ' ' + tdc('transfer referral'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_guiatransferencia',
@@ -18,7 +18,7 @@ export let guiatransferenciaRoutes = [
     name: 'add_guiatransferencia',
     component: () => import('./GuiatransferenciaSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('guiatransferencia'),
+      title: tdc('Add') + ' ' + tdc('transfer referral'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_guiatransferencia',
@@ -29,7 +29,7 @@ export let guiatransferenciaRoutes = [
     name: 'change_guiatransferencia',
     component: () => import('./GuiatransferenciaSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('guiatransferencia'),
+      title: tdc('Edit') + ' ' + tdc('transfer referral'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_guiatransferencia',
@@ -40,7 +40,7 @@ export let guiatransferenciaRoutes = [
     name: 'view_guiatransferencia',
     component: () => import('./GuiatransferenciaVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('guiatransferencia'),
+      title: tdc('View') + ' ' + tdc('transfer referral'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_guiatransferencia',

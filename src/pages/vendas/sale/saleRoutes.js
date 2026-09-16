@@ -6,7 +6,7 @@ export let saleRoutes = [
     name: 'list_sale',
     component: () => import('./SaleLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Vendas'),
+      title: tdc('View of') + ' ' + tdc('Sales'),
       requiresAuth: true,
       icon: 'point_of_sale',
       requiredRole: 'list_sale',
@@ -17,7 +17,7 @@ export let saleRoutes = [
     name: 'add_sale',
     component: () => import('./SaleSEPage.vue'),
     meta: {
-      title: tdc('Ponto de Venda'),
+      title: tdc('Point of Sale'),
       requiresAuth: true,
       icon: 'qr_code_scanner',
       requiredRole: 'add_sale',
@@ -28,7 +28,7 @@ export let saleRoutes = [
     name: 'view_sale',
     component: () => import('./SaleVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('Venda'),
+      title: tdc('View') + ' ' + tdc('Sale'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_sale',

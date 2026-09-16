@@ -9,19 +9,19 @@
 
       <q-btn
         v-if="estado === 'pendente' || estado === 'em_revisao'"
-        color="primary" icon="fact_check" :label="tdc('Rever')"
+        color="primary" icon="fact_check" :label="tdc('Review')"
         :loading="acting" class="q-mr-sm"
         @click="showRevisarDialog = true"
       />
       <q-btn
         v-if="estado === 'aprovada' || estado === 'dispensada_parcial'"
-        color="positive" icon="medication" :label="tdc('Dispensar')"
+        color="positive" icon="medication" :label="tdc('Dispense')"
         :loading="acting" class="q-mr-sm"
         @click="openDispensarDialog"
       />
       <q-btn
         v-if="estado === 'dispensada_parcial'"
-        color="secondary" icon="task_alt" :label="tdc('Concluir')"
+        color="secondary" icon="task_alt" :label="tdc('Complete')"
         :loading="acting"
         @click="concluir"
       />
@@ -32,25 +32,25 @@
     </div>
 
     <q-banner v-if="estado === 'rejeitada' && Filafarmacia.row.motivo_rejeicao" class="bg-negative text-white q-mb-md" dense>
-      {{ tdc('Motivo da rejeição') }}: {{ Filafarmacia.row.motivo_rejeicao }}
+      {{ tdc('Rejection reason') }}: {{ Filafarmacia.row.motivo_rejeicao }}
     </q-banner>
 
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-sm-4">
         <s-card flat bordered><q-card-section>
-          <div class="text-caption text-grey-6">{{ tdc('Prescrição') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Prescription') }}</div>
           <div class="text-body1">{{ Filafarmacia.row.receita?.label || '—' }}</div>
         </q-card-section></s-card>
       </div>
       <div class="col-12 col-sm-4">
         <s-card flat bordered><q-card-section>
-          <div class="text-caption text-grey-6">{{ tdc('Revisado por') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Reviewed by') }}</div>
           <div class="text-body1">{{ Filafarmacia.row.revisado_por?.label || '—' }}</div>
         </q-card-section></s-card>
       </div>
       <div class="col-12 col-sm-4">
         <s-card flat bordered><q-card-section>
-          <div class="text-caption text-grey-6">{{ tdc('Revisado em') }}</div>
+          <div class="text-caption text-grey-6">{{ tdc('Reviewed at') }}</div>
           <div class="text-body1">{{ formatDateTime(Filafarmacia.row.revisado_em) }}</div>
         </q-card-section></s-card>
       </div>
@@ -59,7 +59,7 @@
     <!-- ITENS DA PRESCRIÇÃO -->
     <s-card flat bordered class="q-mb-md">
       <q-card-section>
-        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Itens da Prescrição') }}</div>
+        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Prescription Items') }}</div>
         <div v-if="!itensReceita.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
         <q-table
           v-else flat dense
@@ -75,7 +75,7 @@
     <!-- HISTÓRICO DE DISPENSAÇÕES -->
     <s-card flat bordered>
       <q-card-section>
-        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Dispensações') }}</div>
+        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Dispensations') }}</div>
         <div v-if="!dispensas.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
         <q-list v-else dense separator>
           <q-item v-for="d in dispensas" :key="d.id">
@@ -95,20 +95,20 @@
     <!-- DIALOG REVISAR -->
     <q-dialog v-model="showRevisarDialog">
       <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Rever Prescrição') }}</q-card-section>
+        <q-card-section class="text-h6">{{ tdc('Review Prescription') }}</q-card-section>
         <q-card-section class="q-gutter-md">
           <s-select
             v-model="revisarForm.employee_id"
             :api="employeeSelectUrl"
             option-label="label" option-value="value"
             emit-value map-options
-            :label="tdc('Farmacêutico')"
+            :label="tdc('Pharmacist')"
           />
           <q-option-group
             v-model="revisarForm.aprovado"
             :options="[
-              { label: tdc('Aprovar'), value: true },
-              { label: tdc('Rejeitar'), value: false },
+              { label: tdc('Approve'), value: true },
+              { label: tdc('Reject'), value: false },
             ]"
             inline
           />
@@ -116,13 +116,13 @@
             v-if="revisarForm.aprovado === false"
             v-model="revisarForm.motivo_rejeicao"
             type="textarea"
-            :label="tdc('Motivo da Rejeição')"
+            :label="tdc('Rejection Reason')"
           />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="tdc('Cancelar')" v-close-popup />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn
-            color="primary" :label="tdc('Confirmar')" :loading="acting"
+            color="primary" :label="tdc('Confirm')" :loading="acting"
             :disable="!revisarForm.employee_id || revisarForm.aprovado === null || (revisarForm.aprovado === false && !revisarForm.motivo_rejeicao)"
             @click="revisar"
           />
@@ -133,7 +133,7 @@
     <!-- DIALOG DISPENSAR -->
     <q-dialog v-model="showDispensarDialog">
       <q-card style="min-width: 520px; max-width: 90vw">
-        <q-card-section class="text-h6">{{ tdc('Dispensar Medicação') }}</q-card-section>
+        <q-card-section class="text-h6">{{ tdc('Dispense Medication') }}</q-card-section>
         <q-card-section class="q-gutter-md">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-sm-6">
@@ -142,7 +142,7 @@
                 :api="employeeSelectUrl"
                 option-label="label" option-value="value"
                 emit-value map-options
-                :label="tdc('Farmacêutico')"
+                :label="tdc('Pharmacist')"
               />
             </div>
             <div class="col-12 col-sm-6">
@@ -152,7 +152,7 @@
                 option-label="label" option-value="value"
                 emit-value map-options
                 clearable
-                :label="tdc('Armazém') + ' (' + tdc('opcional — controlo de stock') + ')'"
+                :label="tdc('Warehouse') + ' (' + tdc('optional - stock control') + ')'"
               />
             </div>
           </div>
@@ -171,13 +171,13 @@
               <div class="col-6 col-sm-2">
                 <q-input
                   v-model.number="line.quantidade" type="number" dense
-                  :label="tdc('Quantidade')" :disable="!line.incluir"
+                  :label="tdc('Quantity')" :disable="!line.incluir"
                 />
               </div>
               <div class="col-6 col-sm-2">
                 <q-input
                   v-model="line.lote" dense
-                  :label="tdc('Lote') + ' (' + tdc('opcional') + ')'" :disable="!line.incluir"
+                  :label="tdc('Batch') + ' (' + tdc('optional') + ')'" :disable="!line.incluir"
                 />
               </div>
               <div class="col-12 col-sm-4">
@@ -189,16 +189,16 @@
                   emit-value map-options
                   clearable dense
                   :disable="!line.incluir"
-                  :label="tdc('Produto no Stock') + ' (' + tdc('opcional') + ')'"
+                  :label="tdc('Stock Product') + ' (' + tdc('optional') + ')'"
                 />
               </div>
             </div>
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="tdc('Cancelar')" v-close-popup />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn
-            color="positive" :label="tdc('Dispensar')" :loading="acting"
+            color="positive" :label="tdc('Dispense')" :loading="acting"
             :disable="!dispensarForm.employee_id || !dispensarLines.some(l => l.incluir && l.quantidade > 0)"
             @click="dispensar"
           />
@@ -237,10 +237,10 @@ const estadoColor = computed(() => ({
 }[estado.value] || 'grey'))
 
 const itemReceitaColumns = [
-  { name: 'medicamento', label: tdc('Medicamento'), field: row => row.medicamento?.label, align: 'left' },
-  { name: 'quantidade', label: tdc('Quantidade Prescrita'), field: 'quantidade', align: 'left' },
-  { name: 'dosagem', label: tdc('Dosagem'), field: 'dosagem', align: 'left' },
-  { name: 'observacao', label: tdc('Observação'), field: 'observacao', align: 'left' },
+  { name: 'medicamento', label: tdc('Medicine'), field: row => row.medicamento?.label, align: 'left' },
+  { name: 'quantidade', label: tdc('Prescribed Quantity'), field: 'quantidade', align: 'left' },
+  { name: 'dosagem', label: tdc('Dosage'), field: 'dosagem', align: 'left' },
+  { name: 'observacao', label: tdc('Observation'), field: 'observacao', align: 'left' },
 ]
 
 const itensReceita = ref([])
@@ -299,7 +299,7 @@ async function revisar() {
     revisarForm.motivo_rejeicao = ''
     await refreshAll()
   } catch (e) {
-    actionError.value = extractError(e, tdc('Erro ao rever prescrição.'))
+    actionError.value = extractError(e, tdc('Error reviewing prescription.'))
   } finally {
     acting.value = false
   }
@@ -345,7 +345,7 @@ async function dispensar() {
     dispensarForm.warehouse_id = null
     await refreshAll()
   } catch (e) {
-    actionError.value = extractError(e, tdc('Erro ao dispensar.'))
+    actionError.value = extractError(e, tdc('Error dispensing.'))
   } finally {
     acting.value = false
   }
@@ -359,7 +359,7 @@ async function concluir() {
     await Filafarmacia.concluir(route.params.id)
     await refreshAll()
   } catch (e) {
-    actionError.value = extractError(e, tdc('Erro ao concluir.'))
+    actionError.value = extractError(e, tdc('Error completing.'))
   } finally {
     acting.value = false
   }

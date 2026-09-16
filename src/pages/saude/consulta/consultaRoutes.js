@@ -7,7 +7,7 @@ export let consultaRoutes = [
     name: 'list_consulta',
     component: () => import('./ConsultaLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('consulta'),
+      title: tdc('View of') + ' ' + tdc('consultation'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_consulta',
@@ -18,7 +18,7 @@ export let consultaRoutes = [
     name: 'add_consulta',
     component: () => import('./ConsultaSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('consulta'),
+      title: tdc('Add') + ' ' + tdc('consultation'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_consulta',
@@ -29,7 +29,7 @@ export let consultaRoutes = [
     name: 'change_consulta',
     component: () => import('./ConsultaSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('consulta'),
+      title: tdc('Edit') + ' ' + tdc('consultation'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_consulta',
@@ -40,7 +40,7 @@ export let consultaRoutes = [
     name: 'view_consulta',
     component: () => import('./ConsultaVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('consulta'),
+      title: tdc('View') + ' ' + tdc('consultation'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_consulta',

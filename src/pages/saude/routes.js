@@ -27,7 +27,7 @@ export let saudeRoutes = [
     name: 'view_saude_dashboard',
     component: () => import('./DashBoarde.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Saúde'),
+      title: tdc('Dashboard') + ' ' + tdc('Health'),
       requiresAuth: true,
       icon: 'dashboard',
       requiredRole: 'view_saude_dashboard',
@@ -38,7 +38,7 @@ export let saudeRoutes = [
     name: 'dashboard_saude_clinica',
     component: () => import('./dashboards/ClinicaDashboardPage.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Clínica'),
+      title: tdc('Dashboard') + ' ' + tdc('Clinic'),
       requiresAuth: true,
       icon: 'medical_services',
       requiredRole: 'view_dashboard_saude_clinica',
@@ -49,7 +49,7 @@ export let saudeRoutes = [
     name: 'view_dashboard_saude_medicacao',
     component: () => import('./dashboards/MedicacaoDashboardPage.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Medicação'),
+      title: tdc('Dashboard') + ' ' + tdc('Medication'),
       requiresAuth: true,
       icon: 'medication',
       requiredRole: 'view_dashboard_saude_medicacao',
@@ -60,7 +60,7 @@ export let saudeRoutes = [
     name: 'view_dashboard_saude_documentos_medicos',
     component: () => import('./dashboards/DocumentosMedicosDashboardPage.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Documentos Médicos'),
+      title: tdc('Dashboard') + ' ' + tdc('Medical Documents'),
       requiresAuth: true,
       icon: 'assignment',
       requiredRole: 'view_dashboard_saude_documentos_medicos',
@@ -71,7 +71,7 @@ export let saudeRoutes = [
     name: 'view_dashboard_saude_exames',
     component: () => import('./dashboards/ExamesDashboardPage.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Exames'),
+      title: tdc('Dashboard') + ' ' + tdc('Exams'),
       requiresAuth: true,
       icon: 'biotech',
       requiredRole: 'view_dashboard_saude_exames',
@@ -82,7 +82,7 @@ export let saudeRoutes = [
     name: 'view_dashboard_saude_historico_clinico',
     component: () => import('./dashboards/HistoricoClinicoDashboardPage.vue'),
     meta: {
-      title: tdc('Dashboard') + ' ' + tdc('Histórico Clínico'),
+      title: tdc('Dashboard') + ' ' + tdc('Clinical History'),
       requiresAuth: true,
       icon: 'history_edu',
       requiredRole: 'view_dashboard_saude_historico_clinico',

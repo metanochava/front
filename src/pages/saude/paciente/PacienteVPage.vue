@@ -19,7 +19,7 @@
             <div class="col">
               <div class="text-h6 text-weight-bold">{{ Paciente.row?.person?.label || '—' }}</div>
               <div class="text-caption text-grey-7">
-                {{ tdc('Nº Paciente') }}: {{ Paciente.row?.nid || '—' }}
+                {{ tdc('Patient No.') }}: {{ Paciente.row?.nid || '—' }}
               </div>
             </div>
 
@@ -27,7 +27,7 @@
               flat round icon="edit" color="primary"
               :to="{ name: 'change_paciente', params: { id: Paciente.row?.id } }"
             >
-              <q-tooltip>{{ tdc('Editar Dados') }}</q-tooltip>
+              <q-tooltip>{{ tdc('Edit Data') }}</q-tooltip>
             </q-btn>
           </q-card-section>
 
@@ -35,15 +35,15 @@
 
           <q-card-section class="row q-col-gutter-md">
             <div class="col-6 col-sm-4">
-              <div class="text-caption text-grey-6">{{ tdc('Profissão') }}</div>
+              <div class="text-caption text-grey-6">{{ tdc('Occupation') }}</div>
               <div>{{ Paciente.row?.profissao || '—' }}</div>
             </div>
             <div class="col-6 col-sm-4">
-              <div class="text-caption text-grey-6">{{ tdc('Religião') }}</div>
+              <div class="text-caption text-grey-6">{{ tdc('Religion') }}</div>
               <div>{{ Paciente.row?.religiao || '—' }}</div>
             </div>
             <div class="col-12 col-sm-4">
-              <div class="text-caption text-grey-6">{{ tdc('Contacto de Emergência') }}</div>
+              <div class="text-caption text-grey-6">{{ tdc('Emergency Contact') }}</div>
               <div>{{ Paciente.row?.person_a_contactar || '—' }} {{ Paciente.row?.numero_a_contactar ? `(${Paciente.row.numero_a_contactar})` : '' }}</div>
             </div>
           </q-card-section>
@@ -54,7 +54,7 @@
           <q-card-section class="row items-center">
             <div class="text-subtitle1 text-weight-medium">
               <q-icon name="timeline" class="q-mr-xs" />
-              {{ tdc('Linha do Tempo Clínica') }}
+              {{ tdc('Clinical Timeline') }}
             </div>
           </q-card-section>
 
@@ -64,7 +64,7 @@
             <q-spinner color="primary" size="24px" />
           </div>
           <div v-else-if="!timeline.data.length" class="text-caption text-grey-6 q-pa-md text-center">
-            {{ tdc('Sem eventos') }}
+            {{ tdc('No events') }}
           </div>
           <q-list v-else separator>
             <q-item v-for="(e, index) in timeline.data" :key="index">
@@ -99,10 +99,10 @@
           <q-card-section class="row items-center">
             <div class="text-subtitle1 text-weight-medium">
               <q-icon name="health_and_safety" class="q-mr-xs" />
-              {{ tdc('Consultas Recentes') }}
+              {{ tdc('Recent Consultations') }}
             </div>
             <q-space />
-            <s-btn flat dense no-caps color="primary" :label="tdc('Ver todas')" :to="{ name: 'list_consulta' }" />
+            <s-btn flat dense no-caps color="primary" :label="tdc('View All')" :to="{ name: 'list_consulta' }" />
           </q-card-section>
 
           <q-separator />
@@ -111,7 +111,7 @@
             <q-spinner color="primary" size="24px" />
           </div>
           <div v-else-if="!consultas.data.length" class="text-caption text-grey-6 q-pa-md text-center">
-            {{ tdc('Sem consultas registadas') }}
+            {{ tdc('No consultations recorded') }}
           </div>
           <q-list v-else separator>
             <q-item
@@ -122,7 +122,7 @@
                 <q-icon name="event_available" color="primary" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ c.diagnostico || c.dc || tdc('Sem diagnóstico registado') }}</q-item-label>
+                <q-item-label>{{ c.diagnostico || c.dc || tdc('No diagnosis recorded') }}</q-item-label>
                 <q-item-label caption>{{ c.employee?.label || '—' }}</q-item-label>
               </q-item-section>
               <q-item-section side>
@@ -137,11 +137,11 @@
           <q-card-section class="row items-center">
             <div class="text-subtitle1 text-weight-medium">
               <q-icon name="event" class="q-mr-xs" />
-              {{ tdc('Próximas Marcações') }}
+              {{ tdc('Upcoming Appointments') }}
             </div>
             <q-space />
             <s-btn
-              flat dense no-caps color="primary" icon="add" :label="tdc('Marcar Consulta')"
+              flat dense no-caps color="primary" icon="add" :label="tdc('Schedule Consultation')"
               @click="openNovaMarcacao"
             />
           </q-card-section>
@@ -152,7 +152,7 @@
             <q-spinner color="primary" size="24px" />
           </div>
           <div v-else-if="!agendas.data.length" class="text-caption text-grey-6 q-pa-md text-center">
-            {{ tdc('Sem marcações futuras') }}
+            {{ tdc('No upcoming appointments') }}
           </div>
           <q-list v-else separator>
             <q-item v-for="a in agendas.data" :key="a.id">
@@ -172,13 +172,13 @@
                     flat dense round size="sm" icon="edit" color="primary"
                     @click="openEditMarcacao(a)"
                   >
-                    <q-tooltip>{{ tdc('Editar') }}</q-tooltip>
+                    <q-tooltip>{{ tdc('Edit') }}</q-tooltip>
                   </q-btn>
                   <q-btn
                     flat dense round size="sm" icon="event_busy" color="negative"
                     @click="confirmCancelMarcacao(a)"
                   >
-                    <q-tooltip>{{ tdc('Cancelar') }}</q-tooltip>
+                    <q-tooltip>{{ tdc('Cancel') }}</q-tooltip>
                   </q-btn>
                 </div>
               </q-item-section>
@@ -195,7 +195,7 @@
         <s-card flat bordered :class="alergias.data.length ? 'border-negative' : ''">
           <q-card-section class="row items-center">
             <q-icon name="warning" color="negative" class="q-mr-xs" />
-            <div class="text-subtitle2 text-weight-medium">{{ tdc('Alergias') }}</div>
+            <div class="text-subtitle2 text-weight-medium">{{ tdc('Allergies') }}</div>
             <q-space />
             <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_alergiacorrente' }" />
           </q-card-section>
@@ -205,7 +205,7 @@
               <q-spinner color="primary" size="20px" />
             </div>
             <div v-else-if="!alergias.data.length" class="text-caption text-grey-6">
-              {{ tdc('Nenhuma alergia registada') }}
+              {{ tdc('No allergy recorded') }}
             </div>
             <div v-else class="row q-gutter-xs">
               <q-badge v-for="a in alergias.data" :key="a.id" color="negative" outline>
@@ -219,7 +219,7 @@
         <s-card flat bordered>
           <q-card-section class="row items-center">
             <q-icon name="monitor_heart" color="primary" class="q-mr-xs" />
-            <div class="text-subtitle2 text-weight-medium">{{ tdc('Últimos Sinais Vitais') }}</div>
+            <div class="text-subtitle2 text-weight-medium">{{ tdc('Latest Vital Signs') }}</div>
             <q-space />
             <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_dadovital' }" />
           </q-card-section>
@@ -229,11 +229,11 @@
               <q-spinner color="primary" size="20px" />
             </div>
             <div v-else-if="!vitais.data" class="text-caption text-grey-6">
-              {{ tdc('Sem registos') }}
+              {{ tdc('No records') }}
             </div>
             <div v-else class="row q-col-gutter-sm">
               <div class="col-6" v-if="vitais.data.ta_sistolica">
-                <div class="text-caption text-grey-6">{{ tdc('TA') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Blood Pressure') }}</div>
                 <div class="text-weight-medium">{{ vitais.data.ta_sistolica }}/{{ vitais.data.ta_diastolica }}</div>
               </div>
               <div class="col-6" v-if="vitais.data.temperatura">
@@ -241,7 +241,7 @@
                 <div class="text-weight-medium">{{ vitais.data.temperatura }}°C</div>
               </div>
               <div class="col-6" v-if="vitais.data.frequencia_cardiaca">
-                <div class="text-caption text-grey-6">{{ tdc('FC') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Heart Rate') }}</div>
                 <div class="text-weight-medium">{{ vitais.data.frequencia_cardiaca }} bpm</div>
               </div>
               <div class="col-6" v-if="vitais.data.saturacao_oxigenio">
@@ -249,7 +249,7 @@
                 <div class="text-weight-medium">{{ vitais.data.saturacao_oxigenio }}%</div>
               </div>
               <div class="col-6" v-if="vitais.data.peso">
-                <div class="text-caption text-grey-6">{{ tdc('Peso') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Weight') }}</div>
                 <div class="text-weight-medium">{{ vitais.data.peso }} kg</div>
               </div>
               <div class="col-12 text-caption text-grey-6 q-mt-xs">
@@ -263,7 +263,7 @@
         <s-card flat bordered>
           <q-card-section class="row items-center">
             <q-icon name="coronavirus" color="warning" class="q-mr-xs" />
-            <div class="text-subtitle2 text-weight-medium">{{ tdc('Doenças Correntes') }}</div>
+            <div class="text-subtitle2 text-weight-medium">{{ tdc('Current Conditions') }}</div>
             <q-space />
             <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_doencacorrente' }" />
           </q-card-section>
@@ -273,7 +273,7 @@
               <q-spinner color="primary" size="20px" />
             </div>
             <div v-else-if="!doencas.data.length" class="text-caption text-grey-6">
-              {{ tdc('Nenhuma doença registada') }}
+              {{ tdc('No condition recorded') }}
             </div>
             <div v-else class="row q-gutter-xs">
               <q-badge v-for="d in doencas.data" :key="d.id" color="warning" outline>
@@ -287,7 +287,7 @@
         <s-card flat bordered>
           <q-card-section class="row items-center">
             <q-icon name="medication_liquid" color="secondary" class="q-mr-xs" />
-            <div class="text-subtitle2 text-weight-medium">{{ tdc('Medicação Corrente') }}</div>
+            <div class="text-subtitle2 text-weight-medium">{{ tdc('Current Medication') }}</div>
             <q-space />
             <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_medicacaocorrente' }" />
           </q-card-section>
@@ -297,7 +297,7 @@
               <q-spinner color="primary" size="20px" />
             </div>
             <div v-else-if="!medicacao.data.length" class="text-caption text-grey-6">
-              {{ tdc('Nenhuma medicação registada') }}
+              {{ tdc('No medication recorded') }}
             </div>
             <div v-else class="row q-gutter-xs">
               <q-badge v-for="m in medicacao.data" :key="m.id" color="secondary" outline>
@@ -349,10 +349,10 @@ function openEditMarcacao(a) {
 
 function confirmCancelMarcacao(a) {
   $q.dialog({
-    title: tdc('Cancelar Consulta'),
-    message: tdc('Tem a certeza que deseja cancelar esta marcação?'),
-    cancel: { flat: true, label: tdc('Não') },
-    ok: { color: 'negative', label: tdc('Sim, Cancelar') },
+    title: tdc('Cancel Consultation'),
+    message: tdc('Are you sure you want to cancel this appointment?'),
+    cancel: { flat: true, label: tdc('No') },
+    ok: { color: 'negative', label: tdc('Yes, Cancel') },
     persistent: true,
   }).onOk(async () => {
     await HTTPAuth.patch(url({ type: 'u', url: `saude/agendas/${a.id}/` }), { estado: 'cancelada' })
@@ -395,9 +395,9 @@ function timelineIcon(type) {
 function timelineSummary(e) {
   if (e.summary) return e.summary
   return {
-    consultation: tdc('Consulta'),
-    prescription: tdc('Receita Médica'),
-    lab_request: tdc('Pedido de Exame'),
+    consultation: tdc('Consultation'),
+    prescription: tdc('Medical Prescription'),
+    lab_request: tdc('Exam Request'),
   }[e.type] || e.type
 }
 

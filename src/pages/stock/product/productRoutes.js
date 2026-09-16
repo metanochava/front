@@ -6,7 +6,7 @@ export let productRoutes = [
     name: 'list_product',
     component: () => import('./ProductLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Produtos'),
+      title: tdc('View of') + ' ' + tdc('Products'),
       requiresAuth: true,
       icon: 'inventory_2',
       requiredRole: 'list_product',

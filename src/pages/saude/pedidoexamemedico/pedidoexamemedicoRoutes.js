@@ -7,7 +7,7 @@ export let pedidoexamemedicoRoutes = [
     name: 'list_pedidoexamemedico',
     component: () => import('./PedidoexamemedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('pedidoexamemedico'),
+      title: tdc('View of') + ' ' + tdc('exam request'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_pedidoexamemedico',
@@ -18,7 +18,7 @@ export let pedidoexamemedicoRoutes = [
     name: 'add_pedidoexamemedico',
     component: () => import('./PedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('pedidoexamemedico'),
+      title: tdc('Add') + ' ' + tdc('exam request'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_pedidoexamemedico',
@@ -29,7 +29,7 @@ export let pedidoexamemedicoRoutes = [
     name: 'change_pedidoexamemedico',
     component: () => import('./PedidoexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('pedidoexamemedico'),
+      title: tdc('Edit') + ' ' + tdc('exam request'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_pedidoexamemedico',
@@ -40,7 +40,7 @@ export let pedidoexamemedicoRoutes = [
     name: 'view_pedidoexamemedico',
     component: () => import('./PedidoexamemedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('pedidoexamemedico'),
+      title: tdc('View') + ' ' + tdc('exam request'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_pedidoexamemedico',

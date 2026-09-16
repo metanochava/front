@@ -7,7 +7,7 @@ export let filafarmaciaRoutes = [
     name: 'list_filafarmacia',
     component: () => import('./FilafarmaciaLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('Fila de Farmácia'),
+      title: tdc('View of') + ' ' + tdc('Pharmacy Queue'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_filafarmacia',
@@ -18,7 +18,7 @@ export let filafarmaciaRoutes = [
     name: 'add_filafarmacia',
     component: () => import('./FilafarmaciaSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('Fila de Farmácia'),
+      title: tdc('Add') + ' ' + tdc('Pharmacy Queue'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_filafarmacia',
@@ -29,7 +29,7 @@ export let filafarmaciaRoutes = [
     name: 'change_filafarmacia',
     component: () => import('./FilafarmaciaSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('Fila de Farmácia'),
+      title: tdc('Edit') + ' ' + tdc('Pharmacy Queue'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_filafarmacia',
@@ -40,7 +40,7 @@ export let filafarmaciaRoutes = [
     name: 'view_filafarmacia',
     component: () => import('./FilafarmaciaVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('Fila de Farmácia'),
+      title: tdc('View') + ' ' + tdc('Pharmacy Queue'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_filafarmacia',

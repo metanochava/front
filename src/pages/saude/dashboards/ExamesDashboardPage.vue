@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">
           <q-icon name="biotech" class="q-mr-xs" />
-          {{ tdc('Exames') }}
+          {{ tdc('Exams') }}
         </div>
       </q-card-section>
 
@@ -19,7 +19,7 @@
           <div class="col-4">
             <s-card flat bordered>
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Total de Pedidos') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Total Requests') }}</div>
                 <div class="text-h5 text-weight-bold">{{ data.total_pedidos }}</div>
               </q-card-section>
             </s-card>
@@ -27,7 +27,7 @@
           <div class="col-4">
             <s-card flat bordered class="border-negative">
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Urgentes') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Urgent') }}</div>
                 <div class="text-h5 text-weight-bold text-negative">{{ data.urgentes_count }}</div>
               </q-card-section>
             </s-card>
@@ -35,7 +35,7 @@
           <div class="col-4">
             <s-card flat bordered class="border-warning">
               <q-card-section>
-                <div class="text-caption text-grey-6">{{ tdc('Pendentes') }}</div>
+                <div class="text-caption text-grey-6">{{ tdc('Pending') }}</div>
                 <div class="text-h5 text-weight-bold text-warning">{{ data.pendentes_count }}</div>
               </q-card-section>
             </s-card>
@@ -44,10 +44,10 @@
 
         <q-card-section>
           <div class="text-subtitle2 text-weight-medium q-mb-sm">
-            {{ tdc('Itens por Estado') }}
+            {{ tdc('Items by Status') }}
           </div>
           <div v-if="!data.por_estado.length" class="text-caption text-grey-6">
-            {{ tdc('Sem dados') }}
+            {{ tdc('No data') }}
           </div>
           <div v-else class="row q-gutter-sm">
             <q-badge

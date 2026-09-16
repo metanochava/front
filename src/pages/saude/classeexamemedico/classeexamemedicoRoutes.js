@@ -7,7 +7,7 @@ export let classeexamemedicoRoutes = [
     name: 'list_classeexamemedico',
     component: () => import('./ClasseexamemedicoLPage.vue'),
     meta: {
-      title: tdc('Vista de') + ' ' + tdc('classeexamemedico'),
+      title: tdc('View of') + ' ' + tdc('exam class'),
       requiresAuth: true,
       icon: 'list',
       requiredRole: 'list_classeexamemedico',
@@ -18,7 +18,7 @@ export let classeexamemedicoRoutes = [
     name: 'add_classeexamemedico',
     component: () => import('./ClasseexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Adicionar') + ' ' + tdc('classeexamemedico'),
+      title: tdc('Add') + ' ' + tdc('exam class'),
       requiresAuth: true,
       icon: 'add',
       requiredRole: 'add_classeexamemedico',
@@ -29,7 +29,7 @@ export let classeexamemedicoRoutes = [
     name: 'change_classeexamemedico',
     component: () => import('./ClasseexamemedicoSEPage.vue'),
     meta: {
-      title: tdc('Editar') + ' ' + tdc('classeexamemedico'),
+      title: tdc('Edit') + ' ' + tdc('exam class'),
       requiresAuth: true,
       icon: 'edit',
       requiredRole: 'change_classeexamemedico',
@@ -40,7 +40,7 @@ export let classeexamemedicoRoutes = [
     name: 'view_classeexamemedico',
     component: () => import('./ClasseexamemedicoVPage.vue'),
     meta: {
-      title: tdc('Visualizar') + ' ' + tdc('classeexamemedico'),
+      title: tdc('View') + ' ' + tdc('exam class'),
       requiresAuth: true,
       icon: 'visibility',
       requiredRole: 'view_classeexamemedico',

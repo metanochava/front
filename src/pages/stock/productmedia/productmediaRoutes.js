@@ -6,7 +6,7 @@ export let productmediaRoutes = [
     name: 'view_product_gallery',
     component: () => import('./ProductGalleryPage.vue'),
     meta: {
-      title: tdc('Galeria') + ' ' + tdc('do Produto'),
+      title: tdc('Gallery') + ' ' + tdc('of Product'),
       requiresAuth: true,
       icon: 'photo_library',
       requiredRole: 'list_productmedia',

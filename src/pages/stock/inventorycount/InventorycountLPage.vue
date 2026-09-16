@@ -2,9 +2,9 @@
   <q-page class="q-pa-sm">
     <div class="text-h6 q-mb-sm row items-center">
       <q-icon name="fact_check" class="q-mr-sm" />
-      {{ tdc('Contagens Físicas') }}
+      {{ tdc('Physical Counts') }}
       <q-space />
-      <q-btn color="primary" icon="add" :label="tdc('Nova Contagem')" @click="openForm" />
+      <q-btn color="primary" icon="add" :label="tdc('New Count')" @click="openForm" />
     </div>
 
     <q-table
@@ -28,20 +28,20 @@
 
     <q-dialog v-model="showForm">
       <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Nova Contagem Física') }}</q-card-section>
+        <q-card-section class="text-h6">{{ tdc('New Physical Count') }}</q-card-section>
         <q-card-section class="q-gutter-md">
           <s-select
             v-model="warehouse"
             :api="warehouseSelectUrl"
             option-label="label" option-value="value"
             emit-value map-options
-            :label="tdc('Armazém')"
+            :label="tdc('Warehouse')"
           />
-          <q-input v-model="observacao" type="textarea" :label="tdc('Observação')" />
+          <q-input v-model="observacao" type="textarea" :label="tdc('Observation')" />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="tdc('Cancelar')" v-close-popup />
-          <q-btn color="primary" :label="tdc('Criar')" :loading="saving" @click="createCount" />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup />
+          <q-btn color="primary" :label="tdc('Create')" :loading="saving" @click="createCount" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -60,10 +60,10 @@ const router = useRouter()
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
 const columns = [
-  { name: 'data', label: tdc('Data'), field: 'data', align: 'left' },
-  { name: 'warehouse', label: tdc('Armazém'), field: row => row.warehouse?.label, align: 'left' },
-  { name: 'estado', label: tdc('Estado'), field: 'estado', align: 'left' },
-  { name: 'observacao', label: tdc('Observação'), field: 'observacao', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'warehouse', label: tdc('Warehouse'), field: row => row.warehouse?.label, align: 'left' },
+  { name: 'estado', label: tdc('Status'), field: 'estado', align: 'left' },
+  { name: 'observacao', label: tdc('Observation'), field: 'observacao', align: 'left' },
 ]
 
 const pagination = ref({ page: 1, rowsPerPage: 10, rowsNumber: 0 })
