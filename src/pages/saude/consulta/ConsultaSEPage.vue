@@ -8,7 +8,14 @@
     <PacienteHeader />
     <!-- FORM -->
     <div v-if="Consulta.loading" class="flex flex-center q-pa-lg">
-      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /> </div> <s-form-two v-else :store="Consulta" :ignore-fields="['id', 'entidade', 'branch', 'state', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']" @saved="onSaved" />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+    </div>
+    <s-form-two
+      v-else
+      :store="Consulta"
+      :ignore-fields="['id', 'entidade', 'branch', 'state', 'created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
+      @saved="onSaved"
+    />
   </q-page>
 </template>
 

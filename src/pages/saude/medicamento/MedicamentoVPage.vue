@@ -1,7 +1,13 @@
 <template>
   <q-page class="q-pa-sm">
     <div v-if="Medicamento.loading" class="flex flex-center q-pa-lg">
-      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /> </div> <s-form v-else :store="Medicamento" :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']" />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+    </div>
+    <s-form
+      v-else
+      :store="Medicamento"
+      :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
+    />
   </q-page>
 </template>
 

@@ -76,7 +76,15 @@
               >
                 <template #prepend><q-icon name="qr_code_scanner" /></template>
                 <template #append>
-                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" v-if="scanning" /> <q-icon v-else-if="scanFeedback === 'ok'" name="check" /> <q-icon v-else-if="scanFeedback === 'error'" name="close" /> <q-separator vertical inset class="q-mx-xs" /> <q-btn flat round dense icon="photo_camera" :title="tdc('Scan with camera')" @click="showCameraScanner = true" />
+                  <q-spinner v-if="scanning" :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+                  <q-icon v-else-if="scanFeedback === 'ok'" name="check" color="positive" />
+                  <q-icon v-else-if="scanFeedback === 'error'" name="close" color="negative" />
+                  <q-separator vertical inset class="q-mx-xs" />
+                  <q-btn
+                    flat round dense icon="photo_camera" color="primary"
+                    :title="tdc('Scan with camera')"
+                    @click="showCameraScanner = true"
+                  />
                 </template>
               </q-input>
               <div v-if="scanError" class="text-negative text-caption q-mt-xs">{{ scanError }}</div>
