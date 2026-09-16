@@ -1,14 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div v-if="Classeexamemedico.loading" class="flex flex-center q-pa-lg">
-      <q-spinner size="40px" color="primary" />
-    </div>
-    <s-form-two
-      v-else
-      :store="Classeexamemedico"
-      :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
-      @saved="onSaved"
-    />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /> </div> <s-form-two v-else :store="Classeexamemedico" :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']" @saved="onSaved" />
   </q-page>
 </template>
 

@@ -76,15 +76,7 @@
               >
                 <template #prepend><q-icon name="qr_code_scanner" /></template>
                 <template #append>
-                  <q-spinner v-if="scanning" size="20px" />
-                  <q-icon v-else-if="scanFeedback === 'ok'" name="check" color="positive" />
-                  <q-icon v-else-if="scanFeedback === 'error'" name="close" color="negative" />
-                  <q-separator vertical inset class="q-mx-xs" />
-                  <q-btn
-                    flat round dense icon="photo_camera" color="primary"
-                    :title="tdc('Scan with camera')"
-                    @click="showCameraScanner = true"
-                  />
+                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" v-if="scanning" /> <q-icon v-else-if="scanFeedback === 'ok'" name="check" /> <q-icon v-else-if="scanFeedback === 'error'" name="close" /> <q-separator vertical inset class="q-mx-xs" /> <q-btn flat round dense icon="photo_camera" :title="tdc('Scan with camera')" @click="showCameraScanner = true" />
                 </template>
               </q-input>
               <div v-if="scanError" class="text-negative text-caption q-mt-xs">{{ scanError }}</div>
@@ -119,7 +111,7 @@
               </div>
 
               <div v-if="quickLoading" class="flex flex-center q-pa-md">
-                <q-spinner color="primary" size="24px" />
+                <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
               </div>
               <div v-else-if="!quickProducts.length" class="text-caption text-grey-6">
                 {{ tdc('No products') }}

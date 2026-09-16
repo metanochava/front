@@ -1,11 +1,6 @@
 <template>
   <q-page>
     <s-dashboard-home />
-
-    <s-dashboard-renderer name="notifications" />
-    <s-dashboard-renderer name="django_resaas" />
-    <s-dashboard-renderer name="hr" />
-    <s-dashboard-renderer name="saude" />
   </q-page>
 </template>
 

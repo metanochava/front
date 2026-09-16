@@ -34,7 +34,7 @@ if(siteRoutes.length !== 0 ){
       component: MainLayout,
       children: [
         {
-          path: '',
+          path: '/home',
           component: () => import('src/pages/IndexPage.vue'),
           name: 'home'
         },
@@ -58,9 +58,7 @@ if(siteRoutes.length !== 0 ){
         ...stockRoutes,
         ...saudeRoutes,
         ...vendasRoutes,
-        ...farmaciaRoutes,
-
-      ],
+        ...farmaciaRoutes],
     },
 
     {

@@ -6,11 +6,11 @@ export let amalSiteRoutes = [
     component: () => import('./layouts/MainLayoutt.vue'),
     children: [
       {
-        path: '',
+        path: '/home',
         component: () => import('./pages/HomePage.vue'),
         name: 'home',
         meta: {
-          title: tdc('Bem vindo a clinica amal'),
+          title: tdc('Welcome'),
           icon: 'inventory_2',
         },
       },

@@ -22,7 +22,7 @@
         />
 
         <div v-if="starting" class="flex flex-center q-pa-md">
-          <q-spinner color="primary" size="32px" />
+          <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
         </div>
 
         <div v-if="errorMsg" class="text-negative text-caption q-mt-sm text-center">

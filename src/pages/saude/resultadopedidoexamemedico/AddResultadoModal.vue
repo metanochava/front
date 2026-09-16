@@ -180,6 +180,10 @@ watch(() => props.modelValue, (val) => {
 <style scoped>
 /* opcional: scroll suave */
 iframe {
+  background: #fff;
+}
+
+body.body--dark iframe {
   background: #1e1e1e;
 }
 </style>

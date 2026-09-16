@@ -41,7 +41,7 @@
               @saved="onSaved"
             />
             <div v-else class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="28px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
           </q-card-section>
         </s-card>
@@ -85,7 +85,7 @@
   </q-page>
 
   <q-page v-else class="flex flex-center">
-    <q-spinner color="primary" size="40px" />
+    <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
   </q-page>
 </template>
 

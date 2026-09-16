@@ -17,7 +17,7 @@
             <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Total Stock Value') }}</div>
 
             <div v-if="stockValue.loading" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="32px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="stockValue.error" class="text-negative text-caption">{{ stockValue.error }}</div>
             <template v-else>
@@ -42,7 +42,7 @@
             </div>
 
             <div v-if="lowStock.loading" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="32px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="lowStock.error" class="text-negative text-caption">{{ lowStock.error }}</div>
             <div v-else-if="!lowStock.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
@@ -71,7 +71,7 @@
             </div>
 
             <div v-if="stale.loading" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="32px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="stale.error" class="text-negative text-caption">{{ stale.error }}</div>
             <div v-else-if="!stale.data?.produtos?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
@@ -95,7 +95,7 @@
             <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Recent Movements') }}</div>
 
             <div v-if="recentMovements.loading" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="32px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="recentMovements.error" class="text-negative text-caption">{{ recentMovements.error }}</div>
             <div v-else-if="!recentMovements.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
@@ -123,7 +123,7 @@
             <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Discrepancies from Last Count') }}</div>
 
             <div v-if="countVariance.loading" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="32px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="countVariance.error" class="text-negative text-caption">{{ countVariance.error }}</div>
             <div v-else-if="!countVariance.data?.inventory_count" class="text-caption text-grey-6">{{ tdc('No data') }}</div>

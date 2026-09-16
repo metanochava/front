@@ -208,7 +208,7 @@
   </q-page>
 
   <q-page v-else class="flex flex-center">
-    <q-spinner color="primary" size="40px" />
+    <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
   </q-page>
 </template>
 

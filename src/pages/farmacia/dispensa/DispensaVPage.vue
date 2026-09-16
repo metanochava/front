@@ -2,13 +2,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div v-if="Dispensa.loading" class="flex flex-center q-pa-lg">
-      <q-spinner size="40px" color="primary" />
-    </div>
-    <s-form
-      v-else
-      :store="Dispensa"
-      :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
-    />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /> </div> <s-form v-else :store="Dispensa" :ignore-fields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']" />
   </q-page>
 </template>
 

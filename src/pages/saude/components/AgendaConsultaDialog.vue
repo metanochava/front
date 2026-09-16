@@ -14,7 +14,7 @@
       </q-card-section>
 
       <q-card-section v-if="loadingEdit" class="flex flex-center q-pa-xl">
-        <q-spinner color="primary" size="32px" />
+        <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
       </q-card-section>
 
       <q-card-section v-else class="q-pt-none">
@@ -77,7 +77,7 @@
             :done="step > 2 && !!form.medico"
           >
             <div v-if="loadingMedicos" class="flex flex-center q-pa-md">
-              <q-spinner color="primary" size="28px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="!medicoOptions.length" class="text-caption text-grey-6 q-pa-md text-center">
               {{ tdc('No active doctor found for this specialty.') }}
@@ -151,7 +151,7 @@
                 </div>
 
                 <div v-if="loadingSlots" class="flex flex-center q-pa-md">
-                  <q-spinner color="primary" size="24px" />
+                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
                 </div>
                 <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
                   <q-icon name="warning" class="q-mr-xs" />

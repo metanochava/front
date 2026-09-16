@@ -43,10 +43,7 @@
       v-if="Relatoriomedico.loading"
       class="flex flex-center q-pa-xl"
     >
-      <q-spinner
-        color="primary"
-        size="42px"
-      />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
     </div>
 
     <s-card

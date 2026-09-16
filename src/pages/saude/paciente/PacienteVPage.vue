@@ -3,7 +3,7 @@
     <PacienteHeader />
 
     <div v-if="Paciente.loading" class="flex flex-center q-pa-xl">
-      <q-spinner size="40px" color="primary" />
+      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
     </div>
 
     <div v-else class="row q-col-gutter-md">
@@ -61,7 +61,7 @@
           <q-separator />
 
           <div v-if="timeline.loading" class="flex flex-center q-pa-md">
-            <q-spinner color="primary" size="24px" />
+            <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
           </div>
           <div v-else-if="!timeline.data.length" class="text-caption text-grey-6 q-pa-md text-center">
             {{ tdc('No events') }}
@@ -108,7 +108,7 @@
           <q-separator />
 
           <div v-if="consultas.loading" class="flex flex-center q-pa-md">
-            <q-spinner color="primary" size="24px" />
+            <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
           </div>
           <div v-else-if="!consultas.data.length" class="text-caption text-grey-6 q-pa-md text-center">
             {{ tdc('No consultations recorded') }}
@@ -149,7 +149,7 @@
           <q-separator />
 
           <div v-if="agendas.loading" class="flex flex-center q-pa-md">
-            <q-spinner color="primary" size="24px" />
+            <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
           </div>
           <div v-else-if="!agendas.data.length" class="text-caption text-grey-6 q-pa-md text-center">
             {{ tdc('No upcoming appointments') }}
@@ -202,7 +202,7 @@
           <q-separator />
           <q-card-section>
             <div v-if="alergias.loading" class="flex flex-center q-pa-sm">
-              <q-spinner color="primary" size="20px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="!alergias.data.length" class="text-caption text-grey-6">
               {{ tdc('No allergy recorded') }}
@@ -226,7 +226,7 @@
           <q-separator />
           <q-card-section>
             <div v-if="vitais.loading" class="flex flex-center q-pa-sm">
-              <q-spinner color="primary" size="20px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="!vitais.data" class="text-caption text-grey-6">
               {{ tdc('No records') }}
@@ -270,7 +270,7 @@
           <q-separator />
           <q-card-section>
             <div v-if="doencas.loading" class="flex flex-center q-pa-sm">
-              <q-spinner color="primary" size="20px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="!doencas.data.length" class="text-caption text-grey-6">
               {{ tdc('No condition recorded') }}
@@ -294,7 +294,7 @@
           <q-separator />
           <q-card-section>
             <div v-if="medicacao.loading" class="flex flex-center q-pa-sm">
-              <q-spinner color="primary" size="20px" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
             </div>
             <div v-else-if="!medicacao.data.length" class="text-caption text-grey-6">
               {{ tdc('No medication recorded') }}

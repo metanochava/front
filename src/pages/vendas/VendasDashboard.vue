@@ -51,7 +51,7 @@
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Sales Over Time') }}</div>
 
-            <div v-if="timeseries.loading" class="flex flex-center q-pa-xl"><q-spinner color="primary" size="32px" /></div>
+            <div v-if="timeseries.loading" class="flex flex-center q-pa-xl"><q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /></div>
             <div v-else-if="timeseries.error" class="text-negative text-caption">{{ timeseries.error }}</div>
             <div v-else-if="!timeseries.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
             <div v-else>
@@ -73,7 +73,7 @@
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-md">{{ tdc('Sales by Status') }}</div>
 
-            <div v-if="byEstado.loading" class="flex flex-center q-pa-xl"><q-spinner color="primary" size="32px" /></div>
+            <div v-if="byEstado.loading" class="flex flex-center q-pa-xl"><q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /></div>
             <div v-else-if="byEstado.error" class="text-negative text-caption">{{ byEstado.error }}</div>
             <div v-else-if="!byEstado.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
             <div v-else v-for="row in byEstado.data" :key="row.estado" class="row items-center justify-between q-py-2">
@@ -93,7 +93,7 @@
         <s-card flat bordered class="full-height">
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Products') }}</div>
-            <div v-if="topProducts.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
+            <div v-if="topProducts.loading" class="flex flex-center q-pa-md"><q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /></div>
             <div v-else-if="topProducts.error" class="text-negative text-caption">{{ topProducts.error }}</div>
             <div v-else-if="!topProducts.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
             <q-list v-else dense separator>
@@ -111,7 +111,7 @@
         <s-card flat bordered class="full-height">
           <q-card-section>
             <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Top Customers') }}</div>
-            <div v-if="topCustomers.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
+            <div v-if="topCustomers.loading" class="flex flex-center q-pa-md"><q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /></div>
             <div v-else-if="topCustomers.error" class="text-negative text-caption">{{ topCustomers.error }}</div>
             <div v-else-if="!topCustomers.data?.length" class="text-caption text-grey-6">{{ tdc('No data') }}</div>
             <q-list v-else dense separator>
@@ -132,7 +132,7 @@
               <q-icon name="account_balance_wallet" color="negative" class="q-mr-xs" />
               {{ tdc('Accounts Receivable') }}
             </div>
-            <div v-if="receivables.loading" class="flex flex-center q-pa-md"><q-spinner color="primary" size="28px" /></div>
+            <div v-if="receivables.loading" class="flex flex-center q-pa-md"><q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" /></div>
             <div v-else-if="receivables.error" class="text-negative text-caption">{{ receivables.error }}</div>
             <template v-else>
               <div class="text-h6 text-weight-bold q-mb-sm">{{ formatCurrency(receivables.data?.total_em_divida) }}</div>

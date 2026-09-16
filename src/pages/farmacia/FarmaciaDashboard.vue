@@ -18,7 +18,7 @@
           <q-card-section>
             <div class="text-caption text-grey-6">{{ tdc(c.label) }}</div>
             <div class="text-h5 text-weight-bold" :class="c.textClass">
-              <q-spinner v-if="loading" size="20px" color="primary" />
+              <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" v-if="loading" />
               <span v-else>{{ counts[c.estado] ?? '—' }}</span>
             </div>
           </q-card-section>
