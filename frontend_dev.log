@@ -13,11 +13,11 @@ Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
        Y8b
 
  App • Using quasar.config.js in "esm" format
-[dotenv@17.2.3] injecting env (14) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (15) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
  App •  TIP  • 🚀  You (or an AE) specified an explicit quasar.config file > devServer > port. It is recommended to use a different devServer > port for each Quasar mode to avoid browser cache issues. Example: ctx.mode.ssr ? 9100 : ...
  App • Using .env files: .env
 
- » Reported at............ 9/17/2026 2:51:38 AM
+ » Reported at............ 9/17/2026 6:56:55 PM
  » App dir................ /var/www/dev/front
  » App URL................ http://localhost:9000/
                            http://84.247.162.222:9000/
@@ -31,16 +31,4 @@ Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
 Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-The request id "/var/www/dev/front/.git/config" is outside of Vite serving allow list.
-
-- /var/www/dev/front
-
-Refer to docs https://vite.dev/config/server-options.html#server-fs-allow for configurations and more details.
-
-The request id "/var/www/dev/front/.env" is outside of Vite serving allow list.
-The request id "/var/www/dev/front/.env.example" is outside of Vite serving allow list.
-Files in the public directory are served at the root path.
-Instead of /public/.env, use /.env.
-Files in the public directory are served at the root path.
-Instead of /public/phpinfo.php, use /phpinfo.php.
 Killed
