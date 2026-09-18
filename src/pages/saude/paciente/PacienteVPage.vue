@@ -22,30 +22,6 @@
       </q-banner>
 
 
-      <!-- IDENTIDADE (header) -->
-      <s-card flat bordered>
-        <q-card-section class="row items-center q-col-gutter-md">
-          <q-avatar size="72px" color="primary" text-color="white">
-            <img v-if="Paciente.row?.person_data?.photo?.url" :src="Paciente.row.person_data.photo.url">
-            <q-icon v-else name="person" />
-          </q-avatar>
-
-          <div class="col">
-            <div class="text-h6 text-weight-bold">{{ Paciente.row?.person?.label || '—' }}</div>
-            <div class="text-caption text-grey-7">
-              {{ tdc('Patient No.') }}: {{ Paciente.row?.nid || '—' }}
-            </div>
-          </div>
-
-          <q-btn
-            flat round icon="edit" color="primary"
-            :to="{ name: 'change_paciente', params: { id: Paciente.row?.id } }"
-          >
-            <q-tooltip>{{ tdc('Edit Data') }}</q-tooltip>
-          </q-btn>
-        </q-card-section>
-      </s-card>
-
       <!-- ============== TABS (same layout as view_employee) ============== -->
       <s-card class="q-mt-md">
         <q-tabs
@@ -68,46 +44,44 @@
 
           <!-- PERSONAL: patient data + shared person profile -->
           <q-tab-panel name="personal" class="q-pa-md">
-            <div class="column q-gutter-md">
-              <s-card flat bordered>
+            <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data">
+              <template #aside>
+                <s-card flat bordered class="patient-data">
+                  <q-card-section class="section-title">
+                    <q-icon name="medical_information" size="20px" />
+                    {{ tdc('Patient data') }}
+                  </q-card-section>
+                  <q-separator />
 
-            <q-card-section class="row q-col-gutter-md">
-              <div class="col-6 col-sm-3">
-                <div class="text-caption text-grey-6">{{ tdc('Status') }}</div>
-                <q-badge :color="statusColor" class="q-pa-xs">{{ displayValue(Paciente.row?.status) || '—' }}</q-badge>
-              </div>
-              <div class="col-6 col-sm-3">
-                <div class="text-caption text-grey-6">{{ tdc('Occupation') }}</div>
-                <div>{{ Paciente.row?.person_data?.occupation || '—' }}</div>
-              </div>
-              <div class="col-6 col-sm-3">
-                <div class="text-caption text-grey-6">{{ tdc('Religion') }}</div>
-                <div>{{ Paciente.row?.religion || '—' }}</div>
-              </div>
-              <div class="col-6 col-sm-3">
-                <div class="text-caption text-grey-6">{{ tdc('Blood type') }}</div>
-                <div>{{ displayValue(Paciente.row?.person_data?.blood_type) || '—' }}</div>
-              </div>
-            </q-card-section>
+                  <q-list class="patient-data__list">
+                    <q-item v-for="item in patientFacts" :key="item.label" dense class="patient-data__item">
+                      <q-item-section avatar class="patient-data__icon">
+                        <q-icon :name="item.icon" size="18px" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label caption class="patient-data__label">{{ item.label }}</q-item-label>
+                        <q-item-label>
+                          <q-badge v-if="item.badge" :color="item.badge" class="q-pa-xs">{{ item.value }}</q-badge>
+                          <span v-else :class="{ 'text-grey-6': !item.value }">{{ item.value || '—' }}</span>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
 
-            <template v-if="Paciente.row?.special_needs || Paciente.row?.care_preferences">
-              <q-separator />
-              <q-card-section class="row q-col-gutter-md">
-                <div v-if="Paciente.row?.special_needs" class="col-12 col-sm-6">
-                  <div class="text-caption text-grey-6">{{ tdc('Special needs') }}</div>
-                  <div class="pre-line">{{ Paciente.row.special_needs }}</div>
-                </div>
-                <div v-if="Paciente.row?.care_preferences" class="col-12 col-sm-6">
-                  <div class="text-caption text-grey-6">{{ tdc('Care preferences') }}</div>
-                  <div class="pre-line">{{ Paciente.row.care_preferences }}</div>
-                </div>
-              </q-card-section>
-            </template>
-
-              </s-card>
-
-              <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data" />
-            </div>
+                  <template v-if="patientNotes.length">
+                    <q-separator />
+                    <q-card-section class="column q-gutter-y-md">
+                      <div v-for="note in patientNotes" :key="note.label" class="patient-note" :class="note.tone">
+                        <div class="patient-note__label">
+                          <q-icon :name="note.icon" size="16px" /> {{ note.label }}
+                        </div>
+                        <div class="pre-line">{{ note.value }}</div>
+                      </div>
+                    </q-card-section>
+                  </template>
+                </s-card>
+              </template>
+            </s-person-profile>
           </q-tab-panel>
 
           <!-- CLINICAL SUMMARY -->
@@ -416,6 +390,37 @@ const Paciente = usePacienteStore()
 
 const tab = ref('personal')
 
+function formatDate(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  return Number.isNaN(date.getTime())
+    ? ''
+    : date.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' })
+}
+
+// Only administrative facts about the PATIENT record itself - identity
+// (occupation, blood type, ...) already shows in the person profile beside it.
+const patientFacts = computed(() => {
+  const row = Paciente.row || {}
+
+  return [
+    { icon: 'verified_user', label: tdc('Status'), value: tdc(displayValue(row.status)), badge: statusColor.value },
+    { icon: 'tag', label: tdc('Patient No.'), value: row.nid },
+    { icon: 'church', label: tdc('Religion'), value: row.religion },
+    { icon: 'apartment', label: tdc('Branch'), value: displayValue(row.branch) },
+    { icon: 'event_available', label: tdc('Registered on'), value: formatDate(row.created_at) }
+  ]
+})
+
+const patientNotes = computed(() => {
+  const row = Paciente.row || {}
+
+  return [
+    { icon: 'accessible', label: tdc('Special needs'), value: row.special_needs, tone: 'patient-note--info' },
+    { icon: 'favorite_border', label: tdc('Care preferences'), value: row.care_preferences, tone: 'patient-note--soft' }
+  ].filter(note => note.value)
+})
+
 const statusColor = computed(() => ({
   Active: 'positive',
   Inactive: 'grey',
@@ -609,6 +614,46 @@ onMounted(async () => {
 
 <style scoped>
 .pre-line { white-space: pre-line; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.section-title .q-icon { color: var(--q-primary); }
+
+.patient-data__item { min-height: 44px; }
+.patient-data__icon { min-width: 36px; color: var(--q-primary); }
+.patient-data__label {
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+
+.patient-note {
+  padding: 10px 12px;
+  border-radius: var(--s-radius, 8px);
+  border-left: 4px solid var(--q-primary);
+  background: color-mix(in srgb, var(--q-primary) 8%, transparent);
+}
+.patient-note--info {
+  border-left-color: var(--q-warning);
+  background: color-mix(in srgb, var(--q-warning) 12%, transparent);
+}
+.patient-note__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  opacity: .8;
+}
 .border-negative {
   border-color: var(--q-negative) !important;
 }
