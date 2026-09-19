@@ -6,11 +6,11 @@
       <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
     </div>
 
-    <Form
+    <s-form
       :store="Pedidoexamemedico"
       :ignore-fields="['created_at','updated_at', 'created_by', 'updated_by', 'deleted_at']"
     >
-    </Form>
+    </s-form>
   </q-page>
 </template>
 
@@ -21,7 +21,6 @@
 
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore'
 // import { FormTwo } from 'quasar_resaas'
-import { Form } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 
 // const route = useRoute()

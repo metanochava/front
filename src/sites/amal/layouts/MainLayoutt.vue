@@ -71,9 +71,9 @@
         <div class="q-pr-md text-h6" v-show="!$q.screen.lt.md">
         </div>
 
-        <HeaderDarkMode/>
-        <HeaderFullScreen/>
-        <HeaderLanguage/>
+        <s-header-dark-mode />
+        <s-header-full-screen />
+        <s-header-language />
 
       </q-toolbar>
 
@@ -198,12 +198,6 @@ import HomePage from "../pages/HomePage.vue"
 import RodapePage from '../pages/RodapePage.vue'
 
 
-import {
-  HeaderDarkMode,
-  HeaderLanguage,
-  HeaderFullScreen
-} from 'quasar_resaas'
-
 import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
 
 export default defineComponent({
@@ -211,9 +205,6 @@ export default defineComponent({
   name:'MainAmalLayout',
 
   components:{
-    HeaderDarkMode,
-    HeaderLanguage,
-    HeaderFullScreen,
     HomePage,
     RodapePage,
   },
