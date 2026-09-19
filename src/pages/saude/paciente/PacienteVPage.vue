@@ -378,7 +378,7 @@
 import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { tdc, HTTPAuth, url, displayValue, rawValue } from 'quasar_resaas'
+import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
@@ -389,6 +389,12 @@ const $q = useQuasar()
 const Paciente = usePacienteStore()
 
 const tab = ref('personal')
+
+// tab title: "<patient name> - Patient" once the record is loaded
+usePageTitle(() => {
+  const name = Paciente.row?.person_data?.full_name || Paciente.row?.person?.label
+  return name ? `${name} - ${tdc('Patient')}` : ''
+})
 
 function formatDate(value) {
   if (!value) return ''

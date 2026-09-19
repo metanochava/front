@@ -6,7 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
-import { installAuthGuard } from 'quasar_resaas'
+import { installAuthGuard, installPageTitle } from 'quasar_resaas'
 
 /*
  * If not building with SSR mode, you can
@@ -35,6 +35,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   installAuthGuard(Router)
+  installPageTitle(Router)
 
   return Router
 })

@@ -180,11 +180,7 @@
 
               <div class="text-subtitle1 text-weight-bold q-mt-xs">
 
-                {{
-                  User?.Group?.name
-                    ? tdc(User.Group.name)
-                    : tdc('User')
-                }}
+                {{ groupLabel(User?.Group) || tdc('User') }}
 
               </div>
 
@@ -340,6 +336,7 @@ import {
   useUserStore,
   tdc,
   ds,
+  groupLabel,
 } from 'quasar_resaas'
 
 
@@ -437,7 +434,7 @@ const activeContextLabel = computed(() => {
 
   if (User?.Group?.name) {
     parts.push(
-      tdc(User.Group.name),
+      groupLabel(User.Group),
     )
   }
 

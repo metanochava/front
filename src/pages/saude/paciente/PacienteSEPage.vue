@@ -149,7 +149,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 
-import { usePersonIntake, buildWritePayload, updateWithPayload, tdc, Alert } from 'quasar_resaas'
+import { usePersonIntake, buildWritePayload, updateWithPayload, usePageTitle, tdc, Alert } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 
@@ -174,6 +174,12 @@ const saving = ref(false)
 // (pacienteRoutes.js) - route.params.id tells them apart.
 const patientId = computed(() => route.params.id || null)
 const isEditMode = computed(() => !!patientId.value)
+
+// editing: "Edit patient - <name>" (add keeps the route's own title)
+usePageTitle(() => {
+  const name = Person.form.full_name || [Person.form.name, Person.form.surname].filter(Boolean).join(' ')
+  return isEditMode.value && name ? `${tdc('Edit patient')} - ${name}` : ''
+})
 
 // nid/state are generated/forced by the backend - never part of what the
 // user edits. The person's occupation and emergency contacts live on the
