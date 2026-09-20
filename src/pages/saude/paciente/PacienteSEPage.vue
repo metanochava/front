@@ -35,7 +35,7 @@
              address, documents, emergency contacts)
         ========================================== -->
         <div class="col-12">
-          <s-person-intake :intake="intake" />
+          <s-person-intake :intake="intake" :relation-config="personRelationConfig" />
         </div>
 
         <!-- =========================================
@@ -180,6 +180,13 @@ usePageTitle(() => {
   const name = Person.form.full_name || [Person.form.name, Person.form.surname].filter(Boolean).join(' ')
   return isEditMode.value && name ? `${tdc('Edit patient')} - ${name}` : ''
 })
+
+// The Person relation's own schema config (endpoint, permissions, preview) -
+// the same "existing person" picker add_employee uses. Not offered when
+// editing: the Person is fixed there.
+const personRelationConfig = computed(() =>
+  isEditMode.value ? null : intake.fieldOf(Paciente, 'person').relation_config || null
+)
 
 // nid/state are generated/forced by the backend - never part of what the
 // user edits. The person's occupation and emergency contacts live on the
