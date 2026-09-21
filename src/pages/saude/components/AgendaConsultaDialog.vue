@@ -1,23 +1,16 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="onToggle" persistent>
-    <s-card style="width: 100%; max-width: 760px">
-      <q-card-section class="row items-center q-pb-none">
-        <q-icon name="event" class="q-mr-sm" color="primary" size="24px" />
-        <div class="text-h6">{{ isEditMode ? tdc('Edit Consultation') : tdc('Schedule Consultation') }}</div>
-        <q-space />
-        <q-btn flat round dense icon="close" @click="close" />
-      </q-card-section>
-
-      <q-card-section v-if="pacienteId" class="q-pt-none">
+    <s-modal-card :title="isEditMode ? tdc('Edit Consultation') : tdc('Schedule Consultation')" icon="event" width="760px" @close="close">
+      <div v-if="pacienteId">
         <div class="text-caption text-grey-6">{{ tdc('Patient') }}</div>
         <div class="text-subtitle1">{{ pacienteLabel || pacienteId }}</div>
-      </q-card-section>
+      </div>
 
-      <q-card-section v-if="loadingEdit" class="flex flex-center q-pa-xl">
+      <div v-if="loadingEdit" class="flex flex-center q-pa-xl">
         <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-      </q-card-section>
+      </div>
 
-      <q-card-section v-else class="q-pt-none">
+      <div v-else>
         <q-stepper
           v-model="step"
           flat
@@ -241,8 +234,8 @@
             </div>
           </q-step>
         </q-stepper>
-      </q-card-section>
-    </s-card>
+      </div>
+    </s-modal-card>
   </q-dialog>
 </template>
 

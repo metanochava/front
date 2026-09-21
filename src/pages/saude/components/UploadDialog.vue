@@ -1,120 +1,91 @@
 <template>
 
 <q-dialog v-model="dialog">
+  <s-modal-card title="Novo Resultado" icon="attach_file" width="900px">
+    <div class="row q-col-gutter-lg">
 
-<q-card style="width:900px;max-width:95vw">
+        <div class="col-md-6">
 
-    <q-bar :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-primary text-white'">
+            <s-file
 
-        <q-icon name="attach_file"/>
+                v-model="form.file"
 
-        <div class="q-ml-sm">
+                label="Selecionar ficheiro"
 
-            Novo Resultado
-
-        </div>
-
-        <q-space/>
-
-        <q-btn
-            flat
-            dense
-            icon="close"
-            v-close-popup
-        />
-
-    </q-bar>
-
-    <q-card-section>
-
-        <div class="row q-col-gutter-lg">
-
-            <div class="col-md-6">
-
-                <s-file
-
-                    v-model="form.file"
-
-                    label="Selecionar ficheiro"
-
-                />
-
-            </div>
-
-            <div class="col-md-6">
-
-                <s-input
-
-                    v-model="form.valor_resultado"
-
-                    label="Valor"
-
-                />
-
-            </div>
-
-            <div class="col-12">
-
-                <s-editor
-
-                    v-model="form.laudo"
-
-                    label="Laudo"
-
-                    min-height="160px"
-
-                />
-
-            </div>
-
-            <div class="col-12">
-
-                <s-editor
-
-                    v-model="form.observacao"
-
-                    label="Observações"
-
-                    min-height="120px"
-
-                />
-
-            </div>
+            />
 
         </div>
 
-    </q-card-section>
+        <div class="col-md-6">
 
-    <q-separator/>
+            <s-input
 
-    <q-card-actions align="right">
+                v-model="form.valor_resultado"
 
-        <s-btn
+                label="Valor"
 
-            flat
+            />
 
-            label="Cancelar"
+        </div>
 
-            v-close-popup
+        <div class="col-12">
 
-        />
+            <s-editor
 
-        <s-btn
+                v-model="form.laudo"
 
-            color="primary"
+                label="Laudo"
 
-            icon="cloud_upload"
+                min-height="160px"
 
-            label="Enviar"
+            />
 
-            @click="guardar"
+        </div>
 
-        />
+        <div class="col-12">
 
-    </q-card-actions>
+            <s-editor
 
-</q-card>
+                v-model="form.observacao"
 
+                label="Observações"
+
+                min-height="120px"
+
+            />
+
+        </div>
+
+    </div>
+
+
+
+    <template #footer>
+      <s-btn
+
+          flat
+
+          label="Cancelar"
+
+          v-close-popup
+
+      />
+
+      <s-btn
+
+          color="primary"
+
+          icon="cloud_upload"
+
+          label="Enviar"
+
+          @click="guardar"
+
+      />
+
+
+    </template>
+  </s-modal-card>
 </q-dialog>
 
 </template>

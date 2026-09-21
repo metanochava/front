@@ -27,9 +27,8 @@
     </q-table>
 
     <q-dialog v-model="showForm">
-      <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('New Physical Count') }}</q-card-section>
-        <q-card-section class="q-gutter-md">
+      <s-modal-card :title="tdc('New Physical Count')" width="380px">
+        <div class="q-gutter-md">
           <s-select
             v-model="warehouse"
             :api="warehouseSelectUrl"
@@ -38,12 +37,15 @@
             :label="tdc('Warehouse')"
           />
           <q-input v-model="observacao" type="textarea" :label="tdc('Observation')" />
-        </q-card-section>
-        <q-card-actions align="right">
+
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn color="primary" :label="tdc('Create')" :loading="saving" @click="createCount" />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
   </q-page>
 </template>

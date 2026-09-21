@@ -225,11 +225,7 @@
     </div>
 
     <q-dialog v-model="dialogs.tipo" persistent>
-      <s-card class="q-pa-md" style="width: 500px; max-width: 95vw;">
-        <div class="text-h6 q-mb-md">
-          Novo Tipo de Exame
-        </div>
-
+      <s-modal-card title="Novo Tipo de Exame" width="500px">
         <s-input
           v-model="tipoForm.nome"
           label="Nome"
@@ -255,31 +251,28 @@
           label="Activo"
         />
 
-        <div class="row justify-end q-gutter-sm q-mt-md">
+        <template #footer>
           <s-btn
-            flat
-            label="Cancelar"
-            color="grey"
-            @click="dialogs.tipo = false"
-          />
+                      flat
+                      label="Cancelar"
+                      color="grey"
+                      @click="dialogs.tipo = false"
+                    />
 
-          <s-btn
-            color="primary"
-            icon="save"
-            label="Gravar"
-            :loading="savingTipo"
-            @click="saveTipo"
-          />
-        </div>
-      </s-card>
+                    <s-btn
+                      color="primary"
+                      icon="save"
+                      label="Gravar"
+                      :loading="savingTipo"
+                      @click="saveTipo"
+                    />
+
+        </template>
+      </s-modal-card>
     </q-dialog>
 
     <q-dialog v-model="dialogs.classe" persistent>
-      <s-card class="q-pa-md" style="width: 600px; max-width: 95vw;">
-        <div class="text-h6 q-mb-md">
-          Nova Classe de Exame
-        </div>
-
+      <s-modal-card title="Nova Classe de Exame" width="600px">
         <s-select
           v-model="classeForm.tipo_exame_medico"
           label="Tipo de Exame"
@@ -314,31 +307,28 @@
           label="Activo"
         />
 
-        <div class="row justify-end q-gutter-sm q-mt-md">
+        <template #footer>
           <s-btn
-            flat
-            label="Cancelar"
-            color="grey"
-            @click="dialogs.classe = false"
-          />
+                      flat
+                      label="Cancelar"
+                      color="grey"
+                      @click="dialogs.classe = false"
+                    />
 
-          <s-btn
-            color="primary"
-            icon="save"
-            label="Gravar"
-            :loading="savingClasse"
-            @click="saveClasse"
-          />
-        </div>
-      </s-card>
+                    <s-btn
+                      color="primary"
+                      icon="save"
+                      label="Gravar"
+                      :loading="savingClasse"
+                      @click="saveClasse"
+                    />
+
+        </template>
+      </s-modal-card>
     </q-dialog>
 
     <q-dialog v-model="dialogs.exame" persistent>
-      <s-card class="q-pa-md" style="width: 700px; max-width: 95vw;">
-        <div class="text-h6 q-mb-md">
-          Novo Exame Médico
-        </div>
-
+      <s-modal-card title="Novo Exame Médico" width="700px">
         <s-select
           v-model="exameForm.classe_exame_medico"
           label="Classe de Exame"
@@ -408,23 +398,24 @@
           class="q-mt-sm"
         />
 
-        <div class="row justify-end q-gutter-sm q-mt-md">
+        <template #footer>
           <s-btn
-            flat
-            label="Cancelar"
-            color="grey"
-            @click="dialogs.exame = false"
-          />
+                      flat
+                      label="Cancelar"
+                      color="grey"
+                      @click="dialogs.exame = false"
+                    />
 
-          <s-btn
-            color="primary"
-            icon="save"
-            label="Gravar"
-            :loading="savingExame"
-            @click="saveExame"
-          />
-        </div>
-      </s-card>
+                    <s-btn
+                      color="primary"
+                      icon="save"
+                      label="Gravar"
+                      :loading="savingExame"
+                      @click="saveExame"
+                    />
+
+        </template>
+      </s-modal-card>
     </q-dialog>
   </q-page>
 </template>

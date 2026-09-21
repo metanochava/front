@@ -378,7 +378,7 @@
 import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle } from 'quasar_resaas'
+import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle, sDialog } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
@@ -447,7 +447,7 @@ function openEditMarcacao(a) {
 }
 
 function confirmCancelMarcacao(a) {
-  $q.dialog({
+  sDialog({
     title: tdc('Cancel Consultation'),
     message: tdc('Are you sure you want to cancel this appointment?'),
     cancel: { flat: true, label: tdc('No') },

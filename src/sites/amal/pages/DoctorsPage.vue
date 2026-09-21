@@ -124,11 +124,9 @@
       maximized-on-mobile
     >
 
-      <s-card class="doctor-modal profile-modal">
+      <s-modal-card :title="selectedDoctor.name" width="900px" class="doctor-modal profile-modal">
 
-        <div class="modal-top-gradient"></div>
-
-        <q-card-section class="q-pa-lg">
+        <div>
 
           <div class="row q-col-gutter-xl items-start">
 
@@ -226,10 +224,10 @@
 
           </div>
 
-        </q-card-section>
+        </div>
 
 
-        <s-card-actions align="center" class="q-pb-lg q-px-lg">
+        <template #footer>
           <s-btn
             color="primary"
             icon="event"
@@ -243,9 +241,9 @@
             label="Fechar"
             v-close-popup
           />
-        </s-card-actions>
+        </template>
 
-      </s-card>
+      </s-modal-card>
 
     </q-dialog>
 
@@ -259,11 +257,9 @@
       maximized-on-mobile
     >
 
-      <s-card class="doctor-modal booking-modal">
+      <s-modal-card title="Marcar Consulta" width="820px" class="doctor-modal booking-modal">
 
-        <div class="modal-top-gradient"></div>
-
-        <q-card-section class="q-pa-lg">
+        <div>
 
           <div class="text-h5 text-weight-bold text-center">
             Marcar Consulta
@@ -273,10 +269,10 @@
             {{ selectedDoctor.name }} • {{ selectedDoctor.specialties?.join(' • ') }}
           </div>
 
-        </q-card-section>
+        </div>
 
 
-        <q-card-section class="q-pt-none q-px-lg q-pb-lg">
+        <div>
 
           <q-form @submit.prevent="bookConsultation">
 
@@ -389,10 +385,10 @@
 
           </q-form>
 
-        </q-card-section>
+        </div>
 
 
-        <s-card-actions align="center" class="q-pb-lg q-px-lg">
+        <template #footer>
           <s-btn
             color="primary"
             icon="event"
@@ -407,9 +403,9 @@
             label="Fechar"
             v-close-popup
           />
-        </s-card-actions>
+        </template>
 
-      </s-card>
+      </s-modal-card>
 
     </q-dialog>
 

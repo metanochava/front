@@ -257,35 +257,29 @@
 
     <!-- ===================== DIALOG PAGAMENTO (suporta divisão) ===================== -->
     <q-dialog v-model="showPaymentDialog" persistent>
-      <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Payment') }}</q-card-section>
+      <s-modal-card :title="tdc('Payment')" width="380px" :closable="false">
+        <div class="row justify-between text-caption q-py-xs">
+          <span>{{ tdc('Total') }}</span>
+          <span>{{ formatMoney(totals.total) }}</span>
+        </div>
+        <div class="row justify-between text-caption q-py-xs">
+          <span>{{ tdc('Already Paid') }}</span>
+          <span>{{ formatMoney(totalJaPago) }}</span>
+        </div>
+        <q-separator class="q-my-xs" />
+        <div class="row justify-between text-h6 text-weight-bold">
+          <span>{{ tdc('Amount Due') }}</span>
+          <span>{{ formatMoney(saldoEmFalta) }}</span>
+        </div>
 
-        <q-card-section>
-          <div class="row justify-between text-caption q-py-xs">
-            <span>{{ tdc('Total') }}</span>
-            <span>{{ formatMoney(totals.total) }}</span>
-          </div>
-          <div class="row justify-between text-caption q-py-xs">
-            <span>{{ tdc('Already Paid') }}</span>
-            <span>{{ formatMoney(totalJaPago) }}</span>
-          </div>
-          <q-separator class="q-my-xs" />
-          <div class="row justify-between text-h6 text-weight-bold">
-            <span>{{ tdc('Amount Due') }}</span>
-            <span>{{ formatMoney(saldoEmFalta) }}</span>
-          </div>
+        <q-list v-if="paymentsDone.length" dense class="q-mt-sm">
+          <q-item v-for="(p, i) in paymentsDone" :key="i" class="q-px-none">
+            <q-item-section>{{ formaPagamentoLabel(p.forma_pagamento) }}</q-item-section>
+            <q-item-section side>{{ formatMoney(p.valor) }}</q-item-section>
+          </q-item>
+        </q-list>
 
-          <q-list v-if="paymentsDone.length" dense class="q-mt-sm">
-            <q-item v-for="(p, i) in paymentsDone" :key="i" class="q-px-none">
-              <q-item-section>{{ formaPagamentoLabel(p.forma_pagamento) }}</q-item-section>
-              <q-item-section side>{{ formatMoney(p.valor) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-section class="q-gutter-md">
+        <div class="q-gutter-md">
           <q-select
             v-model="payment.forma_pagamento"
             :options="formaPagamentoOptions"
@@ -318,9 +312,10 @@
           />
 
           <div v-if="paymentError" class="text-negative text-caption">{{ paymentError }}</div>
-        </q-card-section>
 
-        <q-card-actions align="right">
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel Sale')" :disable="payingLoading" @click="showPaymentDialog = false; cancelPOS()" />
           <q-btn
             color="positive"
@@ -329,8 +324,9 @@
             :disable="payment.forma_pagamento === 'numerario' && troco < 0"
             @click="confirmPayment"
           />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
 
     <!-- ===================== DIALOG CÂMARA ===================== -->

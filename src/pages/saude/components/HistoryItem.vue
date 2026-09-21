@@ -1,51 +1,27 @@
 <template>
 
 <q-dialog v-model="dialog">
+  <s-modal-card title="Medico" icon="create_new_folder" width="700px">
+    {{ data }}
 
-    <q-card style="min-width:700px">
 
-        <q-bar :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-primary text-white'">
-            <q-icon name="create_new_folder"/>
-            <div class="q-ml-sm text-subtitle1">
-                Medico
-            </div>
+    <template #footer>
+      <s-btn
+          flat
+          label="Cancelar"
+          v-close-popup
+      />
 
-            <q-space/>
+      <s-btn
+          color="primary"
+          icon="create_new_folder"
+          label="Criar Pasta"
+          @click="guardar"
+      />
 
-            <q-btn
-                flat
-                dense
-                icon="close"
-                v-close-popup
-            />
 
-        </q-bar>
-
-        <q-card-section>
-          {{ data }}
-        </q-card-section>
-
-        <q-separator/>
-
-        <q-card-actions align="right">
-
-            <s-btn
-                flat
-                label="Cancelar"
-                v-close-popup
-            />
-
-            <s-btn
-                color="primary"
-                icon="create_new_folder"
-                label="Criar Pasta"
-                @click="guardar"
-            />
-
-        </q-card-actions>
-
-    </q-card>
-
+    </template>
+  </s-modal-card>
 </q-dialog>
 
   <q-item dense clickable v-ripple @click="emit('action', item, null)" :class="$q.dark.isActive ? 'bg-dark text-white ' : 'bg-primary text-white'">

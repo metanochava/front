@@ -1,43 +1,39 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="onDialogToggle" @hide="stopScanning">
-    <s-card style="width: 100%; max-width: 420px">
-      <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6">{{ tdc('Ler Código') }}</div>
-        <q-space />
+    <s-modal-card :title="tdc('Ler Código')" icon="qr_code_scanner" width="420px" @close="close">
+      <template #bar-actions>
         <q-btn
           v-if="torchSupported"
           flat round dense
           :icon="torchOn ? 'flash_off' : 'flash_on'"
-          :color="torchOn ? 'warning' : 'grey-7'"
+          :color="torchOn ? 'warning' : 'white'"
           @click="toggleTorch"
         />
-        <q-btn flat round dense icon="close" @click="close" />
-      </q-card-section>
+      </template>
 
-      <q-card-section>
-        <div
-          id="camera-scanner-reader"
-          ref="readerEl"
-          class="scanner-box"
-        />
+      <div
+        id="camera-scanner-reader"
+        ref="readerEl"
+        class="scanner-box"
+      />
 
-        <div v-if="starting" class="flex flex-center q-pa-md">
-          <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-        </div>
+      <div v-if="starting" class="flex flex-center q-pa-md">
+        <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+      </div>
 
-        <div v-if="errorMsg" class="text-negative text-caption q-mt-sm text-center">
-          {{ errorMsg }}
-        </div>
+      <div v-if="errorMsg" class="text-negative text-caption q-mt-sm text-center">
+        {{ errorMsg }}
+      </div>
 
-        <div v-if="lastDecoded" class="text-center q-mt-sm">
-          <q-badge color="positive">{{ tdc('Lido') }}: {{ lastDecoded }}</q-badge>
-        </div>
+      <div v-if="lastDecoded" class="text-center q-mt-sm">
+        <q-badge color="positive">{{ tdc('Lido') }}: {{ lastDecoded }}</q-badge>
+      </div>
 
-        <div class="text-caption text-grey-6 text-center q-mt-sm">
-          {{ tdc('Aponta a câmara para o código de barras ou QR') }}
-        </div>
-      </q-card-section>
-    </s-card>
+      <div class="text-caption text-grey-6 text-center q-mt-sm">
+        {{ tdc('Aponta a câmara para o código de barras ou QR') }}
+      </div>
+
+    </s-modal-card>
   </q-dialog>
 </template>
 

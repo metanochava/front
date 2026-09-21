@@ -1,62 +1,33 @@
 <template>
 
 <q-dialog v-model="dialog">
+  <s-modal-card title="Nova Pasta" icon="create_new_folder" width="500px">
+    <s-input
+        v-model="form.nome"
+        label="Nome da pasta"
+        prepend-icon="folder"
+        autofocus
+    />
 
-    <q-card style="min-width:500px">
 
-        <q-bar :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-primary text-white'">
 
-            <q-icon name="create_new_folder"/>
+    <template #footer>
+      <s-btn
+          flat
+          label="Cancelar"
+          v-close-popup
+      />
 
-            <div class="q-ml-sm text-subtitle1">
+      <s-btn
+          color="primary"
+          icon="create_new_folder"
+          label="Criar Pasta"
+          @click="guardar"
+      />
 
-                Nova Pasta
 
-            </div>
-
-            <q-space/>
-
-            <q-btn
-                flat
-                dense
-                icon="close"
-                v-close-popup
-            />
-
-        </q-bar>
-
-        <q-card-section>
-
-            <s-input
-                v-model="form.nome"
-                label="Nome da pasta"
-                prepend-icon="folder"
-                autofocus
-            />
-
-        </q-card-section>
-
-        <q-separator/>
-
-        <q-card-actions align="right">
-
-            <s-btn
-                flat
-                label="Cancelar"
-                v-close-popup
-            />
-
-            <s-btn
-                color="primary"
-                icon="create_new_folder"
-                label="Criar Pasta"
-                @click="guardar"
-            />
-
-        </q-card-actions>
-
-    </q-card>
-
+    </template>
+  </s-modal-card>
 </q-dialog>
 
 </template>

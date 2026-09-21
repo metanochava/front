@@ -88,42 +88,25 @@
     <!-- MODAL ARTIGO -->
     <q-dialog v-model="postModal">
 
-      <s-card class="post-modal">
+      <s-modal-card :title="selectedPost.title" width="600px">
+        <q-img :src="selectedPost.image" height="200px" />
 
-        <q-img
-          :src="selectedPost.image"
-          height="200px"
-        />
+        <div class="text-caption text-grey q-mt-sm">
+          {{ selectedPost.category }} • {{ selectedPost.date }}
+        </div>
 
-        <q-card-section>
-
-          <div class="text-h5 text-weight-bold">
-            {{ selectedPost.title }}
-          </div>
-
-          <div class="text-caption text-grey q-mt-xs">
-            {{ selectedPost.category }} • {{ selectedPost.date }}
-          </div>
-
-        </q-card-section>
-
-        <q-card-section class="text-body1">
-
+        <div class="text-body1 q-mt-md">
           {{ selectedPost.content }}
+        </div>
 
-        </q-card-section>
-
-        <s-card-actions align="center">
-
+        <template #footer>
           <q-btn
             flat
             label="Fechar"
             v-close-popup
           />
-
-        </s-card-actions>
-
-      </s-card>
+        </template>
+      </s-modal-card>
 
     </q-dialog>
 
@@ -245,12 +228,5 @@ export default defineComponent({
 
 /* MODAL */
 
-.post-modal{
-
-  max-width:600px;
-
-  border-radius:20px;
-
-}
 
 </style>

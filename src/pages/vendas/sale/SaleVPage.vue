@@ -142,9 +142,8 @@
 
     <!-- DIALOG PAGAMENTO -->
     <q-dialog v-model="showPaymentDialog">
-      <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Register Payment') }}</q-card-section>
-        <q-card-section class="q-gutter-md">
+      <s-modal-card :title="tdc('Register Payment')" width="380px">
+        <div class="q-gutter-md">
           <q-input v-model.number="paymentForm.valor" type="number" step="0.01" :label="tdc('Amount')" />
           <q-select
             v-model="paymentForm.forma_pagamento"
@@ -153,12 +152,15 @@
             :label="tdc('Payment Method')"
           />
           <q-input v-model="paymentForm.referencia" :label="tdc('Reference') + ' (' + tdc('optional') + ')'" />
-        </q-card-section>
-        <q-card-actions align="right">
+
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn color="primary" :label="tdc('Register')" :loading="acting" @click="pagar" />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
   </q-page>
 

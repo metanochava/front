@@ -94,9 +94,8 @@
 
     <!-- DIALOG REVISAR -->
     <q-dialog v-model="showRevisarDialog">
-      <q-card style="min-width: 380px">
-        <q-card-section class="text-h6">{{ tdc('Review Prescription') }}</q-card-section>
-        <q-card-section class="q-gutter-md">
+      <s-modal-card :title="tdc('Review Prescription')" width="380px">
+        <div class="q-gutter-md">
           <s-select
             v-model="revisarForm.employee_id"
             :api="employeeSelectUrl"
@@ -118,23 +117,25 @@
             type="textarea"
             :label="tdc('Rejection Reason')"
           />
-        </q-card-section>
-        <q-card-actions align="right">
+
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn
             color="primary" :label="tdc('Confirm')" :loading="acting"
             :disable="!revisarForm.employee_id || revisarForm.aprovado === null || (revisarForm.aprovado === false && !revisarForm.motivo_rejeicao)"
             @click="revisar"
           />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
 
     <!-- DIALOG DISPENSAR -->
     <q-dialog v-model="showDispensarDialog">
-      <q-card style="min-width: 520px; max-width: 90vw">
-        <q-card-section class="text-h6">{{ tdc('Dispense Medication') }}</q-card-section>
-        <q-card-section class="q-gutter-md">
+      <s-modal-card :title="tdc('Dispense Medication')" width="520px">
+        <div class="q-gutter-md">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-sm-6">
               <s-select
@@ -194,16 +195,19 @@
               </div>
             </div>
           </div>
-        </q-card-section>
-        <q-card-actions align="right">
+
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn
             color="positive" :label="tdc('Dispense')" :loading="acting"
             :disable="!dispensarForm.employee_id || !dispensarLines.some(l => l.incluir && l.quantidade > 0)"
             @click="dispensar"
           />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
   </q-page>
 

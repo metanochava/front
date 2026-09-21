@@ -85,34 +85,10 @@
       transition-hide="scale"
     >
 
-      <s-card
-        class="exam-modal"
-        style="min-width:420px"
-      >
-
-        <q-card-section class="text-center">
-
-          <q-icon
-            :name="selectedExam.icon"
-            size="60px"
-            color="primary"
-          />
-
-          <div class="text-h6 q-mt-md">
-            {{ selectedExam.name }}
-          </div>
-
-          <div class="text-grey q-mt-xs">
-            {{ selectedExam.short_desc }}
-          </div>
-
-        </q-card-section>
-
-
-        <q-separator />
-
-
-        <q-card-section>
+      <s-modal-card :title="selectedExam.name" :icon="selectedExam.icon" width="480px">
+        <div class="text-grey q-mb-md">
+          {{ selectedExam.short_desc }}
+        </div>
 
           <div class="q-mb-sm">
             <b>Preço:</b> {{ selectedExam.price }}
@@ -137,11 +113,8 @@
             {{ selectedExam.results }}
           </div>
 
-        </q-card-section>
 
-
-        <s-card-actions align="center">
-
+        <template #footer>
           <s-btn
             color="primary"
             icon="event"
@@ -153,10 +126,8 @@
             label="Fechar"
             v-close-popup
           />
-
-        </s-card-actions>
-
-      </s-card>
+        </template>
+      </s-modal-card>
 
     </q-dialog>
 
@@ -326,10 +297,5 @@ export default defineComponent({
 
 /* MODAL */
 
-.exam-modal{
-
-  border-radius:20px;
-
-}
 
 </style>

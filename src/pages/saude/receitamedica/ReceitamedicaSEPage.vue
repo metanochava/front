@@ -182,12 +182,7 @@
 
     <!-- MODAL NOVO MEDICAMENTO -->
     <q-dialog v-model="showMedicamentoDialog" persistent>
-      <s-card style="width: 600px; max-width: 95vw;" class="q-pa-md">
-
-        <div class="text-h6 q-mb-md">
-          Novo Medicamento
-        </div>
-
+      <s-modal-card title="Novo Medicamento" width="600px">
         <s-input
           v-model="medicamento.codigo"
           label="Código"
@@ -224,24 +219,24 @@
           min-height="100px"
         />
 
-        <div class="row justify-end q-mt-md">
+        <template #footer>
           <s-btn
-            flat
-            label="Cancelar"
-            color="grey"
-            @click="showMedicamentoDialog = false"
-          />
+                      flat
+                      label="Cancelar"
+                      color="grey"
+                      @click="showMedicamentoDialog = false"
+                    />
 
-          <s-btn
-            color="primary"
-            icon="save"
-            label="Gravar"
-            :loading="savingMedicamento"
-            @click="saveMedicamento"
-          />
-        </div>
+                    <s-btn
+                      color="primary"
+                      icon="save"
+                      label="Gravar"
+                      :loading="savingMedicamento"
+                      @click="saveMedicamento"
+                    />
 
-      </s-card>
+        </template>
+      </s-modal-card>
     </q-dialog>
 
   </q-page>

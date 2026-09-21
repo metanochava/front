@@ -205,9 +205,8 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useQuasar } from 'quasar'
 
-import { buildWritePayload, updateWithPayload, usePageTitle, useRelationSearch, tdc, url, Alert } from 'quasar_resaas'
+import { buildWritePayload, updateWithPayload, usePageTitle, useRelationSearch, tdc, url, Alert, sDialog } from 'quasar_resaas'
 
 import { useMedicoStore } from './medicoStore'
 
@@ -218,7 +217,6 @@ import { useMedicoStore } from './medicoStore'
 // schema's relation_config, nothing here knows the Employee model.
 const router = useRouter()
 const route = useRoute()
-const $q = useQuasar()
 
 const Medico = useMedicoStore()
 
@@ -349,7 +347,7 @@ function cancel() {
     return
   }
 
-  $q.dialog({
+  sDialog({
     title: tdc('Discard changes?'),
     message: tdc('The doctor form has unsaved information. Are you sure you want to leave?'),
     persistent: true,

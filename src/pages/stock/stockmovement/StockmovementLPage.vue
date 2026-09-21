@@ -57,10 +57,8 @@
 
     <!-- FORM: NOVO MOVIMENTO -->
     <q-dialog v-model="showForm">
-      <q-card style="min-width: 420px">
-        <q-card-section class="text-h6">{{ tdc('New Stock Movement') }}</q-card-section>
-
-        <q-card-section class="q-gutter-md">
+      <s-modal-card :title="tdc('New Stock Movement')" width="420px">
+        <div class="q-gutter-md">
           <s-select
             v-model="form.product"
             :api="productSelectUrl"
@@ -93,13 +91,15 @@
             :hint="form.tipo === 'ajuste' ? tdc('Required for adjustments') : ''"
           />
           <div v-if="errorMsg" class="text-negative text-caption">{{ errorMsg }}</div>
-        </q-card-section>
 
-        <q-card-actions align="right">
+        </div>
+
+        <template #footer>
           <q-btn flat :label="tdc('Cancel')" v-close-popup />
           <q-btn color="primary" :label="tdc('Save')" :loading="saving" @click="save" />
-        </q-card-actions>
-      </q-card>
+
+        </template>
+      </s-modal-card>
     </q-dialog>
   </q-page>
 </template>

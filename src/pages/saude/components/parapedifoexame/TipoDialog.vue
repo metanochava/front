@@ -1,16 +1,17 @@
 <template>
   <q-dialog v-model="model" persistent>
-    <s-card class="q-pa-md dialog-card">
-      <div class="text-h6 q-mb-md">Novo Tipo de Exame</div>
+    <s-modal-card title="Novo Tipo de Exame" width="460px">
       <s-input v-model="form.nome" label="Nome" class="q-mb-sm" />
       <s-editor v-model="form.descricao" label="Descrição" min-height="100px" class="q-mb-sm" />
       <s-input v-model="form.ordem" label="Ordem" type="number" class="q-mb-sm" />
       <s-switch v-model="form.ativo" label="Activo" />
-      <div class="row justify-end q-gutter-sm q-mt-md">
+
+      <template #footer>
         <s-btn flat color="grey" label="Cancelar" @click="model = false" />
-        <s-btn color="primary" icon="save" label="Guardar" :loading="loading" :disable="!form.nome" @click="$emit('save', { ...form })" />
-      </div>
-    </s-card>
+                <s-btn color="primary" icon="save" label="Guardar" :loading="loading" :disable="!form.nome" @click="$emit('save', { ...form })" />
+
+      </template>
+    </s-modal-card>
   </q-dialog>
 </template>
 

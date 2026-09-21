@@ -1,142 +1,119 @@
 <template>
   <q-dialog v-model="dialog" full-width full-height>
-    <s-card class="">
+    <s-modal-card title="Resultados" icon="fact_check" fullscreen @close="dialog = false">
+      <q-card
+          v-for="item in Pedidoexamemedico.items"
+          :key="item"
+          class="q-mb-lg"
+          flat
+          bordered
+      >
 
+          <q-bar class="bg-grey-2">
 
-      <!-- HEADER -->
-      <q-bar :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-primary text-white'">
-        <div class="text-subtitle1">
-          {{ 'Resultados' }}
-        </div>
+              <div class="text-subtitle2 text-weight-bold">
+                  {{ item?.exame?.label }}
+              </div>
 
-        <q-space />
+              <q-space/>
 
-        <!-- DOWNLOAD -->
-       .
+              <q-badge
+                  :color="item.estado_exame?.id=='pendente'
+                      ? 'orange'
+                      : 'positive'"
+              >
+                  {{ item.estado_exame?.label }}
+              </q-badge>
 
-        <!-- CLOSE -->
-        <q-btn dense flat icon="close" @click="dialog = false" />
-      </q-bar>
+          </q-bar>
 
-      <!-- BODY -->
-      <q-card-section class="q-pa-none" style="height: 100vh;">
+          <q-card-section>
 
-      </q-card-section>
+            {{ item }}
 
-    </s-card>
+              <!-- <s-input
+                  v-model="item.resultado.valor_resultado"
+                  label="Valor Resultado"
+              />
 
-    <q-card
-    v-for="item in Pedidoexamemedico.items"
-    :key="item"
-    class="q-mb-lg"
-    flat
-    bordered
->
+              <div class="row q-col-gutter-md">
 
-    <q-bar class="bg-grey-2">
+                  <div class="col">
 
-        <div class="text-subtitle2 text-weight-bold">
-            {{ item?.exame?.label }}
-        </div>
+                      <s-date-time
+                          v-model="item.resultado.data_colheita"
+                          label="Data da Colheita"
+                      />
 
-        <q-space/>
+                  </div>
 
-        <q-badge
-            :color="item.estado_exame?.id=='pendente'
-                ? 'orange'
-                : 'positive'"
-        >
-            {{ item.estado_exame?.label }}
-        </q-badge>
+                  <div class="col">
 
-    </q-bar>
+                      <s-date-time
+                          v-model="item.resultado.data_resultado"
+                          label="Data do Resultado"
+                      />
 
-    <q-card-section>
+                  </div>
 
-      {{ item }}
+              </div>
 
-        <!-- <s-input
-            v-model="item.resultado.valor_resultado"
-            label="Valor Resultado"
-        />
+              <s-editor
+                  v-model="item.resultado.laudo"
+                  label="Laudo"
+                  min-height="120px"
+              />
 
-        <div class="row q-col-gutter-md">
+              <s-editor
+                  v-model="item.resultado.observacao"
+                  label="Observação"
+                  min-height="100px"
+              />
 
-            <div class="col">
+              <s-file
+                  v-model="item.resultado.ficheiro"
+                  label="Ficheiro"
+              />
 
-                <s-date-time
-                    v-model="item.resultado.data_colheita"
-                    label="Data da Colheita"
-                />
+              <div class="row q-col-gutter-md">
 
-            </div>
+                  <div class="col">
 
-            <div class="col">
+                      <s-switch
+                          v-model="item.resultado.validado"
+                          label="Validado"
+                      />
 
-                <s-date-time
-                    v-model="item.resultado.data_resultado"
-                    label="Data do Resultado"
-                />
+                  </div>
 
-            </div>
+                  <div class="col">
 
-        </div>
+                      <s-switch
+                          v-model="item.resultado.assinado_digitalmente"
+                          label="Assinado Digitalmente"
+                      />
 
-        <s-editor
-            v-model="item.resultado.laudo"
-            label="Laudo"
-            min-height="120px"
-        />
+                  </div>
 
-        <s-editor
-            v-model="item.resultado.observacao"
-            label="Observação"
-            min-height="100px"
-        />
+              </div> -->
 
-        <s-file
-            v-model="item.resultado.ficheiro"
-            label="Ficheiro"
-        />
+          </q-card-section>
 
-        <div class="row q-col-gutter-md">
+          <q-separator/>
 
-            <div class="col">
+          <q-card-actions align="right">
 
-                <s-switch
-                    v-model="item.resultado.validado"
-                    label="Validado"
-                />
+              <s-btn
+                  color="primary"
+                  icon="save"
+                  label="Guardar Resultado"
+                  @click="saveResultado(item)"
+              />
 
-            </div>
+          </q-card-actions>
 
-            <div class="col">
-
-                <s-switch
-                    v-model="item.resultado.assinado_digitalmente"
-                    label="Assinado Digitalmente"
-                />
-
-            </div>
-
-        </div> -->
-
-    </q-card-section>
-
-    <q-separator/>
-
-    <q-card-actions align="right">
-
-        <s-btn
-            color="primary"
-            icon="save"
-            label="Guardar Resultado"
-            @click="saveResultado(item)"
-        />
-
-    </q-card-actions>
-
-</q-card>
+      </q-card>
+    </s-modal-card>
   </q-dialog>
 </template>
 

@@ -1,7 +1,6 @@
 <template>
   <q-dialog v-model="model" persistent>
-    <s-card class="q-pa-md dialog-card">
-      <div class="text-h6 q-mb-md">Novo Exame Médico</div>
+    <s-modal-card title="Novo Exame Médico" width="460px">
       <s-select v-model="form.classe_exame_medico" label="Classe de Exame" :options="classeOptions" emit-value map-options class="q-mb-sm" />
       <div class="row q-col-gutter-sm">
         <div class="col-md-4 col-xs-12"><s-input v-model="form.codigo" label="Código" /></div>
@@ -15,11 +14,13 @@
         <div class="col-md-4 col-xs-12 flex items-center"><s-switch v-model="form.ativo" label="Activo" /></div>
       </div>
       <s-input v-model="form.valor_referencia" label="Valor de Referência" class="q-mt-sm" />
-      <div class="row justify-end q-gutter-sm q-mt-md">
+
+      <template #footer>
         <s-btn flat color="grey" label="Cancelar" @click="model = false" />
-        <s-btn color="primary" icon="save" label="Guardar" :loading="loading" :disable="!form.nome || !form.classe_exame_medico" @click="$emit('save', { ...form })" />
-      </div>
-    </s-card>
+                <s-btn color="primary" icon="save" label="Guardar" :loading="loading" :disable="!form.nome || !form.classe_exame_medico" @click="$emit('save', { ...form })" />
+
+      </template>
+    </s-modal-card>
   </q-dialog>
 </template>
 

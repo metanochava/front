@@ -149,7 +149,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 
-import { usePersonIntake, buildWritePayload, updateWithPayload, usePageTitle, tdc, Alert } from 'quasar_resaas'
+import { usePersonIntake, buildWritePayload, updateWithPayload, usePageTitle, tdc, Alert, sDialog } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 
@@ -269,7 +269,7 @@ function cancel() {
     return
   }
 
-  $q.dialog({
+  sDialog({
     title: tdc('Discard changes?'),
     message: tdc('The patient form has unsaved information. Are you sure you want to leave?'),
     persistent: true,
