@@ -14,10 +14,12 @@ const host = window.location.hostname
 
 const domainRoutes = {
   "clinicaamal.co.mz": amalSiteRoutes,
+  "amal.dev.mytech.co.mz": amalSiteRoutes,
   "docodela.co.mz": docodelaSiteRoutes,
   "docodela.dev.mytech.co.mz": docodelaSiteRoutes,
   // the portfolio: add the real domain here (e.g. "metanochava.dev": portfolioSiteRoutes)
-  "portfolio.dev.mytech.co.mz": portfolioSiteRoutes,
+  "metano.mytech.co.mz": portfolioSiteRoutes,
+  "metano.dev.mytech.co.mz": portfolioSiteRoutes,
 }
 
 // Preview a site while developing, without its domain:  http://localhost:9000/?site=portfolio
