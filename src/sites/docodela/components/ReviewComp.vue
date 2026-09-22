@@ -39,8 +39,7 @@
             </div>
 
             <div class="text-body1 q-mt-md">
-              Consultas médicas, exames, atendimento especializado
-              e acompanhamento personalizado.
+              {{ tdc('Medical consultations, exams, specialised care and personalised follow-up.') }}
             </div>
 
             <q-btn

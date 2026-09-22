@@ -40,14 +40,11 @@
       </div>
 
       <p class="text-white">
-        A Clínica Amal nasceu com o objetivo de oferecer cuidados médicos
-        modernos e humanizados. Trabalhamos com especialistas qualificados
-        e tecnologia avançada para garantir diagnósticos precisos.
+        {{ tdc('Amal Clinic was created to offer modern, humanised medical care. We work with qualified specialists and advanced technology to ensure accurate diagnoses.') }}
       </p>
 
       <p class="text-white">
-        Nosso compromisso é proporcionar atendimento de excelência,
-        colocando sempre o bem-estar e a segurança do paciente em primeiro lugar.
+        {{ tdc('Our commitment is to provide excellent care, always putting patient well-being and safety first.') }}
       </p>
 
     </div>

@@ -520,7 +520,7 @@ export default defineComponent({
         age: 47,
         experience: '19 years',
         educations: [
-          "Licenciatura em Medicina — Universidade Agostinho Neto",
+          "Degree in Medicine — Agostinho Neto University",
           'Specialisation in Orthopaedics — University of São Paulo'
         ],
         phone: "+258 84 111 0005",
@@ -552,7 +552,7 @@ export default defineComponent({
         age: 44,
         experience: '16 years',
         educations: [
-          "Licenciatura em Medicina — Universidade do Porto",
+          "Degree in Medicine — University of Porto",
           'Specialisation in Ophthalmology — University of Barcelona'
         ],
         phone: "+258 84 111 0007",
