@@ -3,10 +3,10 @@
   <s-pdf-render
     v-model="AtestadomedicoStore.showPdf"
     :src="AtestadomedicoStore.pdf"
-    title="Atestado Medico"
+    :title="tdc('Medical certificate')"
   />
   <HistoryList
-    title="Atestado Medico"
+    :title="tdc('Medical certificate')"
     :store="AtestadomedicoStore"
     :actions="['pdf', 'Accao B', 'Accao C']"
     @action="onClick"
@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import HistoryList from '../components/HistoryList.vue'
 import { useAtestadomedicoStore } from './atestadomedicoStore'

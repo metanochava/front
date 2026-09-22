@@ -3,7 +3,7 @@
   <s-pdf-render
       v-model="Consulta.showPdf"
       :src="Consulta.pdf"
-      title="Consulta Medica"
+      :title="tdc('Medical consultation')"
     />
     <PacienteHeader />
     <!-- FORM -->
@@ -21,6 +21,7 @@
 
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useConsultaStore } from './consultaStore'

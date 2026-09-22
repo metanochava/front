@@ -3,10 +3,10 @@
   <s-pdf-render
     v-model="PedidoexamemedicoStore.showPdf"
     :src="PedidoexamemedicoStore.pdf"
-    title="Ped. Exame Medico"
+    :title="tdc('Exam request')"
   />
   <HistoryList
-    title="Ped. Exame Medico"
+    :title="tdc('Exam request')"
     :store="PedidoexamemedicoStore"
     :actions="['pdf', 'Accao B', 'Accao C']"
     @action="onClick"
@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import HistoryList from '../components/HistoryList.vue'
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore.js'

@@ -9,7 +9,7 @@
         class="text-weight-bold q-mb-md text-grey-9 text-center col-12"
         :style="{ fontSize: '50px' }"
       >
-        Trusted Partners
+        {{ tdc('Trusted partners') }}
       </div>
 
       <div
@@ -59,15 +59,15 @@
             />
 
             <div class="text-h4 text-weight-bold">
-              Clínica Médica
+              {{ tdc('Medical clinic') }}
             </div>
 
             <div class="text-subtitle1 q-mt-sm">
-             {{ tdc(' Cuidamos da sua saúde') }}
+             {{ tdc('We take care of your health') }}
             </div>
 
             <div class="text-caption q-mt-md">
-              Passe o rato para conhecer os nossos serviços
+              {{ tdc('Hover to discover our services') }}
             </div>
           </div>
         </div>

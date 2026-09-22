@@ -13,7 +13,7 @@
         class="text-weight-bold text-primary text-center col-12"
         :style="{ fontSize: ps?.typography.font_size_h1 + 'px' }"
       >
-        {{ tdc('Exames') }}
+        {{ tdc('Exams') }}
       </div>
 
     </div>
@@ -46,11 +46,11 @@
               />
 
               <div class="text-h6 q-mt-md">
-                {{ exam.name }}
+                {{ tdc(exam.name) }}
               </div>
 
               <div class="text-caption text-grey-7 q-mt-xs">
-                {{ exam.short_desc }}
+                {{ tdc(exam.short_desc) }}
               </div>
 
               <div class="q-mt-md">
@@ -58,7 +58,7 @@
                 <s-btn
                   color="primary"
                   icon="visibility"
-                  label="Ver Detalhes"
+                  :label="tdc('View details')"
                   @click="openExam(exam)"
                   unelevated
                 />
@@ -85,32 +85,32 @@
       transition-hide="scale"
     >
 
-      <s-modal-card :title="selectedExam.name" :icon="selectedExam.icon" width="480px">
+      <s-modal-card :title="tdc(selectedExam.name)" :icon="selectedExam.icon" width="480px">
         <div class="text-grey q-mb-md">
-          {{ selectedExam.short_desc }}
+          {{ tdc(selectedExam.short_desc) }}
         </div>
 
           <div class="q-mb-sm">
-            <b>Preço:</b> {{ selectedExam.price }}
+            <b>{{ tdc('Price:') }}</b> {{ selectedExam.price }}
           </div>
 
           <div class="q-mb-sm">
-            <b>Duração:</b> {{ selectedExam.duration }}
+            <b>{{ tdc('Duration:') }}</b> {{ tdc(selectedExam.duration) }}
           </div>
 
           <div class="q-mb-sm">
-            <b>Preparação:</b>
-            {{ selectedExam.preparation }}
+            <b>{{ tdc('Preparation:') }}</b>
+            {{ tdc(selectedExam.preparation) }}
           </div>
 
           <div class="q-mb-sm">
-            <b>Procedimento:</b>
-            {{ selectedExam.procedure }}
+            <b>{{ tdc('Procedure:') }}</b>
+            {{ tdc(selectedExam.procedure) }}
           </div>
 
           <div class="q-mb-sm">
-            <b>Resultados:</b>
-            {{ selectedExam.results }}
+            <b>{{ tdc('Results:') }}</b>
+            {{ tdc(selectedExam.results) }}
           </div>
 
 
@@ -118,12 +118,12 @@
           <s-btn
             color="primary"
             icon="event"
-            label="Agendar Exame"
+            :label="tdc('Schedule exam')"
           />
 
           <q-btn
             flat
-            label="Fechar"
+            :label="tdc('Close')"
             v-close-popup
           />
         </template>
@@ -159,74 +159,74 @@ export default defineComponent({
 
       {
         id:1,
-        name:"Análise de Sangue",
+        name:'Blood test',
         icon:"biotech",
-        short_desc:"Exame laboratorial para avaliação geral",
+        short_desc:'Laboratory test for general assessment',
         price:"1200 MZN",
-        duration:"15 minutos",
-        preparation:"Jejum de 8 horas",
-        procedure:"Coleta de sangue por profissional qualificado",
-        results:"Resultados disponíveis em 24h"
+        duration:'15 minutes',
+        preparation:'8-hour fast',
+        procedure:'Blood drawn by a qualified professional',
+        results:'Results available within 24h'
       },
 
       {
         id:2,
-        name:"Raio-X",
+        name:'X-ray',
         icon:"medical_services",
-        short_desc:"Diagnóstico por imagem",
+        short_desc:'Diagnostic imaging',
         price:"2500 MZN",
-        duration:"20 minutos",
-        preparation:"Sem preparação especial",
-        procedure:"Imagem radiológica da área solicitada",
-        results:"Disponível no mesmo dia"
+        duration:'20 minutes',
+        preparation:'No special preparation',
+        procedure:'Radiological image of the requested area',
+        results:'Available the same day'
       },
 
       {
         id:3,
-        name:"Ultrassonografia",
+        name:'Ultrasound',
         icon:"monitor_heart",
-        short_desc:"Avaliação interna por imagem",
+        short_desc:'Internal imaging assessment',
         price:"3000 MZN",
-        duration:"30 minutos",
-        preparation:"Dependendo do exame pode exigir jejum",
-        procedure:"Avaliação por equipamento de ultrassom",
-        results:"Resultados imediatos"
+        duration:'30 minutes',
+        preparation:'Depending on the exam, fasting may be required',
+        procedure:'Assessment with ultrasound equipment',
+        results:'Immediate results'
       },
 
       {
         id:4,
-        name:"Eletrocardiograma",
+        name:'Electrocardiogram',
         icon:"favorite",
-        short_desc:"Avaliação da atividade elétrica do coração",
+        short_desc:'Assessment of the heart\'s electrical activity',
         price:"1800 MZN",
-        duration:"15 minutos",
-        preparation:"Evitar exercício antes do exame",
-        procedure:"Sensores são colocados no peito",
-        results:"Resultados imediatos"
+        duration:'15 minutes',
+        preparation:'Avoid exercise before the exam',
+        procedure:'Sensors are placed on the chest',
+        results:'Immediate results'
       },
 
       {
         id:5,
-        name:"Teste de COVID-19",
+        name:'COVID-19 test',
         icon:"coronavirus",
-        short_desc:"Diagnóstico do vírus SARS-CoV-2",
+        short_desc:'Diagnosis of the SARS-CoV-2 virus',
         price:"1500 MZN",
-        duration:"10 minutos",
-        preparation:"Sem preparação necessária",
-        procedure:"Coleta nasal",
-        results:"Resultados em 24h"
+        duration:'10 minutes',
+        preparation:'No preparation needed',
+        procedure:'Nasal swab',
+        results:'Results within 24h'
       },
 
       {
         id:6,
-        name:"Exame de Urina",
+        name:'Urine test',
         icon:"science",
-        short_desc:"Avaliação laboratorial da urina",
+        short_desc:'Laboratory assessment of urine',
         price:"800 MZN",
-        duration:"10 minutos",
-        preparation:"Coleta de amostra",
-        procedure:"Análise laboratorial",
-        results:"Resultados em 12h"
+        duration:'10 minutes',
+        preparation:'Sample collection',
+        procedure:'Laboratory analysis',
+        results:'Results within 12h'
       }
 
     ]

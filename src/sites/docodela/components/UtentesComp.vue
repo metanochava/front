@@ -12,13 +12,13 @@
           class="text-weight-bold text-white"
           style="font-size:40px"
         >
-          {{ tdc('Utentes') }}
+          {{ tdc('Patients') }}
         </div>
       </div>
 
       <s-btn
         color="primary"
-        label="Utentes"
+        :label="tdc('Patients')"
       />
 
 
@@ -58,20 +58,20 @@ const about=[
 
 {
 icon:"flag",
-title:"Missão",
-desc:"Oferecer cuidados médicos de qualidade com atendimento humanizado."
+title:'Mission',
+desc:'Offer quality medical care with humane service.'
 },
 
 {
 icon:"visibility",
-title:"Visão",
-desc:"Ser referência em inovação e excelência em saúde."
+title:'Vision',
+desc:'Be a reference in innovation and excellence in healthcare.'
 },
 
 {
 icon:"favorite",
-title:"Valores",
-desc:"Ética, compromisso, respeito e dedicação aos utentes."
+title:'Values',
+desc:'Ethics, commitment, respect and dedication to patients.'
 }
 
 ]
@@ -81,19 +81,19 @@ const doctors=[
 
 {
 name:"Dr João Silva",
-specialty:"Cardiologista",
+specialty:'Cardiologist',
 img:"https://randomuser.me/api/portraits/men/32.jpg"
 },
 
 {
 name:"Dra Maria Costa",
-specialty:"Neurologista",
+specialty:'Neurologist',
 img:"https://randomuser.me/api/portraits/women/44.jpg"
 },
 
 {
 name:"Dr Paulo Mendes",
-specialty:"Ortopedista",
+specialty:'Orthopaedist',
 img:"https://randomuser.me/api/portraits/men/65.jpg"
 }
 

@@ -19,7 +19,7 @@
         <q-input
           v-model="search"
           type="search"
-          label="Pesquisar por nome ou data"
+          :label="tdc('Search by name or date')"
           outlined
           dense
           clearable
@@ -55,6 +55,7 @@
 </style>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { ref, computed, onMounted } from 'vue'
 import HistoryItem from './HistoryItem.vue'
 

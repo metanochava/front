@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="onDialogToggle" @hide="stopScanning">
-    <s-modal-card :title="tdc('Ler Código')" icon="qr_code_scanner" width="420px" @close="close">
+    <s-modal-card :title="tdc('Read code')" icon="qr_code_scanner" width="420px" @close="close">
       <template #bar-actions>
         <q-btn
           v-if="torchSupported"
@@ -26,11 +26,11 @@
       </div>
 
       <div v-if="lastDecoded" class="text-center q-mt-sm">
-        <q-badge color="positive">{{ tdc('Lido') }}: {{ lastDecoded }}</q-badge>
+        <q-badge color="positive">{{ tdc('Read') }}: {{ lastDecoded }}</q-badge>
       </div>
 
       <div class="text-caption text-grey-6 text-center q-mt-sm">
-        {{ tdc('Aponta a câmara para o código de barras ou QR') }}
+        {{ tdc('Point the camera at the barcode or QR code') }}
       </div>
 
     </s-modal-card>
@@ -99,15 +99,15 @@ function cameraErrorMessage(e) {
   const msg = String(e?.message || e || '')
 
   if (msg.includes('NotAllowedError') || msg.toLowerCase().includes('permission')) {
-    return tdc('Permissão de câmara negada. Ativa o acesso à câmara nas definições do navegador.')
+    return tdc('Camera permission denied. Enable camera access in your browser settings.')
   }
   if (msg.includes('NotFoundError')) {
-    return tdc('Nenhuma câmara encontrada neste dispositivo.')
+    return tdc('No camera found on this device.')
   }
   if (window.isSecureContext === false) {
-    return tdc('A câmara só funciona em HTTPS (ou localhost).')
+    return tdc('The camera only works over HTTPS (or localhost).')
   }
-  return tdc('Não foi possível aceder à câmara.')
+  return tdc('Could not access the camera.')
 }
 
 function onDecoded(decodedText) {

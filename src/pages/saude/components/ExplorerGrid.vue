@@ -32,7 +32,7 @@
       />
 
       <div class="text-grey-7 text-subtitle1 q-mt-md">
-        Esta pasta está vazia
+        {{ tdc('This folder is empty') }}
       </div>
 
     </div>
@@ -42,6 +42,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import ExplorerItem from './ExplorerItem.vue'
 

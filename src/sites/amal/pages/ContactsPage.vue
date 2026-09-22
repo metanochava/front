@@ -12,7 +12,7 @@
         class="text-weight-bold text-primary text-center col-12"
         :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
-        {{ tdc('Contactos') }}
+        {{ tdc('Contacts') }}
       </div>
 
     </div>
@@ -30,7 +30,7 @@
             <q-card-section>
 
               <div class="text-h6 text-primary q-mb-md">
-                Envie-nos uma mensagem
+                {{ tdc('Send us a message') }}
               </div>
 
               <q-form @submit.prevent="submit">
@@ -38,21 +38,21 @@
                 <q-input
                   v-model="form.name"
                   outlined
-                  label="Nome"
+                  :label="tdc('Name')"
                   class="q-mb-md"
                 />
 
                 <q-input
                   v-model="form.phone"
                   outlined
-                  label="Telefone"
+                  :label="tdc('Phone')"
                   class="q-mb-md"
                 />
 
                 <q-input
                   v-model="form.email"
                   outlined
-                  label="Email"
+                  :label="tdc('Email')"
                   class="q-mb-md"
                 />
 
@@ -60,7 +60,7 @@
                   v-model="form.message"
                   outlined
                   type="textarea"
-                  label="Mensagem"
+                  :label="tdc('Message')"
                   autogrow
                   class="q-mb-md"
                 />
@@ -69,7 +69,7 @@
                   type="submit"
                   color="primary"
                   icon="send"
-                  label="Enviar Mensagem"
+                  :label="tdc('Send message')"
                   class="full-width"
                 />
 
@@ -90,7 +90,7 @@
             <q-card-section>
 
               <div class="text-h6 text-primary q-mb-md">
-                Informações de Contacto
+                {{ tdc('Contact information') }}
               </div>
 
               <!-- TELEFONE -->
@@ -108,13 +108,13 @@
               <!-- LOCAL -->
               <div class="info-item">
                 <q-icon name="location_on" color="primary" size="24px"/>
-                <div>Maputo, Moçambique</div>
+                <div>{{ tdc('Maputo, Mozambique') }}</div>
               </div>
 
               <!-- HORARIO -->
               <div class="info-item">
                 <q-icon name="schedule" color="primary" size="24px"/>
-                <div>Aberto 24h</div>
+                <div>{{ tdc('Open 24h') }}</div>
               </div>
 
 
@@ -122,7 +122,7 @@
               <q-btn
                 color="green"
                 icon="chat"
-                label="Falar no WhatsApp"
+                :label="tdc('Chat on WhatsApp')"
                 class="q-mt-md full-width"
                 href="https://wa.me/258865550550"
                 target="_blank"
@@ -171,7 +171,7 @@ export default defineComponent({
 
       Notify.create({
         type: "positive",
-        message: "Mensagem enviada com sucesso"
+        message: 'Message sent successfully'
       })
 
       console.log(form)

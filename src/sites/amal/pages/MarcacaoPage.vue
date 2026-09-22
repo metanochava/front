@@ -11,7 +11,7 @@
         class="text-weight-bold text-primary text-center col-12"
         :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
-        {{ tdc('Marcar Consulta') }}
+        {{ tdc('Book appointment') }}
       </div>
 
     </div>
@@ -35,8 +35,8 @@
                   <q-input
                     v-model="form.name"
                     outlined
-                    label="Nome"
-                    :rules="[v => !!v || 'Informe o nome']"
+                    :label="tdc('Name')"
+                    :rules="[v => !!v || tdc('Enter the name')]"
                   />
                 </div>
 
@@ -45,9 +45,9 @@
                   <q-input
                     v-model="form.phone"
                     outlined
-                    label="Telefone"
+                    :label="tdc('Phone')"
                     mask="+258 ## ### ####"
-                    :rules="[v => !!v || 'Informe o telefone']"
+                    :rules="[v => !!v || tdc('Enter the phone number')]"
                   />
                 </div>
 
@@ -56,14 +56,14 @@
                   <q-select
                     v-model="form.doctor"
                     outlined
-                    label="Médico"
+                    :label="tdc('Doctor')"
                     :options="doctors"
                     option-label="name"
                     option-value="id"
                     emit-value
                     map-options
                     @update:model-value="loadSchedule"
-                    :rules="[v => !!v || 'Selecione o médico']"
+                    :rules="[v => !!v || tdc('Select the doctor')]"
                   />
                 </div>
 
@@ -72,7 +72,7 @@
                   <q-select
                     v-model="form.specialty"
                     outlined
-                    label="Especialidade"
+                    :label="tdc('Specialty')"
                     :options="selectedDoctorSpecialties"
                     :disable="!form.doctor"
                   />
@@ -83,9 +83,9 @@
                   <q-input
                     v-model="form.date"
                     outlined
-                    label="Data"
+                    :label="tdc('Date')"
                     readonly
-                    :rules="[v => !!v || 'Selecione a data']"
+                    :rules="[v => !!v || tdc('Select the date')]"
                   >
                     <template #append>
                       <q-icon name="event" class="cursor-pointer">
@@ -106,9 +106,9 @@
                   <q-input
                     v-model="form.time"
                     outlined
-                    label="Horário"
+                    :label="tdc('Opening hours')"
                     readonly
-                    :rules="[v => !!v || 'Selecione o horário']"
+                    :rules="[v => !!v || tdc('Select the time')]"
                   />
                 </div>
 
@@ -116,7 +116,7 @@
                 <div class="col-12">
 
                   <div class="text-subtitle2 q-mb-sm">
-                    Horários disponíveis
+                    {{ tdc('Available times') }}
                   </div>
 
                   <div class="row q-gutter-sm">
@@ -143,7 +143,7 @@
                     type="submit"
                     color="primary"
                     icon="event"
-                    label="Confirmar Consulta"
+                    :label="tdc('Confirm appointment')"
                     :loading="loading"
                   />
 
@@ -193,7 +193,7 @@ export default defineComponent({
       {
         id: 1,
         name: "Dr João",
-        specialties: ["Cardiologia", "Clínica Geral"]
+        specialties: ['Cardiology', 'General practice']
       },
       {
         id: 2,
@@ -257,14 +257,14 @@ export default defineComponent({
 
         Notify.create({
           type: "positive",
-          message: "Consulta marcada com sucesso"
+          message: 'Appointment booked successfully'
         })
 
       } catch {
 
         Notify.create({
           type: "negative",
-          message: "Erro ao marcar consulta"
+          message: 'Error booking appointment'
         })
 
       } finally {

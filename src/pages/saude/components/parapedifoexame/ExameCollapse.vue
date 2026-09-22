@@ -2,7 +2,7 @@
   <div class="exame-collapse">
     <div class="row items-center q-col-gutter-sm q-mb-sm">
       <div class="col">
-        <s-input v-model="search" type="search" label="Pesquisar exame" dense clearable />
+        <s-input v-model="search" type="search" :label="tdc('Search exam')" dense clearable />
       </div>
       <div class="col-auto">
         <s-btn color="primary" icon="add" round @click="$emit('novo-tipo')" />
@@ -10,7 +10,7 @@
     </div>
 
     <div v-if="!filteredTipos.length" class="text-grey text-center q-pa-md">
-      Nenhum exame encontrado.
+      {{ tdc('No exam found.') }}
     </div>
 
     <q-list v-else bordered class="rounded-borders">
@@ -19,7 +19,7 @@
           <q-item-section avatar><q-icon name="science" color="primary" /></q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold">{{ tipo.nome }}</q-item-label>
-            <q-item-label caption>{{ countExamesByTipo(tipo.id) }} exames</q-item-label>
+            <q-item-label caption>{{ countExamesByTipo(tipo.id) }} {{ tdc('Exams').toLowerCase() }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <s-btn dense flat round icon="add" color="primary" @click.stop="$emit('nova-classe', tipo)" />
@@ -32,7 +32,7 @@
               <q-item-section avatar><q-icon name="folder" color="orange-8" /></q-item-section>
               <q-item-section>
                 <q-item-label>{{ classe.nome }}</q-item-label>
-                <q-item-label caption>{{ examesByClasse(classe.id).length }} exames</q-item-label>
+                <q-item-label caption>{{ examesByClasse(classe.id).length }} {{ tdc('Exams').toLowerCase() }}</q-item-label>
               </q-item-section>
               <q-item-section side>
                 <s-btn dense flat round icon="add" color="primary" @click.stop="$emit('novo-exame', classe)" />
@@ -49,13 +49,13 @@
                 @add="$emit('add', buildPayload(tipo, classe, exame))"
               />
               <div v-if="!examesByClasse(classe.id).length" class="text-caption text-grey q-pa-sm">
-                Esta classe ainda não tem exames.
+                {{ tdc('This class has no exams yet.') }}
               </div>
             </div>
           </q-expansion-item>
 
           <div v-if="!classesByTipo(tipo.id).length" class="text-caption text-grey q-pa-sm">
-            Este tipo ainda não tem classes.
+            {{ tdc('This type has no classes yet.') }}
           </div>
         </div>
       </q-expansion-item>
@@ -64,6 +64,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { ref, computed } from 'vue'
 import ExameItem from './ExameItem.vue'
 

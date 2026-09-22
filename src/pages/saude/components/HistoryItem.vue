@@ -1,21 +1,21 @@
 <template>
 
 <q-dialog v-model="dialog">
-  <s-modal-card title="Medico" icon="create_new_folder" width="700px">
+  <s-modal-card :title="tdc('Doctor')" icon="create_new_folder" width="700px">
     {{ data }}
 
 
     <template #footer>
       <s-btn
           flat
-          label="Cancelar"
+          :label="tdc('Cancel')"
           v-close-popup
       />
 
       <s-btn
           color="primary"
           icon="create_new_folder"
-          label="Criar Pasta"
+          :label="tdc('Create folder')"
           @click="guardar"
       />
 
@@ -70,6 +70,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { ref } from "vue"
 import { ds, useUserStore } from "quasar_resaas"
 

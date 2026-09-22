@@ -16,11 +16,11 @@
 
           <div class="q-ml-sm">
             <div class="text-subtitle2 text-weight-bold">
-              Atendimento
+              {{ tdc('Support') }}
             </div>
 
             <div class="text-caption">
-              Estamos online
+              {{ tdc('We\'re online') }}
             </div>
           </div>
 
@@ -38,9 +38,9 @@
         <!-- MENSAGENS.   'Olá! Como podemos ajudá-lo?' -->
         <q-card-section class="chat-messages">
           <q-chat-message
-            name="Atendimento"
-            :text="['Olá! sou o chat?', 'Como podemos ajudá-lo?', ]"
-            stamp="Agora"
+            :name="tdc('Support')"
+            :text="[tdc('Hello! Can I help you?'), tdc('How can we help you?'), ]"
+            :stamp="tdc('Now')"
             bg-color="grey-3"
             text-color="black"
           />
@@ -49,7 +49,7 @@
             v-for="(item, index) in chatMessages"
             :key="index"
             sent
-            name="Você"
+            :name="tdc('You')"
             :text="[item]"
             bg-color="primary"
             text-color="white"
@@ -65,7 +65,7 @@
             dense
             outlined
             rounded
-            placeholder="Escreva uma mensagem..."
+            :placeholder="tdc('Write a message...')"
             @keyup.enter="sendChatMessage"
           >
             <template #append>
@@ -85,7 +85,7 @@
       <!-- BOTÃO DO CHAT -->
       <q-btn
         v-if="!chatOpen"
-        label="Live Chat"
+        :label="tdc('Live chat')"
         size="lg"
         color="primary"
         icon="chat"
@@ -93,7 +93,7 @@
         @click="chatOpen = true"
       >
         <q-tooltip>
-          Falar connosco
+          {{ tdc('Talk to us') }}
         </q-tooltip>
       </q-btn>
     </div>
@@ -135,6 +135,8 @@
         <!-- DIVISÃO ENTRE OS DOIS LADOS -->
         <q-space />
 
+        <site-language-menu :languages="languages" :current="current" @choose="choose" />
+
         <!-- Grande e Longo -->
 
           <s-btn
@@ -142,7 +144,7 @@
             dense
             icon="calculate"
             :round="$q.screen.lt.md"
-            :label="$q.screen.lt.md ? '' : 'Loan Calculator'"
+            :label="$q.screen.lt.md ? '' : tdc('Loan calculator')"
             :class="
               $q.dark.isActive
                 ? 'bg-dark text-white'
@@ -159,7 +161,7 @@
                   : 'bg-primary text-white'
               "
             >
-              Loan Calculator
+              {{ tdc('Loan calculator') }}
             </q-tooltip>
 
           </s-btn>
@@ -181,7 +183,7 @@
                   : 'bg-primary text-white'
               "
             >
-              Liga no WhatsApp
+              {{ tdc('Call us on WhatsApp') }}
             </q-tooltip>
           </s-btn>
 
@@ -261,6 +263,8 @@
 
 import { defineComponent} from 'vue'
 import RodapePage from '../pages/RodapePage.vue'
+import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
+import { useSiteLanguage } from '../../shared/useSiteLanguage'
 import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
 import { useRouter } from 'vue-router'
 
@@ -270,17 +274,22 @@ export default defineComponent({
 
   components:{
     RodapePage,
+    SiteLanguageMenu,
   },
 
   setup(){
     const router = useRouter()
     const User = useUserStore()
     const Entity = useEntityStore()
+    const { languages, current, choose } = useSiteLanguage({ defaultCode: 'pt-pt' })
 
     return{
       User,
       Entity,
-      router
+      router,
+      languages,
+      current,
+      choose
     }
 
   },
@@ -302,12 +311,12 @@ export default defineComponent({
           route: 'home'
         },
         {
-          label: 'Sobre Nós',
+          label: 'About us',
           icon: 'groups',
           route: 'sobrenos'
         },
         {
-          label: 'Utentes',
+          label: 'Patients',
           icon: 'person',
           route: 'utentes'
         },

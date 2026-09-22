@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="Pedidoexamemedico.showPdf"
       :src="Pedidoexamemedico.pdf"
-      title="Resultado de Exame Médico"
+      :title="tdc('Medical exam result')"
     />
 
     <PacienteHeader />
@@ -18,11 +18,11 @@
 
           <td align="center">
             <div class="banner-title">
-              RESULTADO DE EXAME MÉDICO
+              {{ tdc('Medical exam result').toUpperCase() }}
             </div>
 
             <div class="banner-subtitle">
-              Gestão documental dos resultados laboratoriais
+              {{ tdc('Document management of laboratory results') }}
             </div>
           </td>
 
@@ -80,6 +80,7 @@
 
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import { ref, reactive, onMounted } from 'vue'
 

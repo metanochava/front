@@ -12,15 +12,15 @@
             />
 
             <div class="text-h4 text-weight-bold">
-              Clínica Médica
+              {{ tdc('Medical clinic') }}
             </div>
 
             <div class="text-subtitle1 q-mt-sm">
-              Cuidamos da sua saúde
+              {{ tdc('We take care of your health') }}
             </div>
 
             <div class="text-caption q-mt-md">
-              Passe o rato para conhecer os nossos serviços
+              {{ tdc('Hover to discover our services') }}
             </div>
           </div>
         </div>
@@ -35,7 +35,7 @@
             />
 
             <div class="text-h5 text-weight-bold">
-              Os nossos serviços
+              {{ tdc('Our services') }}
             </div>
 
             <div class="text-body1 q-mt-md">
@@ -47,7 +47,7 @@
               class="q-mt-lg"
               color="white"
               text-color="primary"
-              label="Saber mais"
+              :label="tdc('Learn more')"
               icon-right="arrow_forward"
               no-caps
               rounded

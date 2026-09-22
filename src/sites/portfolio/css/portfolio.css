@@ -1,0 +1,130 @@
+/* Portfolio design tokens and shared building blocks. Scoped under .pf so nothing leaks
+   into the rest of the application (the same SPA serves the other sites). */
+
+.pf {
+  --pf-font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --pf-font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --pf-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --pf-radius: 14px;
+  --pf-radius-sm: 8px;
+  --pf-max: 1160px;
+  --pf-nav: 68px;
+
+  /* dark (default): graphite ink, evidence-tag amber */
+  --pf-bg: #0a0f14;
+  --pf-surface: #101821;
+  --pf-surface-2: #16212d;
+  --pf-line: rgba(150, 180, 210, 0.16);
+  --pf-text: #e7eef5;
+  --pf-muted: #93a7b9;
+  --pf-accent: #ffb020;
+  --pf-accent-ink: #1b1305;
+  --pf-cool: #5cc8ff;
+  --pf-ok: #4ade80;
+  --pf-glow: rgba(255, 176, 32, 0.14);
+
+  background: var(--pf-bg);
+  color: var(--pf-text);
+  font-family: var(--pf-font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.body--light .pf {
+  --pf-bg: #eef2f6;
+  --pf-surface: #ffffff;
+  --pf-surface-2: #e2e9f0;
+  --pf-line: rgba(20, 45, 70, 0.14);
+  --pf-text: #0d1a26;
+  --pf-muted: #4a5e72;
+  --pf-accent: #b45309;
+  --pf-accent-ink: #ffffff;
+  --pf-cool: #0b6fa4;
+  --pf-ok: #15803d;
+  --pf-glow: rgba(180, 83, 9, 0.1);
+}
+
+.pf *,
+.pf *::before,
+.pf *::after { box-sizing: border-box; }
+
+.pf a { color: inherit; text-decoration: none; }
+
+.pf h1, .pf h2, .pf h3 {
+  font-family: var(--pf-font-display);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.pf p { margin: 0; }
+
+.pf-wrap {
+  width: 100%;
+  max-width: var(--pf-max);
+  margin: 0 auto;
+  padding-inline: 24px;
+}
+
+.pf-section { padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: var(--pf-nav); }
+
+/* the mono "path" that names a section, like a location in a shell */
+.pf-path {
+  font-family: var(--pf-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--pf-accent);
+  margin-bottom: 14px;
+}
+
+.pf-title { font-size: clamp(30px, 4.6vw, 52px); max-width: 18ch; }
+.pf-lead { color: var(--pf-muted); max-width: 62ch; margin-top: 18px; }
+
+.pf-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--pf-font-body); font-weight: 600; font-size: 15px;
+  padding: 13px 22px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--pf-line); background: transparent; color: var(--pf-text);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
+}
+.pf-btn:hover { transform: translateY(-2px); border-color: var(--pf-accent); }
+.pf-btn:focus-visible, .pf a:focus-visible, .pf button:focus-visible {
+  outline: 2px solid var(--pf-accent); outline-offset: 3px;
+}
+.pf a.pf-btn { color: var(--pf-text); }
+.pf a.pf-btn--primary, .pf .pf-btn--primary { background: var(--pf-accent); color: var(--pf-accent-ink); border-color: var(--pf-accent); }
+.pf .pf-btn--primary:hover { background: var(--pf-accent); filter: brightness(1.08); }
+
+.pf-chip {
+  display: inline-block; font-family: var(--pf-font-mono); font-size: 12.5px;
+  padding: 5px 11px; border-radius: 999px;
+  background: var(--pf-surface-2); border: 1px solid var(--pf-line); color: var(--pf-text);
+}
+
+.pf-card {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  padding: 28px;
+  transition: transform .25s ease, border-color .25s ease;
+}
+.pf-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--pf-accent) 55%, var(--pf-line)); }
+
+/* scroll reveal: visible at rest, only animated from a resting state */
+.pf-reveal { opacity: 1; transform: none; }
+.pf-js .pf-reveal:not(.is-in) { opacity: 0; transform: translateY(22px); }
+.pf-js .pf-reveal { transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .2, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-js .pf-reveal:not(.is-in) { opacity: 1; transform: none; }
+  .pf *, .pf *::before, .pf *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+@media (max-width: 640px) {
+  .pf { font-size: 16px; }
+  .pf-wrap { padding-inline: 18px; }
+}

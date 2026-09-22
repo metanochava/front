@@ -7,7 +7,7 @@
       class="text-weight-bold text-primary"
       :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
     >
-      {{ tdc('Depoimentos dos Pacientes') }}
+      {{ tdc('Patient testimonials') }}
     </div>
 
   <q-carousel
@@ -44,7 +44,7 @@
 
           <!-- TEXTO -->
           <div class="text-subtitle1 text-center">
-            "{{ t.text }}"
+            "{{ tdc(t.text) }}"
           </div>
 
           <!-- ESTRELAS -->
@@ -92,28 +92,28 @@ const testimonials=[
 
 {
 name:"Maria João",
-text:"Excelente atendimento e médicos muito profissionais.",
+text:'Excellent service and very professional doctors.',
 rating:5,
 photo:"https://randomuser.me/api/portraits/women/44.jpg"
 },
 
 {
 name:"Carlos Manuel",
-text:"Clínica moderna com diagnóstico rápido e eficiente.",
+text:'Modern clinic with fast and efficient diagnosis.',
 rating:5,
 photo:"https://randomuser.me/api/portraits/men/32.jpg"
 },
 
 {
 name:"Ana Costa",
-text:"Ambiente acolhedor e equipa muito atenciosa.",
+text:'Welcoming environment and a very caring team.',
 rating:4,
 photo:"https://randomuser.me/api/portraits/women/68.jpg"
 },
 
 {
 name:"Paulo Mendes",
-text:"Recomendo muito a clínica, atendimento excelente.",
+text:'I highly recommend the clinic, excellent service.',
 rating:5,
 photo:"https://randomuser.me/api/portraits/men/55.jpg"
 }

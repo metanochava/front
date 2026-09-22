@@ -7,7 +7,7 @@
         flat
         color="primary"
         icon="home"
-        label="Resultados"
+        :label="tdc('Results')"
         @click="$emit('root')"
       />
 
@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 defineProps({
   caminho: {
     type: Array,

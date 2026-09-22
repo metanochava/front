@@ -1,10 +1,10 @@
 <template>
 
 <q-dialog v-model="dialog">
-  <s-modal-card title="Nova Pasta" icon="create_new_folder" width="500px">
+  <s-modal-card :title="tdc('New folder')" icon="create_new_folder" width="500px">
     <s-input
         v-model="form.nome"
-        label="Nome da pasta"
+        :label="tdc('Folder name')"
         prepend-icon="folder"
         autofocus
     />
@@ -14,14 +14,14 @@
     <template #footer>
       <s-btn
           flat
-          label="Cancelar"
+          :label="tdc('Cancel')"
           v-close-popup
       />
 
       <s-btn
           color="primary"
           icon="create_new_folder"
-          label="Criar Pasta"
+          :label="tdc('Create folder')"
           @click="guardar"
       />
 
@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import {computed,reactive} from 'vue'
 

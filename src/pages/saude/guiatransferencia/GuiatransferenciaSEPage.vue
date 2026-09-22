@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="Guiatransferencia.showPdf"
       :src="Guiatransferencia.pdf"
-      title="Atestado Médico"
+      :title="tdc('Medical certificate')"
     />
 
     <PacienteHeader />
@@ -22,11 +22,11 @@
 
           <td align="center">
             <div class="banner-title">
-              GUIA DE TRANSFERÊNCIA
+              {{ tdc('Transfer form').toUpperCase() }}
             </div>
 
             <div class="banner-subtitle">
-              Referenciação do paciente para outra unidade de saúde
+              {{ tdc('Patient referral to another health unit') }}
             </div>
           </td>
 
@@ -57,14 +57,14 @@
 
             <s-input
               v-model="Guiatransferencia.form.destino"
-              label="Unidade de Destino"
+              :label="tdc('Destination unit')"
             />
 
             <div class="q-mt-md">
 
               <s-input
                 v-model="Guiatransferencia.form.motivo"
-                label="Motivo da Transferência"
+                :label="tdc('Transfer reason')"
               />
 
             </div>
@@ -73,7 +73,7 @@
 
               <s-editor
                 v-model="Guiatransferencia.form.diagnostico"
-                label="Diagnóstico / Fundamentação Clínica"
+                :label="tdc('Diagnosis / Clinical rationale')"
                 min-height="220px"
               />
 
@@ -83,7 +83,7 @@
 
               <s-editor
                 v-model="Guiatransferencia.form.observacao"
-                label="Observações"
+                :label="tdc('Observations')"
                 min-height="140px"
               />
 
@@ -102,14 +102,14 @@
               <q-card-section>
 
                 <div class="text-subtitle1 text-weight-bold">
-                  Resumo
+                  {{ tdc('Summary') }}
                 </div>
 
                 <q-separator class="q-my-md" />
 
                 <div>
 
-                  <strong>Paciente</strong>
+                  <strong>{{ tdc('Patient') }}</strong>
 
                   <br>
 
@@ -121,7 +121,7 @@
 
                 <div>
 
-                  <strong>NID</strong>
+                  <strong>{{ tdc('NID') }}</strong>
 
                   <br>
 
@@ -133,7 +133,7 @@
 
                 <div>
 
-                  <strong>Destino</strong>
+                  <strong>{{ tdc('Destination') }}</strong>
 
                   <br>
 
@@ -145,7 +145,7 @@
 
                 <div>
 
-                  <strong>Motivo</strong>
+                  <strong>{{ tdc('Reason') }}</strong>
 
                   <br>
 
@@ -170,13 +170,13 @@
         <s-btn
           flat
           color="grey"
-          label="Cancelar"
+          :label="tdc('Cancel')"
         />
 
         <s-btn
           color="primary"
           icon="save"
-          label="Emitir Guia"
+          :label="tdc('Issue transfer form')"
           :loading="Guiatransferencia.saving"
           @click="save"
         />
@@ -221,6 +221,7 @@
 </style>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 

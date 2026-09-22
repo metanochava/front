@@ -12,11 +12,11 @@
         class="text-weight-bold q-mb-md text-grey-9 text-center col-12"
         :style="{ fontSize: '50px' }"
       >
-        FAQs
+        {{ tdc('FAQs') }}
       </div>
 
       <label class=" q-px-xl text-h5">
-        Answers to some of the common questions about financing your treament with Chrysalis
+        {{ tdc('Answers to some of the common questions about financing your treatment') }}
       </label>
 
       <div
@@ -26,7 +26,7 @@
           <q-list bordered>
             <q-expansion-item
               group="somegroup"
-              label="First"
+              :label="tdc('First')"
               default-opened
               header-class="text-primary"
             >
@@ -39,7 +39,7 @@
 
             <q-expansion-item
               group="somegroup"
-              label="First"
+              :label="tdc('First')"
               default-opened
               header-class="text-primary"
             >

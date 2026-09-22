@@ -11,7 +11,7 @@
         class="text-weight-bold text-primary text-center col-12"
         :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
-        {{ tdc('Serviços') }}
+        {{ tdc('Services') }}
       </div>
 
     </div>
@@ -38,11 +38,11 @@
             </div>
 
             <div class="service-title">
-              {{ s.title }}
+              {{ tdc(s.title) }}
             </div>
 
             <div class="service-desc">
-              {{ s.desc }}
+              {{ tdc(s.desc) }}
             </div>
 
           </div>
@@ -73,38 +73,38 @@ export default defineComponent({
 
       {
         icon: "monitor_heart",
-        title: "Cardiologia",
-        desc: "Diagnóstico e tratamento de doenças cardiovasculares"
+        title: 'Cardiology',
+        desc: 'Diagnosis and treatment of cardiovascular disease'
       },
 
       {
         icon: "visibility",
         title: "Oftalmologia",
-        desc: "Cuidados completos para visão e saúde ocular"
+        desc: 'Complete care for vision and eye health'
       },
 
       {
         icon: "psychology",
         title: "Neurologia",
-        desc: "Tratamento especializado do sistema nervoso"
+        desc: 'Specialised treatment of the nervous system'
       },
 
       {
         icon: "healing",
         title: "Ortopedia",
-        desc: "Tratamento de lesões musculares e ósseas"
+        desc: 'Treatment of muscle and bone injuries'
       },
 
       {
         icon: "pregnant_woman",
         title: "Maternidade",
-        desc: "Acompanhamento completo da gravidez"
+        desc: 'Complete pregnancy care'
       },
 
       {
         icon: "biotech",
-        title: "Exames Laboratoriais",
-        desc: "Análises clínicas e diagnósticos laboratoriais"
+        title: 'Laboratory exams',
+        desc: 'Clinical analyses and laboratory diagnostics'
       }
 
     ]

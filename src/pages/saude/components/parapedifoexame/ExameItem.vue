@@ -6,9 +6,9 @@
     <q-item-section>
       <q-item-label class="text-weight-medium">{{ label }}</q-item-label>
       <q-item-label v-if="exame.codigo || exame.amostra || exame.prazo_horas" caption>
-        <span v-if="exame.codigo">Código: {{ exame.codigo }}</span>
-        <span v-if="exame.amostra"> · Amostra: {{ exame.amostra }}</span>
-        <span v-if="exame.prazo_horas"> · Prazo: {{ exame.prazo_horas }}h</span>
+        <span v-if="exame.codigo">{{ tdc('Code') }}: {{ exame.codigo }}</span>
+        <span v-if="exame.amostra"> · {{ tdc('Sample') }}: {{ exame.amostra }}</span>
+        <span v-if="exame.prazo_horas"> · {{ tdc('Deadline') }}: {{ exame.prazo_horas }}h</span>
       </q-item-label>
     </q-item-section>
     <q-item-section side>
@@ -18,6 +18,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed } from 'vue'
 const props = defineProps({ exame: { type: Object, required: true }, selected: Boolean })
 defineEmits(['select', 'add'])

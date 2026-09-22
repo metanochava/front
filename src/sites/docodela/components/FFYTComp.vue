@@ -56,20 +56,20 @@
 
               <!-- CATEGORIA -->
               <div class=" text-h6 text-primary text-weight-bold">
-                {{ post.category }}
+                {{ tdc(post.category) }}
               </div>
 
 
               <!-- DESCRIÇÃO -->
               <div class="text-grey-7 q-mt-sm">
-                {{ post.excerpt }}
+                {{ tdc(post.excerpt) }}
               </div>
 
               <!-- META -->
               <div class="row justify-between items-center q-mt-md text-caption text-grey">
 
                 <span>{{ 'Explore Finace Options ->' }}</span>
-                <!-- <span>{{ post.read_time }}</span> -->
+                <!-- <span>{{ tdc(post.read_time) }}</span> -->
 
               </div>
 
@@ -88,21 +88,21 @@
     <!-- MODAL ARTIGO -->
     <q-dialog v-model="postModal">
 
-      <s-modal-card :title="selectedPost.title" width="600px">
+      <s-modal-card :title="tdc(selectedPost.title)" width="600px">
         <q-img :src="selectedPost.image" height="200px" />
 
         <div class="text-caption text-grey q-mt-sm">
-          {{ selectedPost.category }} • {{ selectedPost.date }}
+          {{ tdc(selectedPost.category) }} • {{ selectedPost.date }}
         </div>
 
         <div class="text-body1 q-mt-md">
-          {{ selectedPost.content }}
+          {{ tdc(selectedPost.content) }}
         </div>
 
         <template #footer>
           <q-btn
             flat
-            label="Fechar"
+            :label="tdc('Close')"
             v-close-popup
           />
         </template>
@@ -129,21 +129,21 @@ export default defineComponent({
 
       {
         id:1,
-        title:"Importância do Check-up Regular",
-        category:"Prevenção",
-        excerpt:"Realizar exames regulares ajuda a prevenir doenças...",
-        content:"Check-ups permitem identificar problemas precocemente e aumentar as chances de tratamento eficaz.",
+        title:'The importance of regular check-ups',
+        category:'Prevention',
+        excerpt:'Having regular exams helps prevent disease...',
+        content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
         date:"10 Mar 2026",
-        read_time:"5 min",
+        read_time:'5 min',
         image:"https://images.unsplash.com/photo-1584515933487-779824d29309"
       },
 
       {
         id:2,
-        title:"Cuidados com o Coração",
-        category:"Cardiologia",
-        excerpt:"Saiba como manter o seu coração saudável...",
-        content:"Uma alimentação equilibrada e prática de exercícios físicos são fundamentais.",
+        title:'Taking care of your heart',
+        category:'Cardiology',
+        excerpt:'Learn how to keep your heart healthy...',
+        content:'A balanced diet and regular physical exercise are essential.',
         date:"05 Mar 2026",
         read_time:"4 min",
         image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
@@ -151,20 +151,20 @@ export default defineComponent({
 
       {
         id:3,
-        title:"Saúde Mental no Dia-a-dia",
-        category:"Psicologia",
-        excerpt:"Dicas para cuidar da sua saúde mental...",
-        content:"Dormir bem, evitar stress e procurar ajuda são essenciais.",
+        title:'Mental health in everyday life',
+        category:'Psychology',
+        excerpt:'Tips for looking after your mental health...',
+        content:'Sleeping well, avoiding stress and seeking help are essential.',
         date:"01 Mar 2026",
         read_time:"6 min",
         image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
       },
       {
         id:4,
-        title:"Cuidados com o Coração",
-        category:"Cardiologia",
-        excerpt:"Saiba como manter o seu coração saudável...",
-        content:"Uma alimentação equilibrada e prática de exercícios físicos são fundamentais.",
+        title:'Taking care of your heart',
+        category:'Cardiology',
+        excerpt:'Learn how to keep your heart healthy...',
+        content:'A balanced diet and regular physical exercise are essential.',
         date:"05 Mar 2026",
         read_time:"4 min",
         image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
@@ -172,31 +172,31 @@ export default defineComponent({
 
       {
         id:5,
-        title:"Saúde Mental no Dia-a-dia",
-        category:"Psicologia",
-        excerpt:"Dicas para cuidar da sua saúde mental...",
-        content:"Dormir bem, evitar stress e procurar ajuda são essenciais.",
+        title:'Mental health in everyday life',
+        category:'Psychology',
+        excerpt:'Tips for looking after your mental health...',
+        content:'Sleeping well, avoiding stress and seeking help are essential.',
         date:"01 Mar 2026",
         read_time:"6 min",
         image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
       },
       {
         id:6,
-        title:"Importância do Check-up Regular",
-        category:"Prevenção",
-        excerpt:"Realizar exames regulares ajuda a prevenir doenças...",
-        content:"Check-ups permitem identificar problemas precocemente e aumentar as chances de tratamento eficaz.",
+        title:'The importance of regular check-ups',
+        category:'Prevention',
+        excerpt:'Having regular exams helps prevent disease...',
+        content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
         date:"10 Mar 2026",
-        read_time:"5 min",
+        read_time:'5 min',
         image:"https://images.unsplash.com/photo-1584515933487-779824d29309"
       },
 
       {
         id:7,
-        title:"Cuidados com o Coração",
-        category:"Cardiologia",
-        excerpt:"Saiba como manter o seu coração saudável...",
-        content:"Uma alimentação equilibrada e prática de exercícios físicos são fundamentais.",
+        title:'Taking care of your heart',
+        category:'Cardiology',
+        excerpt:'Learn how to keep your heart healthy...',
+        content:'A balanced diet and regular physical exercise are essential.',
         date:"05 Mar 2026",
         read_time:"4 min",
         image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
@@ -204,10 +204,10 @@ export default defineComponent({
 
       {
         id:8,
-        title:"Saúde Mental no Dia-a-dia",
-        category:"Psicologia",
-        excerpt:"Dicas para cuidar da sua saúde mental...",
-        content:"Dormir bem, evitar stress e procurar ajuda são essenciais.",
+        title:'Mental health in everyday life',
+        category:'Psychology',
+        excerpt:'Tips for looking after your mental health...',
+        content:'Sleeping well, avoiding stress and seeking help are essential.',
         date:"01 Mar 2026",
         read_time:"6 min",
         image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"

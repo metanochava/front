@@ -16,14 +16,14 @@
       <div
         class="q-mb-lg"
       >
-        <label class="text-h4"><q-icon name="bolt" color="primary" /> Less than 1 minute to apply </label> <br/>
-        <label class="text-h4"><q-icon name="verified" color="primary" /> Instant decision</label> <br/>
-        <label class="text-h4"><q-icon name="description" color="primary" /> Simple online application</label> <br/>
-        <label class="text-h4"><q-icon name="sentiment_satisfied_alt" color="primary" /> Easy with no hassle </label> <br/><br/>
+        <label class="text-h4"><q-icon name="bolt" color="primary" /> {{ tdc('Less than 1 minute to apply') }} </label> <br/>
+        <label class="text-h4"><q-icon name="verified" color="primary" /> {{ tdc('Instant decision') }}</label> <br/>
+        <label class="text-h4"><q-icon name="description" color="primary" /> {{ tdc('Simple online application') }}</label> <br/>
+        <label class="text-h4"><q-icon name="sentiment_satisfied_alt" color="primary" /> {{ tdc('Easy with no hassle') }} </label> <br/><br/>
 
         <s-btn
           color="primary"
-          label="Emquire now"
+          :label="tdc('Enquire now')"
         />
       </div>
     </div>

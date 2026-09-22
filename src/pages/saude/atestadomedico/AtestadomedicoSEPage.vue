@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="Atestadomedico.showPdf"
       :src="Atestadomedico.pdf"
-      title="Atestado Médico"
+      :title="tdc('Medical certificate')"
     />
 
     <PacienteHeader />
@@ -17,11 +17,11 @@
 
             <td align="center">
               <div class="banner-title">
-                ATESTADO MÉDICO
+                {{ tdc('Medical certificate').toUpperCase() }}
               </div>
 
               <div class="banner-subtitle">
-                Requisição emitida por profissional de saúde habilitado
+                {{ tdc('Request issued by a qualified healthcare professional') }}
               </div>
             </td>
 
@@ -52,7 +52,7 @@
 
                         <s-date
                             v-model="Atestadomedico.form.data_criacao"
-                            label="Data de Emissão"
+                            :label="tdc('Issue date')"
                         />
 
                     </div>
@@ -61,7 +61,7 @@
 
                         <s-date
                             v-model="Atestadomedico.form.data_limite"
-                            label="Válido Até"
+                            :label="tdc('Valid until')"
                         />
 
                     </div>
@@ -72,7 +72,7 @@
 
                     <s-input
                         v-model="Atestadomedico.form.comparecer"
-                        label="Comparecer"
+                        :label="tdc('Attend')"
                     />
 
                 </div>
@@ -81,7 +81,7 @@
 
                     <s-editor
                         v-model="Atestadomedico.form.diagnostico"
-                        label="Diagnóstico / Fundamentação Clínica"
+                        :label="tdc('Diagnosis / Clinical rationale')"
                         min-height="250px"
                     />
 
@@ -101,14 +101,14 @@
                     <q-card-section>
 
                         <div class="text-subtitle1 text-weight-bold">
-                            Resumo
+                            {{ tdc('Summary') }}
                         </div>
 
                         <q-separator class="q-my-md"/>
 
                         <div>
 
-                            <strong>Paciente</strong>
+                            <strong>{{ tdc('Patient') }}</strong>
 
                             <br>
 
@@ -120,7 +120,7 @@
 
                         <div>
 
-                            <strong>NID</strong>
+                            <strong>{{ tdc('NID') }}</strong>
 
                             <br>
 
@@ -132,7 +132,7 @@
 
                         <div>
 
-                            <strong>Médico</strong>
+                            <strong>{{ tdc('Doctor') }}</strong>
 
                             <br>
 
@@ -144,7 +144,7 @@
 
                         <div>
 
-                            <strong>Data</strong>
+                            <strong>{{ tdc('Date') }}</strong>
 
                             <br>
 
@@ -169,13 +169,13 @@
         <s-btn
             flat
             color="grey"
-            label="Cancelar"
+            :label="tdc('Cancel')"
         />
 
         <s-btn
             color="primary"
             icon="save"
-            label="Emitir Atestado"
+            :label="tdc('Issue certificate')"
             :loading="Atestadomedico.saving"
             @click="save"
         />
@@ -218,6 +218,7 @@
 </style>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 

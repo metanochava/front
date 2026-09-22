@@ -10,7 +10,7 @@ export let docodelaSiteRoutes = [
         component: () => import('./pages/HomePage.vue'),
         name: 'home',
         meta: {
-          title: tdc('Bem vindo a clinica docodela'),
+          title: tdc('Welcome to Docodela clinic'),
           icon: 'inventory_2',
         },
       },
@@ -19,7 +19,7 @@ export let docodelaSiteRoutes = [
         component:()=>import("./pages/UtentesPage.vue"),
         name:"utentes",
         meta: {
-          title: tdc('Utentes'),
+          title: tdc('Patients'),
           icon: 'inventory_2',
         },
       },
@@ -28,7 +28,7 @@ export let docodelaSiteRoutes = [
         component:()=>import("./pages/SobreNosPage.vue"),
         name:"sobrenos",
         meta: {
-          title: tdc('Sobre nos'),
+          title: tdc('About us'),
           icon: 'inventory_2',
         },
       },

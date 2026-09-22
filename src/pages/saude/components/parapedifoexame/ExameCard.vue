@@ -13,13 +13,14 @@
           <s-btn dense flat round color="negative" icon="delete" @click="$emit('remove')" />
         </div>
       </div>
-      <div v-if="item.instrucoes" class="q-mt-sm text-caption"><b>Instruções:</b> <span v-html="item.instrucoes"></span></div>
-      <div v-if="item.observacao" class="q-mt-xs text-caption"><b>Observação:</b> <span v-html="item.observacao"></span></div>
+      <div v-if="item.instrucoes" class="q-mt-sm text-caption"><b>{{ tdc('Instructions') }}:</b> <span v-html="item.instrucoes"></span></div>
+      <div v-if="item.observacao" class="q-mt-xs text-caption"><b>{{ tdc('Observation') }}:</b> <span v-html="item.observacao"></span></div>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed } from 'vue'
 const props = defineProps({ item: { type: Object, required: true } })
 defineEmits(['remove'])

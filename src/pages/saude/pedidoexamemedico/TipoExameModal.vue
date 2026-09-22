@@ -1,5 +1,5 @@
 <template>
-  <s-modal-card title="Novo Tipo de Exame" icon="science" width="min(1000px, 92vw)" @close="cancel">
+  <s-modal-card :title="tdc('New exam type')" icon="science" width="min(1000px, 92vw)" @close="cancel">
     <div class="row q-col-gutter-lg">
 
             <!-- ESQUERDA -->
@@ -7,7 +7,7 @@
 
               <s-input
                 v-model="Tipoexamemedico.form.nome"
-                label="Nome"
+                :label="tdc('Name')"
                 outlined
               />
 
@@ -15,7 +15,7 @@
 
                 <s-editor
                   v-model="Tipoexamemedico.form.descricao"
-                  label="Descrição"
+                  :label="tdc('Description')"
                   min-height="180px"
                 />
 
@@ -35,13 +35,13 @@
                 <q-card-section>
 
                   <div class="text-subtitle2 text-weight-bold q-mb-md">
-                    Configuração
+                    {{ tdc('Configuration') }}
                   </div>
 
                   <s-input
                     v-model="Tipoexamemedico.form.ordem"
                     type="number"
-                    label="Ordem"
+                    :label="tdc('Order')"
                     outlined
                   />
 
@@ -49,7 +49,7 @@
 
                     <s-switch
                       v-model="Tipoexamemedico.form.ativo"
-                      label="Activo"
+                      :label="tdc('Active')"
                     />
 
                   </div>
@@ -69,14 +69,14 @@
               flat
               color="grey-8"
               icon="close"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="cancel"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar"
+              :label="tdc('Save')"
               :loading="Tipoexamemedico.saving"
               @click="save"
             />
@@ -85,6 +85,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { onMounted } from 'vue'
 import { useTipoexamemedicoStore } from '../tipoexamemedico/tipoexamemedicoStore'
 

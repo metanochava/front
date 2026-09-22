@@ -294,7 +294,7 @@ const pedidosUrgentes = computed(() => pedidos.value.filter(p => p.urgente).leng
 const pedidosNormais = computed(() => pedidos.value.length - pedidosUrgentes.value)
 
 const pedidosDonut = computed(() => buildDonut([
-  { label: 'Urgente', value: pedidosUrgentes.value, color: 'var(--q-negative)' },
+  { label: 'Urgent', value: pedidosUrgentes.value, color: 'var(--q-negative)' },
   { label: 'Normal', value: pedidosNormais.value, color: 'var(--q-primary)' }
 ]))
 
@@ -316,48 +316,48 @@ const examesPorClasse = computed(() => {
 
 const kpis = computed(() => [
   {
-    label: 'Pacientes',
+    label: 'Patients',
     value: Paciente.pagination.rowsNumber || 0,
     icon: 'groups', color: 'primary', route: 'list_paciente'
   },
   {
-    label: 'Consultas Hoje',
+    label: 'Consultations today',
     value: consultasHoje.value.length,
     hint: `${Consulta.pagination.rowsNumber || 0} ${tdc('total')}`,
     icon: 'event_available', color: 'positive', route: 'list_consulta'
   },
   {
-    label: 'Pedidos de Exame',
+    label: 'Exam requests',
     value: Pedido.pagination.rowsNumber || 0,
     hint: `${pedidosUrgentes.value} ${tdc('urgent')}`,
     icon: 'science', color: 'warning', route: 'list_pedidoexamemedico'
   },
   {
-    label: 'Receitas Médicas',
+    label: 'Medical prescriptions',
     value: Receita.pagination.rowsNumber || 0,
     icon: 'medication', color: 'info', route: 'list_receitamedica'
   },
   {
-    label: 'Atestados Médicos',
+    label: 'Medical certificates',
     value: Atestado.pagination.rowsNumber || 0,
     icon: 'assignment_ind', color: 'accent', route: 'list_atestadomedico'
   },
   {
-    label: 'Guias de Transferência',
+    label: 'Transfer forms',
     value: Guia.pagination.rowsNumber || 0,
     icon: 'sync_alt', color: 'secondary', route: 'list_guiatransferencia'
   }
 ])
 
 const quickLinks = [
-  { label: 'Pacientes', icon: 'groups', route: 'list_paciente' },
-  { label: 'Consultas', icon: 'event_available', route: 'list_consulta' },
-  { label: 'Pedidos de Exame', icon: 'science', route: 'list_pedidoexamemedico' },
-  { label: 'Exames Médicos', icon: 'biotech', route: 'list_examemedico' },
-  { label: 'Receitas Médicas', icon: 'medication', route: 'list_receitamedica' },
-  { label: 'Atestados Médicos', icon: 'assignment_ind', route: 'list_atestadomedico' },
-  { label: 'Guias de Transferência', icon: 'sync_alt', route: 'list_guiatransferencia' },
-  { label: 'Relatórios Médicos', icon: 'summarize', route: 'list_relatoriomedico' }
+  { label: 'Patients', icon: 'groups', route: 'list_paciente' },
+  { label: 'Consultations', icon: 'event_available', route: 'list_consulta' },
+  { label: 'Exam requests', icon: 'science', route: 'list_pedidoexamemedico' },
+  { label: 'Medical exams', icon: 'biotech', route: 'list_examemedico' },
+  { label: 'Medical prescriptions', icon: 'medication', route: 'list_receitamedica' },
+  { label: 'Medical certificates', icon: 'assignment_ind', route: 'list_atestadomedico' },
+  { label: 'Transfer forms', icon: 'sync_alt', route: 'list_guiatransferencia' },
+  { label: 'Medical reports', icon: 'summarize', route: 'list_relatoriomedico' }
 ]
 
 </script>

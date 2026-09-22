@@ -238,10 +238,10 @@ function reloadAll() {
 }
 
 const kpis = [
-  { label: 'Nº de Vendas', icon: 'receipt_long', color: 'primary', value: () => summary.data?.num_vendas ?? 0 },
-  { label: 'Receita', icon: 'payments', color: 'positive', value: () => formatCurrency(summary.data?.receita) },
-  { label: 'Ticket Médio', icon: 'trending_up', color: 'info', value: () => formatCurrency(summary.data?.ticket_medio) },
-  { label: 'Contas a Receber', icon: 'account_balance_wallet', color: 'negative', value: () => formatCurrency(receivables.data?.total_em_divida) },
+  { label: 'Number of sales', icon: 'receipt_long', color: 'primary', value: () => summary.data?.num_vendas ?? 0 },
+  { label: 'Revenue', icon: 'payments', color: 'positive', value: () => formatCurrency(summary.data?.receita) },
+  { label: 'Average ticket', icon: 'trending_up', color: 'info', value: () => formatCurrency(summary.data?.ticket_medio) },
+  { label: 'Accounts receivable', icon: 'account_balance_wallet', color: 'negative', value: () => formatCurrency(receivables.data?.total_em_divida) },
 ]
 
 const timeseriesBars = computed(() => {

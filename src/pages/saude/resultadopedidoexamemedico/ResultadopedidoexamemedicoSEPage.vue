@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="Resultadoexamemedico.showPdf"
       :src="Resultadoexamemedico.pdf"
-      title="Resultado de Exame Médico"
+      :title="tdc('Medical exam result')"
     />
 
     <PacienteHeader />
@@ -18,11 +18,11 @@
 
           <td align="center">
             <div class="banner-title">
-              RESULTADO DE EXAME MÉDICO
+              {{ tdc('Medical exam result').toUpperCase() }}
             </div>
 
             <div class="banner-subtitle">
-              Registo, emissão e validação de resultados laboratoriais
+              {{ tdc('Recording, issuing and validating laboratory results') }}
             </div>
           </td>
 
@@ -49,7 +49,7 @@
               <div class="col-md-8 col-xs-12">
                 <s-select
                   v-model="Resultadoexamemedico.form.item_pedido"
-                  label="Item do Pedido / Exame"
+                  :label="tdc('Request item / Exam')"
                   :options="itemPedidoOptions"
                   emit-value
                   map-options
@@ -60,7 +60,7 @@
                 <s-input
                   v-model="Resultadoexamemedico.form.numero_revisao"
                   type="number"
-                  label="N.º Revisão"
+                  :label="tdc('Revision no.')"
                 />
               </div>
             </div>
@@ -69,14 +69,14 @@
               <div class="col-md-6 col-xs-12">
                 <s-input
                   v-model="Resultadoexamemedico.form.valor_resultado"
-                  label="Valor do Resultado"
+                  :label="tdc('Result value')"
                 />
               </div>
 
               <div class="col-md-6 col-xs-12">
                 <s-file
                   v-model="Resultadoexamemedico.form.ficheiro"
-                  label="Ficheiro do Resultado"
+                  :label="tdc('Result file')"
                 />
               </div>
             </div>
@@ -85,14 +85,14 @@
               <div class="col-md-6 col-xs-12">
                 <s-date-time
                   v-model="Resultadoexamemedico.form.data_colheita"
-                  label="Data da Colheita"
+                  :label="tdc('Collection date')"
                 />
               </div>
 
               <div class="col-md-6 col-xs-12">
                 <s-date-time
                   v-model="Resultadoexamemedico.form.data_resultado"
-                  label="Data do Resultado"
+                  :label="tdc('Result date')"
                 />
               </div>
             </div>
@@ -100,7 +100,7 @@
             <div class="q-mt-md">
               <s-editor
                 v-model="Resultadoexamemedico.form.laudo"
-                label="Laudo"
+                :label="tdc('Findings')"
                 min-height="220px"
               />
             </div>
@@ -108,7 +108,7 @@
             <div class="q-mt-md">
               <s-editor
                 v-model="Resultadoexamemedico.form.observacao"
-                label="Observações"
+                :label="tdc('Observations')"
                 min-height="140px"
               />
             </div>
@@ -120,37 +120,37 @@
             <q-card flat bordered>
               <q-card-section>
                 <div class="text-subtitle1 text-weight-bold">
-                  Resumo do Resultado
+                  {{ tdc('Result summary') }}
                 </div>
 
                 <q-separator class="q-my-md" />
 
                 <div class="summary-item">
-                  <strong>Paciente</strong>
+                  <strong>{{ tdc('Patient') }}</strong>
                   <br>
                   {{ Paciente.row?.person?.full_name || '-' }}
                 </div>
 
                 <div class="summary-item">
-                  <strong>NID</strong>
+                  <strong>{{ tdc('NID') }}</strong>
                   <br>
                   {{ Paciente.row?.nid || '-' }}
                 </div>
 
                 <div class="summary-item">
-                  <strong>Exame</strong>
+                  <strong>{{ tdc('Exam') }}</strong>
                   <br>
                   {{ selectedItemLabel }}
                 </div>
 
                 <div class="summary-item">
-                  <strong>Valor</strong>
+                  <strong>{{ tdc('Value') }}</strong>
                   <br>
                   {{ Resultadoexamemedico.form.valor_resultado || '-' }}
                 </div>
 
                 <div class="summary-item">
-                  <strong>Data Resultado</strong>
+                  <strong>{{ tdc('Result date') }}</strong>
                   <br>
                   {{ Resultadoexamemedico.form.data_resultado || '-' }}
                 </div>
@@ -159,12 +159,12 @@
 
                 <s-switch
                   v-model="Resultadoexamemedico.form.validado"
-                  label="Resultado Validado"
+                  :label="tdc('Validated result')"
                 />
 
                 <s-switch
                   v-model="Resultadoexamemedico.form.assinado_digitalmente"
-                  label="Assinado Digitalmente"
+                  :label="tdc('Digitally signed')"
                 />
 
                 <div
@@ -172,7 +172,7 @@
                   class="q-mt-md"
                 >
                   <q-banner rounded class="bg-green-1 text-green-9">
-                    Resultado marcado como validado.
+                    {{ tdc('Result marked as validated.') }}
                   </q-banner>
                 </div>
               </q-card-section>
@@ -188,13 +188,13 @@
         <s-btn
           flat
           color="grey"
-          label="Cancelar"
+          :label="tdc('Cancel')"
         />
 
         <s-btn
           color="primary"
           icon="save"
-          label="Emitir Resultado"
+          :label="tdc('Issue result')"
           :loading="Resultadoexamemedico.saving"
           @click="save"
         />
@@ -205,6 +205,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 

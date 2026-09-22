@@ -1,5 +1,5 @@
 <template>
-  <s-modal-card title="Novo Exame Médico" icon="biotech" width="min(1000px, 92vw)" @close="cancel">
+  <s-modal-card :title="tdc('New medical exam')" icon="biotech" width="min(1000px, 92vw)" @close="cancel">
     <div class="row q-col-gutter-lg">
 
             <!-- ESQUERDA -->
@@ -7,7 +7,7 @@
 
               <s-select
                 v-model="Examemedico.form.classe_exame_medico"
-                label="Classe de Exame"
+                :label="tdc('Exam class')"
                 :options="classeOptions"
                 emit-value
                 map-options
@@ -19,7 +19,7 @@
                 <div class="col-md-4">
                   <s-input
                     v-model="Examemedico.form.codigo"
-                    label="Código"
+                    :label="tdc('Code')"
                     outlined
                   />
                 </div>
@@ -27,7 +27,7 @@
                 <div class="col-md-8">
                   <s-input
                     v-model="Examemedico.form.nome"
-                    label="Nome"
+                    :label="tdc('Name')"
                     outlined
                   />
                 </div>
@@ -36,13 +36,13 @@
 
               <s-editor
                 v-model="Examemedico.form.descricao"
-                label="Descrição"
+                :label="tdc('Description')"
                 min-height="140px"
               />
 
               <s-editor
                 v-model="Examemedico.form.preparacao"
-                label="Preparação do Paciente"
+                :label="tdc('Patient preparation')"
                 min-height="120px"
               />
 
@@ -59,25 +59,25 @@
                 <q-card-section>
 
                   <div class="text-subtitle2 text-weight-bold q-mb-md">
-                    Configuração
+                    {{ tdc('Configuration') }}
                   </div>
 
                   <s-input
                     v-model="Examemedico.form.amostra"
-                    label="Tipo de Amostra"
+                    :label="tdc('Sample type')"
                     outlined
                   />
 
                   <s-input
                     v-model="Examemedico.form.prazo_horas"
                     type="number"
-                    label="Prazo (Horas)"
+                    :label="tdc('Deadline (hours)')"
                     outlined
                   />
 
                   <s-input
                     v-model="Examemedico.form.valor_referencia"
-                    label="Valor de Referência"
+                    :label="tdc('Reference value')"
                     outlined
                   />
 
@@ -85,7 +85,7 @@
 
                     <s-switch
                       v-model="Examemedico.form.ativo"
-                      label="Activo"
+                      :label="tdc('Active')"
                     />
 
                   </div>
@@ -104,14 +104,14 @@
               flat
               color="grey-8"
               icon="close"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="cancel"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar"
+              :label="tdc('Save')"
               :loading="Examemedico.saving"
               @click="save"
             />
@@ -120,6 +120,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed, onMounted } from 'vue'
 
 import { useExamemedicoStore } from '../examemedico/examemedicoStore'

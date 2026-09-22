@@ -3,10 +3,10 @@
   <s-pdf-render
     v-model="GuiatransferenciaStore.showPdf"
     :src="GuiatransferenciaStore.pdf"
-    title="Guia Transferencia"
+    :title="tdc('Transfer form')"
   />
   <HistoryList
-    title="Guia Transferencia"
+    :title="tdc('Transfer form')"
     :store="GuiatransferenciaStore"
     :actions="['pdf', 'Accao B', 'Accao C']"
     @action="onClick"
@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import HistoryList from '../components/HistoryList.vue'
 import { useGuiatransferenciaStore } from './guiatransferenciaStore'

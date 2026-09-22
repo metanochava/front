@@ -7,7 +7,7 @@
         <s-card flat bordered class="q-pa-md">
           <div class="row items-center q-mb-md">
             <div class="text-h6 text-weight-bold">
-              Pedido de Exame
+              {{ tdc('Exam request') }}
             </div>
             <q-space />
           </div>
@@ -16,7 +16,7 @@
             <div class="col">
               <s-select
                 v-model="form.tipo_exame_medico"
-                label="Tipo de Exame"
+                :label="tdc('Exam type')"
                 :options="tipoOptions"
                 emit-value
                 map-options
@@ -38,7 +38,7 @@
             <div class="col">
               <s-select
                 v-model="form.classe_exame_medico"
-                label="Classe de Exame"
+                :label="tdc('Exam class')"
                 :options="classeOptions"
                 emit-value
                 map-options
@@ -62,7 +62,7 @@
             <div class="col">
               <s-select
                 v-model="form.exame"
-                label="Exame Médico"
+                :label="tdc('Medical exam')"
                 :options="exameOptions"
                 emit-value
                 map-options
@@ -84,7 +84,7 @@
 
           <s-select
             v-model="form.prioridade"
-            label="Prioridade"
+            :label="tdc('Priority')"
             :options="prioridadeOptions"
             emit-value
             map-options
@@ -93,14 +93,14 @@
 
           <s-editor
             v-model="form.instrucoes"
-            label="Instruções"
+            :label="tdc('Instructions')"
             min-height="100px"
             class="q-mb-sm"
           />
 
           <s-editor
             v-model="form.observacao"
-            label="Observação"
+            :label="tdc('Observation')"
             min-height="100px"
             class="q-mb-sm"
           />
@@ -109,7 +109,7 @@
             <s-btn
               color="primary"
               icon="add"
-              label="Adicionar Exame"
+              :label="tdc('Add exam')"
               :disable="!form.exame"
               @click="addExame"
             />
@@ -121,7 +121,7 @@
         <s-card flat bordered class="q-pa-md">
           <div class="row items-center q-mb-md">
             <div class="text-h6 text-weight-bold">
-              Exames Adicionados
+              {{ tdc('Added exams') }}
             </div>
 
             <q-space />
@@ -142,15 +142,15 @@
                 </q-item-label>
 
                 <q-item-label caption>
-                  Tipo: {{ item.tipo_label }}
+                  {{ tdc('Type') }}: {{ item.tipo_label }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  Classe: {{ item.classe_label }}
+                  {{ tdc('Class') }}: {{ item.classe_label }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  Prioridade: {{ item.prioridade_label }}
+                  {{ tdc('Priority') }}: {{ item.prioridade_label }}
                 </q-item-label>
 
                 <q-item-label
@@ -184,21 +184,21 @@
             v-else
             class="text-center text-grey q-pa-xl"
           >
-            Nenhum exame adicionado.
+            {{ tdc('No exam added.') }}
           </div>
 
           <q-separator class="q-my-md" />
 
           <s-editor
             v-model="pedido.informacao_clinica"
-            label="Informação Clínica"
+            :label="tdc('Clinical information')"
             min-height="120px"
             class="q-mb-sm"
           />
 
           <s-editor
             v-model="pedido.outros_exames"
-            label="Outros Exames"
+            :label="tdc('Other exams')"
             min-height="100px"
             class="q-mb-sm"
           />
@@ -207,14 +207,14 @@
             <s-btn
               flat
               color="grey"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="router.back()"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar Pedido"
+              :label="tdc('Save request')"
               :loading="saving"
               :disable="!items.length"
               @click="savePedido"
@@ -225,36 +225,36 @@
     </div>
 
     <q-dialog v-model="dialogs.tipo" persistent>
-      <s-modal-card title="Novo Tipo de Exame" width="500px">
+      <s-modal-card :title="tdc('New exam type')" width="500px">
         <s-input
           v-model="tipoForm.nome"
-          label="Nome"
+          :label="tdc('Name')"
           class="q-mb-sm"
         />
 
         <s-editor
           v-model="tipoForm.descricao"
-          label="Descrição"
+          :label="tdc('Description')"
           min-height="100px"
           class="q-mb-sm"
         />
 
         <s-input
           v-model="tipoForm.ordem"
-          label="Ordem"
+          :label="tdc('Order')"
           type="number"
           class="q-mb-sm"
         />
 
         <s-switch
           v-model="tipoForm.ativo"
-          label="Activo"
+          :label="tdc('Active')"
         />
 
         <template #footer>
           <s-btn
                       flat
-                      label="Cancelar"
+                      :label="tdc('Cancel')"
                       color="grey"
                       @click="dialogs.tipo = false"
                     />
@@ -262,7 +262,7 @@
                     <s-btn
                       color="primary"
                       icon="save"
-                      label="Gravar"
+                      :label="tdc('Save')"
                       :loading="savingTipo"
                       @click="saveTipo"
                     />
@@ -272,10 +272,10 @@
     </q-dialog>
 
     <q-dialog v-model="dialogs.classe" persistent>
-      <s-modal-card title="Nova Classe de Exame" width="600px">
+      <s-modal-card :title="tdc('New exam class')" width="600px">
         <s-select
           v-model="classeForm.tipo_exame_medico"
-          label="Tipo de Exame"
+          :label="tdc('Exam type')"
           :options="tipoOptions"
           emit-value
           map-options
@@ -284,33 +284,33 @@
 
         <s-input
           v-model="classeForm.nome"
-          label="Nome"
+          :label="tdc('Name')"
           class="q-mb-sm"
         />
 
         <s-editor
           v-model="classeForm.descricao"
-          label="Descrição"
+          :label="tdc('Description')"
           min-height="100px"
           class="q-mb-sm"
         />
 
         <s-input
           v-model="classeForm.ordem"
-          label="Ordem"
+          :label="tdc('Order')"
           type="number"
           class="q-mb-sm"
         />
 
         <s-switch
           v-model="classeForm.ativo"
-          label="Activo"
+          :label="tdc('Active')"
         />
 
         <template #footer>
           <s-btn
                       flat
-                      label="Cancelar"
+                      :label="tdc('Cancel')"
                       color="grey"
                       @click="dialogs.classe = false"
                     />
@@ -318,7 +318,7 @@
                     <s-btn
                       color="primary"
                       icon="save"
-                      label="Gravar"
+                      :label="tdc('Save')"
                       :loading="savingClasse"
                       @click="saveClasse"
                     />
@@ -328,10 +328,10 @@
     </q-dialog>
 
     <q-dialog v-model="dialogs.exame" persistent>
-      <s-modal-card title="Novo Exame Médico" width="700px">
+      <s-modal-card :title="tdc('New medical exam')" width="700px">
         <s-select
           v-model="exameForm.classe_exame_medico"
-          label="Classe de Exame"
+          :label="tdc('Exam class')"
           :options="classeOptions"
           emit-value
           map-options
@@ -342,28 +342,28 @@
           <div class="col-md-4 col-xs-12">
             <s-input
               v-model="exameForm.codigo"
-              label="Código"
+              :label="tdc('Code')"
             />
           </div>
 
           <div class="col-md-8 col-xs-12">
             <s-input
               v-model="exameForm.nome"
-              label="Nome"
+              :label="tdc('Name')"
             />
           </div>
         </div>
 
         <s-editor
           v-model="exameForm.descricao"
-          label="Descrição"
+          :label="tdc('Description')"
           min-height="100px"
           class="q-mt-sm"
         />
 
         <s-editor
           v-model="exameForm.preparacao"
-          label="Preparação"
+          :label="tdc('Preparation')"
           min-height="100px"
           class="q-mt-sm"
         />
@@ -372,14 +372,14 @@
           <div class="col-md-4 col-xs-12">
             <s-input
               v-model="exameForm.amostra"
-              label="Amostra"
+              :label="tdc('Sample')"
             />
           </div>
 
           <div class="col-md-4 col-xs-12">
             <s-input
               v-model="exameForm.prazo_horas"
-              label="Prazo em Horas"
+              :label="tdc('Deadline (hours)')"
               type="number"
             />
           </div>
@@ -387,21 +387,21 @@
           <div class="col-md-4 col-xs-12">
             <s-switch
               v-model="exameForm.ativo"
-              label="Activo"
+              :label="tdc('Active')"
             />
           </div>
         </div>
 
         <s-input
           v-model="exameForm.valor_referencia"
-          label="Valor de Referência"
+          :label="tdc('Reference value')"
           class="q-mt-sm"
         />
 
         <template #footer>
           <s-btn
                       flat
-                      label="Cancelar"
+                      :label="tdc('Cancel')"
                       color="grey"
                       @click="dialogs.exame = false"
                     />
@@ -409,7 +409,7 @@
                     <s-btn
                       color="primary"
                       icon="save"
-                      label="Gravar"
+                      :label="tdc('Save')"
                       :loading="savingExame"
                       @click="saveExame"
                     />
@@ -423,7 +423,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { HTTPAuth, url } from 'quasar_resaas'
+import { HTTPAuth, url, tdc } from 'quasar_resaas'
 import PacienteHeader from '../paciente/PacienteHeaderPage.vue'
 
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
@@ -497,15 +497,15 @@ const exameForm = ref({
 
 const prioridadeOptions = [
   {
-    label: 'Normal',
+    label: tdc('Normal'),
     value: 'normal'
   },
   {
-    label: 'Urgente',
+    label: tdc('Urgent'),
     value: 'urgente'
   },
   {
-    label: 'Muito Urgente',
+    label: tdc('Very urgent'),
     value: 'muito_urgente'
   }
 ]

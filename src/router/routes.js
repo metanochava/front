@@ -3,6 +3,7 @@ import {  MainLayout, CrudPage } from 'quasar_resaas'
 
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
+import { portfolioSiteRoutes } from 'src/sites/portfolio/routes'
 
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
@@ -15,11 +16,19 @@ const domainRoutes = {
   "clinicaamal.co.mz": amalSiteRoutes,
   "docodela.co.mz": docodelaSiteRoutes,
   "docodela.dev.mytech.co.mz": docodelaSiteRoutes,
+  // the portfolio: add the real domain here (e.g. "metanochava.dev": portfolioSiteRoutes)
+  "portfolio.dev.mytech.co.mz": portfolioSiteRoutes,
 }
+
+// Preview a site while developing, without its domain:  http://localhost:9000/?site=portfolio
+const previewSites = { portfolio: portfolioSiteRoutes, amal: amalSiteRoutes, docodela: docodelaSiteRoutes }
+const previewSite = import.meta.env.DEV
+  ? previewSites[new URLSearchParams(window.location.search).get('site')]
+  : null
 
 let routes = []
 
-const siteRoutes = domainRoutes[host] || []
+const siteRoutes = previewSite || domainRoutes[host] || []
 
 if(siteRoutes.length !== 0 ){
   routes = [ ...siteRoutes, {path: '/:catchAll(.*)*',component: () => import('pages/ErrorNotFound.vue'), }]

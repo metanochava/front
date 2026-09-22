@@ -43,7 +43,7 @@
           <s-btn
             color="primary"
             class="text-white"
-            :label="s.button"
+            :label="tdc(s.button)"
             @click="$router.push({ name: s.route })"
             style="border-radius:70%;"
           />
@@ -75,25 +75,25 @@ export default defineComponent({
     const slides = [
       {
         img: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=2000",
-        title: "Clínica moderna",
-        desc: "Tecnologia avançada para cuidar da sua saúde",
-        button: "Marcar Consulta",
+        title: 'Modern clinic',
+        desc: 'Advanced technology to look after your health',
+        button: 'Book appointment',
         route: "marcarconsulta"
       },
 
       {
         img: foto,
-        title: "Especialistas qualificados",
-        desc: "Médicos experientes em várias especialidades",
-        button: "Conhecer Médicos",
+        title: 'Qualified specialists',
+        desc: 'Experienced doctors in several specialties',
+        button: 'Meet the doctors',
         route: "medicos"
       },
 
       {
         img: "https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=2000",
-        title: "Atendimento humanizado",
-        desc: "Cuidamos de cada paciente com atenção",
-        button: "Contactar Clínica",
+        title: 'Humane care',
+        desc: 'We care for every patient with attention',
+        button: 'Contact the clinic',
         route: "contactos"
       }
     ]

@@ -12,30 +12,30 @@
           class="text-weight-bold text-white"
           style="font-size:40px"
         >
-          {{ tdc('Sobre Nós') }}
+          {{ tdc('About us') }}
         </div>
       </div>
 
       <p class="text-white">
-        Ajudamos a ter acesso rápido ao tratamento de que precisa, mesmo quando o seu seguro ou plano de saúde não cobre os custos.
+        {{ tdc('We help you get quick access to the treatment you need, even when your insurance or health plan does not cover the costs.') }}
       </p>
 
       <p class="text-white">
-        Oferecemos financiamento responsável e acompanhamos o seu processo, do início ao fim, para que possa cuidar da sua saúde com mais tranquilidade.
+        {{ tdc('We offer responsible financing and follow your process from start to finish, so you can look after your health with peace of mind.') }}
       </p>
 
       <p class="text-white">
-        Condições claras, apoio em cada etapa e um compromisso simples_ ajudar mais pessoas a receber os cuidados de saúde de que precisam.
+        {{ tdc('Clear terms, support at every step and a simple commitment: helping more people receive the healthcare they need.') }}
       </p>
 
       <p class="text-white">
-        Porque a saúde não deve esperar.
+        {{ tdc('Because health should not wait.') }}
       </p>
 
 
       <s-btn
         color="primary"
-        label="Contact Us"
+        :label="tdc('Contact us')"
       />
 
 
@@ -75,20 +75,20 @@ const about=[
 
 {
 icon:"flag",
-title:"Missão",
-desc:"Oferecer cuidados médicos de qualidade com atendimento humanizado."
+title:'Mission',
+desc:'Offer quality medical care with humane service.'
 },
 
 {
 icon:"visibility",
-title:"Visão",
-desc:"Ser referência em inovação e excelência em saúde."
+title:'Vision',
+desc:'Be a reference in innovation and excellence in healthcare.'
 },
 
 {
 icon:"favorite",
-title:"Valores",
-desc:"Ética, compromisso, respeito e dedicação aos utentes."
+title:'Values',
+desc:'Ethics, commitment, respect and dedication to patients.'
 }
 
 ]
@@ -98,19 +98,19 @@ const doctors=[
 
 {
 name:"Dr João Silva",
-specialty:"Cardiologista",
+specialty:'Cardiologist',
 img:"https://randomuser.me/api/portraits/men/32.jpg"
 },
 
 {
 name:"Dra Maria Costa",
-specialty:"Neurologista",
+specialty:'Neurologist',
 img:"https://randomuser.me/api/portraits/women/44.jpg"
 },
 
 {
 name:"Dr Paulo Mendes",
-specialty:"Ortopedista",
+specialty:'Orthopaedist',
 img:"https://randomuser.me/api/portraits/men/65.jpg"
 }
 

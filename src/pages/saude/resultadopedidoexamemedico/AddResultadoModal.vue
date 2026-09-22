@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="dialog" full-width full-height>
-    <s-modal-card title="Resultados" icon="fact_check" fullscreen @close="dialog = false">
+    <s-modal-card :title="tdc('Results')" icon="fact_check" fullscreen @close="dialog = false">
       <q-card
           v-for="item in Pedidoexamemedico.items"
           :key="item"
@@ -33,7 +33,7 @@
 
               <!-- <s-input
                   v-model="item.resultado.valor_resultado"
-                  label="Valor Resultado"
+                  :label="tdc('Result value')"
               />
 
               <div class="row q-col-gutter-md">
@@ -42,7 +42,7 @@
 
                       <s-date-time
                           v-model="item.resultado.data_colheita"
-                          label="Data da Colheita"
+                          :label="tdc('Collection date')"
                       />
 
                   </div>
@@ -51,7 +51,7 @@
 
                       <s-date-time
                           v-model="item.resultado.data_resultado"
-                          label="Data do Resultado"
+                          :label="tdc('Result date')"
                       />
 
                   </div>
@@ -60,19 +60,19 @@
 
               <s-editor
                   v-model="item.resultado.laudo"
-                  label="Laudo"
+                  :label="tdc('Findings')"
                   min-height="120px"
               />
 
               <s-editor
                   v-model="item.resultado.observacao"
-                  label="Observação"
+                  :label="tdc('Observation')"
                   min-height="100px"
               />
 
               <s-file
                   v-model="item.resultado.ficheiro"
-                  label="Ficheiro"
+                  :label="tdc('File')"
               />
 
               <div class="row q-col-gutter-md">
@@ -81,7 +81,7 @@
 
                       <s-switch
                           v-model="item.resultado.validado"
-                          label="Validado"
+                          :label="tdc('Validated')"
                       />
 
                   </div>
@@ -90,7 +90,7 @@
 
                       <s-switch
                           v-model="item.resultado.assinado_digitalmente"
-                          label="Assinado Digitalmente"
+                          :label="tdc('Digitally signed')"
                       />
 
                   </div>
@@ -106,7 +106,7 @@
               <s-btn
                   color="primary"
                   icon="save"
-                  label="Guardar Resultado"
+                  :label="tdc('Save result')"
                   @click="saveResultado(item)"
               />
 
@@ -118,6 +118,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed, watch } from 'vue'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
 

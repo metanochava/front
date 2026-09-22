@@ -4,10 +4,10 @@
   <s-pdf-render
     v-model="ConsultaStore.showPdf"
     :src="ConsultaStore.pdf"
-    title="Consulta Medica"
+    :title="tdc('Medical consultation')"
   />
   <HistoryList
-    title="Consulta Medica"
+    :title="tdc('Medical consultation')"
     :store="ConsultaStore"
     :actions="['pdf', 'Accao B', 'Accao C']"
     @action="onClick"
@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import HistoryList from '../components/HistoryList.vue'
 import { useConsultaStore } from './consultaStore'

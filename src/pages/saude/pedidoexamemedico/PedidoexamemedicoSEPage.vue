@@ -3,7 +3,7 @@
     <s-pdf-render
       v-model="Pedidoexamemedico.showPdf"
       :src="Pedidoexamemedico.pdf"
-      title="Pedido de Exames Medicos"
+      :title="tdc('Medical exam request')"
     />
     <PacienteHeader />
     <div class="prescription-banner">
@@ -15,11 +15,11 @@
 
             <td align="center">
               <div class="banner-title">
-                PEDIDO DE EXAMES MÉDICOS
+                {{ tdc('Medical exam request').toUpperCase() }}
               </div>
 
               <div class="banner-subtitle">
-                Requisição emitida por profissional de saúde habilitado
+                {{ tdc('Request issued by a qualified healthcare professional') }}
               </div>
             </td>
 
@@ -37,14 +37,14 @@
             class="full-width q-mb-sm"
             color="primary"
             icon="add"
-            label="Add Tipo Exame"
+            :label="tdc('Add exam type')"
             @click="dialogs.tipo = true"
           />
 
           <s-input
             v-model="search"
             type="search"
-            label="Pesquisar exame"
+            :label="tdc('Search exam')"
             clearable
             dense
             class="q-mb-sm"
@@ -172,7 +172,7 @@
         <s-card flat bordered class="q-pa-md">
           <div class="row items-center q-mb-md">
             <div class="text-h6 text-weight-bold">
-              Exames Adicionados
+              {{ tdc('Added exams') }}
             </div>
 
             <q-space />
@@ -184,7 +184,7 @@
 
            <s-editor
             v-model="Pedidoexamemedico.form.informacao_clinica"
-            label="Informação Clínica"
+            :label="tdc('Clinical information')"
             min-height="120px"
             class="q-mb-sm"
           />
@@ -200,15 +200,15 @@
                 </q-item-label>
 
                 <q-item-label caption>
-                  Tipo: {{ item.tipo_label }}
+                  {{ tdc('Type') }}: {{ item.tipo_label }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  Classe: {{ item.classe_label }}
+                  {{ tdc('Class') }}: {{ item.classe_label }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  Prioridade: {{ item.prioridade_label }}
+                  {{ tdc('Priority') }}: {{ item.prioridade_label }}
                 </q-item-label>
 
                 <q-item-label v-if="item.instrucoes" caption>
@@ -233,7 +233,7 @@
           </q-list>
 
           <div v-else class="text-center text-grey q-pa-xl">
-            Nenhum exame adicionado.
+            {{ tdc('No exam added.') }}
           </div>
 
           <q-separator class="q-my-md" />
@@ -242,7 +242,7 @@
 
           <s-editor
             v-model="Pedidoexamemedico.form.outros_exames"
-            label="Outros Exames"
+            :label="tdc('Other exams')"
             min-height="100px"
             class="q-mb-sm"
           />
@@ -251,14 +251,14 @@
             <s-btn
               flat
               color="grey"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="router.back()"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar Pedido"
+              :label="tdc('Save request')"
               :loading="saving"
               :disable="!items.length"
               @click="savePedido"
@@ -324,7 +324,7 @@
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
-import { HTTPAuth, url } from 'quasar_resaas'
+import { HTTPAuth, url, tdc } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import TipoExameModal from './TipoExameModal.vue'
 import ExameModal from './ExameModal.vue'
@@ -361,9 +361,9 @@ const form = ref({
 })
 
 const prioridadeOptions = [
-  { label: 'Normal', value: 'normal' },
-  { label: 'Urgente', value: 'urgente' },
-  { label: 'Muito Urgente', value: 'muito_urgente' }
+  { label: tdc('Normal'), value: 'normal' },
+  { label: tdc('Urgent'), value: 'urgente' },
+  { label: tdc('Very urgent'), value: 'muito_urgente' }
 ]
 
 const filteredCatalogo = computed(() => {

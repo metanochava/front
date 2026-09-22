@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="ReceitamedicaStore.showPdf"
       :src="ReceitamedicaStore.pdf"
-      title="Receita Medica"
+      :title="tdc('Medical prescription')"
     />
     <PacienteHeader />
     <div class="prescription-banner">
@@ -16,11 +16,11 @@
 
             <td align="center">
               <div class="banner-title">
-                RECEITA MÉDICA
+                {{ tdc('Medical prescription').toUpperCase() }}
               </div>
 
               <div class="banner-subtitle">
-                Prescrição emitida por profissional de saúde habilitado
+                {{ tdc('Prescription issued by a qualified healthcare professional') }}
               </div>
             </td>
 
@@ -38,7 +38,7 @@
 
           <div class="row items-center q-mb-md">
             <div class="text-h6">
-              Medicamento
+              {{ tdc('Medication') }}
             </div>
 
             <q-space />
@@ -46,14 +46,14 @@
             <s-btn
               color="primary"
               icon="add"
-              label="Novo Medicamento"
+              :label="tdc('New medication')"
               @click="showMedicamentoDialog = true"
             />
           </div>
 
           <s-select
             v-model="item.medicamento"
-            label="Medicamento"
+            :label="tdc('Medication')"
             relation="saude.Medicamento"
             use-input
             emit-value
@@ -64,19 +64,19 @@
 
           <s-input
             v-model="item.quantidade"
-            label="Quantidade"
+            :label="tdc('Quantity')"
             class="q-mt-sm"
           />
 
           <s-input
             v-model="item.dosagem"
-            label="Dosagem"
+            :label="tdc('Dosage')"
             class="q-mt-sm"
           />
 
           <s-editor
             v-model="item.observacao"
-            label="Observação"
+            :label="tdc('Observation')"
             class="q-mt-sm"
             min-height="100px"
           />
@@ -85,7 +85,7 @@
             <s-btn
               color="primary"
               icon="add"
-              label="Adicionar"
+              :label="tdc('Add')"
               @click="addItem"
             />
           </div>
@@ -100,7 +100,7 @@
         <s-card flat class="q-pa-md">
 
           <div class="text-h6 q-mb-md">
-            Medicamentos da Receita
+            {{ tdc('Prescription medications') }}
           </div>
 
           <q-list bordered separator v-if="items.length">
@@ -116,18 +116,18 @@
                 </q-item-label>
 
                 <q-item-label caption>
-                  Quantidade: {{ row.quantidade || '-' }}
+                  {{ tdc('Quantity') }}: {{ row.quantidade || '-' }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  Dosagem: {{ row.dosagem || '-' }}
+                  {{ tdc('Dosage') }}: {{ row.dosagem || '-' }}
                 </q-item-label>
 
                 <q-item-label
                   v-if="row.observacao"
                   caption
                 >
-                  Observação:
+                  {{ tdc('Observation') }}:
                   <span v-html="row.observacao"></span>
                 </q-item-label>
 
@@ -151,7 +151,7 @@
             v-else
             class="text-grey text-center q-pa-lg"
           >
-            Nenhum medicamento adicionado.
+            {{ tdc('No medication added.') }}
           </div>
 
           <div class="row justify-end q-mt-md">
@@ -159,14 +159,14 @@
             <s-btn
               flat
               color="grey"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="router.back()"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar Receita"
+              :label="tdc('Save prescription')"
               :loading="saving"
               :disable="!items.length"
               @click="saveReceita"
@@ -182,39 +182,39 @@
 
     <!-- MODAL NOVO MEDICAMENTO -->
     <q-dialog v-model="showMedicamentoDialog" persistent>
-      <s-modal-card title="Novo Medicamento" width="600px">
+      <s-modal-card :title="tdc('New medication')" width="600px">
         <s-input
           v-model="medicamento.codigo"
-          label="Código"
+          :label="tdc('Code')"
         />
 
         <s-input
           v-model="medicamento.descricao"
-          label="Descrição"
+          :label="tdc('Description')"
           class="q-mt-sm"
         />
 
         <s-input
           v-model="medicamento.principio_ativo"
-          label="Princípio Activo"
+          :label="tdc('Active ingredient')"
           class="q-mt-sm"
         />
 
         <s-input
           v-model="medicamento.forma_farmaceutica"
-          label="Forma Farmacêutica"
+          :label="tdc('Pharmaceutical form')"
           class="q-mt-sm"
         />
 
         <s-input
           v-model="medicamento.dosagem"
-          label="Dosagem"
+          :label="tdc('Dosage')"
           class="q-mt-sm"
         />
 
         <s-editor
           v-model="medicamento.observacao"
-          label="Observação"
+          :label="tdc('Observation')"
           class="q-mt-sm"
           min-height="100px"
         />
@@ -222,7 +222,7 @@
         <template #footer>
           <s-btn
                       flat
-                      label="Cancelar"
+                      :label="tdc('Cancel')"
                       color="grey"
                       @click="showMedicamentoDialog = false"
                     />
@@ -230,7 +230,7 @@
                     <s-btn
                       color="primary"
                       icon="save"
-                      label="Gravar"
+                      :label="tdc('Save')"
                       :loading="savingMedicamento"
                       @click="saveMedicamento"
                     />
@@ -289,7 +289,7 @@ function afterSave(item) {
 import { ref, onMounted } from 'vue'
 // import { useRoute, useRouter } from 'vue-router'
 import { useRouter } from 'vue-router'
-import { HTTPAuth, url } from 'quasar_resaas'
+import { HTTPAuth, url, tdc } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import { usePacienteStore } from './../paciente/pacienteStore'
 

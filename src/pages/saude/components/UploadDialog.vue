@@ -1,7 +1,7 @@
 <template>
 
 <q-dialog v-model="dialog">
-  <s-modal-card title="Novo Resultado" icon="attach_file" width="900px">
+  <s-modal-card :title="tdc('New result')" icon="attach_file" width="900px">
     <div class="row q-col-gutter-lg">
 
         <div class="col-md-6">
@@ -10,7 +10,7 @@
 
                 v-model="form.file"
 
-                label="Selecionar ficheiro"
+                :label="tdc('Select file')"
 
             />
 
@@ -22,7 +22,7 @@
 
                 v-model="form.valor_resultado"
 
-                label="Valor"
+                :label="tdc('Value')"
 
             />
 
@@ -34,7 +34,7 @@
 
                 v-model="form.laudo"
 
-                label="Laudo"
+                :label="tdc('Findings')"
 
                 min-height="160px"
 
@@ -48,7 +48,7 @@
 
                 v-model="form.observacao"
 
-                label="Observações"
+                :label="tdc('Observations')"
 
                 min-height="120px"
 
@@ -65,7 +65,7 @@
 
           flat
 
-          label="Cancelar"
+          :label="tdc('Cancel')"
 
           v-close-popup
 
@@ -77,7 +77,7 @@
 
           icon="cloud_upload"
 
-          label="Enviar"
+          :label="tdc('Send')"
 
           @click="guardar"
 
@@ -91,6 +91,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 
 import {computed,reactive} from 'vue'
 

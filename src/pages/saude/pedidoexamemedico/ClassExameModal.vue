@@ -1,11 +1,11 @@
 <template>
-  <s-modal-card title="Nova Classe de Exame" icon="folder" width="min(1000px, 92vw)" @close="cancel">
+  <s-modal-card :title="tdc('New exam class')" icon="folder" width="min(1000px, 92vw)" @close="cancel">
     <div class="row q-col-gutter-lg">
             <!-- ESQUERDA -->
             <div class="col-md-8 col-xs-12">
               <s-select
                 v-model="Classeexamemedico.form.tipo_exame_medico"
-                label="Tipo de Exame"
+                :label="tdc('Exam type')"
                 :options="tipoOptions"
                 emit-value
                 map-options
@@ -14,13 +14,13 @@
 
               <s-input
                 v-model="Classeexamemedico.form.nome"
-                label="Nome"
+                :label="tdc('Name')"
                 outlined
               />
 
               <s-editor
                 v-model="Classeexamemedico.form.descricao"
-                label="Descrição"
+                :label="tdc('Description')"
                 min-height="180px"
               />
             </div>
@@ -34,20 +34,20 @@
               >
                 <q-card-section>
                   <div class="text-subtitle2 text-weight-bold q-mb-md">
-                    Configuração
+                    {{ tdc('Configuration') }}
                   </div>
 
                   <s-input
                     v-model="Classeexamemedico.form.ordem"
                     type="number"
-                    label="Ordem"
+                    :label="tdc('Order')"
                     outlined
                   />
 
                   <div class="q-mt-lg">
                     <s-switch
                       v-model="Classeexamemedico.form.ativo"
-                      label="Activo"
+                      :label="tdc('Active')"
                     />
                   </div>
                 </q-card-section>
@@ -61,14 +61,14 @@
               flat
               color="grey-8"
               icon="close"
-              label="Cancelar"
+              :label="tdc('Cancel')"
               @click="cancel"
             />
 
             <s-btn
               color="primary"
               icon="save"
-              label="Gravar"
+              :label="tdc('Save')"
               :loading="Classeexamemedico.saving"
               @click="save"
             />
@@ -77,6 +77,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { computed, onMounted } from 'vue'
 import { useClasseexamemedicoStore } from '../classeexamemedico/classeexamemedicoStore'
 import { useTipoexamemedicoStore } from '../tipoexamemedico/tipoexamemedicoStore'

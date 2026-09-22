@@ -64,7 +64,7 @@
           @click="go({ route: 'home' })"
         />
 
-        <label class="q-ml-sm text-h6">Clínica Amal</label>
+        <label class="q-ml-sm text-h6">{{ tdc('Amal Clinic') }}</label>
 
         <q-space/>
 
@@ -73,7 +73,7 @@
 
         <s-header-dark-mode />
         <s-header-full-screen />
-        <s-header-language />
+        <site-language-menu :languages="languages" :current="current" @choose="choose" />
 
       </q-toolbar>
 
@@ -196,6 +196,8 @@ import { defineComponent } from 'vue'
 
 import HomePage from "../pages/HomePage.vue"
 import RodapePage from '../pages/RodapePage.vue'
+import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
+import { useSiteLanguage } from '../../shared/useSiteLanguage'
 
 
 import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
@@ -207,16 +209,21 @@ export default defineComponent({
   components:{
     HomePage,
     RodapePage,
+    SiteLanguageMenu,
   },
 
   setup(){
 
     const User = useUserStore()
     const Entity = useEntityStore()
+    const { languages, current, choose } = useSiteLanguage({ defaultCode: 'pt-pt' })
 
     return{
       User,
-      Entity
+      Entity,
+      languages,
+      current,
+      choose
     }
 
   },
@@ -233,16 +240,16 @@ export default defineComponent({
 
       menuItems:[
 
-        {label:'Início',icon:'home',route:'home'},
-        {label:'Sobre Nós',icon:'info',link:'#sobrenos'},
-        {label:'Especialidades',icon:'health_and_safety',link:'#especialidades'},
-        {label:'Médicos',icon:'groups',link:'#medicos'},
-        {label:'Serviços',icon:'layout',link:'#servicos'},
-        {label:'Marcação',icon:'event',link:'#marcacao'},
-        {label:'Exames',icon:'biotech',link:'#exames'},
+        {label:'Home',icon:'home',route:'home'},
+        {label:'About us',icon:'info',link:'#sobrenos'},
+        {label:'Specialties',icon:'health_and_safety',link:'#especialidades'},
+        {label:'Doctors',icon:'groups',link:'#medicos'},
+        {label:'Services',icon:'layout',link:'#servicos'},
+        {label:'Booking',icon:'event',link:'#marcacao'},
+        {label:'Exams',icon:'biotech',link:'#exames'},
         {label:'Blog',icon:'article',link:'#blog'},
-        {label:'Contactos',icon:'call',link:'#contactos'},
-        {label:'Depoimentos',icon:'people',link:'#depoimentos'},
+        {label:'Contacts',icon:'call',link:'#contactos'},
+        {label:'Testimonials',icon:'people',link:'#depoimentos'},
         {label:'Login',icon:'admin_panel_settings',route:'Login'}
 
       ]

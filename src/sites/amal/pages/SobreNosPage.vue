@@ -9,11 +9,11 @@
       class="text-weight-bold text-primary"
       :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
     >
-      {{ tdc('Sobre Nós') }}
+      {{ tdc('About us') }}
     </div>
 
     <div class="text-subtitle1 q-mt-sm text-white " :style="{ fontSize: ps?.typography?.font_size_h3 + 'px' }">
-      {{ tdc('Cuidamos da sua saúde com excelência e dedicação') }}
+      {{ tdc('We take care of your health with excellence and dedication') }}
     </div>
 
   </div>
@@ -36,7 +36,7 @@
     <div class="col-md-5 col-12 items-center justify-center" :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }">
 
       <div class=" text-weight-bold q-mb-md">
-        Clínica Amal
+        {{ tdc('Amal Clinic') }}
       </div>
 
       <p class="text-white">
@@ -76,11 +76,11 @@
           />
 
           <div class="text-h6 q-mt-md">
-            {{ item.title }}
+            {{ tdc(item.title) }}
           </div>
 
           <div class="text-caption q-mt-sm text-grey-7">
-            {{ item.desc }}
+            {{ tdc(item.desc) }}
           </div>
 
         </q-card-section>
@@ -110,30 +110,30 @@ const User =useUserStore()
 const ps = computed(()=>User.ps || {})
 
 const counters=[
-{value:1200,label:"Pacientes atendidos"},
+{value:1200,label:'Patients treated'},
 {value:45,label:"Especialistas"},
-{value:15,label:"Anos de experiência"},
-{value:12,label:"Especialidades"}
+{value:15,label:'Years of experience'},
+{value:12,label:'Specialties'}
 ]
 
 const about=[
 
 {
 icon:"flag",
-title:"Missão",
-desc:"Oferecer cuidados médicos de qualidade com atendimento humanizado."
+title:'Mission',
+desc:'Offer quality medical care with humane service.'
 },
 
 {
 icon:"visibility",
-title:"Visão",
-desc:"Ser referência em inovação e excelência em saúde."
+title:'Vision',
+desc:'Be a reference in innovation and excellence in healthcare.'
 },
 
 {
 icon:"favorite",
-title:"Valores",
-desc:"Ética, compromisso, respeito e dedicação aos pacientes."
+title:'Values',
+desc:'Ethics, commitment, respect and dedication to patients.'
 }
 
 ]
@@ -142,19 +142,19 @@ const doctors=[
 
 {
 name:"Dr João Silva",
-specialty:"Cardiologista",
+specialty:'Cardiologist',
 img:"https://randomuser.me/api/portraits/men/32.jpg"
 },
 
 {
 name:"Dra Maria Costa",
-specialty:"Neurologista",
+specialty:'Neurologist',
 img:"https://randomuser.me/api/portraits/women/44.jpg"
 },
 
 {
 name:"Dr Paulo Mendes",
-specialty:"Ortopedista",
+specialty:'Orthopaedist',
 img:"https://randomuser.me/api/portraits/men/65.jpg"
 }
 

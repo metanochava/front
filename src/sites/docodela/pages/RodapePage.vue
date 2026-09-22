@@ -30,8 +30,7 @@
         </div>
 
         <div>
-          Atendimento médico moderno com tecnologia avançada
-          e especialistas qualificados para cuidar da sua saúde.
+          {{ tdc('Modern medical care with advanced technology and qualified specialists to look after your health.') }}
         </div>
 
       </div>
@@ -41,12 +40,12 @@
       <div class="col-md-4 col-12">
 
         <div class="text-h6 text-weight-bold q-mb-md">
-          Horário
+          {{ tdc('Opening hours') }}
         </div>
 
-        <div>Segunda - Sexta: 08:00 - 18:00</div>
-        <div>Sábado: 08:00 - 13:00</div>
-        <div>Domingo: Encerrado</div>
+        <div>{{ tdc('Monday - Friday: 08:00 - 18:00') }}</div>
+        <div>{{ tdc('Saturday: 08:00 - 13:00') }}</div>
+        <div>{{ tdc('Sunday: Closed') }}</div>
 
       </div>
 
@@ -55,7 +54,7 @@
       <div class="col-md-4 col-12">
 
         <div class="text-h6 text-weight-bold q-mb-md">
-          Contactos
+          {{ tdc('Contacts') }}
         </div>
 
         <div>📧 info@docodela.co.mz</div>
@@ -92,7 +91,7 @@
     <div class="text-center q-mt-xl text-caption">
 
       © {{ new Date().getFullYear() }}
-      {{ tdc('Todos os direitos reservados') }}
+      {{ tdc('All rights reserved') }}
 
     </div>
 

@@ -11,14 +11,14 @@
         class="text-weight-bold text-primary text-center col-12"
         :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
       >
-        {{ tdc('Nossos Médicos') }}
+        {{ tdc('Our doctors') }}
       </div>
 
       <div
         class="text-center col-12 text-white q-mt-sm"
         :style="{ fontSize: ps?.typography?.font_size_body + 'px' }"
       >
-        {{ tdc('Especialistas qualificados com agenda disponível para marcação') }}
+        {{ tdc('Qualified specialists with availability for booking') }}
       </div>
 
     </div>
@@ -66,7 +66,7 @@
                   text-color="primary"
                   class="q-ma-xs"
                 >
-                  {{ specialty }}
+                  {{ tdc(specialty) }}
                 </q-chip>
 
               </div>
@@ -88,7 +88,7 @@
                 <s-btn
                   color="primary"
                   icon="event"
-                  label="Marcar Consulta"
+                  :label="tdc('Book appointment')"
                   @click="openBookingModal(doctor)"
                   unelevated
                 />
@@ -97,7 +97,7 @@
                   color="white"
                   text-color="primary"
                   icon="visibility"
-                  label="Ver Perfil"
+                  :label="tdc('View profile')"
                   @click="openProfileModal(doctor)"
                   outline
                 />
@@ -143,7 +143,7 @@
               </div>
 
               <div class="text-grey-7 q-mt-xs">
-                {{ selectedDoctor.specialties?.join(' • ') }}
+                {{ selectedDoctor.specialties?.map(item => tdc(item)).join(' • ') }}
               </div>
 
               <div class="stars q-mt-md justify-center">
@@ -167,42 +167,42 @@
 
                 <div class="col-md-6 col-12">
                   <div class="info-box">
-                    <div class="info-label">Idade</div>
+                    <div class="info-label">{{ tdc('Age') }}</div>
                     <div class="info-value">{{ selectedDoctor.age }}</div>
                   </div>
                 </div>
 
                 <div class="col-md-6 col-12">
                   <div class="info-box">
-                    <div class="info-label">Experiência</div>
-                    <div class="info-value">{{ selectedDoctor.experience }}</div>
+                    <div class="info-label">{{ tdc('Experience') }}</div>
+                    <div class="info-value">{{ tdc(selectedDoctor.experience) }}</div>
                   </div>
                 </div>
 
                 <div class="col-md-6 col-12">
                   <div class="info-box">
-                    <div class="info-label">Telefone</div>
+                    <div class="info-label">{{ tdc('Phone') }}</div>
                     <div class="info-value">{{ selectedDoctor.phone }}</div>
                   </div>
                 </div>
 
                 <div class="col-md-6 col-12">
                   <div class="info-box">
-                    <div class="info-label">Email</div>
+                    <div class="info-label">{{ tdc('Email') }}</div>
                     <div class="info-value">{{ selectedDoctor.email }}</div>
                   </div>
                 </div>
 
                 <div class="col-12">
                   <div class="info-box">
-                    <div class="info-label">Formações</div>
+                    <div class="info-label">{{ tdc('Qualifications') }}</div>
 
                     <ul class="education-list">
                       <li
                         v-for="(education, index) in selectedDoctor.educations || []"
                         :key="index"
                       >
-                        {{ education }}
+                        {{ tdc(education) }}
                       </li>
                     </ul>
 
@@ -211,9 +211,9 @@
 
                 <div class="col-12">
                   <div class="info-box">
-                    <div class="info-label">Sobre o médico</div>
+                    <div class="info-label">{{ tdc('About the doctor') }}</div>
                     <div class="info-value">
-                      {{ selectedDoctor.bio }}
+                      {{ tdc(selectedDoctor.bio) }}
                     </div>
                   </div>
                 </div>
@@ -231,14 +231,14 @@
           <s-btn
             color="primary"
             icon="event"
-            label="Marcar Consulta"
+            :label="tdc('Book appointment')"
             @click="switchToBooking"
             unelevated
           />
           <q-btn
             flat
             color="grey-7"
-            label="Fechar"
+            :label="tdc('Close')"
             v-close-popup
           />
         </template>
@@ -257,16 +257,16 @@
       maximized-on-mobile
     >
 
-      <s-modal-card title="Marcar Consulta" width="820px" class="doctor-modal booking-modal">
+      <s-modal-card :title="tdc('Book appointment')" width="820px" class="doctor-modal booking-modal">
 
         <div>
 
           <div class="text-h5 text-weight-bold text-center">
-            Marcar Consulta
+            {{ tdc('Book appointment') }}
           </div>
 
           <div class="text-center text-grey-7 q-mt-sm">
-            {{ selectedDoctor.name }} • {{ selectedDoctor.specialties?.join(' • ') }}
+            {{ selectedDoctor.name }} • {{ selectedDoctor.specialties?.map(item => tdc(item)).join(' • ') }}
           </div>
 
         </div>
@@ -282,8 +282,8 @@
                 <q-input
                   v-model="bookingForm.patient_name"
                   outlined
-                  label="Nome do paciente"
-                  :rules="[v => !!v || 'Informe o nome']"
+                  :label="tdc('Patient name')"
+                  :rules="[v => !!v || tdc('Enter the name')]"
                 />
               </div>
 
@@ -291,9 +291,9 @@
                 <q-input
                   v-model="bookingForm.patient_phone"
                   outlined
-                  label="Telefone"
+                  :label="tdc('Phone')"
                   mask="+258 ## ### ####"
-                  :rules="[v => !!v || 'Informe o telefone']"
+                  :rules="[v => !!v || tdc('Enter the phone number')]"
                 />
               </div>
 
@@ -302,7 +302,7 @@
                   v-model="bookingForm.patient_email"
                   outlined
                   type="email"
-                  label="Email"
+                  :label="tdc('Email')"
                 />
               </div>
 
@@ -310,9 +310,9 @@
                 <q-select
                   v-model="bookingForm.specialty"
                   outlined
-                  label="Especialidade"
-                  :options="selectedDoctor.specialties || []"
-                  :rules="[v => !!v || 'Selecione a especialidade']"
+                  :label="tdc('Specialty')"
+                  :options="(selectedDoctor.specialties || []).map(item => tdc(item))"
+                  :rules="[v => !!v || tdc('Select the specialty')]"
                 />
               </div>
 
@@ -320,7 +320,7 @@
                 <q-input
                   v-model="bookingForm.date"
                   outlined
-                  label="Data"
+                  :label="tdc('Date')"
                   readonly
                   :rules="[v => !!v || 'Selecione a data']"
                 >
@@ -343,15 +343,15 @@
                 <q-input
                   v-model="bookingForm.time"
                   outlined
-                  label="Horário selecionado"
+                  :label="tdc('Selected time')"
                   readonly
-                  :rules="[v => !!v || 'Selecione um horário']"
+                  :rules="[v => !!v || tdc('Select the time')]"
                 />
               </div>
 
               <div class="col-12">
                 <div class="text-subtitle1 text-weight-medium q-mb-sm">
-                  Horários Disponíveis
+                  {{ tdc('Available times') }}
                 </div>
 
                 <div class="row q-gutter-sm">
@@ -376,7 +376,7 @@
                   v-model="bookingForm.notes"
                   outlined
                   type="textarea"
-                  label="Observações"
+                  :label="tdc('Notes')"
                   autogrow
                 />
               </div>
@@ -392,7 +392,7 @@
           <s-btn
             color="primary"
             icon="event"
-            label="Confirmar Consulta"
+            :label="tdc('Confirm appointment')"
             :loading="bookingLoading"
             @click="bookConsultation"
             unelevated
@@ -400,7 +400,7 @@
           <q-btn
             flat
             color="grey-7"
-            label="Fechar"
+            :label="tdc('Close')"
             v-close-popup
           />
         </template>
@@ -451,33 +451,33 @@ export default defineComponent({
       {
         id: 1,
         name: "Dr. João Silva",
-        specialties: ["Cardiologia", "Clínica Geral"],
+        specialties: ['Cardiology', 'General practice'],
         rating: 5,
         age: 45,
-        experience: "20 anos",
+        experience: '20 years',
         educations: [
-          "Licenciatura em Medicina — UEM",
-          "Especialização em Cardiologia — Universidade de Lisboa"
+          'Degree in Medicine — UEM',
+          'Specialisation in Cardiology — University of Lisbon'
         ],
         phone: "+258 84 111 0001",
         email: "joao.silva@clinicaamal.co.mz",
-        bio: "Especialista em doenças cardiovasculares, prevenção e acompanhamento clínico de longo prazo.",
+        bio: 'Specialist in cardiovascular disease, prevention and long-term clinical follow-up.',
         photo: "https://randomuser.me/api/portraits/men/32.jpg"
       },
       {
         id: 2,
         name: "Dra. Maria Costa",
-        specialties: ["Dermatologia", "Estética Médica"],
+        specialties: ["Dermatologia", 'Medical aesthetics'],
         rating: 5,
         age: 39,
-        experience: "15 anos",
+        experience: '15 years',
         educations: [
-          "Licenciatura em Medicina — Universidade de Coimbra",
-          "Especialização em Dermatologia — Universidade do Porto"
+          'Degree in Medicine — University of Coimbra',
+          'Specialisation in Dermatology — University of Porto'
         ],
         phone: "+258 84 111 0002",
         email: "maria.costa@clinicaamal.co.mz",
-        bio: "Atua no diagnóstico e tratamento de doenças da pele, cabelo e unhas, com foco em abordagem humanizada.",
+        bio: 'Works in the diagnosis and treatment of skin, hair and nail conditions, with a humane approach.',
         photo: "https://randomuser.me/api/portraits/women/44.jpg"
       },
       {
@@ -486,30 +486,30 @@ export default defineComponent({
         specialties: ["Pediatria", "Neonatologia"],
         rating: 5,
         age: 50,
-        experience: "25 anos",
+        experience: '25 years',
         educations: [
-          "Licenciatura em Medicina — Universidade de Coimbra",
-          "Especialização em Pediatria — Universidade Nova de Lisboa"
+          'Degree in Medicine — University of Coimbra',
+          'Specialisation in Paediatrics — NOVA University of Lisbon'
         ],
         phone: "+258 84 111 0003",
         email: "paulo.mendes@clinicaamal.co.mz",
-        bio: "Pediatra com vasta experiência em acompanhamento do crescimento e desenvolvimento infantil.",
+        bio: 'Paediatrician with wide experience in monitoring children\'s growth and development.',
         photo: "https://randomuser.me/api/portraits/men/45.jpg"
       },
       {
         id: 4,
         name: "Dra. Ana Jorge",
-        specialties: ["Ginecologia", "Obstetrícia"],
+        specialties: ["Ginecologia", 'Obstetrics'],
         rating: 4,
         age: 42,
-        experience: "17 anos",
+        experience: '17 years',
         educations: [
-          "Licenciatura em Medicina — UEM",
-          "Especialização em Ginecologia e Obstetrícia — Universidade de Pretória"
+          'Degree in Medicine — UEM',
+          'Specialisation in Gynaecology and Obstetrics — University of Pretoria'
         ],
         phone: "+258 84 111 0004",
         email: "ana.jorge@clinicaamal.co.mz",
-        bio: "Acompanha a saúde da mulher em todas as fases, incluindo gravidez, parto e puerpério.",
+        bio: 'Looks after women\'s health at every stage, including pregnancy, childbirth and the postpartum period.',
         photo: "https://randomuser.me/api/portraits/women/65.jpg"
       },
       {
@@ -518,14 +518,14 @@ export default defineComponent({
         specialties: ["Ortopedia", "Traumatologia"],
         rating: 5,
         age: 47,
-        experience: "19 anos",
+        experience: '19 years',
         educations: [
           "Licenciatura em Medicina — Universidade Agostinho Neto",
-          "Especialização em Ortopedia — Universidade de São Paulo"
+          'Specialisation in Orthopaedics — University of São Paulo'
         ],
         phone: "+258 84 111 0005",
         email: "carlos.alberto@clinicaamal.co.mz",
-        bio: "Especialista em lesões musculares, articulares e ósseas, com foco em recuperação funcional.",
+        bio: 'Specialist in muscle, joint and bone injuries, focused on functional recovery.',
         photo: "https://randomuser.me/api/portraits/men/55.jpg"
       },
       {
@@ -534,14 +534,14 @@ export default defineComponent({
         specialties: ["Neurologia", "Neurofisiologia"],
         rating: 4,
         age: 41,
-        experience: "14 anos",
+        experience: '14 years',
         educations: [
-          "Licenciatura em Medicina — UEM",
-          "Especialização em Neurologia — Universidade do Cabo"
+          'Degree in Medicine — UEM',
+          'Specialisation in Neurology — University of Cape Town'
         ],
         phone: "+258 84 111 0006",
         email: "beatriz.mucavele@clinicaamal.co.mz",
-        bio: "Avalia e trata doenças do sistema nervoso com foco em diagnóstico preciso e seguimento contínuo.",
+        bio: 'Assesses and treats nervous system disorders with a focus on accurate diagnosis and continuous follow-up.',
         photo: "https://randomuser.me/api/portraits/women/68.jpg"
       },
       {
@@ -550,62 +550,62 @@ export default defineComponent({
         specialties: ["Oftalmologia", "Cirurgia Ocular"],
         rating: 5,
         age: 44,
-        experience: "16 anos",
+        experience: '16 years',
         educations: [
           "Licenciatura em Medicina — Universidade do Porto",
-          "Especialização em Oftalmologia — Universidade de Barcelona"
+          'Specialisation in Ophthalmology — University of Barcelona'
         ],
         phone: "+258 84 111 0007",
         email: "eduardo.matola@clinicaamal.co.mz",
-        bio: "Atua na prevenção, diagnóstico e cirurgia de doenças oculares, com acompanhamento personalizado.",
+        bio: 'Works in the prevention, diagnosis and surgery of eye diseases, with personalised follow-up.',
         photo: "https://randomuser.me/api/portraits/men/60.jpg"
       },
       {
         id: 8,
         name: "Dra. Lúcia Banze",
-        specialties: ["Psicologia Clínica", "Psicoterapia"],
+        specialties: ['Clinical psychology', "Psicoterapia"],
         rating: 5,
         age: 36,
-        experience: "11 anos",
+        experience: '11 years',
         educations: [
-          "Licenciatura em Psicologia — Universidade Pedagógica",
-          "Formação em Psicoterapia Cognitivo-Comportamental"
+          'Degree in Psychology — Pedagogical University',
+          'Training in Cognitive-Behavioural Psychotherapy'
         ],
         phone: "+258 84 111 0008",
         email: "lucia.banze@clinicaamal.co.mz",
-        bio: "Especialista em saúde mental, acompanhamento emocional e apoio psicoterapêutico individual.",
+        bio: 'Specialist in mental health, emotional support and individual psychotherapy.',
         photo: "https://randomuser.me/api/portraits/women/72.jpg"
       },
       {
         id: 9,
         name: "Dr. Samuel Mussá",
-        specialties: ["Clínica Geral", "Medicina Interna"],
+        specialties: ['General practice', "Medicina Interna"],
         rating: 4,
         age: 48,
-        experience: "22 anos",
+        experience: '22 years',
         educations: [
-          "Licenciatura em Medicina — UEM",
-          "Especialização em Medicina Interna — Universidade de Lisboa"
+          'Degree in Medicine — UEM',
+          'Specialisation in Internal Medicine — University of Lisbon'
         ],
         phone: "+258 84 111 0009",
         email: "samuel.mussa@clinicaamal.co.mz",
-        bio: "Responsável por consultas gerais, seguimento clínico e orientação diagnóstica em casos complexos.",
+        bio: 'In charge of general consultations, clinical follow-up and diagnostic guidance in complex cases.',
         photo: "https://randomuser.me/api/portraits/men/22.jpg"
       },
       {
         id: 10,
         name: "Dra. Helena Novela",
-        specialties: ["Endocrinologia", "Nutrição Clínica"],
+        specialties: ["Endocrinologia", 'Clinical nutrition'],
         rating: 5,
         age: 40,
-        experience: "13 anos",
+        experience: '13 years',
         educations: [
-          "Licenciatura em Medicina — Universidade de Coimbra",
-          "Especialização em Endocrinologia — Universidade de Lisboa"
+          'Degree in Medicine — University of Coimbra',
+          'Specialisation in Endocrinology — University of Lisbon'
         ],
         phone: "+258 84 111 0010",
         email: "helena.novela@clinicaamal.co.mz",
-        bio: "Acompanha distúrbios hormonais, diabetes, obesidade e planos clínicos multidisciplinares.",
+        bio: 'Follows hormonal disorders, diabetes, obesity and multidisciplinary clinical plans.',
         photo: "https://randomuser.me/api/portraits/women/50.jpg"
       }
     ]
@@ -729,7 +729,7 @@ export default defineComponent({
       ) {
         Notify.create({
           type: "warning",
-          message: "Preencha os campos obrigatórios e selecione um horário."
+          message: 'Fill in the required fields and select a time.'
         })
         return
       }
@@ -750,7 +750,7 @@ export default defineComponent({
 
         Notify.create({
           type: "positive",
-          message: "Consulta marcada com sucesso."
+          message: 'Appointment booked successfully.'
         })
 
         bookingModal.value = false
@@ -771,7 +771,7 @@ export default defineComponent({
         console.log(error)
         Notify.create({
           type: "negative",
-          message: "Não foi possível marcar a consulta."
+          message: 'The appointment could not be booked.'
         })
       } finally {
         bookingLoading.value = false

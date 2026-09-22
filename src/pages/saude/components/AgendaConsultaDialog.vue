@@ -123,7 +123,7 @@
                   v-model="form.data"
                   :options="dateOptions"
                   flat bordered
-                  :locale="ptLocale"
+                  :locale="dateLocale"
                   @update:model-value="onDataChanged"
                 />
               </div>
@@ -281,11 +281,15 @@ const duracaoOptions = [
   { label: '60 ' + tdc('min'), value: 60 },
 ]
 
-const ptLocale = {
-  days: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
-  daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-  months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-  monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+// the date picker's own day / month names, in the user's language (never a fixed one)
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+const dateLocale = {
+  days: dayNames.map(name => tdc(name)),
+  daysShort: dayNames.map(name => tdc(name.slice(0, 3))),
+  months: monthNames.map(name => tdc(name)),
+  monthsShort: monthNames.map(name => tdc(name.slice(0, 3))),
 }
 
 function todayISO() {

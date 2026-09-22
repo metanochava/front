@@ -72,25 +72,25 @@ const autoplay = ref(5000)
 const slides = [
   {
     name: 'pacientes',
-    title: 'Gestão de Pacientes',
-    desc: 'Registe e consulte os dados dos pacientes.',
-    button: 'Ver pacientes',
+    title: 'Patient management',
+    desc: 'Register and view patient data.',
+    button: 'View patients',
     route: 'list_paciente',
     image: foto
   },
   {
     name: 'consultas',
-    title: 'Gestão de Consultas',
-    desc: 'Organize e acompanhe as consultas médicas.',
-    button: 'Ver consultas',
+    title: 'Appointment management',
+    desc: 'Organise and follow medical appointments.',
+    button: 'View appointments',
     route: 'list_consulta',
     image: 'https://unsplash.com/photos/green-potted-plant-on-white-ceramic-floor-tiles-HuWm7malJ18'
   },
   {
     name: 'exames',
-    title: 'Exames Médicos',
-    desc: 'Registe pedidos e resultados de exames médicos.',
-    button: 'Ver exames',
+    title: 'Medical exams',
+    desc: 'Register medical exam requests and results.',
+    button: 'View exams',
     route: 'list_pedidoexamemedico',
     image: foto
   }

@@ -6,7 +6,7 @@
         <s-btn
           color="primary"
           icon="create_new_folder"
-          label="Nova Pasta"
+          :label="tdc('New folder')"
           unelevated
           @click="$emit('new-folder')"
         />
@@ -16,7 +16,7 @@
         <s-btn
           color="primary"
           icon="attach_file"
-          label="Upload"
+          :label="tdc('Upload')"
           unelevated
           @click="$emit('upload')"
         />
@@ -27,7 +27,7 @@
           flat
           color="grey-8"
           icon="edit"
-          label="Renomear"
+          :label="tdc('Rename')"
           :disable="!selected"
           @click="$emit('rename')"
         />
@@ -38,7 +38,7 @@
           flat
           color="negative"
           icon="delete"
-          label="Eliminar"
+          :label="tdc('Delete')"
           :disable="!selected"
           @click="$emit('delete')"
         />
@@ -49,7 +49,7 @@
           flat
           color="primary"
           icon="refresh"
-          label="Atualizar"
+          :label="tdc('Update')"
           @click="$emit('refresh')"
         />
       </div>
@@ -62,7 +62,7 @@
           dense
           outlined
           clearable
-          label="Pesquisar resultados"
+          :label="tdc('Search results')"
           prepend-icon="search"
           @update:model-value="$emit('search', search)"
         />
@@ -73,6 +73,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { ref } from 'vue'
 
 defineProps({

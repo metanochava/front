@@ -4,7 +4,7 @@
     <s-pdf-render
       v-model="Relatoriomedico.showPdf"
       :src="Relatoriomedico.pdf"
-      title="Relatório Médico"
+      :title="tdc('Medical report')"
     />
 
     <PacienteHeader />
@@ -24,11 +24,11 @@
           <td align="center">
 
             <div class="banner-title">
-              RELATÓRIO MÉDICO
+              {{ tdc('Medical report').toUpperCase() }}
             </div>
 
             <div class="banner-subtitle">
-              Documento clínico elaborado pelo médico assistente
+              {{ tdc('Clinical document prepared by the attending physician') }}
             </div>
 
           </td>
@@ -61,7 +61,7 @@
 
             <s-editor
               v-model="Relatoriomedico.form.resumo"
-              label="Relatório Clínico"
+              :label="tdc('Clinical report')"
               min-height="500px"
             />
 
@@ -78,14 +78,14 @@
               <q-card-section>
 
                 <div class="text-subtitle1 text-weight-bold">
-                  Resumo
+                  {{ tdc('Summary') }}
                 </div>
 
                 <q-separator class="q-my-md"/>
 
                 <div>
 
-                  <strong>Paciente</strong>
+                  <strong>{{ tdc('Patient') }}</strong>
 
                   <br>
 
@@ -97,7 +97,7 @@
 
                 <div>
 
-                  <strong>NID</strong>
+                  <strong>{{ tdc('NID') }}</strong>
 
                   <br>
 
@@ -109,7 +109,7 @@
 
                 <div>
 
-                  <strong>Médico</strong>
+                  <strong>{{ tdc('Doctor') }}</strong>
 
                   <br>
 
@@ -134,13 +134,13 @@
         <s-btn
           flat
           color="grey"
-          label="Cancelar"
+          :label="tdc('Cancel')"
         />
 
         <s-btn
           color="primary"
           icon="save"
-          label="Emitir Relatório"
+          :label="tdc('Issue report')"
           :loading="Relatoriomedico.saving"
           @click="save"
         />
@@ -182,6 +182,7 @@
 </style>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 

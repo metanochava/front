@@ -213,12 +213,12 @@ function formatCurrency(value) {
 }
 
 const quickLinks = [
-  { label: 'Produtos', icon: 'inventory_2', route: 'list_product' },
-  { label: 'Categorias', icon: 'category', route: 'list_productcategory' },
-  { label: 'Armazéns', icon: 'warehouse', route: 'list_warehouse' },
-  { label: 'Saldo de Stock', icon: 'inventory', route: 'list_stockitem' },
-  { label: 'Movimentos', icon: 'receipt_long', route: 'list_stockmovement' },
-  { label: 'Contagens Físicas', icon: 'fact_check', route: 'list_inventorycount' },
+  { label: 'Products', icon: 'inventory_2', route: 'list_product' },
+  { label: 'Categories', icon: 'category', route: 'list_productcategory' },
+  { label: 'Warehouses', icon: 'warehouse', route: 'list_warehouse' },
+  { label: 'Stock balance', icon: 'inventory', route: 'list_stockitem' },
+  { label: 'Movements', icon: 'receipt_long', route: 'list_stockmovement' },
+  { label: 'Physical counts', icon: 'fact_check', route: 'list_inventorycount' },
 ]
 
 onMounted(() => {

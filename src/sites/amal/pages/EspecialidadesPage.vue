@@ -9,7 +9,7 @@
       class="text-weight-bold text-primary"
       :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
     >
-      {{ tdc('Especialidades') }}
+      {{ tdc('Specialties') }}
     </div>
 
   </div>
@@ -36,11 +36,11 @@
           />
 
           <div class="text-h6 q-mt-md">
-            {{ s.title }}
+            {{ tdc(s.title) }}
           </div>
 
           <div class="text-caption text-grey-7 q-mt-sm">
-            {{ s.desc }}
+            {{ tdc(s.desc) }}
           </div>
 
         </q-card-section>
@@ -73,26 +73,26 @@ const services=[
 
 {
 icon:"favorite",
-title:"Cardiologia",
-desc:"Diagnóstico e tratamento de doenças do coração."
+title:'Cardiology',
+desc:'Diagnosis and treatment of heart disease.'
 },
 
 {
 icon:"visibility",
 title:"Oftalmologia",
-desc:"Cuidados completos para a saúde dos olhos."
+desc:'Complete care for eye health.'
 },
 
 {
 icon:"psychology",
 title:"Neurologia",
-desc:"Tratamento especializado do sistema nervoso."
+desc:'Specialised treatment of the nervous system.'
 },
 
 {
 icon:"healing",
 title:"Ortopedia",
-desc:"Tratamento de lesões e doenças ósseas."
+desc:'Treatment of injuries and bone diseases.'
 }
 
 ]

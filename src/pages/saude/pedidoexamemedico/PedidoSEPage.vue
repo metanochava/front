@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import { tdc } from 'quasar_resaas'
 import { ref } from 'vue'
 import ExameCollapse from '../components/parapedifoexame/ExameCollapse.vue'
 import ExameCard from '../components/parapedifoexame/ExameCard.vue'
@@ -51,7 +52,7 @@ function prepareAdd(payload) {
     classe_label: payload.classe_label,
     exame_label: payload.exame_label,
     prioridade: 'normal',
-    prioridade_label: 'Normal'
+    prioridade_label: tdc('Normal')
   })
 }
 

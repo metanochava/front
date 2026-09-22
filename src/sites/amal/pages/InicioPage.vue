@@ -11,7 +11,7 @@
       <div class="col-12 col-md-8">
         <s-card flat class="preview-mini-card text-h6 text-primary justify-center">
           <q-card-section>
-            <b class="text-h6">Atendimento moderno e humanizado</b>
+            <b class="text-h6">{{ tdc('Modern, humane care') }}</b>
           </q-card-section>
         </s-card>
       </div>
@@ -20,16 +20,16 @@
         class="text-weight-bold q-mb-md text-grey-9"
         :style="{ fontSize: '50px' }"
       >
-        {{ tdc('CUIDAMOS ') }}
+        {{ tdc('WE CARE') }}&nbsp;
         <b style="color:#E60000;font-size:50px"> + </b>
-        {{ tdc(' DE PERTO') }}
+        {{ tdc('UP CLOSE') }}
       </div>
 
       <div
         class="q-mb-lg"
         :style="{ fontSize: ps?.typography?.font_size_h5 + 'px' }"
       >
-        {{ tdc('Atendimento humanizado, especialistas qualificados, tecnologia moderna e marcação simples para consultas, exames e check-ups.') }}
+        {{ tdc('Humane care, qualified specialists, modern technology and simple booking for consultations, exams and check-ups.') }}
 
         <label
           :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }"
@@ -37,9 +37,9 @@
         >
           <b>
             <br>
-            Aberto 24 horas<br>
-            Maternidade e Bloco operatório<br>
-            Consultas de diferentes especialidades<br>
+            {{ tdc('Open 24 hours') }}<br>
+            {{ tdc('Maternity and operating theatre') }}<br>
+            {{ tdc('Consultations in different specialties') }}<br>
           </b>
         </label>
       </div>
@@ -47,7 +47,7 @@
       <s-btn
         color="primary"
         icon="event"
-        label="Marcar Consulta"
+        :label="tdc('Book appointment')"
       />
 
       &nbsp;&nbsp;&nbsp;
@@ -55,14 +55,14 @@
       <s-btn
         color="primary"
         outline
-        label="Ver Especialidades"
+        :label="tdc('View specialties')"
       />
 
       <div class="row col-md-12 q-pa-0 q-col-gutter-sm q-mt-xl">
 
         <div class="col-md-6 justify-center">
           <s-card flat class="q-pa-md">
-            <b class="text-h6 text-primary">Telefone</b>
+            <b class="text-h6 text-primary">{{ tdc('Phone') }}</b>
             <br>
             +258 86 555 0550
           </s-card>
@@ -70,9 +70,9 @@
 
         <div class="col-md-6 justify-center">
           <s-card flat class="q-pa-md">
-            <b class="text-h6 text-primary">Localização</b>
+            <b class="text-h6 text-primary">{{ tdc('Location') }}</b>
             <br>
-            Maputo, Moçambique
+            {{ tdc('Maputo, Mozambique') }}
           </s-card>
         </div>
 
@@ -108,7 +108,7 @@
     </div>
 
     <div style="font-size:18px">
-      {{ c.label }}
+      {{ tdc(c.label) }}
     </div>
 
   </div>
@@ -140,8 +140,8 @@ const counters=[
 
 {value:1200,label:"Pacientes"},
 {value:45,label:"Especialistas"},
-{value:12,label:"Especialidades"},
-{value:15,label:"Anos de Experiência"}
+{value:12,label:'Specialties'},
+{value:15,label:'Years of experience'}
 
 ]
 

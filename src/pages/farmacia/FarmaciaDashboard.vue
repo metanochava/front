@@ -51,11 +51,11 @@ import { tdc, url, HTTPAuth } from 'quasar_resaas'
 const router = useRouter()
 
 const cards = [
-  { estado: 'pendente', label: 'Pendentes', textClass: '' },
-  { estado: 'aprovada', label: 'Aprovadas', textClass: 'text-info' },
-  { estado: 'dispensada_parcial', label: 'Parcialmente Dispensadas', textClass: 'text-warning' },
-  { estado: 'dispensada', label: 'Dispensadas', textClass: 'text-positive' },
-  { estado: 'rejeitada', label: 'Rejeitadas', textClass: 'text-negative' },
+  { estado: 'pendente', label: 'Pending', textClass: '' },
+  { estado: 'aprovada', label: 'Approved', textClass: 'text-info' },
+  { estado: 'dispensada_parcial', label: 'Partially dispensed', textClass: 'text-warning' },
+  { estado: 'dispensada', label: 'Dispensed', textClass: 'text-positive' },
+  { estado: 'rejeitada', label: 'Rejected', textClass: 'text-negative' },
 ]
 
 const counts = reactive({})
@@ -76,8 +76,8 @@ async function loadCounts() {
 }
 
 const quickLinks = [
-  { label: 'Fila de Farmácia', icon: 'fact_check', route: 'list_filafarmacia' },
-  { label: 'Dispensas', icon: 'medication', route: 'list_dispensa' },
+  { label: 'Pharmacy queue', icon: 'fact_check', route: 'list_filafarmacia' },
+  { label: 'Dispensations', icon: 'medication', route: 'list_dispensa' },
 ]
 
 onMounted(loadCounts)
