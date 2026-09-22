@@ -4,6 +4,7 @@ import { ref, onMounted } from 'vue'
 import { useReveal } from '../useReveal'
 import HeroSection from '../components/HeroSection.vue'
 import AboutSection from '../components/AboutSection.vue'
+import ResumeSection from '../components/ResumeSection.vue'
 import MethodSection from '../components/MethodSection.vue'
 import StackSection from '../components/StackSection.vue'
 import ProjectsSection from '../components/ProjectsSection.vue'
@@ -21,6 +22,7 @@ onMounted(() => document.querySelector('.pf')?.classList.add('pf-js'))
   <div ref="root">
     <HeroSection />
     <AboutSection />
+    <ResumeSection />
     <MethodSection />
     <StackSection />
     <ProjectsSection />

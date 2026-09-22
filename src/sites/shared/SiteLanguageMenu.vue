@@ -11,7 +11,7 @@ defineEmits(['choose'])
 </script>
 
 <template>
-  <q-btn flat round dense icon="translate" :aria-label="tdc('Language')" data-test="site-language">
+  <q-btn flat dense no-caps icon="translate" :label="current?.code?.split('-')[0]?.toUpperCase()" :aria-label="tdc('Language')" data-test="site-language">
     <q-menu>
       <q-list dense style="min-width: 150px">
         <q-item

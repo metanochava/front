@@ -137,9 +137,7 @@
 
         <site-language-menu :languages="languages" :current="current" @choose="choose" />
 
-        <!-- Grande e Longo -->
-
-          <s-btn
+        <s-btn
             flat
             dense
             icon="calculate"
@@ -150,9 +148,8 @@
                 ? 'bg-dark text-white'
                 : 'bg-primary text-white'
             "
-            @click="drawer = !drawer"
+            :to="{ name: 'calculadora' }"
             :size="$q.screen.lt.md ? 'md' : 'lg'"
-
           >
             <q-tooltip
               :class="
@@ -163,11 +160,10 @@
             >
               {{ tdc('Loan calculator') }}
             </q-tooltip>
-
           </s-btn>
           &nbsp; &nbsp;
 
-          <s-btn
+        <s-btn
             round
             flat
             icon="fab fa-whatsapp"
@@ -214,6 +210,7 @@
       v-model="drawer"
       side="right"
       bordered
+      overlay
 
       :width="280"
       class="no-shadow"
@@ -321,9 +318,14 @@ export default defineComponent({
           route: 'utentes'
         },
         {
-          label: 'Parceiros',
+          label: 'Partners',
           icon: 'handshake',
           route: 'parceiros'
+        },
+        {
+          label: 'Loan calculator',
+          icon: 'calculate',
+          route: 'calculadora'
         },
         {
           label: 'Login',

@@ -5,8 +5,11 @@
     <FFYTComp />
     <SobreNosComp />
     <ParceirosComp />
+    <ReviewsStripComp />
+    <AwardsComp />
     <BlogComp />
     <FAQsComp />
+    <GuidesComp />
   </q-page>
 </template>
 
@@ -22,6 +25,9 @@ import BlogComp from "../components/BlogComp.vue"
 import FAQsComp from "../components/FAQsComp.vue"
 import FFYTComp from "../components/FFYTComp.vue"
 import ParceirosComp from '../components/ParceirosComp.vue'
+import ReviewsStripComp from '../components/ReviewsStripComp.vue'
+import AwardsComp from '../components/AwardsComp.vue'
+import GuidesComp from '../components/GuidesComp.vue'
 
 import { useUserStore } from 'quasar_resaas'
 
@@ -38,6 +44,9 @@ export default defineComponent({
     BlogComp,
     SliderComp,
     ParceirosComp,
+    ReviewsStripComp,
+    AwardsComp,
+    GuidesComp,
 
   },
 

@@ -1,6 +1,6 @@
 <template>
 
-<div id="sobrenos" class="q-py-xl bg" style="padding-top:100px; padding-bottom:100px; ">
+<div id="utentes" class="q-py-xl bg" style="padding-top:100px; padding-bottom:100px; ">
 
   <div class="row justify-center q-col-gutter-xl q-px-md">
 
@@ -16,20 +16,48 @@
         </div>
       </div>
 
+      <p class="text-white">
+        {{ tdc('Everything you need as a Docodela patient, from your first visit to ongoing care.') }}
+      </p>
+
+      <div class="row q-col-gutter-md q-mt-sm q-mb-lg">
+        <div v-for="item in info" :key="item.title" class="col-12">
+          <div class="row items-start no-wrap">
+            <q-icon :name="item.icon" size="28px" color="white" class="q-mr-md q-mt-xs" />
+            <div>
+              <div class="text-weight-bold text-white">{{ tdc(item.title) }}</div>
+              <div class="text-white" style="opacity: .85">{{ tdc(item.desc) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <s-btn
         color="primary"
-        :label="tdc('Patients')"
+        :label="tdc('Contact us')"
       />
-
 
     </div>
 
     <div class="col-md-5 col-12">
 
-      <q-img
-        src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
-        style="border-radius:20px"
-      />
+      <div class="text-weight-bold text-white q-mb-md" style="font-size:24px">
+        {{ tdc('Our medical team') }}
+      </div>
+
+      <div class="row q-col-gutter-md">
+        <div v-for="doctor in doctors" :key="doctor.name" class="col-12">
+          <s-card flat class="row items-center no-wrap q-pa-sm">
+            <q-avatar size="64px">
+              <img :src="doctor.img">
+            </q-avatar>
+            <div class="q-ml-md">
+              <div class="text-weight-bold">{{ doctor.name }}</div>
+              <div class="text-grey-7">{{ tdc(doctor.specialty) }}</div>
+            </div>
+          </s-card>
+        </div>
+      </div>
 
     </div>
 
@@ -54,24 +82,24 @@ const User =useUserStore()
 const ps = computed(()=>User.ps || {})
 
 
-const about=[
+const info=[
 
 {
-icon:"flag",
-title:'Mission',
-desc:'Offer quality medical care with humane service.'
+icon:"app_registration",
+title:'Registration',
+desc:'Quick registration at your first visit, in person or via WhatsApp.'
 },
 
 {
-icon:"visibility",
-title:'Vision',
-desc:'Be a reference in innovation and excellence in healthcare.'
+icon:"folder_shared",
+title:'Medical records',
+desc:'Your history stored securely and available at every visit.'
 },
 
 {
-icon:"favorite",
-title:'Values',
-desc:'Ethics, commitment, respect and dedication to patients.'
+icon:"support_agent",
+title:'Ongoing support',
+desc:'Our team is available on WhatsApp for any questions about your care.'
 }
 
 ]
@@ -102,7 +130,7 @@ img:"https://randomuser.me/api/portraits/men/65.jpg"
 return{
 tdc,
 ps,
-about,
+info,
 doctors
 }
 

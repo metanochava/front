@@ -32,6 +32,17 @@
         {{ tdc('Because health should not wait.') }}
       </p>
 
+      <div class="row q-col-gutter-md q-mt-sm q-mb-lg">
+        <div v-for="item in about" :key="item.title" class="col-12">
+          <div class="row items-start no-wrap">
+            <q-icon :name="item.icon" size="28px" color="white" class="q-mr-md q-mt-xs" />
+            <div>
+              <div class="text-weight-bold text-white">{{ tdc(item.title) }}</div>
+              <div class="text-white" style="opacity: .85">{{ tdc(item.desc) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <s-btn
         color="primary"

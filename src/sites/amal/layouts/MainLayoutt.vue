@@ -7,6 +7,7 @@
       v-model="drawer"
       side="left"
       bordered
+      overlay
       class="lt-md"
       :width="ps.layout?.sidebar_width || 260"
       :class="$q.dark.isActive ? 'bg-dark text-white' : 'bg-primary text-white'"

@@ -5,16 +5,22 @@
 // Edit this file to change what the site links to.
 
 export const profile = {
-  name: 'Metano Chavana',
+  name: 'Dias Metano Salvador Chavana',
   // rotates in the hero (each one is translated with tdc)
   roles: ['Computer engineer', 'Digital forensics', 'Application developer'],
   location: 'Moçambique',
-  defaultLanguage: 'pt-pt'
+  defaultLanguage: 'pt-pt',
+  // Headshot shown in the hero, at professional CV-photo proportions (portrait, object-fit
+  // cover). Put the file under public/portfolio/ (e.g. public/portfolio/profile.jpg) and
+  // point this at its served path (e.g. '/portfolio/profile.jpg'). Left empty, the hero
+  // shows an initials avatar instead - never a placeholder photo of someone else.
+  photo: ''
 }
 
 // A link left empty is not shown. Add yours here.
 export const contact = {
   email: 'metanochava@gmail.com',
+  phones: ['+258 85 733 5500', '+258 86 733 5500', '+258 83 733 5500', '+91 74900 60603'],
   github: '',
   linkedin: '',
   whatsapp: ''
@@ -58,4 +64,4 @@ export const projects = [
   { id: 'sites', icon: 'language', tags: ['Vue 3', 'Quasar', 'i18n'] }
 ]
 
-export const sections = ['about', 'method', 'stack', 'projects', 'contact']
+export const sections = ['about', 'resume', 'method', 'stack', 'projects', 'contact']

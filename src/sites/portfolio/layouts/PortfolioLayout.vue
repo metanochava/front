@@ -18,6 +18,7 @@ const menu = ref(false)
 
 const NAV = {
   about: 'About',
+  resume: 'Resume',
   method: 'How I work',
   stack: 'Stack',
   projects: 'Projects',
@@ -102,7 +103,7 @@ onBeforeUnmount(() => {
     <q-header class="nav" :class="{ 'nav--solid': scrolled || menu }">
       <div class="pf-wrap nav__inner">
         <a class="nav__brand" href="#" :aria-label="profile.name" @click.prevent="go('top')">
-          <span class="nav__mark" aria-hidden="true">M</span>
+          <span class="nav__mark" aria-hidden="true">D</span>
           <span class="nav__name">{{ profile.name }}</span>
         </a>
 

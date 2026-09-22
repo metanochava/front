@@ -24,6 +24,17 @@ const links = computed(() => [
           {{ contact.email }}
         </a>
 
+        <a
+          v-for="phone in contact.phones"
+          :key="phone"
+          class="pf-btn"
+          :href="`tel:${phone.replace(/\s+/g, '')}`"
+          data-test="contact-phone"
+        >
+          <q-icon name="call" size="20px" />
+          {{ phone }}
+        </a>
+
         <a v-for="link in links" :key="link.label" class="pf-btn" :href="link.href" target="_blank" rel="noopener noreferrer">
           <q-icon :name="link.icon" size="20px" />
           {{ link.label }}

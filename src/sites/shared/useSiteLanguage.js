@@ -10,8 +10,12 @@ import { useLanguageStore, useUserStore } from 'quasar_resaas'
 // public endpoints the login screen already uses (languages/ and
 // languages/{id}/translations/) - no second translation mechanism.
 //
-// Order: the language the visitor chose before (this site) > the browser's language >
-// the site's own default. The choice is remembered per browser.
+// Order: the language the visitor chose before (this site) > the site's own default >
+// the browser's language. The site's default is a business decision (these are
+// Mozambican businesses; the portfolio's audience is Portuguese-speaking) and must win
+// over an auto-detected browser locale - a visitor whose OS/browser is set to English
+// still sees the site in Portuguese until they explicitly switch. The choice is
+// remembered per browser once made.
 const STORAGE_KEY = 'site_language'
 
 const normalise = (code) => String(code || '').toLowerCase().replace('_', '-')
@@ -66,7 +70,7 @@ export function useSiteLanguage({ defaultCode = 'pt-pt' } = {}) {
       const rows = Language.rows || []
       const browser = typeof navigator !== 'undefined' ? navigator.language : ''
 
-      const target = pick(rows, remembered()) || pick(rows, browser) || pick(rows, defaultCode) || rows[0]
+      const target = pick(rows, remembered()) || pick(rows, defaultCode) || pick(rows, browser) || rows[0]
 
       await choose(target)
     } finally {

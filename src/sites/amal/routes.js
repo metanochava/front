@@ -6,6 +6,10 @@ export let amalSiteRoutes = [
     component: () => import('./layouts/MainLayoutt.vue'),
     children: [
       {
+        path: '',
+        redirect: '/home'
+      },
+      {
         path: '/home',
         component: () => import('./pages/HomePage.vue'),
         name: 'home',

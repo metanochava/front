@@ -25,27 +25,16 @@
         <div class="q-pa-md" style="max-width: 100%">
           <q-list bordered>
             <q-expansion-item
+              v-for="(faq, index) in faqs"
+              :key="faq.question"
               group="somegroup"
-              :label="tdc('First')"
-              default-opened
+              :label="tdc(faq.question)"
+              :default-opened="index === 0"
               header-class="text-primary"
             >
               <q-card>
                 <q-card-section>
-                  {{ tdc('Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem,  eius reprehenderit eos corrupti commodi magni quaerat ex numquam,  dolorum officiis modi facere maiores architecto suscipit iste  eveniet doloribus ullam aliquid.') }}
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
-
-            <q-expansion-item
-              group="somegroup"
-              :label="tdc('First')"
-              default-opened
-              header-class="text-primary"
-            >
-              <q-card>
-                <q-card-section>
-                  ghjhjh jkjbjkb ikjbikbjk.
+                  {{ tdc(faq.answer) }}
                 </q-card-section>
               </q-card>
             </q-expansion-item>
@@ -80,13 +69,43 @@ const ps = computed(()=>User.ps || {})
 
 const slide= ref(1)
 
-
+const faqs = [
+  {
+    question: 'How can I book a consultation?',
+    answer: 'Call us or send us a message on WhatsApp and our team will schedule your appointment.'
+  },
+  {
+    question: 'Can I finance my treatment at Docodela?',
+    answer: 'Yes. We offer payment plans for most treatments, so you can start your care and pay over time.'
+  },
+  {
+    question: 'Which treatments can I finance?',
+    answer: 'Consultations, exams, dental care, surgery and most other treatments offered at Docodela can be financed.'
+  },
+  {
+    question: 'How much can I borrow?',
+    answer: 'Financing is available from small amounts up to larger treatment costs, depending on your treatment plan and approval.'
+  },
+  {
+    question: 'Do I need a good credit score?',
+    answer: 'We look at your application as a whole, not just your credit score. Talk to our team to find the best option for you.'
+  },
+  {
+    question: 'How long does approval take?',
+    answer: 'In most cases, you will have a decision the same day you apply.'
+  },
+  {
+    question: 'Is financing available outside Mozambique?',
+    answer: 'Our financing is currently available for treatment at Docodela in Mozambique.'
+  }
+]
 
 return{
 User,
 ps,
 tdc,
 slide,
+faqs,
 }
 
 }

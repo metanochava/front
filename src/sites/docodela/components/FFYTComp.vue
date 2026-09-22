@@ -14,14 +14,14 @@
           class="text-weight-bold text-white"
           style="font-size:40px"
         >
-          {{ tdc('Mounthly Payment options across private Healfcare') }}
+          {{ tdc('Finance for your treatment') }}
         </div>
 
         <div
           class="text-weight-bold text-white"
           style="font-size:20px"
         >
-          {{ tdc('Other infoOther infoOther infoOther infoOther infoOther infoOther infoOther info') }}
+          {{ tdc('Mounthly Payment options across private Healfcare') }}
         </div>
 
       </div>
@@ -29,51 +29,31 @@
     </div>
 
 
-    <!-- POSTS -->
+    <!-- CATEGORIAS -->
     <div class="row justify-center ">
 
       <div class="col-md-10  col-12 row q-col-gutter-lg">
 
         <div
-          v-for="post in posts"
-          :key="post.id"
+          v-for="category in categories"
+          :key="category.id"
           class="col-md-3 col-sm-6 col-12"
         >
 
           <s-card
-            class="blog-card"
-            @click="openPost(post)"
+            class="blog-card text-center q-pa-lg"
+            @click="go()"
           >
 
-            <!-- IMAGEM -->
-            <q-img
-              :src="post.image"
-              height="180px"
-              class="rounded-top"
-            />
+            <q-icon :name="category.icon" size="46px" color="primary" class="q-mb-md" />
 
-            <q-card-section>
+            <div class="text-h6 text-weight-bold">
+              {{ tdc(category.label) }}
+            </div>
 
-              <!-- CATEGORIA -->
-              <div class=" text-h6 text-primary text-weight-bold">
-                {{ tdc(post.category) }}
-              </div>
-
-
-              <!-- DESCRIÇÃO -->
-              <div class="text-grey-7 q-mt-sm">
-                {{ tdc(post.excerpt) }}
-              </div>
-
-              <!-- META -->
-              <div class="row justify-between items-center q-mt-md text-caption text-grey">
-
-                <span>{{ 'Explore Finace Options ->' }}</span>
-                <!-- <span>{{ tdc(post.read_time) }}</span> -->
-
-              </div>
-
-            </q-card-section>
+            <div class="row justify-center items-center q-mt-md text-caption text-primary">
+              <span>{{ tdc('Explore finance options') }} -&gt;</span>
+            </div>
 
           </s-card>
 
@@ -83,153 +63,38 @@
 
     </div>
 
-
-
-    <!-- MODAL ARTIGO -->
-    <q-dialog v-model="postModal">
-
-      <s-modal-card :title="tdc(selectedPost.title)" width="600px">
-        <q-img :src="selectedPost.image" height="200px" />
-
-        <div class="text-caption text-grey q-mt-sm">
-          {{ tdc(selectedPost.category) }} • {{ selectedPost.date }}
-        </div>
-
-        <div class="text-body1 q-mt-md">
-          {{ tdc(selectedPost.content) }}
-        </div>
-
-        <template #footer>
-          <q-btn
-            flat
-            :label="tdc('Close')"
-            v-close-popup
-          />
-        </template>
-      </s-modal-card>
-
-    </q-dialog>
-
   </section>
 </template>
 
 
 <script>
-import { defineComponent, ref } from "vue"
+import { defineComponent } from "vue"
 import { tdc } from "quasar_resaas"
 
 export default defineComponent({
 
   setup () {
 
-    const postModal = ref(false)
-    const selectedPost = ref({})
-
-    const posts = [
-
-      {
-        id:1,
-        title:'The importance of regular check-ups',
-        category:'Prevention',
-        excerpt:'Having regular exams helps prevent disease...',
-        content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
-        date:"10 Mar 2026",
-        read_time:'5 min',
-        image:"https://images.unsplash.com/photo-1584515933487-779824d29309"
-      },
-
-      {
-        id:2,
-        title:'Taking care of your heart',
-        category:'Cardiology',
-        excerpt:'Learn how to keep your heart healthy...',
-        content:'A balanced diet and regular physical exercise are essential.',
-        date:"05 Mar 2026",
-        read_time:"4 min",
-        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
-      },
-
-      {
-        id:3,
-        title:'Mental health in everyday life',
-        category:'Psychology',
-        excerpt:'Tips for looking after your mental health...',
-        content:'Sleeping well, avoiding stress and seeking help are essential.',
-        date:"01 Mar 2026",
-        read_time:"6 min",
-        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
-      },
-      {
-        id:4,
-        title:'Taking care of your heart',
-        category:'Cardiology',
-        excerpt:'Learn how to keep your heart healthy...',
-        content:'A balanced diet and regular physical exercise are essential.',
-        date:"05 Mar 2026",
-        read_time:"4 min",
-        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
-      },
-
-      {
-        id:5,
-        title:'Mental health in everyday life',
-        category:'Psychology',
-        excerpt:'Tips for looking after your mental health...',
-        content:'Sleeping well, avoiding stress and seeking help are essential.',
-        date:"01 Mar 2026",
-        read_time:"6 min",
-        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
-      },
-      {
-        id:6,
-        title:'The importance of regular check-ups',
-        category:'Prevention',
-        excerpt:'Having regular exams helps prevent disease...',
-        content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
-        date:"10 Mar 2026",
-        read_time:'5 min',
-        image:"https://images.unsplash.com/photo-1584515933487-779824d29309"
-      },
-
-      {
-        id:7,
-        title:'Taking care of your heart',
-        category:'Cardiology',
-        excerpt:'Learn how to keep your heart healthy...',
-        content:'A balanced diet and regular physical exercise are essential.',
-        date:"05 Mar 2026",
-        read_time:"4 min",
-        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
-      },
-
-      {
-        id:8,
-        title:'Mental health in everyday life',
-        category:'Psychology',
-        excerpt:'Tips for looking after your mental health...',
-        content:'Sleeping well, avoiding stress and seeking help are essential.',
-        date:"01 Mar 2026",
-        read_time:"6 min",
-        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
-      },
-
+    const categories = [
+      { id: 1, icon: 'hearing', label: 'Audiology' },
+      { id: 2, icon: 'spa', label: 'Cosmetic surgery' },
+      { id: 3, icon: 'biotech', label: 'Diagnostics' },
+      { id: 4, icon: 'medical_services', label: 'Dental' },
+      { id: 5, icon: 'visibility', label: 'Optometry' },
+      { id: 6, icon: 'child_care', label: 'IVF & fertility' },
+      { id: 7, icon: 'local_hospital', label: 'Medical' },
     ]
 
-
-    function openPost (post) {
-
-      selectedPost.value = post
-      postModal.value = true
-
+    // every category leads to the same finance FAQ / contact section - real
+    // navigation, not a dead link.
+    function go () {
+      document.getElementById('faqs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-
 
     return {
       tdc,
-      posts,
-      postModal,
-      selectedPost,
-      openPost
+      categories,
+      go,
     }
 
   }
@@ -273,9 +138,5 @@ export default defineComponent({
   transform:translateY(-8px) scale(1.02);
 
 }
-
-
-/* MODAL */
-
 
 </style>

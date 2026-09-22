@@ -6,6 +6,10 @@ export let docodelaSiteRoutes = [
     component: () => import('./layouts/MainLayout.vue'),
     children: [
       {
+        path: '',
+        redirect: '/home'
+      },
+      {
         path: '/home',
         component: () => import('./pages/HomePage.vue'),
         name: 'home',
@@ -37,8 +41,17 @@ export let docodelaSiteRoutes = [
         component:()=>import("./pages/ParceirosPage.vue"),
         name:"parceiros",
         meta: {
-          title: tdc('ParceirosPage'),
+          title: tdc('Partners'),
           icon: 'inventory_2',
+        },
+      },
+      {
+        path:"/calculadora",
+        component:()=>import("./pages/LoanCalculatorPage.vue"),
+        name:"calculadora",
+        meta: {
+          title: tdc('Loan calculator'),
+          icon: 'calculate',
         },
       },
     ],

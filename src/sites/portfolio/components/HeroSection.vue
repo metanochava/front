@@ -8,6 +8,13 @@ import { profile } from '../portfolio.config'
 // motion (or before mount) it just shows the first role.
 const roles = computed(() => profile.roles.map(role => tdc(role)))
 const shown = ref('')
+
+// Shown while profile.photo is empty (see portfolio.config.js): the initials of the
+// first and last name, never a placeholder photo of someone else.
+const initials = computed(() => {
+  const words = profile.name.trim().split(/\s+/)
+  return ((words[0]?.[0] || '') + (words[words.length - 1]?.[0] || '')).toUpperCase()
+})
 const roleIndex = ref(0)
 
 let timer = null
@@ -68,6 +75,11 @@ const lines = [
 
     <div class="pf-wrap hero__inner">
       <div class="hero__copy">
+        <div class="hero__portrait" role="img" :aria-label="profile.name">
+          <img v-if="profile.photo" :src="profile.photo" :alt="profile.name">
+          <span v-else class="hero__portrait-fallback" aria-hidden="true">{{ initials }}</span>
+        </div>
+
         <p class="pf-path">$ whoami</p>
 
         <h1 id="hero-title" class="hero__name">{{ profile.name }}</h1>
@@ -128,6 +140,21 @@ const lines = [
 }
 
 .hero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+
+/* Professional headshot proportions (4:5 portrait, the standard CV/ID-photo ratio),
+   object-fit: cover so any source photo crops cleanly instead of stretching. */
+.hero__portrait {
+  width: 116px; aspect-ratio: 4 / 5; border-radius: var(--pf-radius);
+  overflow: hidden; margin-bottom: 22px;
+  border: 1px solid var(--pf-line); background: var(--pf-surface-2);
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .5);
+}
+.hero__portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__portrait-fallback {
+  width: 100%; height: 100%; display: grid; place-items: center;
+  font-family: var(--pf-font-display); font-weight: 700; font-size: 30px;
+  color: var(--pf-accent); background: linear-gradient(160deg, var(--pf-surface-2), var(--pf-surface));
+}
 
 .hero__name { font-size: clamp(44px, 8.4vw, 96px); }
 

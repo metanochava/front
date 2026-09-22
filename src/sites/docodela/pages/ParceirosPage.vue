@@ -33,11 +33,11 @@
             >
               <q-img
                 class="rounded-borders col-6 full-height"
-                src="https://cdn.quasar.dev/img/mountains.jpg"
+                src="https://images.unsplash.com/photo-1516549655169-df83a0774514"
               />
               <q-img
                 class="rounded-borders col-6 full-height"
-                src="https://cdn.quasar.dev/img/parallax1.jpg"
+                src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
               />
             </div>
           </q-carousel-slide>
