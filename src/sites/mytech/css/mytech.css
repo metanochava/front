@@ -1,0 +1,160 @@
+/* MyTech design system. Tokens derived from the real logo mark (public icon,
+   qmytechui project): blue #1976D2, green #238C3E, red #DC3545, gold #FFC107.
+   Blue is the core brand colour (trust, primary actions); green/red/gold are
+   used sparingly as accents - one per business division - never as loud
+   gradients or decoration. Scoped under .mt so nothing leaks into the rest
+   of the SPA (the same app also serves amal/docodela/portfolio/admin). */
+
+.mt {
+  --mt-font-display: 'Sora', 'Segoe UI', system-ui, sans-serif;
+  --mt-font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --mt-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --mt-radius: 14px;
+  --mt-radius-sm: 8px;
+  --mt-max: 1200px;
+  --mt-nav: 100px;
+
+  /* brand */
+  --mt-blue: #1976D2;
+  --mt-blue-dark: #0F4E8C;
+  --mt-blue-light: #4B94DE;
+  --mt-green: #1F7A38;
+  --mt-red: #C9313F;
+  --mt-gold: #E0A400;
+
+  /* light (default) */
+  --mt-bg: #FBFCFD;
+  --mt-surface: #FFFFFF;
+  --mt-surface-2: #F2F5F8;
+  --mt-line: rgba(16, 26, 38, 0.10);
+  --mt-text: #10151B;
+  --mt-muted: #57636E;
+  /* Quasar's own brand variables (q-btn color="primary", text-positive,
+     bg-warning, etc. all resolve through these) - overridden here so every
+     Quasar component rendered under .mt automatically uses MyTech's brand
+     colours, instead of Quasar's stock blue/green/red/amber. This is the
+     single source of truth for brand colour; --mt-accent below just aliases
+     --q-primary for this file's own utility classes (.mt-btn, .mt-eyebrow). */
+  --q-primary: var(--mt-blue);
+  --q-positive: var(--mt-green);
+  --q-warning: var(--mt-gold);
+  --q-negative: var(--mt-red);
+  --q-info: var(--mt-blue-light);
+
+  --mt-accent: var(--q-primary);
+  --mt-accent-ink: #FFFFFF;
+  --mt-glow: rgba(25, 118, 210, 0.14);
+
+  --mt-success: var(--q-positive);
+  --mt-warning: var(--q-warning);
+  --mt-danger: var(--q-negative);
+  --mt-info: var(--q-info);
+
+  background: var(--mt-bg);
+  color: var(--mt-text);
+  font-family: var(--mt-font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.body--light .mt {
+  /* explicit light values kept identical to the base :root above; present
+     so a future dark-mode toggle has a real "light" branch to switch to,
+     mirroring the pattern used by the portfolio site's .pf tokens. */
+}
+
+@media (prefers-color-scheme: dark) {
+  .mt:not([data-theme="light"]) {
+    --mt-bg: #0A0D11;
+    --mt-surface: #10151B;
+    --mt-surface-2: #161C23;
+    --mt-line: rgba(180, 200, 220, 0.12);
+    --mt-text: #EDF1F4;
+    --mt-muted: #93A0AC;
+    --mt-accent: var(--mt-blue-light);
+    --mt-accent-ink: #06121F;
+    --mt-glow: rgba(75, 148, 222, 0.16);
+    --q-primary: var(--mt-blue-light);
+  }
+}
+
+.mt[data-theme="dark"] {
+  --mt-bg: #0A0D11;
+  --mt-surface: #10151B;
+  --mt-surface-2: #161C23;
+  --mt-line: rgba(180, 200, 220, 0.12);
+  --mt-text: #EDF1F4;
+  --mt-muted: #93A0AC;
+  --mt-accent: var(--mt-blue-light);
+  --mt-accent-ink: #06121F;
+  --mt-glow: rgba(75, 148, 222, 0.16);
+  --q-primary: var(--mt-blue-light);
+}
+
+.mt *, .mt *::before, .mt *::after { box-sizing: border-box; }
+.mt { -webkit-tap-highlight-color: transparent; }
+
+.mt h1, .mt h2, .mt h3, .mt h4 {
+  font-family: var(--mt-font-display);
+  font-weight: 700;
+  line-height: 1.12;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.mt p { margin: 0; }
+
+.mt-wrap {
+  max-width: var(--mt-max);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.mt-section { padding-block: clamp(64px, 9vw, 120px); scroll-margin-top: var(--mt-nav); }
+
+.mt-eyebrow {
+  font-family: var(--mt-font-mono);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mt-accent);
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.mt-title { font-size: clamp(30px, 4.4vw, 48px); max-width: 20ch; }
+.mt-lead { color: var(--mt-muted); max-width: 62ch; margin-top: 16px; font-size: clamp(16px, 1.6vw, 19px); }
+
+.mt-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 999px;
+  font-family: var(--mt-font-body); font-weight: 600; font-size: 15px;
+  border: 1px solid var(--mt-line); background: transparent; color: var(--mt-text);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  text-decoration: none; cursor: pointer;
+}
+.mt-btn:hover { transform: translateY(-2px); border-color: var(--mt-accent); }
+.mt-btn:focus-visible { outline: 2px solid var(--mt-accent); outline-offset: 2px; }
+.mt a.mt-btn--primary, .mt .mt-btn--primary {
+  background: var(--mt-accent); color: var(--mt-accent-ink); border-color: var(--mt-accent);
+}
+.mt .mt-btn--primary:hover { filter: brightness(1.08); }
+
+.mt-card {
+  border: 1px solid var(--mt-line); border-radius: var(--mt-radius);
+  background: var(--mt-surface); transition: transform .2s ease, border-color .2s ease;
+}
+.mt-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--mt-accent) 40%, var(--mt-line)); }
+
+.mt-reveal { opacity: 1; transform: none; }
+.mt-js .mt-reveal:not(.is-in) { opacity: 0; transform: translateY(20px); }
+.mt-js .mt-reveal { transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+@media (prefers-reduced-motion: reduce) {
+  .mt-js .mt-reveal:not(.is-in) { opacity: 1; transform: none; }
+}
+
+@media (max-width: 600px) {
+  .mt-wrap { padding-inline: 18px; }
+}

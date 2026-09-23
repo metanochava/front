@@ -267,6 +267,11 @@ export default defineComponent({
 
   async mounted(){
     await this.Entity.getSettings()
+    if (this.User.Entity?.id) {
+      console.log('[Amal] Entity found for this site:', this.User.Entity)
+    } else {
+      console.log('[Amal] No Entity matched this domain (site.py lookup by Origin).')
+    }
     this.calculateMenu()
     window.addEventListener("resize",this.calculateMenu)
   },
@@ -286,7 +291,10 @@ export default defineComponent({
 
       if(item?.route === 'Login'){
         const dominio = process.env.API.replace('app','saude')
-        window.location.href = `${dominio}/#/auth/login?entity=${this.Entity?.row?.id}`
+        // Entity.getSettings() (called on mount) never populates Entity.row -
+        // only User.Entity, from the same /site response. Entity.row.id was
+        // always undefined here.
+        window.location.href = `${dominio}/#/auth/login?entity=${this.User?.Entity?.id}`
       }else{
         const el = document.querySelector(item.link)
         if(el){

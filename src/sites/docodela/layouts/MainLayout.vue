@@ -323,9 +323,24 @@ export default defineComponent({
           route: 'parceiros'
         },
         {
+          label: 'Health blog',
+          icon: 'article',
+          route: 'blog'
+        },
+        {
           label: 'Loan calculator',
           icon: 'calculate',
           route: 'calculadora'
+        },
+        {
+          label: 'FAQs',
+          icon: 'quiz',
+          route: 'faqs'
+        },
+        {
+          label: 'Get in touch',
+          icon: 'chat',
+          route: 'contacto'
         },
         {
           label: 'Login',
@@ -346,6 +361,11 @@ export default defineComponent({
 
   async mounted(){
     await this.Entity.getSettings()
+    if (this.User.Entity?.id) {
+      console.log('[Docodela] Entity found for this site:', this.User.Entity)
+    } else {
+      console.log('[Docodela] No Entity matched this domain (site.py lookup by Origin).')
+    }
   },
 
   methods:{
@@ -366,7 +386,10 @@ export default defineComponent({
       console.log(item?.route)
       if(item?.route === 'login'){
         const dominio = process.env.API.replace('docodela','app')
-        window.location.href = `${dominio}/#/auth/login?entity=${this.Entity?.row?.id}`
+        // Entity.getSettings() (called on mount) never populates Entity.row -
+        // only User.Entity, from the same /site response. Entity.row.id was
+        // always undefined here.
+        window.location.href = `${dominio}/#/auth/login?entity=${this.User?.Entity?.id}`
       }else {
           this.router.push({
           name: item?.route

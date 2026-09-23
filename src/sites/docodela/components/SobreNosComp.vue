@@ -47,6 +47,7 @@
       <s-btn
         color="primary"
         :label="tdc('Contact us')"
+        :to="{ name: 'contacto' }"
       />
 
 
@@ -55,7 +56,7 @@
     <div class="col-md-5 col-12">
 
       <q-img
-        src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
+        :src="fotoAbout"
         style="border-radius:20px"
       />
 
@@ -72,6 +73,7 @@
 
 import { defineComponent, computed } from "vue"
 import { tdc,useUserStore } from "quasar_resaas"
+import fotoAbout from './../images/docodela24.jpeg'
 
 export default defineComponent({
 
@@ -131,7 +133,8 @@ return{
 tdc,
 ps,
 about,
-doctors
+doctors,
+fotoAbout
 }
 
 }

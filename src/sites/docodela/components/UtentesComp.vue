@@ -35,6 +35,7 @@
       <s-btn
         color="primary"
         :label="tdc('Contact us')"
+        :to="{ name: 'contacto' }"
       />
 
     </div>

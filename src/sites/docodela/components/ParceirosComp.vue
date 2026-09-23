@@ -32,12 +32,14 @@
               class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap"
             >
               <q-img
-                class="rounded-borders col-6 full-height"
-                src="https://images.unsplash.com/photo-1516549655169-df83a0774514"
+                class="rounded-borders col-6 full-height bg-white"
+                fit="contain"
+                src="./../public/logotexte.jpeg"
               />
               <q-img
-                class="rounded-borders col-6 full-height"
-                src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
+                class="rounded-borders col-6 full-height bg-black"
+                fit="contain"
+                src="./../public/logo_.jpeg"
               />
             </div>
           </q-carousel-slide>

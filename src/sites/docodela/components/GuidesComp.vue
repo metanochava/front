@@ -9,11 +9,11 @@
         </div>
 
         <div class="row q-col-gutter-md">
-          <div v-for="guide in guides" :key="guide.title" class="col-md-4 col-sm-6 col-12">
-            <a class="guide-link" href="#faqs">
+          <div v-for="guide in guides" :key="guide.slug" class="col-md-4 col-sm-6 col-12">
+            <router-link class="guide-link" :to="{ name: 'guia', params: { slug: guide.slug } }">
               <q-icon name="menu_book" size="20px" color="primary" class="q-mr-sm" />
               {{ tdc(guide.title) }}
-            </a>
+            </router-link>
           </div>
         </div>
 
@@ -32,11 +32,11 @@ export default defineComponent({
   setup () {
 
     const guides = [
-      { title: 'Dental implants finance' },
-      { title: 'Treatment payment plans and credit checks' },
-      { title: 'Cosmetic surgery finance with bad credit' },
-      { title: 'Treatment finance with bad credit' },
-      { title: 'How treatment finance works' },
+      { title: 'Dental implants finance', slug: 'dental-implants-finance' },
+      { title: 'Treatment payment plans and credit checks', slug: 'treatment-payment-plans-credit-checks' },
+      { title: 'Cosmetic surgery finance with bad credit', slug: 'cosmetic-surgery-finance-bad-credit' },
+      { title: 'Treatment finance with bad credit', slug: 'treatment-finance-bad-credit' },
+      { title: 'How treatment finance works', slug: 'how-treatment-finance-works' },
     ]
 
     return {

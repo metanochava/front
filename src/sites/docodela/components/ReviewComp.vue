@@ -16,7 +16,7 @@
             </div>
 
             <div class="text-subtitle1 q-mt-sm">
-              {{ tdc('We take care of your health') }}
+              {{ tdc('Our promise is to simplify your path.') }}
             </div>
 
             <div class="text-caption q-mt-md">
@@ -26,33 +26,7 @@
         </div>
 
         <!-- VERSO -->
-        <div class="flip-card-back">
-          <div class="back-content">
-            <q-icon
-              name="health_and_safety"
-              size="55px"
-              class="q-mb-md"
-            />
-
-            <div class="text-h5 text-weight-bold">
-              {{ tdc('Our services') }}
-            </div>
-
-            <div class="text-body1 q-mt-md">
-              {{ tdc('Medical consultations, exams, specialised care and personalised follow-up.') }}
-            </div>
-
-            <q-btn
-              class="q-mt-lg"
-              color="white"
-              text-color="primary"
-              :label="tdc('Learn more')"
-              icon-right="arrow_forward"
-              no-caps
-              rounded
-            />
-          </div>
-        </div>
+        <div class="flip-card-back" :style="{ backgroundImage: `url(${banner})` }" />
       </div>
     </div>
   </div>
@@ -60,13 +34,15 @@
 
 <script>
 import { tdc } from 'quasar_resaas'
+import banner from './../images/docodela24.jpeg'
 
 export default {
   name: 'ClinicaFlipCard',
 
   setup() {
     return {
-      tdc
+      tdc,
+      banner
     }
   }
 }
@@ -152,20 +128,13 @@ export default {
 /* VERSO */
 
 .flip-card-back {
-  background: linear-gradient(
-    135deg,
-    rgba(2, 123, 227, 0.95),
-    rgba(0, 70, 140, 0.95)
-  );
+  background-color: #0a4a8a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   color: white;
   transform: rotateY(180deg);
-}
-
-.back-content {
-  padding: 40px;
-  text-align: center;
-  max-width: 500px;
 }
 
 /* MOBILE */
@@ -180,8 +149,7 @@ export default {
     height: 330px;
   }
 
-  .slideoverlay,
-  .back-content {
+  .slideoverlay {
     padding: 25px;
   }
 }

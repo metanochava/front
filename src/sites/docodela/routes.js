@@ -54,6 +54,51 @@ export let docodelaSiteRoutes = [
           icon: 'calculate',
         },
       },
+      {
+        path:"/blog",
+        component:()=>import("./pages/BlogPage.vue"),
+        name:"blog",
+        meta: {
+          title: tdc('Health blog'),
+          icon: 'article',
+        },
+      },
+      {
+        path:"/faqs",
+        component:()=>import("./pages/FAQsPage.vue"),
+        name:"faqs",
+        meta: {
+          title: tdc('FAQs'),
+          icon: 'quiz',
+        },
+      },
+      {
+        path:"/contacto",
+        component:()=>import("./pages/ContactPage.vue"),
+        name:"contacto",
+        meta: {
+          title: tdc('Get in touch'),
+          icon: 'chat',
+        },
+      },
+      {
+        path:"/financiamento/:categoria",
+        component:()=>import("./pages/CategoryFinancePage.vue"),
+        name:"categoria-financiamento",
+        meta: {
+          title: tdc('Finance for your treatment'),
+          icon: 'calculate',
+        },
+      },
+      {
+        path:"/guia/:slug",
+        component:()=>import("./pages/GuidePage.vue"),
+        name:"guia",
+        meta: {
+          title: tdc('Popular finance guides'),
+          icon: 'menu_book',
+        },
+      },
     ],
   }
 ]

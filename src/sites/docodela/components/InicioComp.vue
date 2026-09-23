@@ -16,14 +16,18 @@
       <div
         class="q-mb-lg"
       >
-        <label class="text-h4"><q-icon name="bolt" color="primary" /> {{ tdc('Less than 1 minute to apply') }} </label> <br/>
-        <label class="text-h4"><q-icon name="verified" color="primary" /> {{ tdc('Instant decision') }}</label> <br/>
-        <label class="text-h4"><q-icon name="description" color="primary" /> {{ tdc('Simple online application') }}</label> <br/>
-        <label class="text-h4"><q-icon name="sentiment_satisfied_alt" color="primary" /> {{ tdc('Easy with no hassle') }} </label> <br/><br/>
+        <div v-for="item in benefits" :key="item.title" class="row items-start no-wrap q-mb-md">
+          <q-icon :name="item.icon" color="primary" size="32px" class="q-mr-md q-mt-xs" />
+          <div>
+            <div class="text-h6 text-weight-bold">{{ tdc(item.title) }}</div>
+            <div class="text-body1 text-grey-8">{{ tdc(item.desc) }}</div>
+          </div>
+        </div>
 
         <s-btn
           color="primary"
-          :label="tdc('Enquire now')"
+          :label="tdc('Start now')"
+          :to="{ name: 'contacto' }"
         />
       </div>
     </div>
@@ -62,11 +66,30 @@ const ps = computed(()=>User.ps || {})
 
 const slide= ref(1)
 
+const benefits = [
+  {
+    icon: 'support_agent',
+    title: 'A single point of contact',
+    desc: 'Start with a conversation. Our team helps you organise the next steps.'
+  },
+  {
+    icon: 'event_available',
+    title: 'More organised care',
+    desc: 'We help make it easier to get in touch and schedule appointments with providers available in our network.'
+  },
+  {
+    icon: 'savings',
+    title: 'More planned payment',
+    desc: 'When applicable, we assess financing solutions to spread the cost of care over time.'
+  }
+]
+
 return{
 User,
 ps,
 tdc,
 slide,
+benefits,
 }
 
 }
