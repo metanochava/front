@@ -16,7 +16,7 @@ const host = window.location.hostname
 const domainRoutes = {
   "clinicaamal.co.mz": amalSiteRoutes,
   "amal.dev.mytech.co.mz": amalSiteRoutes,
-  "docodela.co.mz": docodelaSiteRoutes,
+  "docodela.mytech.co.mz": docodelaSiteRoutes,
   "docodela.dev.mytech.co.mz": docodelaSiteRoutes,
   // the portfolio: add the real domain here (e.g. "metanochava.dev": portfolioSiteRoutes)
   "metano.mytech.co.mz": portfolioSiteRoutes,
