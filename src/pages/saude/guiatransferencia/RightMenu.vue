@@ -8,7 +8,8 @@
   <HistoryList
     :title="tdc('Transfer form')"
     :store="GuiatransferenciaStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="guiatransferencia"
     @action="onClick"
   />
 </template>

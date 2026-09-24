@@ -7,7 +7,9 @@
   <HistoryList
     :title="tdc('Medical report')"
     :store="ReceitamedicaStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="receitamedica"
+    :date-fields="[{ name: 'data', label: 'Date', type: 'date' }, { name: 'hora', label: 'Time', type: 'time' }]"
     @action="onClick"
   />
 </template>

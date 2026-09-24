@@ -9,7 +9,8 @@
   <HistoryList
     :title="tdc('Medical exam')"
     :store="ExamemedicoStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="examemedico"
     @action="onClick"
   />
 </template>

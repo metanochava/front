@@ -219,7 +219,7 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 import { useFilafarmaciaStore } from './filafarmaciaStore'
 
 const route = useRoute()
@@ -283,9 +283,7 @@ const acting = ref(false)
 const actionError = ref('')
 
 function extractError(e, fallback) {
-  const detail = e?.response?.data?.detail
-  if (Array.isArray(detail)) return detail[0]
-  return detail || fallback
+  return errorMessage(e) || fallback
 }
 
 // -------- Revisar --------

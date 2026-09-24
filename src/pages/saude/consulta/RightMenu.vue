@@ -9,7 +9,8 @@
   <HistoryList
     :title="tdc('Medical consultation')"
     :store="ConsultaStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="consulta"
     @action="onClick"
   />
 </template>

@@ -106,7 +106,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { tdc, url } from 'quasar_resaas'
+import { tdc, url, errorMessage } from 'quasar_resaas'
 import { useStockmovementStore } from './stockmovementStore'
 
 const Stockmovement = useStockmovementStore()
@@ -212,7 +212,7 @@ async function save() {
     showForm.value = false
     await fetch()
   } catch (e) {
-    errorMsg.value = e?.response?.data?.detail || e?.response?.data?.[0] || tdc('Error saving movement.')
+    errorMsg.value = errorMessage(e) || tdc('Error saving movement.')
   } finally {
     saving.value = false
   }

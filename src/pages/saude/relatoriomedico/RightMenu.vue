@@ -7,7 +7,8 @@
   <HistoryList
     :title="tdc('Medical report')"
     :store="RelatoriomedicoStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="relatoriomedico"
     @action="onClick"
   />
 </template>

@@ -52,18 +52,24 @@
               @update:model-value="onEspecialidadeChanged"
             />
 
+            <div v-if="isGeral" class="text-caption text-grey-6 q-mt-sm">
+              <q-icon name="info" size="16px" class="q-mr-xs" />
+              {{ tdc('No need to choose a doctor - the patient will be seen by any available doctor at the health unit.') }}
+            </div>
+
             <div class="row justify-end q-mt-md">
               <q-btn
                 color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
                 :disable="!canLeaveStep1"
-                @click="step = 2"
+                @click="step = isGeral ? 3 : 2"
               />
             </div>
           </q-step>
 
-          <!-- ============ STEP 2: MÉDICO ============ -->
+          <!-- ============ STEP 2: MÉDICO (skipped for a "GERAL"-code specialty:
+               the patient sees any available doctor, chosen on site) ============ -->
           <q-step
-            v-if="!isEditMode"
+            v-if="!isEditMode && !isGeral"
             :name="2"
             :title="tdc('Doctor')"
             icon="medical_services"
@@ -129,50 +135,67 @@
               </div>
 
               <div class="col-12 col-sm-6">
-                <q-select
-                  v-model="duracaoMin"
-                  :options="duracaoOptions"
-                  emit-value map-options
-                  dense outlined
-                  class="q-mb-md"
-                  :label="tdc('Consultation Duration')"
-                  @update:model-value="buildSlots"
-                />
-
-                <div class="text-caption text-grey-6 q-mb-xs">
-                  {{ tdc('Available Times') }} — {{ form.data }}
-                </div>
-
-                <div v-if="loadingSlots" class="flex flex-center q-pa-md">
-                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-                </div>
-                <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
-                  <q-icon name="warning" class="q-mr-xs" />
-                  {{ tdc('Doctor has no schedule configured for this day — using default hours (08:00-17:00).') }}
-                  <br>
-                </div>
-
-                <div v-if="!loadingSlots && !slots.length" class="text-caption text-grey-6 q-pa-md text-center">
-                  {{ tdc('No available times on this day.') }}
-                </div>
-
-                <div v-else class="row q-gutter-xs slot-grid">
-                  <q-btn
-                    v-for="s in slots" :key="s.inicio"
-                    dense no-caps
-                    :disable="s.busy || s.past"
-                    :outline="form.hora_inicio !== s.inicio"
-                    :color="form.hora_inicio === s.inicio ? 'primary' : (s.busy ? 'grey-5' : 'primary')"
-                    :label="s.inicio"
-                    class="slot-btn"
-                    @click="selectSlot(s)"
+                <template v-if="isGeral">
+                  <!-- No doctor to check availability against: any time picked here is
+                       just when the patient is expected at the unit. -->
+                  <s-time v-model="form.hora_inicio" :label="tdc('Time')" @update:model-value="onGeralHoraChanged" />
+                  <q-select
+                    v-model="duracaoMin"
+                    :options="duracaoOptions"
+                    emit-value map-options
+                    dense outlined
+                    class="q-mt-md"
+                    :label="tdc('Consultation Duration')"
+                    @update:model-value="onGeralHoraChanged"
                   />
-                </div>
+                </template>
+
+                <template v-else>
+                  <q-select
+                    v-model="duracaoMin"
+                    :options="duracaoOptions"
+                    emit-value map-options
+                    dense outlined
+                    class="q-mb-md"
+                    :label="tdc('Consultation Duration')"
+                    @update:model-value="buildSlots"
+                  />
+
+                  <div class="text-caption text-grey-6 q-mb-xs">
+                    {{ tdc('Available Times') }} — {{ form.data }}
+                  </div>
+
+                  <div v-if="loadingSlots" class="flex flex-center q-pa-md">
+                    <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+                  </div>
+                  <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
+                    <q-icon name="warning" class="q-mr-xs" />
+                    {{ tdc('Doctor has no schedule configured for this day — using default hours (08:00-17:00).') }}
+                    <br>
+                  </div>
+
+                  <div v-if="!loadingSlots && !slots.length" class="text-caption text-grey-6 q-pa-md text-center">
+                    {{ tdc('No available times on this day.') }}
+                  </div>
+
+                  <div v-else class="row q-gutter-xs slot-grid">
+                    <q-btn
+                      v-for="s in slots" :key="s.inicio"
+                      dense no-caps
+                      :disable="s.busy || s.past"
+                      :outline="form.hora_inicio !== s.inicio"
+                      :color="form.hora_inicio === s.inicio ? 'primary' : (s.busy ? 'grey-5' : 'primary')"
+                      :label="s.inicio"
+                      class="slot-btn"
+                      @click="selectSlot(s)"
+                    />
+                  </div>
+                </template>
               </div>
             </div>
 
             <div class="row justify-between q-mt-md">
-              <q-btn v-if="!isEditMode" flat :label="tdc('Back')" icon="arrow_back" @click="step = 2" />
+              <q-btn v-if="!isEditMode" flat :label="tdc('Back')" icon="arrow_back" @click="step = isGeral ? 1 : 2" />
               <div v-else />
               <q-btn
                 color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
@@ -191,7 +214,7 @@
             <s-card flat bordered class="q-pa-sm q-mb-md bg-grey-1">
               <div class="text-caption text-grey-7">{{ tdc('Summary') }}</div>
               <div class="text-body2 q-mt-xs">
-                <div><b>{{ tdc('Doctor') }}:</b> {{ medicoSelecionadoLabel }}</div>
+                <div><b>{{ tdc('Doctor') }}:</b> {{ isGeral ? tdc('Any available doctor') : medicoSelecionadoLabel }}</div>
                 <div><b>{{ tdc('Date') }}:</b> {{ form.data }}</div>
                 <div><b>{{ tdc('Time') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
               </div>
@@ -241,7 +264,7 @@
 
 <script setup>
 import { reactive, ref, watch, computed } from 'vue'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 import { useAgendaStore } from './../agenda/agendaStore'
 
 const props = defineProps({
@@ -326,6 +349,28 @@ const errorMsg = ref('')
 
 const canLeaveStep1 = computed(() => !!form.especialidade && !!(props.pacienteId || form.paciente))
 
+// ---------------- ESPECIALIDADE "GERAL" (no doctor chosen at booking time) ----------------
+// especialidadeSelectUrl (?select=true) only returns {id, value, label} - the
+// specialty's own `code` is fetched separately, once, when the choice changes.
+const especialidadeCode = ref('')
+// The Agenda model has no `especialidade` field (it's a step-1 filter only,
+// never sent to the backend) - so in edit mode the only signal of a
+// "GERAL" booking is that it has no medico at all.
+const isGeral = computed(() => (
+  isEditMode.value ? !form.medico : especialidadeCode.value.toUpperCase() === 'GERAL'
+))
+
+async function loadEspecialidadeCode() {
+  especialidadeCode.value = ''
+  if (!form.especialidade) return
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: `hr/specialties/${form.especialidade}/` }))
+    especialidadeCode.value = data.code || ''
+  } catch {
+    especialidadeCode.value = ''
+  }
+}
+
 // ---------------- MÉDICOS (filtrados client-side por especialidade) ----------------
 const medicos = ref([])
 const loadingMedicos = ref(false)
@@ -363,7 +408,21 @@ const medicoSelecionadoLabel = computed(() => {
 
 function onEspecialidadeChanged() {
   form.medico = null
+  form.hora_inicio = null
+  form.hora_fim = null
+  loadEspecialidadeCode()
   if (form.especialidade) loadMedicos()
+}
+
+// GERAL has no per-doctor schedule to check: hora_fim is simply hora_inicio + duration
+function onGeralHoraChanged() {
+  if (!form.hora_inicio) {
+    form.hora_fim = null
+    return
+  }
+  const [h, m] = form.hora_inicio.split(':').map(Number)
+  const total = h * 60 + m + duracaoMin.value
+  form.hora_fim = `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
 function selectMedico(m) {
@@ -475,7 +534,7 @@ async function loadForEdit(id) {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: `saude/agendas/${id}/` }))
 
     form.paciente = data.paciente?.value || data.paciente?.id
-    form.medico = data.medico?.value || data.medico?.id
+    form.medico = data.medico?.value || data.medico?.id || null
     form.consultorio = data.consultorio?.value || data.consultorio?.id || null
     form.data = data.data.replace(/-/g, '/')
     form.estado = data.estado?.value || data.estado
@@ -514,6 +573,7 @@ function resetForm() {
   slots.value = []
   medicos.value = []
   editMedicoLabel.value = ''
+  especialidadeCode.value = ''
 }
 
 function onToggle(val) {
@@ -525,21 +585,13 @@ function close() {
 }
 
 function extractError(e) {
-  const d = e?.response?.data?.detail
-  if (Array.isArray(d)) return d[0]
-  if (d) return d
-  const data = e?.response?.data
-  if (data && typeof data === 'object') {
-    const first = Object.values(data)[0]
-    return Array.isArray(first) ? first[0] : first
-  }
-  return tdc('Error scheduling consultation.')
+  return errorMessage(e) || tdc('Error scheduling consultation.')
 }
 
 async function save() {
   errorMsg.value = ''
 
-  if (!form.paciente || !form.medico || !form.data || !form.hora_inicio) {
+  if (!form.paciente || (!form.medico && !isGeral.value) || !form.data || !form.hora_inicio) {
     errorMsg.value = tdc('Patient, doctor, date and start time are required.')
     return
   }

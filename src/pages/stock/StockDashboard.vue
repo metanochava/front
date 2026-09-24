@@ -173,7 +173,7 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 
 const router = useRouter()
 
@@ -196,7 +196,7 @@ async function loadCard(card, endpoint, params = {}) {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: `inventory/${endpoint}`, params }))
     card.data = data
   } catch (e) {
-    card.error = e?.response?.data?.detail || tdc('Error loading')
+    card.error = errorMessage(e) || tdc('Error loading')
   } finally {
     card.loading = false
   }

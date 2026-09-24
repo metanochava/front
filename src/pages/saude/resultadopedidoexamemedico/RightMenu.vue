@@ -13,7 +13,8 @@
   <HistoryList
     :title="tdc('Exam request result')"
     :store="PedidoexamemedicoStore"
-    :actions="['pdf', 'Ad. Resultado', 'Accao C']"
+    :actions="['Pdf', 'Ad. Resultado', 'Edit', 'delete']"
+    route-key="pedidoexamemedico"
     @action="onClick"
   />
 </template>

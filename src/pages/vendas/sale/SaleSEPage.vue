@@ -340,7 +340,7 @@
 
 <script setup>
 import { ref, reactive, computed, nextTick, onMounted } from 'vue'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
 import { useSaleitemStore } from './saleitemStore'
 import CameraScannerDialog from 'src/components/CameraScannerDialog.vue'
@@ -546,9 +546,7 @@ async function ensureSaleAndItems() {
 }
 
 function extractError(e) {
-  const d = e?.response?.data?.detail
-  if (Array.isArray(d)) return d[0]
-  return d || tdc('An error occurred. Please try again.')
+  return errorMessage(e) || tdc('An error occurred. Please try again.')
 }
 
 async function goToCheckout() {

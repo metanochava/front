@@ -172,7 +172,7 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
 import { useSaleitemStore } from './saleitemStore'
 import { usePaymentStore } from './../payment/paymentStore'
@@ -287,7 +287,7 @@ async function confirmar() {
     await Sale.confirmar(route.params.id)
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error confirming sale.')
+    actionError.value = errorMessage(e) || tdc('Error confirming sale.')
   } finally {
     acting.value = false
   }
@@ -300,7 +300,7 @@ async function anular() {
     await Sale.anular(route.params.id)
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error voiding sale.')
+    actionError.value = errorMessage(e) || tdc('Error voiding sale.')
   } finally {
     acting.value = false
   }
@@ -329,7 +329,7 @@ async function pagar() {
     paymentForm.referencia = ''
     await refreshAll()
   } catch (e) {
-    actionError.value = e?.response?.data?.detail?.[0] || e?.response?.data?.detail || tdc('Error registering payment.')
+    actionError.value = errorMessage(e) || tdc('Error registering payment.')
   } finally {
     acting.value = false
   }

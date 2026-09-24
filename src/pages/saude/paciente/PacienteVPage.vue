@@ -32,6 +32,7 @@
           indicator-color="primary"
         >
           <q-tab name="personal" :label="tdc('Personal')" />
+          <q-tab name="patient" :label="tdc('Patient data')" />
           <q-tab name="clinical" :label="tdc('Clinical summary')" />
           <q-tab name="consultations" :label="tdc('Consultations')" />
           <q-tab name="appointments" :label="tdc('Appointments')" />
@@ -42,46 +43,47 @@
 
         <q-tab-panels v-model="tab" animated>
 
-          <!-- PERSONAL: patient data + shared person profile -->
+          <!-- PERSONAL: shared person profile -->
           <q-tab-panel name="personal" class="q-pa-md">
-            <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data">
-              <template #aside>
-                <s-card flat bordered class="patient-data">
-                  <q-card-section class="section-title">
-                    <q-icon name="medical_information" size="20px" />
-                    {{ tdc('Patient data') }}
-                  </q-card-section>
-                  <q-separator />
+            <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data" />
+          </q-tab-panel>
 
-                  <q-list class="patient-data__list">
-                    <q-item v-for="item in patientFacts" :key="item.label" dense class="patient-data__item">
-                      <q-item-section avatar class="patient-data__icon">
-                        <q-icon :name="item.icon" size="18px" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label caption class="patient-data__label">{{ item.label }}</q-item-label>
-                        <q-item-label>
-                          <q-badge v-if="item.badge" :color="item.badge" class="q-pa-xs">{{ item.value }}</q-badge>
-                          <span v-else :class="{ 'text-grey-6': !item.value }">{{ item.value || '—' }}</span>
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
+          <!-- PATIENT DATA -->
+          <q-tab-panel name="patient" class="q-pa-md">
+            <s-card flat bordered class="patient-data">
+              <q-card-section class="section-title">
+                <q-icon name="medical_information" size="20px" />
+                {{ tdc('Patient data') }}
+              </q-card-section>
+              <q-separator />
 
-                  <template v-if="patientNotes.length">
-                    <q-separator />
-                    <q-card-section class="column q-gutter-y-md">
-                      <div v-for="note in patientNotes" :key="note.label" class="patient-note" :class="note.tone">
-                        <div class="patient-note__label">
-                          <q-icon :name="note.icon" size="16px" /> {{ note.label }}
-                        </div>
-                        <div class="pre-line">{{ note.value }}</div>
-                      </div>
-                    </q-card-section>
-                  </template>
-                </s-card>
+              <q-list class="patient-data__list">
+                <q-item v-for="item in patientFacts" :key="item.label" dense class="patient-data__item">
+                  <q-item-section avatar class="patient-data__icon">
+                    <q-icon :name="item.icon" size="18px" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label caption class="patient-data__label">{{ item.label }}</q-item-label>
+                    <q-item-label>
+                      <q-badge v-if="item.badge" :color="item.badge" class="q-pa-xs">{{ item.value }}</q-badge>
+                      <span v-else :class="{ 'text-grey-6': !item.value }">{{ item.value || '—' }}</span>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+
+              <template v-if="patientNotes.length">
+                <q-separator />
+                <q-card-section class="column q-gutter-y-md">
+                  <div v-for="note in patientNotes" :key="note.label" class="patient-note" :class="note.tone">
+                    <div class="patient-note__label">
+                      <q-icon :name="note.icon" size="16px" /> {{ note.label }}
+                    </div>
+                    <div class="pre-line">{{ note.value }}</div>
+                  </div>
+                </q-card-section>
               </template>
-            </s-person-profile>
+            </s-card>
           </q-tab-panel>
 
           <!-- CLINICAL SUMMARY -->

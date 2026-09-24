@@ -102,6 +102,17 @@
       :paciente-id="pacienteId"
       :paciente-label="name"
     />
+
+    <!-- "Patient card (PDF)" above calls Paciente.getPdf(), which sets
+         Paciente.showPdf - but this header is reused across 20+ pages, each
+         with its own store's <s-pdf-render> (Consulta, Receita, ...), so
+         nothing was ever listening to Paciente.showPdf. Owning the viewer
+         here fixes it everywhere at once. -->
+    <s-pdf-render
+      v-model="Paciente.showPdf"
+      :src="Paciente.pdf"
+      :title="tdc('Patient card')"
+    />
   </s-card>
 </template>
 

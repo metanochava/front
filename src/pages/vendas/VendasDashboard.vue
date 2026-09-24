@@ -164,7 +164,7 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { tdc, url, HTTPAuth } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
 
 const router = useRouter()
 
@@ -222,7 +222,7 @@ async function loadCard(card, endpoint, extraParams = {}) {
     }))
     card.data = data
   } catch (e) {
-    card.error = e?.response?.data?.detail || tdc('Error loading')
+    card.error = errorMessage(e) || tdc('Error loading')
   } finally {
     card.loading = false
   }

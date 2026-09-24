@@ -8,7 +8,9 @@
   <HistoryList
     :title="tdc('Medical certificate')"
     :store="AtestadomedicoStore"
-    :actions="['pdf', 'Accao B', 'Accao C']"
+    :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
+    route-key="atestadomedico"
+    :date-fields="[{ name: 'data_criacao', label: 'Issue date', type: 'date' }, { name: 'data_limite', label: 'Valid until', type: 'date' }]"
     @action="onClick"
   />
 </template>
