@@ -60,6 +60,17 @@
         </div>
 
 
+        <!-- PATIENT PORTAL: shown when the backend says this user is a
+             patient with portal access in the current Entity -->
+        <div v-if="portal.portal" class="text-center q-mt-lg" data-test="welcome-my-health">
+          <s-btn
+            color="primary"
+            icon="favorite"
+            :label="tdc('My Health')"
+            @click="router.push({ name: 'my_health' })"
+          />
+        </div>
+
         <q-separator class="q-my-lg" />
 
 
@@ -325,6 +336,7 @@
 
 import {
   computed,
+  onMounted,
   ref,
 } from 'vue'
 
@@ -337,6 +349,8 @@ import {
   tdc,
   ds,
   groupLabel,
+  HTTPAuth,
+  url,
 } from 'quasar_resaas'
 
 
@@ -352,6 +366,24 @@ const router = useRouter()
 // =============================================================
 
 const User = useUserStore()
+
+
+// =============================================================
+// PATIENT PORTAL (saude) - always answers 200 {portal: bool}; only asked
+// once an Entity is selected (it needs the tenant context)
+// =============================================================
+
+const portal = ref({ portal: false })
+
+onMounted(async () => {
+  if (!User.Entity?.id) return
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'saude/me/status/' }))
+    portal.value = data || { portal: false }
+  } catch {
+    portal.value = { portal: false }
+  }
+})
 
 
 // =============================================================

@@ -104,6 +104,15 @@
           <q-card-actions align="right">
 
               <s-btn
+                  flat
+                  color="primary"
+                  icon="edit_note"
+                  :label="tdc('Record result')"
+                  data-test="open-structured-result"
+                  @click="openStructured(item)"
+              />
+
+              <s-btn
                   color="primary"
                   icon="save"
                   :label="tdc('Save result')"
@@ -115,12 +124,23 @@
       </q-card>
     </s-modal-card>
   </q-dialog>
+
+  <ExamResultDialog v-model="structuredOpen" :item-id="structuredItemId" />
 </template>
 
 <script setup>
 import { tdc } from 'quasar_resaas'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
+import ExamResultDialog from '../components/ExamResultDialog.vue'
+
+// structured result of one exam item (form built from the exam's parameters)
+const structuredOpen = ref(false)
+const structuredItemId = ref(null)
+function openStructured (item) {
+  structuredItemId.value = item?.id
+  structuredOpen.value = true
+}
 
 // import { usePacienteStore } from './../paciente/pacienteStore'
 

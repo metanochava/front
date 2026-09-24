@@ -18,6 +18,7 @@ import { atestadomedicoRoutes } from './atestadomedico/atestadomedicoRoutes'
 import { receitamedicaRoutes } from './receitamedica/receitamedicaRoutes'
 import { consultaRoutes } from './consulta/consultaRoutes'
 import { pacienteRoutes } from './paciente/pacienteRoutes'
+import { myHealthRoutes } from './myhealth/myHealthRoutes'
 import { horariomedicoRoutes } from './horariomedico/horariomedicoRoutes'
 import { medicoRoutes } from './medico/medicoRoutes'
 
@@ -89,6 +90,7 @@ export let saudeRoutes = [
     },
   },
   ...pacienteRoutes,
+  ...myHealthRoutes,
   ...consultaRoutes,
   ...receitamedicaRoutes,
   ...atestadomedicoRoutes,

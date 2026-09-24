@@ -45,6 +45,16 @@
 
           <!-- PERSONAL: shared person profile -->
           <q-tab-panel name="personal" class="q-pa-md">
+            <!-- patient portal access (UX only: the backend enforces
+                 grant_portal_access_paciente) -->
+            <div v-if="User.can('grant_portal_access_paciente')" class="row items-center q-gutter-sm q-mb-md" data-test="portal-access">
+              <q-badge :color="Paciente.row?.portal_access ? 'positive' : 'grey-6'"
+                       :label="tdc(Paciente.row?.portal_access ? 'Patient portal active' : 'No patient portal access')" />
+              <s-btn v-if="!Paciente.row?.portal_access" dense flat color="primary" icon="key"
+                     :label="tdc('Grant portal access')" :loading="portalBusy" @click="grantPortal" />
+              <s-btn v-else dense flat color="negative" icon="key_off"
+                     :label="tdc('Revoke portal access')" :loading="portalBusy" @click="revokePortal" />
+            </div>
             <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data" />
           </q-tab-panel>
 
@@ -120,6 +130,15 @@
                 <q-icon name="monitor_heart" color="primary" class="q-mr-xs" />
                 <div class="text-subtitle2 text-weight-medium">{{ tdc('Latest Vital Signs') }}</div>
                 <q-space />
+                <!-- UX only: the backend enforces lab_evolution_paciente -->
+                <s-btn
+                  v-if="User.can('lab_evolution_paciente')"
+                  flat dense round size="sm" icon="show_chart"
+                  data-test="open-lab-evolution"
+                  @click="showLabEvolution = true"
+                >
+                  <s-tooltip>{{ tdc('Lab evolution') }}</s-tooltip>
+                </s-btn>
                 <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_dadovital' }" />
               </q-card-section>
               <q-separator />
@@ -373,6 +392,8 @@
       :edit-id="editAgendaId"
       @saved="fetchAgendas"
     />
+
+    <lab-evolution-dialog v-model="showLabEvolution" :paciente-id="Paciente.row?.id" />
   </q-page>
 </template>
 
@@ -385,6 +406,11 @@ import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle, sDialog } fro
 import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
+import LabEvolutionDialog from './../components/LabEvolutionDialog.vue'
+import { useUserStore } from 'quasar_resaas'
+
+const User = useUserStore()
+const showLabEvolution = ref(false)
 
 const route = useRoute()
 const $q = useQuasar()
@@ -446,6 +472,60 @@ function openNovaMarcacao() {
 function openEditMarcacao(a) {
   editAgendaId.value = a.id
   showAgendaDialog.value = true
+}
+
+// ---------------- PATIENT PORTAL ----------------
+const portalBusy = ref(false)
+
+// values interpolated into the dialog's HTML come from the server (the
+// username derives from the patient's name): always escape them
+function escapeHtml (value) {
+  return String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+}
+
+function portalUrl (action) {
+  return url({ type: 'u', url: `saude/pacientes/${Paciente.row?.id}/${action}/` })
+}
+
+async function reloadPaciente () {
+  Paciente.row = await Paciente.getById(Paciente.row?.id)
+}
+
+async function grantPortal () {
+  portalBusy.value = true
+  try {
+    const { data } = await HTTPAuth.post(portalUrl('grant_portal_access'))
+    await reloadPaciente()
+    // the temporary password is shown once, here only
+    sDialog({
+      title: tdc('Patient portal access granted'),
+      message: data.temporary_password
+        ? `${escapeHtml(tdc('Username'))}: <b>${escapeHtml(data.username)}</b><br>${escapeHtml(tdc('Temporary password'))}: <b>${escapeHtml(data.temporary_password)}</b><br>${escapeHtml(tdc('Give these to the patient. The password must be changed at the first login.'))}`
+        : `${escapeHtml(tdc('Username'))}: <b>${escapeHtml(data.username)}</b><br>${escapeHtml(tdc('The patient already has a password.'))}`,
+      html: true,
+      persistent: true,
+    })
+  } finally {
+    portalBusy.value = false
+  }
+}
+
+function revokePortal () {
+  sDialog({
+    title: tdc('Revoke portal access'),
+    message: tdc('The patient will no longer be able to see their data in this entity.'),
+    cancel: { flat: true, label: tdc('No') },
+    ok: { color: 'negative', label: tdc('Revoke') },
+    persistent: true,
+  }).onOk(async () => {
+    portalBusy.value = true
+    try {
+      await HTTPAuth.post(portalUrl('revoke_portal_access'))
+      await reloadPaciente()
+    } finally {
+      portalBusy.value = false
+    }
+  })
 }
 
 function confirmCancelMarcacao(a) {
