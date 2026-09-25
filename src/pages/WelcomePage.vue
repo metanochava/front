@@ -383,6 +383,13 @@ onMounted(async () => {
   } catch {
     portal.value = { portal: false }
   }
+
+  // landing page decided by capability, never by the profile's name: an
+  // active profile whose job is the portal goes straight to it (a staff
+  // profile doesn't have view_patient_portal)
+  if (portal.value.portal && User.can('view_patient_portal')) {
+    router.replace({ name: 'my_health' })
+  }
 })
 
 

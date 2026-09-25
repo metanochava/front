@@ -19,6 +19,13 @@
           <div class="col-12 col-sm-6">{{ tdc('Collected') }}: <b>{{ formatDate(schema.collected_at) }}</b></div>
         </div>
 
+        <div v-if="schema.result" class="q-mb-sm" data-test="exam-result-status">
+          <q-badge outline color="primary" class="q-mr-xs" :label="`${tdc('Revision')} ${schema.result.revision}`" />
+          <q-badge :color="schema.result.validated ? 'positive' : 'grey'" class="q-mr-xs"
+                   :label="tdc(schema.result.validated ? 'Validated' : 'Not validated')" />
+          <q-badge v-if="schema.result.released" color="info" :label="tdc('Released')" />
+        </div>
+
         <q-banner v-if="locked" dense rounded class="q-mb-md bg-grey-3 text-dark">
           {{ tdc('This result is validated and cannot be changed. Amend it to create a new revision.') }}
         </q-banner>
@@ -69,6 +76,24 @@
       <template #footer>
         <s-btn flat :label="tdc('Close')" @click="open = false" />
         <s-btn
+          v-if="canRun('validate')"
+          flat color="positive" icon="verified" :label="tdc('Validate')"
+          :loading="running === 'validate'" data-test="exam-result-validate"
+          @click="runResultAction('validate')"
+        />
+        <s-btn
+          v-if="canRun('release')"
+          flat color="info" icon="publish" :label="tdc('Release')"
+          :loading="running === 'release'" data-test="exam-result-release"
+          @click="runResultAction('release')"
+        />
+        <s-btn
+          v-if="canRun('amend')"
+          flat color="warning" icon="history_edu" :label="tdc('Amend')"
+          :loading="running === 'amend'" data-test="exam-result-amend"
+          @click="amend"
+        />
+        <s-btn
           v-if="!locked"
           color="primary"
           icon="save"
@@ -88,13 +113,13 @@
 // decides which parameters exist and validates every value; field errors
 // come back in error.details and are shown on their field.
 import { computed, ref, watch } from 'vue'
-import { HTTPAuth, url, tdc } from 'quasar_resaas'
+import { HTTPAuth, url, tdc, sDialog, useUserStore } from 'quasar_resaas'
 
 const props = defineProps({
   modelValue: Boolean,
   itemId: { type: [String, Number], default: null }
 })
-const emit = defineEmits(['update:modelValue', 'saved'])
+const emit = defineEmits(['update:modelValue', 'saved', 'changed'])
 
 const open = computed({
   get: () => props.modelValue,
@@ -110,6 +135,45 @@ const loading = ref(false)
 const saving = ref(false)
 
 const locked = computed(() => !!schema.value?.result?.validated)
+
+// Result lifecycle (saude/views/resultadoexamemedico.py): validate, release
+// and amend each have their own permission and are only offered in the state
+// the backend accepts them - the backend enforces both (403 / 409).
+const User = useUserStore()
+const running = ref(null)
+const LIFECYCLE = {
+  validate: (r) => !r.validated,
+  release: (r) => r.validated && !r.released,
+  amend: (r) => r.validated
+}
+
+function canRun (action) {
+  const result = schema.value?.result
+  return !!result && LIFECYCLE[action](result) && User.can(`${action}_resultadoexamemedico`)
+}
+
+async function runResultAction (action, body = {}) {
+  running.value = action
+  try {
+    await HTTPAuth.post(
+      url({ type: 'u', url: `saude/resultadoexamemedicos/${schema.value.result.id}/${action}/` }), body
+    )
+    await load()
+    emit('changed', action)
+  } finally {
+    running.value = null
+  }
+}
+
+function amend () {
+  sDialog({
+    title: tdc('Amend'),
+    message: tdc('A new revision is created from this one; it must be validated and released again.'),
+    icon: 'history_edu',
+    cancel: true,
+    prompt: { model: '', type: 'textarea', label: tdc('Reason'), isValid: (v) => !!v?.trim() }
+  }).onOk((reason) => runResultAction('amend', { reason }))
+}
 
 const FLAGS = {
   low: ['Low', 'warning'],

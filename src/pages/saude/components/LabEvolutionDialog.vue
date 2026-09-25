@@ -77,8 +77,11 @@
 // URL resource (pacientes/{id}/...), resolved and scoped by the backend;
 // values are filtered by the database (parameter + date range).
 import { computed, ref, watch } from 'vue'
-import { HTTPAuth, url, tdc } from 'quasar_resaas'
-import LineChartWidget from 'quasar_resaas/components/dashboard/LineChartWidget.vue'
+import { HTTPAuth, url, tdc, resolveWidgetComponent } from 'quasar_resaas'
+
+// the dashboard engine's line chart, through the package's public API
+// (only '.', './auto-imports' and './core/*' are exported)
+const LineChartWidget = resolveWidgetComponent('line_chart')
 
 const props = defineProps({
   modelValue: Boolean,

@@ -5,7 +5,21 @@ export const usePacienteStore = createBaseStore(
   'paciente',
   { app: 'saude', model: 'Paciente' },
   {
+    // The current patient (row) and the patient form survive F5
+    // (quasar_resaas base/persistence.js): per user + Entity + Branch, for
+    // one working shift, removed at logout. A restored row is only a
+    // snapshot for the first paint - getById() always asks the backend for
+    // it. personDraft: the Person half of the add_paciente form (usePersonIntake
+    // draftState(), no files). Personal/clinical data on the device: keep
+    // this list to what the patient pages need.
+    persist: {
+      include: ['row', 'form', 'personDraft'],
+      scope: 'branch',
+      ttl: 8 * 60 * 60 * 1000
+    },
+
     state: () => ({
+      personDraft: null,
       person: null,
       user: null,
       registering: false

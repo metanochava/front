@@ -7,41 +7,18 @@
     </div>
 
     <div v-else class="column q-gutter-md" data-test="my-health">
-      <!-- HEADER -->
-      <s-card flat bordered>
-        <q-card-section>
-          <div class="text-h6">{{ tdc('Welcome') }}, {{ summary.patient }}</div>
-          <div v-if="summary.next_appointment" class="text-body2 q-mt-xs">
-            {{ tdc('Next appointment') }}:
-            <b>{{ formatDate(summary.next_appointment.date) }} • {{ summary.next_appointment.time }}</b>
-            <span v-if="summary.next_appointment.doctor"> — {{ summary.next_appointment.doctor }}</span>
-          </div>
-          <div v-else class="text-body2 text-grey-7 q-mt-xs">{{ tdc('No upcoming appointments.') }}</div>
-        </q-card-section>
-      </s-card>
-
-      <!-- KPIs -->
-      <div class="row q-col-gutter-md">
-        <div v-for="k in kpis" :key="k.label" class="col-6 col-md-3">
-          <s-card flat bordered class="full-height">
-            <q-card-section class="text-center">
-              <q-icon :name="k.icon" size="28px" color="primary" />
-              <div class="text-h5">{{ k.value }}</div>
-              <div class="text-caption text-grey-7">{{ tdc(k.label) }}</div>
-            </q-card-section>
-          </s-card>
-        </div>
-      </div>
+      <!-- HEADER: welcome + the Patient dashboard (saude_patient, rendered by
+           the dashboard engine - its widgets carry their own permissions
+           and the backend returns only this patient's data) -->
+      <div class="text-h6" data-test="my-health-welcome">{{ tdc('Welcome') }}, {{ summary.patient }}</div>
+      <s-dashboard-renderer name="saude_patient" />
 
       <!-- SECTIONS -->
       <s-card flat bordered>
         <q-tabs v-model="tab" dense align="left" outside-arrows mobile-arrows inline-label>
-          <q-tab name="appointments" icon="event" :label="tdc('My Appointments')" />
-          <q-tab name="exams" icon="science" :label="tdc('My Exams')" />
-          <q-tab name="results" icon="fact_check" :label="tdc('My Results')" />
-          <q-tab name="trends" icon="show_chart" :label="tdc('My Health Trends')" />
-          <q-tab name="prescriptions" icon="medication" :label="tdc('My Prescriptions')" />
-          <q-tab name="vitals" icon="monitor_heart" :label="tdc('My Vital Signs')" />
+          <!-- a section is shown only with its permission (UX; the backend
+               checks it too) - no request, no 403, for a hidden one -->
+          <q-tab v-for="t in allowedTabs" :key="t.name" :name="t.name" :icon="t.icon" :label="tdc(t.label)" />
         </q-tabs>
         <q-separator />
 
@@ -159,23 +136,32 @@
 // context. Every request goes to /api/saude/me/... - the backend derives the
 // patient from the authenticated user; this page never sends a patient id.
 import { computed, onMounted, ref, watch } from 'vue'
-import { HTTPAuth, url, tdc } from 'quasar_resaas'
-import LineChartWidget from 'quasar_resaas/components/dashboard/LineChartWidget.vue'
+import { HTTPAuth, url, tdc, useUserStore, resolveWidgetComponent } from 'quasar_resaas'
+
+// the dashboard engine's line chart, through the package's public API
+// (only '.', './auto-imports' and './core/*' are exported)
+const LineChartWidget = resolveWidgetComponent('line_chart')
+
+const User = useUserStore()
+
+const TABS = [
+  { name: 'appointments', icon: 'event', label: 'My Appointments', permission: 'view_own_appointments' },
+  { name: 'exams', icon: 'science', label: 'My Exams', permission: 'view_own_exams' },
+  { name: 'results', icon: 'fact_check', label: 'My Results', permission: 'view_own_results' },
+  { name: 'trends', icon: 'show_chart', label: 'My Health Trends', permission: 'view_own_trends' },
+  { name: 'prescriptions', icon: 'medication', label: 'My Prescriptions', permission: 'view_own_prescriptions' },
+  { name: 'vitals', icon: 'monitor_heart', label: 'My Vital Signs', permission: 'view_own_vitals' }
+]
+const allowedTabs = computed(() => TABS.filter((t) => User.can(t.permission)))
 
 const loading = ref(true)
 const available = ref(false)
 const summary = ref({})
 const sections = ref({})
-const tab = ref('appointments')
+const tab = ref(null)
 const trendParameter = ref(null)
 const trend = ref(null)
 
-const kpis = computed(() => [
-  { label: 'Pending Exams', value: summary.value.pending_exams ?? 0, icon: 'science' },
-  { label: 'New Results', value: summary.value.new_results ?? 0, icon: 'fact_check' },
-  { label: 'Prescriptions', value: summary.value.prescriptions ?? 0, icon: 'medication' },
-  { label: 'Next appointment', value: summary.value.next_appointment ? formatDate(summary.value.next_appointment.date) : '-', icon: 'event' }
-])
 
 const trendChart = computed(() => ({
   labels: trend.value.points.map((p) => formatDate(p.date)),
@@ -205,13 +191,14 @@ onMounted(async () => {
     if (!available.value) return
     const { data } = await HTTPAuth.get(me('summary'))
     summary.value = data
-    await loadSection(tab.value)
+    tab.value = allowedTabs.value[0]?.name || null
+    if (tab.value) await loadSection(tab.value)
   } finally {
     loading.value = false
   }
 })
 
-watch(tab, (name) => loadSection(name))
+watch(tab, (name) => { if (name) loadSection(name) })
 watch(trendParameter, async (code) => {
   if (!code) return
   const { data } = await HTTPAuth.get(me('trends', { parameter: code }))

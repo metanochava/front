@@ -185,7 +185,8 @@ async function load(id) {
   }
 
   // avoid duplicate requests when the row is already the one being viewed
-  if (String(Paciente.row?.id) === String(id)) {
+  // (not when it is only a snapshot restored from storage after F5)
+  if (String(Paciente.row?.id) === String(id) && !Paciente.persistRestored?.('row')) {
     Paciente.form = Paciente.row
     return
   }

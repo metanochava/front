@@ -686,7 +686,8 @@ watch(
   async (id) => {
     if (!id) return
 
-    if (String(Paciente.row?.id) !== String(id)) {
+    // a row restored from storage (F5) is a snapshot: revalidate it
+    if (String(Paciente.row?.id) !== String(id) || Paciente.persistRestored?.('row')) {
       Paciente.row = await Paciente.getById(id)
     }
 

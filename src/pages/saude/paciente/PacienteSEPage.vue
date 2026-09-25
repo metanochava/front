@@ -212,6 +212,10 @@ async function saveNew() {
     patientData: buildPatientData()
   })
 
+  // the draft is done: it must not come back on the next "add patient"
+  Paciente.resetForm?.()
+  Paciente.personDraft = null
+
   router.push({ name: 'view_paciente', params: { id: paciente.id } })
 }
 
@@ -275,7 +279,13 @@ function cancel() {
     persistent: true,
     ok: { label: tdc('Discard'), color: 'negative', flat: true },
     cancel: { label: tdc('Keep editing'), flat: true }
-  }).onOk(() => router.back())
+  }).onOk(() => {
+    if (!isEditMode.value) { // discard the saved draft too
+      Paciente.resetForm?.()
+      Paciente.personDraft = null
+    }
+    router.back()
+  })
 }
 
 // change_paciente - the real row (with its nested Person) instead of a
@@ -286,6 +296,13 @@ async function loadForEdit() {
 }
 
 onMounted(async () => {
+  // add_paciente: a draft restored after F5 (a form WITHOUT id - a form with
+  // an id is an existing patient's data and never prefills a new one)
+  const draft = !isEditMode.value && Paciente.persistRestored?.('form') && !Paciente.form?.id
+    ? { ...Paciente.form }
+    : null
+  const personDraft = !isEditMode.value ? Paciente.personDraft : null
+
   Paciente.resetForm?.()
   intake.reset({ withBlankContact: !isEditMode.value })
 
@@ -301,10 +318,24 @@ onMounted(async () => {
 
   Paciente.resetForm?.()
   Person.resetForm?.()
+  if (draft) Paciente.form = { ...Paciente.form, ...draft }
+  if (personDraft) intake.restoreDraft(personDraft)
+  draftReady.value = true
 })
+
+// add_paciente only, once the page (and any restored draft) is in place:
+// every change of the Person half becomes the persisted draft. Registered
+// here in setup so it stops with the page; never while editing (that is an
+// existing person, not a draft).
+const draftReady = ref(false)
+watch(() => intake.draftState(), (state) => {
+  if (!draftReady.value || isEditMode.value) return
+  Paciente.personDraft = intake.hasUnsavedData() ? state : null
+}, { deep: true })
 
 // Same component instance is reused for change_paciente/A -> /B.
 watch(() => route.params.id, async (id) => {
+  if (id) draftReady.value = false
   if (id) await loadForEdit()
 })
 </script>
