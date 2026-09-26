@@ -31,7 +31,9 @@
 
     </div >
 
-    <!-- 📋 LISTA: newest first, 20 per page, pages are appended while scrolling down -->
+    <!-- 📋 LISTA: newest first, 20 per page. Scrolling down appends the next
+         (older) pages; near the top, the previous (newer) pages are prepended -
+         the list reopens where the user was after F5. -->
     <q-infinite-scroll
       ref="scroller"
       :offset="200"
@@ -39,12 +41,20 @@
       style="margin-top: 98px;"
       @load="onLoad"
     >
-      <q-list separator>
+      <div v-if="loadingPrevious" class="row justify-center q-my-sm" data-test="history-loading-previous">
+        <q-spinner-dots color="primary" size="28px" />
+      </div>
+      <div v-else-if="firstPage > 1 && !loadError" class="row justify-center q-my-xs">
+        <s-btn flat dense no-caps size="sm" icon="expand_less" color="primary"
+               :label="tdc('Newer records')" data-test="history-load-previous" @click="loadPrevious" />
+      </div>
+
+      <q-list ref="listRef" separator>
         <HistoryItem
           v-for="i in filteredList"
           :key="i?.id"
           :item="i"
-          :actions="visibleActions"
+          :actions="actionsFor(i)"
           @action="onAction"
         />
       </q-list>
@@ -84,10 +94,12 @@
 </style>
 
 <script setup>
-import { tdc, sDialog, useUserStore, AlertSuccess, AlertError } from 'quasar_resaas'
-import { ref, computed } from 'vue'
+import { tdc, sDialog, useUserStore, AlertSuccess, AlertError, getUserPreference, setUserPreference } from 'quasar_resaas'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { scroll, debounce } from 'quasar'
 import { useRouter } from 'vue-router'
 import HistoryItem from './HistoryItem.vue'
+import { canEditDocument } from './documentEditPolicy'
 import ReprintDialog from './ReprintDialog.vue'
 
 // props
@@ -144,7 +156,9 @@ const User = useUserStore()
 const canDo = (verb) => !props.routeKey || User.can(`${verb}_${props.routeKey}`)
 
 // Conditions: Edit/Delete need the permission (UX only - the backend enforces it),
-// Reprint needs a date to change AND the permission to change it.
+// Reprint needs a date to change AND the permission to change it. Edit and
+// Reprint (a change of the document) are also only for its author within 24 h
+// of its creation (documentEditPolicy.js / backend document_edit_policy.py).
 const visibleActions = computed(() => props.actions.filter(action => {
   if (action === 'Edit') return !!props.routeKey && canDo('change')
   if (action === 'delete') return !!props.routeKey && canDo('delete')
@@ -154,6 +168,13 @@ const visibleActions = computed(() => props.actions.filter(action => {
 
 const reprintOpen = ref(false)
 const reprintItem = ref(null)
+
+const EDITING = ['Edit', 'Reprint']
+
+function actionsFor (item) {
+  const editable = canEditDocument(item, User.data?.id)
+  return visibleActions.value.filter(action => !EDITING.includes(action) || editable)
+}
 
 function onAction(item, action) {
   if (action === 'Edit') {
@@ -197,30 +218,78 @@ function onReprinted(updated) {
 // The list lives here, not in props.store.rows: that array (and the store's
 // pagination) belongs to the page's own list and must not be replaced by this
 // side menu. store.fetchPage() only reads.
+//
+// Loaded pages form one window [firstPage, lastPage]. q-infinite-scroll
+// extends it downwards (older records); near the top loadPrevious() extends it
+// upwards (newer records), keeping the rows on screen where they were. The
+// page and record at the top of the menu are kept per user/Entity/Branch
+// (setUserPreference), so after F5 the menu reopens there instead of at page 1.
 const PAGE_SIZE = 20
+const HEADER_OFFSET = 98
 
 const items = ref([])
 const hasNext = ref(true)
 const loaded = ref(false)
 const loadError = ref(false)
+const loadingPrevious = ref(false)
 const scroller = ref(null)
+const listRef = ref(null)
 
-// q-infinite-scroll calls this on mount (index 1) and every time the user
-// nears the bottom; pages are appended, never replaced, so scrolling back up
-// still shows everything already loaded.
-async function onLoad(index, done) {
+const positionName = computed(() => {
+  const list = props.routeKey || props.store?.$id || 'history'
+  return `history:${list}:${User.Entity?.id || '-'}:${User.Branch?.id || '-'}`
+})
+
+function readPosition() {
   try {
-    const page = await props.store.fetchPage({
-      page: index,
-      page_size: PAGE_SIZE,
-      ordering: '-created_at',
-      state: 'Active'
-    })
+    const saved = JSON.parse(getUserPreference(User.data?.id, positionName.value) || 'null')
+    return saved && Number.isInteger(saved.page) && saved.page > 0 ? saved : null
+  } catch {
+    return null
+  }
+}
+
+const restored = readPosition()
+const firstPage = ref(restored?.page || 1)
+let nextPage = firstPage.value
+let anchorId = restored?.id || null
+
+async function fetch(page) {
+  const result = await props.store.fetchPage({
+    page,
+    page_size: PAGE_SIZE,
+    ordering: '-created_at',
+    state: 'Active'
+  })
+  return { ...result, rows: result.rows.map(row => ({ ...row, _page: page })) }
+}
+
+// q-infinite-scroll calls this on mount and every time the user nears the
+// bottom: the next (older) page is appended.
+async function onLoad(_index, done) {
+  try {
+    let page = await fetch(nextPage)
+
+    // a saved page that no longer exists (records deleted): start again at 1
+    if (!page.rows.length && nextPage > 1 && !items.value.length) {
+      firstPage.value = 1
+      nextPage = 1
+      anchorId = null
+      page = await fetch(1)
+    }
 
     const known = new Set(items.value.map(i => i?.id))
     items.value = [...items.value, ...page.rows.filter(i => !known.has(i?.id))]
     hasNext.value = page.hasNext
     loaded.value = true
+    nextPage += 1
+
+    if (anchorId) {
+      const id = anchorId
+      anchorId = null
+      await nextTick()
+      scrollToItem(id)
+    }
 
     done(!page.hasNext)
   } catch {
@@ -230,9 +299,100 @@ async function onLoad(index, done) {
   }
 }
 
+// The previous (newer) page, prepended without moving what is on screen.
+async function loadPrevious() {
+  if (loadingPrevious.value || firstPage.value <= 1) return
+  loadingPrevious.value = true
+
+  try {
+    const target = scrollTarget()
+    const before = target?.scrollHeight || 0
+    const page = await fetch(firstPage.value - 1)
+
+    const known = new Set(items.value.map(i => i?.id))
+    items.value = [...page.rows.filter(i => !known.has(i?.id)), ...items.value]
+    firstPage.value -= 1
+
+    await nextTick()
+    if (target) target.scrollTop += target.scrollHeight - before
+  } catch {
+    loadError.value = true
+  } finally {
+    loadingPrevious.value = false
+  }
+}
+
 function retry() {
   loadError.value = false
   scroller.value?.resume()
   scroller.value?.trigger()
 }
+
+// ---------------- SCROLL POSITION ----------------
+function scrollTarget() {
+  const el = scroller.value?.$el
+  return el ? scroll.getScrollTarget(el) : null
+}
+
+function itemElements() {
+  const list = listRef.value?.$el
+  return list ? Array.from(list.querySelectorAll(':scope > .q-item')) : []
+}
+
+function scrollToItem(id) {
+  const index = filteredList.value.findIndex(i => i?.id === id)
+  const el = itemElements()[index]
+  const target = scrollTarget()
+  if (!el || !target || !target.getBoundingClientRect) return
+  target.scrollTop += el.getBoundingClientRect().top - target.getBoundingClientRect().top - HEADER_OFFSET
+}
+
+// the first record visible below the header
+function topVisibleItem() {
+  const target = scrollTarget()
+  if (!target?.getBoundingClientRect) return null
+  const top = target.getBoundingClientRect().top + HEADER_OFFSET
+  const index = itemElements().findIndex(el => el.getBoundingClientRect().bottom > top)
+  return index >= 0 ? filteredList.value[index] : null
+}
+
+const savePosition = debounce(() => {
+  if (search.value) return // a filtered view is not a position
+  const item = topVisibleItem()
+  if (!item) return
+  setUserPreference(User.data?.id, positionName.value, JSON.stringify({ page: item._page, id: item.id }))
+}, 300)
+
+function onScroll() {
+  const target = scrollTarget()
+  if (target && target.scrollTop < 60 && firstPage.value > 1 && !search.value) loadPrevious()
+  savePosition()
+}
+
+// already at the top there is no 'scroll' event: pulling up (wheel/touch)
+// is what asks for the newer pages
+let touchY = null
+function onWheel(event) {
+  if (event.deltaY < 0 && (scrollTarget()?.scrollTop || 0) <= 0 && !search.value) loadPrevious()
+}
+function onTouchStart(event) { touchY = event.touches?.[0]?.clientY ?? null }
+function onTouchMove(event) {
+  const y = event.touches?.[0]?.clientY
+  if (touchY !== null && y - touchY > 30 && (scrollTarget()?.scrollTop || 0) <= 0 && !search.value) loadPrevious()
+}
+
+let scrollEl = null
+onMounted(() => {
+  scrollEl = scrollTarget()
+  scrollEl?.addEventListener('scroll', onScroll, { passive: true })
+  scrollEl?.addEventListener('wheel', onWheel, { passive: true })
+  scrollEl?.addEventListener('touchstart', onTouchStart, { passive: true })
+  scrollEl?.addEventListener('touchmove', onTouchMove, { passive: true })
+})
+onBeforeUnmount(() => {
+  scrollEl?.removeEventListener('scroll', onScroll)
+  scrollEl?.removeEventListener('wheel', onWheel)
+  scrollEl?.removeEventListener('touchstart', onTouchStart)
+  scrollEl?.removeEventListener('touchmove', onTouchMove)
+})
 </script>

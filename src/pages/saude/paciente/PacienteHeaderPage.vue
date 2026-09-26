@@ -57,6 +57,18 @@
 
       <q-separator vertical inset class="q-mx-sm gt-sm" />
 
+      <!-- Record vital signs of this patient (same dialog as the dashboards) -->
+      <s-btn
+        v-if="User.can('add_dadovital')"
+        flat round dense
+        icon="monitor_heart"
+        :disable="!pacienteId"
+        data-test="patient-header-vital-signs"
+        @click="showVitalsDialog = true"
+      >
+        <s-tooltip>{{ tdc('Record vital signs') }}</s-tooltip>
+      </s-btn>
+
       <s-btn flat round dense icon="event" :disable="!pacienteId" @click="showAgendaDialog = true">
         <s-tooltip>{{ tdc('Appointment Schedule') }}</s-tooltip>
       </s-btn>
@@ -97,6 +109,13 @@
       </s-btn>
     </div>
 
+    <vital-signs-dialog
+      v-if="pacienteId"
+      v-model="showVitalsDialog"
+      :patient-id="pacienteId"
+      @saved="showVitalsDialog = false"
+    />
+
     <agenda-consulta-dialog
       v-model="showAgendaDialog"
       :paciente-id="pacienteId"
@@ -121,14 +140,24 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePacienteStore } from './pacienteStore'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
+import VitalSignsDialog from './../components/VitalSignsDialog.vue'
 
-import { tdc, displayValue, rawValue } from 'quasar_resaas'
+import { tdc, displayValue, rawValue, useUserStore } from 'quasar_resaas'
 
 const route = useRoute()
 const router = useRouter()
 
+// A page whose route :id is NOT the patient (e.g. change_consulta/:id is the
+// consultation) passes the patient here; without it the header keeps using
+// the route id or the current patient.
+const props = defineProps({
+  patientId: { type: [String, Number], default: null }
+})
+
 const Paciente = usePacienteStore()
 const showAgendaDialog = ref(false)
+const showVitalsDialog = ref(false)
+const User = useUserStore()
 
 const row = computed(() => Paciente.row)
 const person = computed(() => row.value?.person_data)
@@ -197,13 +226,15 @@ async function load(id) {
 async function init() {
   await Paciente.init()
 
-  await load(route.params.id || Paciente?.row?.id)
+  await load(props.patientId || route.params.id || Paciente?.row?.id)
 }
+
+watch(() => props.patientId, (id) => { if (id) load(id) })
 
 watch(
   () => route.params,
   async (params) => {
-    if (!params) return
+    if (!params || props.patientId) return
 
     await load(params.id)
   },

@@ -310,19 +310,39 @@
                 <q-item-label caption>{{ a.data }} {{ a.hora_inicio?.slice(0, 5) }}</q-item-label>
               </q-item-section>
               <q-item-section side top class="q-gutter-x-xs">
-                <div class="row no-wrap">
-                  <q-btn
-                    flat dense round size="sm" icon="edit" color="primary"
+                <div class="row no-wrap q-gutter-x-xs">
+                  <!-- reception: shown by state and permission (UX only; the
+                       backend checks both and answers 409 otherwise) -->
+                  <s-btn
+                    v-if="canCheckIn(a)"
+                    flat round size="md" icon="login" color="positive"
+                    :loading="flowBusy === a.id"
+                    data-test="appointment-check-in"
+                    @click="checkIn(a)"
+                  >
+                    <s-tooltip>{{ tdc('Check in (patient arrived)') }}</s-tooltip>
+                  </s-btn>
+                  <s-btn
+                    v-if="canCheckOut(a)"
+                    flat round size="md" icon="logout" color="primary"
+                    :loading="flowBusy === a.id"
+                    data-test="appointment-check-out"
+                    @click="checkOut(a)"
+                  >
+                    <s-tooltip>{{ tdc('Check out (patient leaves)') }}</s-tooltip>
+                  </s-btn>
+                  <s-btn
+                    flat round size="md" icon="edit" color="primary"
                     @click="openEditMarcacao(a)"
                   >
-                    <q-tooltip>{{ tdc('Edit') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    flat dense round size="sm" icon="event_busy" color="negative"
+                    <s-tooltip>{{ tdc('Edit') }}</s-tooltip>
+                  </s-btn>
+                  <s-btn
+                    flat round size="md" icon="event_busy" color="negative"
                     @click="confirmCancelMarcacao(a)"
                   >
-                    <q-tooltip>{{ tdc('Cancel') }}</q-tooltip>
-                  </q-btn>
+                    <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+                  </s-btn>
                 </div>
               </q-item-section>
             </q-item>
@@ -401,7 +421,7 @@
 import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle, sDialog } from 'quasar_resaas'
+import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle, sDialog, AlertSuccess } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
@@ -539,6 +559,43 @@ function confirmCancelMarcacao(a) {
     await HTTPAuth.patch(url({ type: 'u', url: `saude/agendas/${a.id}/` }), { estado: 'cancelada' })
     await fetchAgendas()
   })
+}
+
+// ---------------- reception: check-in / check-out ----------------
+// AgendaAPIView.check_in / check_out (explicit actions: the server checks the
+// state, the day and the permission, and stamps the time).
+const flowBusy = ref(null)
+const estadoOf = (a) => a.estado?.value || a.estado
+const isToday = (a) => a.data === new Date().toLocaleDateString('en-CA')
+
+const canCheckIn = (a) => User.can('check_in_agenda') && isToday(a) && ['marcada', 'confirmada'].includes(estadoOf(a))
+const canCheckOut = (a) => User.can('check_out_agenda') && ['em_espera', 'em_atendimento'].includes(estadoOf(a))
+
+async function runFlow(a, action, message) {
+  flowBusy.value = a.id
+  try {
+    await HTTPAuth.post(url({ type: 'u', url: `saude/agendas/${a.id}/${action}/` }), {})
+    AlertSuccess(tdc(message))
+    await fetchAgendas()
+  } catch {
+    // the reason (409 wrong state / not today, 403) goes through the alert funnel
+  } finally {
+    flowBusy.value = null
+  }
+}
+
+function checkIn(a) {
+  runFlow(a, 'check_in', 'Patient checked in.')
+}
+
+function checkOut(a) {
+  sDialog({
+    title: tdc('Check out (patient leaves)'),
+    message: tdc('Check out this patient? The appointment will be marked as completed.'),
+    cancel: { flat: true, label: tdc('No') },
+    ok: { color: 'primary', label: tdc('Check out') },
+    persistent: true
+  }).onOk(() => runFlow(a, 'check_out', 'Patient checked out.'))
 }
 
 function estadoAgendaColor(estado) {

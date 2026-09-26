@@ -62,16 +62,25 @@
             @filter="filterMedicamentos"
           />
 
+          <div v-if="defaultsSource" class="text-caption text-grey-7 q-mt-xs" data-test="prescription-defaults-source">
+            <q-icon name="auto_fix_high" size="14px" />
+            {{ defaultsSource === 'last_prescription'
+              ? tdc('Dosage and quantity filled in from the last prescription of this medication.')
+              : tdc('Filled in from the medication catalogue.') }}
+          </div>
+
           <s-input
             v-model="item.quantidade"
             :label="tdc('Quantity')"
             class="q-mt-sm"
+            data-test="prescription-quantity"
           />
 
           <s-input
             v-model="item.dosagem"
             :label="tdc('Dosage')"
             class="q-mt-sm"
+            data-test="prescription-dosage"
           />
 
           <s-editor
@@ -212,6 +221,12 @@
           class="q-mt-sm"
         />
 
+        <s-input
+          v-model="medicamento.quantidade"
+          :label="tdc('Quantity')"
+          class="q-mt-sm"
+        />
+
         <s-editor
           v-model="medicamento.observacao"
           :label="tdc('Observation')"
@@ -286,7 +301,7 @@ function afterSave(item) {
   ReceitamedicaStore.showPdf = true
   ReceitamedicaStore.loadData()
 }
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 // import { useRoute, useRouter } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { HTTPAuth, url, tdc } from 'quasar_resaas'
@@ -324,6 +339,7 @@ const medicamento = ref({
   principio_ativo: '',
   forma_farmaceutica: '',
   dosagem: '',
+  quantidade: '',
   observacao: ''
 })
 
@@ -355,6 +371,33 @@ function filterMedicamentos(val, update) {
   })
 }
 
+// ---------------- prefill on medication choice ----------------
+// GET medicamentos/{id}/prescription_defaults/: the dosage and quantity of the
+// last prescription of this medication (else the catalogue dosage). A value
+// the doctor already typed is never replaced; a value this prefill put there
+// is, when another medication is chosen.
+const defaultsSource = ref(null)
+let prefilled = { dosagem: '', quantidade: '' }
+
+async function prefillFor(medicamentoId) {
+  defaultsSource.value = null
+  if (!medicamentoId) return
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: `saude/medicamentos/${medicamentoId}/prescription_defaults/` }))
+    if (String(item.value.medicamento) !== String(medicamentoId)) return   // changed meanwhile
+    for (const field of ['dosagem', 'quantidade']) {
+      const current = item.value[field] || ''
+      if (data[field] && (!current || current === prefilled[field])) item.value[field] = data[field]
+    }
+    prefilled = { dosagem: data.dosagem || '', quantidade: data.quantidade || '' }
+    defaultsSource.value = data.source || null
+  } catch {
+    // no prefill: the doctor types them
+  }
+}
+
+watch(() => item.value.medicamento, (id) => prefillFor(id))
+
 function addItem() {
   if (!item.value.medicamento) return
 
@@ -378,6 +421,8 @@ function addItem() {
     dosagem: '',
     observacao: ''
   }
+  prefilled = { dosagem: '', quantidade: '' }
+  defaultsSource.value = null
 }
 
 function removeItem(index) {
@@ -411,6 +456,7 @@ async function saveMedicamento() {
       principio_ativo: '',
       forma_farmaceutica: '',
       dosagem: '',
+      quantidade: '',
       observacao: ''
     }
 
@@ -455,6 +501,9 @@ async function saveReceita() {
 
     afterSave(receita.data)
 
+  } catch {
+    // e.g. 409 consultation_required ("start the consultation first"): the
+    // message goes through the alert funnel (HTTPAuth interceptor)
   } finally {
     saving.value = false
   }
