@@ -62,7 +62,13 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { tdc } from "quasar_resaas"
 
-import foto from './../images/clinica.jpeg'
+// high-resolution photos (1920 px wide): images/clinica.jpeg is a 541 px copy
+// of the first one and looked blurred across the full-width slide
+const IMAGES = {
+  clinic: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1920&q=80&auto=format&fit=crop',
+  consultation: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1920&q=80&auto=format&fit=crop',
+  laboratory: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1920&q=80&auto=format&fit=crop'
+}
 
 const router = useRouter()
 
@@ -75,33 +81,33 @@ const slides = [
     title: 'Patient management',
     desc: 'Register and view patient data.',
     button: 'View patients',
-    route: 'list_paciente',
-    image: foto
+    // public pages of the site - the old routes were the internal system
+    // screens (list_paciente, list_consulta, ...), closed to site visitors
+    route: { name: 'utentes' },
+    image: IMAGES.clinic
   },
   {
     name: 'consultas',
     title: 'Appointment management',
     desc: 'Organise and follow medical appointments.',
     button: 'View appointments',
-    route: 'list_consulta',
-    image: 'https://unsplash.com/photos/green-potted-plant-on-white-ceramic-floor-tiles-HuWm7malJ18'
+    route: { name: 'categoria-financiamento', params: { categoria: 'consultas-medicas' } },
+    image: IMAGES.consultation
   },
   {
     name: 'exames',
     title: 'Medical exams',
     desc: 'Register medical exam requests and results.',
     button: 'View exams',
-    route: 'list_pedidoexamemedico',
-    image: foto
+    route: { name: 'categoria-financiamento', params: { categoria: 'exames-diagnostico' } },
+    image: IMAGES.laboratory
   }
 ]
 
 function goToSlideRoute(slide) {
   if (!slide.route) return
 
-  router.push({
-    name: slide.route
-  })
+  router.push(slide.route)
 }
 </script>
 

@@ -1,25 +1,23 @@
 <template>
   <div class="carousel-bg col-md-12">
-    <div class="flip-card">
+    <div
+      class="flip-card"
+      :class="{ 'flip-card--flipped': flipped }"
+      tabindex="0"
+      data-test="docodela-flip-card"
+      @click="flipped = !flipped"
+      @keyup.enter="flipped = !flipped"
+    >
       <div class="flip-card-inner">
         <!-- FRENTE -->
         <div class="flip-card-front">
           <div class="slideoverlay">
-            <q-icon
-              name="local_hospital"
-              size="60px"
-              class="q-mb-md"
-            />
-
-            <div class="text-h4 text-weight-bold">
-              {{ tdc('Medical clinic') }}
-            </div>
-
-            <div class="text-subtitle1 q-mt-sm">
+            <div class="flip-card-title">
               {{ tdc('Our promise is to simplify your path.') }}
             </div>
 
-            <div class="text-caption q-mt-md">
+            <div class="flip-card-hint q-mt-lg">
+              <q-icon name="touch_app" size="18px" class="q-mr-xs" />
               {{ tdc('Hover to discover our services') }}
             </div>
           </div>
@@ -33,6 +31,7 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { tdc } from 'quasar_resaas'
 import banner from './../images/docodela24.jpeg'
 
@@ -40,9 +39,13 @@ export default {
   name: 'ClinicaFlipCard',
 
   setup() {
+    // hover flips it on desktop; a tap (or Enter) flips it on touch screens
+    const flipped = ref(false)
+
     return {
       tdc,
-      banner
+      banner,
+      flipped
     }
   }
 }
@@ -50,7 +53,7 @@ export default {
 
 <style scoped>
 .carousel-bg {
-  height: 500px;
+  height: 380px;
   border-radius: 0px;
   background: transparent;
   background-size: cover;
@@ -86,8 +89,14 @@ export default {
 
 /* ROTAÇÃO NO HOVER */
 
-.flip-card:hover .flip-card-inner {
+.flip-card:hover .flip-card-inner,
+.flip-card--flipped .flip-card-inner {
   transform: rotateY(180deg);
+}
+
+.flip-card {
+  cursor: pointer;
+  outline: none;
 }
 
 /* FRENTE E VERSO */
@@ -114,8 +123,24 @@ export default {
 /* FRENTE */
 
 .flip-card-front {
-  background: rgba(0, 0, 0, 0.45);
+  background: linear-gradient(135deg, #185a9d 0%, #1f8f6b 100%);
   color: white;
+  box-shadow: 0 24px 48px rgba(24, 90, 157, .28);
+}
+
+.flip-card-title {
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.flip-card-hint {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: rgba(255, 255, 255, .16);
 }
 
 .slideoverlay {

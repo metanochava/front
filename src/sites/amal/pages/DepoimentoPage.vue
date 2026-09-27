@@ -1,14 +1,17 @@
 <template>
 
-<div class="depoimentos">
+<!-- id: the header menu's "Testimonials" (#depoimentos) had no target -->
+<div id="depoimentos" class="depoimentos amal-section">
 
 
-  <div
-      class="text-weight-bold text-primary"
-      :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
-    >
-      {{ tdc('Patient testimonials') }}
-    </div>
+  <div class="row justify-center q-mb-lg q-px-md">
+      <div class="text-center col-12">
+        <div class="amal-eyebrow">{{ tdc('Testimonials') }}</div>
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('Patient testimonials') }}
+        </h2>
+      </div>
+  </div>
 
   <q-carousel
     v-model="slide"
@@ -17,7 +20,7 @@
     navigation
     autoplay
     infinite
-    height="300px"
+    height="340px"
     control-color="primary"
     class="bg-transparent"
   >
@@ -35,7 +38,8 @@
         class="col-md-5 col-12"
       >
 
-        <div class="testimonial-card">
+        <div class="amal-card testimonial-card">
+          <q-icon name="format_quote" size="40px" class="testimonial-quote" />
 
           <!-- FOTO -->
           <q-avatar size="70px" class="q-mb-md">
@@ -43,7 +47,7 @@
           </q-avatar>
 
           <!-- TEXTO -->
-          <div class="text-subtitle1 text-center">
+          <div class="testimonial-text">
             "{{ tdc(t.text) }}"
           </div>
 
@@ -55,7 +59,7 @@
               :key="n"
               name="star"
               size="20px"
-              :color="n <= t.rating ? 'amber' : 'grey-4'"
+              :color="n <= t.rating ? 'amber' : 'grey-5'"
             />
 
           </div>
@@ -80,11 +84,15 @@
 <script>
 
 import { defineComponent, ref, computed } from "vue"
-import { tdc } from "quasar_resaas"
+import { tdc, useUserStore } from "quasar_resaas"
 
 export default defineComponent({
 
 setup(){
+
+// the title reads the Entity typography (ps) - it was used without being defined
+const User = useUserStore()
+const ps = computed(() => User.ps || {})
 
 const slide = ref(0)
 
@@ -136,6 +144,7 @@ return groups
 
 return{
   tdc,
+  ps,
 slide,
 testimonials,
 testimonialGroups
@@ -148,59 +157,28 @@ testimonialGroups
 </script>
 
 <style scoped>
-
-.depoimentos{
-
-padding:80px 0;
-
-background:
-linear-gradient(
-135deg,
-#43CEA2,
-#185A9D
-);
-
-}
-
-/* CARD APPLE STYLE */
-
 .testimonial-card{
-
-background:rgba(255,255,255,.12);
-
-backdrop-filter:blur(12px);
-
-padding:30px;
-
-border-radius:22px;
-
-text-align:center;
-
-color:white;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.2);
-
-transition:.3s;
-
+  position:relative;
+  padding:32px 28px;
+  text-align:center;
 }
-
-.testimonial-card:hover{
-transform:translateY(-6px);
+.testimonial-quote{
+  position:absolute;
+  top:16px;
+  right:18px;
+  color:var(--amal-tint-strong);
 }
-
-/* ESTRELAS */
-
+.testimonial-text{
+  font-size:16px;
+  line-height:1.6;
+  font-style:italic;
+}
 .stars{
-display:flex;
-justify-content:center;
-gap:3px;
+  display:flex;
+  justify-content:center;
+  gap:3px;
 }
-
-/* BARRA DO CAROUSEL TRANSPARENTE */
-
 :deep(.q-carousel__navigation){
-background:transparent;
+  background:transparent;
 }
-
 </style>

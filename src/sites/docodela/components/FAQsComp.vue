@@ -1,129 +1,146 @@
 <template>
+  <section id="faqs" class="faqs" data-test="docodela-faqs">
+    <div class="row justify-center">
+      <div class="col-12 col-md-8">
 
-<div id="faqs" class="q-py-md" style="padding-top:100px; padding-bottom:100px; background-color: #fff;  ">
+        <div class="text-center q-mb-xl">
+          <div class="section-eyebrow">{{ tdc('FAQs') }}</div>
+          <h2 class="section-title">
+            {{ tdc('Answers to some of the common questions about financing your treatment') }}
+          </h2>
+        </div>
 
-<div class="row justify-center items-center q-col-gutter-xl q-mt-xl" style="">
+        <q-list class="faq-list">
+          <q-expansion-item
+            v-for="(faq, index) in faqs"
+            :key="faq.question"
+            group="docodela-faqs"
+            :label="tdc(faq.question)"
+            :default-opened="index === 0"
+            expand-icon="add"
+            expanded-icon="remove"
+            header-class="faq__question"
+            class="faq"
+          >
+            <div class="faq__answer">
+              {{ tdc(faq.answer) }}
+            </div>
+          </q-expansion-item>
+        </q-list>
 
-
-
-    <div class="col-md-10 col-12 row ">
-
-      <div
-        class="text-weight-bold q-mb-md text-grey-9 text-center col-12"
-        :style="{ fontSize: '50px' }"
-      >
-        {{ tdc('FAQs') }}
-      </div>
-
-      <label class=" q-px-xl text-h5">
-        {{ tdc('Answers to some of the common questions about financing your treatment') }}
-      </label>
-
-      <div
-        class=" col-12 text-h6"
-      >
-        <div class="q-pa-md" style="max-width: 100%">
-          <q-list bordered>
-            <q-expansion-item
-              v-for="(faq, index) in faqs"
-              :key="faq.question"
-              group="somegroup"
-              :label="tdc(faq.question)"
-              :default-opened="index === 0"
-              header-class="text-primary"
-            >
-              <q-card>
-                <q-card-section>
-                  {{ tdc(faq.answer) }}
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
-          </q-list>
+        <div class="faqs__more">
+          {{ tdc('Still have questions?') }}
+          <router-link :to="{ name: 'contacto' }">{{ tdc('Talk to us') }}</router-link>
         </div>
 
       </div>
     </div>
-
-</div>
-
-</div>
-
+  </section>
 </template>
 
-<script>
-
-import { defineComponent, computed, ref } from "vue"
-import { tdc,useUserStore } from "quasar_resaas"
-
-
-export default defineComponent({
-
-components:{
-
-},
-
-setup(){
-
-const User =useUserStore()
-const ps = computed(()=>User.ps || {})
-
-const slide= ref(1)
+<script setup>
+import { tdc } from "quasar_resaas"
 
 const faqs = [
   {
-    question: 'How can I book a consultation?',
-    answer: 'Call us or send us a message on WhatsApp and our team will schedule your appointment.'
+    question: 'Is Docodela 24horas a health insurance?',
+    answer: 'No. Docodela 24horas does not replace health insurance. It is a complementary solution that helps make access to certain healthcare easier and, when applicable, lets you assess financing solutions.'
   },
   {
-    question: 'Can I finance my treatment at Docodela?',
-    answer: 'Yes. We offer payment plans for most treatments, so you can start your care and pay over time.'
+    question: 'Do I need health insurance?',
+    answer: 'Not necessarily. The options available depend on the care you need, the provider network and the applicable conditions.'
   },
   {
-    question: 'Which treatments can I finance?',
-    answer: 'Consultations, exams, dental care, surgery and most other treatments offered at Docodela can be financed.'
+    question: 'Can I choose my own doctor?',
+    answer: 'Docodela 24horas can help you find and organise care with professionals and providers available in its network. Availability depends on the speciality, location and provider.'
   },
   {
-    question: 'How much can I borrow?',
-    answer: 'Financing is available from small amounts up to larger treatment costs, depending on your treatment plan and approval.'
+    question: 'Can I finance any treatment?',
+    answer: 'No. Financing solutions are only available for eligible care and procedures and are subject to the applicable assessment, eligibility and approval criteria.'
   },
   {
-    question: 'Do I need a good credit score?',
-    answer: 'We look at your application as a whole, not just your credit score. Talk to our team to find the best option for you.'
+    question: 'How much can I finance?',
+    answer: "The amount depends on the cost of the care, the solution available and the assessment of the client's ability to pay."
   },
   {
-    question: 'How long does approval take?',
-    answer: 'In most cases, you will have a decision the same day you apply.'
+    question: 'Do I have to pay everything straight away?',
+    answer: 'When an applicable financing solution exists and is approved, you can organise the payment according to the approved plan and conditions.'
   },
   {
-    question: 'Is financing available outside Mozambique?',
-    answer: 'Our financing is currently available for treatment at Docodela in Mozambique.'
+    question: 'How do I get started?',
+    answer: "It's simple. Tell us what you need. Our team will guide you through the options available and the next steps."
   }
 ]
-
-return{
-User,
-ps,
-tdc,
-slide,
-faqs,
-}
-
-}
-
-})
-
 </script>
 
 <style scoped>
-.flip-card-front {
-  background: rgba(0, 0, 0, 0.45);
-  color: white;
+.faqs {
+  padding: 88px 16px;
+  background: #f4f8fc;
 }
 
-.slideoverlay {
-  padding: 40px;
-  color: white;
+.section-eyebrow {
+  color: #1f8f6b;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin: 8px 0 0;
+  font-size: clamp(24px, 2.8vw, 34px);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #10233f;
+}
+
+.faq {
+  margin-bottom: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e3ebf5;
+}
+.faq :deep(.faq__question) {
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #10233f;
+}
+/* long questions wrap instead of being cut with an ellipsis on phones */
+.faq :deep(.q-item__label) {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  -webkit-line-clamp: unset;
+}
+.faq :deep(.q-expansion-item__toggle-icon) {
+  color: #185a9d;
+}
+.faq__answer {
+  padding: 0 20px 18px;
+  white-space: normal;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.faqs__more {
+  margin-top: 24px;
   text-align: center;
-  max-width: 600px;
+  font-size: 15px;
+  color: #4b5563;
+}
+.faqs__more a {
+  margin-left: 6px;
+  font-weight: 700;
+  color: #185a9d;
+}
+
+@media (max-width: 599px) {
+  .faqs {
+    padding: 56px 16px;
+  }
 }
 </style>

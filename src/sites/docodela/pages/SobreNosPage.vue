@@ -17,19 +17,20 @@
       </div>
 
       <p class="text-white">
-        {{ tdc('We help you get quick access to the treatment you need, even when your insurance or health plan does not cover the costs.') }}
+        {{ tdc('We are a solution for accessing and financing private healthcare.') }}
       </p>
 
       <p class="text-white">
-        {{ tdc('We offer responsible financing and follow your process from start to finish, so you can look after your health with peace of mind.') }}
+        {{ tdc('We help our clients find care options, organise their treatment and, when needed, assess financing solutions for eligible healthcare expenses.') }}
       </p>
 
       <p class="text-white">
-        {{ tdc('Clear terms, support at every step and a simple commitment: helping more people receive the healthcare they need.') }}
+        {{ tdc('More than financing, we want to help make the journey to accessing healthcare simpler, more organised and more predictable.') }}
       </p>
 
-      <p class="text-white">
-        {{ tdc('Because health should not wait.') }}
+      <p class="text-white text-weight-bold">
+        {{ tdc('Because a health need should not turn into an unnecessary financial worry.') }}
+        {{ tdc('And a temporary cash-flow difficulty should not, on its own, mean putting off important care.') }}
       </p>
 
       <div class="row q-col-gutter-md q-mt-sm q-mb-lg">
@@ -46,7 +47,8 @@
 
       <s-btn
         color="primary"
-        :label="tdc('Contact us')"
+        icon="support_agent"
+        :label="tdc('Talk to a consultant')"
         :to="{ name: 'contacto' }"
       />
 

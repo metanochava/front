@@ -1,70 +1,50 @@
-
 <template>
+  <section class="intro" data-test="docodela-intro">
+    <div class="row justify-center">
+      <div class="col-12 col-md-10 row q-col-gutter-xl items-center">
 
-<div style=" padding-top:100px; padding-bottom: 100px; background-color: #fff;">
+        <div class="col-12 col-md-7">
+          <div class="section-eyebrow">{{ tdc('Why Docodela24horas') }}</div>
+          <h2 class="section-title">
+            {{ tdc('Simpler, more organised and more convenient access to healthcare') }}
+          </h2>
 
-  <div class="row justify-center items-center q-col-gutter-xl q-mt-xl q-pa-md" >
-
-    <div class="col-md-10 col-12 row">
-    <div class="col-md-8 col-12">
-      <div
-        class="text-weight-bold q-mb-md text-grey-9"
-        :style="{ fontSize: '50px' }"
-      >
-        {{ tdc('Largest provider of healthcare finance') }}
-      </div>
-      <div
-        class="q-mb-lg"
-      >
-        <div v-for="item in benefits" :key="item.title" class="row items-start no-wrap q-mb-md">
-          <q-icon :name="item.icon" color="primary" size="32px" class="q-mr-md q-mt-xs" />
-          <div>
-            <div class="text-h6 text-weight-bold">{{ tdc(item.title) }}</div>
-            <div class="text-body1 text-grey-8">{{ tdc(item.desc) }}</div>
+          <div class="q-mt-lg">
+            <div v-for="item in benefits" :key="item.title" class="benefit">
+              <div class="benefit__icon">
+                <q-icon :name="item.icon" size="26px" />
+              </div>
+              <div>
+                <div class="benefit__title">{{ tdc(item.title) }}</div>
+                <div class="benefit__text">{{ tdc(item.desc) }}</div>
+              </div>
+            </div>
           </div>
+
+          <s-btn
+            unelevated
+            no-caps
+            color="primary"
+            size="lg"
+            icon-right="arrow_forward"
+            class="intro__btn q-mt-md"
+            :label="tdc('Start now')"
+            :to="{ name: 'contacto' }"
+          />
         </div>
 
-        <s-btn
-          color="primary"
-          :label="tdc('Start now')"
-          :to="{ name: 'contacto' }"
-        />
+        <div class="col-12 col-md-5">
+          <FlipCard />
+        </div>
+
       </div>
     </div>
-
-    <div class=" col-md-4 col-12   q-pa-sm justify-center items-center text-center">
-      <s-card
-        flat
-
-      >
-        <ReviewPage />
-      </s-card>
-    </div>
-</div>
-  </div>
-</div>
-
+  </section>
 </template>
 
-<script>
-
-import { defineComponent, computed, ref } from "vue"
-import { tdc,useUserStore } from "quasar_resaas"
-import ReviewPage from "./ReviewComp.vue"
-
-
-export default defineComponent({
-
-components:{
-  ReviewPage
-},
-
-setup(){
-
-const User =useUserStore()
-const ps = computed(()=>User.ps || {})
-
-const slide= ref(1)
+<script setup>
+import { tdc } from 'quasar_resaas'
+import FlipCard from './ReviewComp.vue'
 
 const benefits = [
   {
@@ -83,32 +63,67 @@ const benefits = [
     desc: 'When applicable, we assess financing solutions to spread the cost of care over time.'
   }
 ]
-
-return{
-User,
-ps,
-tdc,
-slide,
-benefits,
-}
-
-}
-
-})
-
 </script>
 
 <style scoped>
-.flip-card-front {
-  background: transparent;
-  color: white;
+.intro {
+  padding: 88px 16px;
+  background: #fff;
 }
 
-.slideoverlay {
-  padding: 40px;
-  color: white;
-  text-align: center;
-  max-width: 600px;
+.section-eyebrow {
+  color: #1f8f6b;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin: 8px 0 0;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.15;
+  font-weight: 800;
+  color: #10233f;
+  letter-spacing: -.01em;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.benefit__icon {
+  flex: 0 0 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #185a9d;
+  background: #e8f1fb;
+}
+.benefit__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #10233f;
+}
+.benefit__text {
+  margin-top: 2px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.intro__btn {
+  border-radius: 12px !important;
+  font-weight: 700;
+}
+
+@media (max-width: 599px) {
+  .intro {
+    padding: 56px 16px;
+  }
 }
 </style>
-

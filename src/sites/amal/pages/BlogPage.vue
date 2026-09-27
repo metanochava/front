@@ -1,25 +1,19 @@
 <template>
   <section
     id="blog"
-    class="blog-section q-py-xl"
+    class="blog-section amal-section"
   >
 
     <!-- TITULO -->
     <div class="row justify-center q-mb-xl">
 
       <div class="text-center col-12">
-
-        <div
-          class="text-weight-bold text-primary"
-          style="font-size:40px"
-        >
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
           {{ tdc('Health blog') }}
-        </div>
-
-        <div class="text-grey-7 q-mt-sm">
+        </h2>
+        <p class="amal-subtitle">
           {{ tdc('Medical tips, prevention and well-being') }}
-        </div>
-
+        </p>
       </div>
 
     </div>
@@ -37,36 +31,39 @@
         >
 
           <s-card
-            class="blog-card"
+            class="amal-card amal-card--hover blog-card"
+            tabindex="0"
+            role="button"
             @click="openPost(post)"
+            @keyup.enter="openPost(post)"
           >
 
             <!-- IMAGEM -->
             <q-img
               :src="post.image"
-              height="180px"
-              class="rounded-top"
+              :ratio="16 / 10"
+              class="blog-image"
             />
 
             <q-card-section>
 
               <!-- CATEGORIA -->
-              <div class="text-caption text-primary text-weight-bold">
+              <div class="amal-eyebrow blog-category">
                 {{ tdc(post.category) }}
               </div>
 
               <!-- TITULO -->
-              <div class="text-h6 q-mt-sm">
+              <div class="text-h6 text-weight-bold q-mt-sm blog-title">
                 {{ tdc(post.title) }}
               </div>
 
               <!-- DESCRIÇÃO -->
-              <div class="text-grey-7 q-mt-sm">
+              <div class="amal-muted q-mt-sm">
                 {{ tdc(post.excerpt) }}
               </div>
 
               <!-- META -->
-              <div class="row justify-between items-center q-mt-md text-caption text-grey">
+              <div class="row justify-between items-center q-mt-md text-caption amal-muted">
 
                 <span>{{ post.date }}</span>
                 <span>{{ tdc(post.read_time) }}</span>
@@ -115,12 +112,16 @@
 
 
 <script>
-import { defineComponent, ref } from "vue"
-import { tdc } from "quasar_resaas"
+import { defineComponent, ref, computed } from "vue"
+import { tdc, useUserStore } from "quasar_resaas"
 
 export default defineComponent({
 
   setup () {
+
+    // the title reads the Entity typography (ps)
+    const User = useUserStore()
+    const ps = computed(() => User.ps || {})
 
     const postModal = ref(false)
     const selectedPost = ref({})
@@ -135,7 +136,7 @@ export default defineComponent({
         content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
         date:"10 Mar 2026",
         read_time:'5 min',
-        image:"https://images.unsplash.com/photo-1584515933487-779824d29309"
+        image:"https://images.unsplash.com/photo-1584515933487-779824d29309?w=900&q=75&auto=format&fit=crop"
       },
 
       {
@@ -146,7 +147,7 @@ export default defineComponent({
         content:'A balanced diet and regular physical exercise are essential.',
         date:"05 Mar 2026",
         read_time:"4 min",
-        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d"
+        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=75&auto=format&fit=crop"
       },
 
       {
@@ -157,7 +158,7 @@ export default defineComponent({
         content:'Sleeping well, avoiding stress and seeking help are essential.',
         date:"01 Mar 2026",
         read_time:"6 min",
-        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2"
+        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=900&q=75&auto=format&fit=crop"
       }
 
     ]
@@ -173,6 +174,7 @@ export default defineComponent({
 
     return {
       tdc,
+      ps,
       posts,
       postModal,
       selectedPost,
@@ -186,47 +188,15 @@ export default defineComponent({
 
 
 <style scoped>
-
-.blog-section{
-
-  background:
-  linear-gradient(
-    135deg,
-    #43CEA2,
-    #185A9D
-  );
-
-  padding-top:80px;
-  padding-bottom:80px;
-
-}
-
-
-/* CARD */
-
 .blog-card{
-
-  border-radius:20px;
-
   overflow:hidden;
-
   cursor:pointer;
-
-  transition:all .3s;
-
-  box-shadow:
-  0 10px 25px rgba(0,0,0,.15);
-
 }
-
-.blog-card:hover{
-
-  transform:translateY(-8px) scale(1.02);
-
+.blog-category{
+  padding:4px 10px;
+  font-size:11px;
 }
-
-
-/* MODAL */
-
-
+.blog-title{
+  line-height:1.3;
+}
 </style>

@@ -13,6 +13,7 @@ const $q = useQuasar()
 const { languages, current, choose } = useSiteLanguage({ defaultCode: profile.defaultLanguage })
 
 const scrolled = ref(false)
+const progress = ref(0)
 const active = ref('')
 const menu = ref(false)
 
@@ -66,7 +67,20 @@ function watchSections() {
   })
 }
 
-const onScroll = () => { scrolled.value = window.scrollY > 12 }
+const onScroll = () => {
+  scrolled.value = window.scrollY > 12
+  const max = document.documentElement.scrollHeight - window.innerHeight
+  progress.value = max > 0 ? Math.min(1, window.scrollY / max) : 0
+}
+
+// the card spotlight (.pf-card / .pf-spot in portfolio.css): one listener for the page
+function onPointerMove(event) {
+  const target = event.target.closest?.('.pf-card, .pf-spot')
+  if (!target) return
+  const rect = target.getBoundingClientRect()
+  target.style.setProperty('--mx', `${event.clientX - rect.left}px`)
+  target.style.setProperty('--my', `${event.clientY - rect.top}px`)
+}
 
 function go(id) {
   menu.value = false
@@ -89,18 +103,23 @@ onMounted(() => {
   loadFonts()
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('pointermove', onPointerMove, { passive: true })
   setTimeout(watchSections, 300)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('pointermove', onPointerMove)
   observer?.disconnect()
 })
 </script>
 
 <template>
   <q-layout view="hHh lpr fFf" class="pf">
+    <div class="pf-backdrop" aria-hidden="true"><span /><span /></div>
+
     <q-header class="nav" :class="{ 'nav--solid': scrolled || menu }">
+      <div class="nav__progress" :style="{ transform: `scaleX(${progress})` }" aria-hidden="true" />
       <div class="pf-wrap nav__inner">
         <a class="nav__brand" href="#" :aria-label="profile.name" @click.prevent="go('top')">
           <span class="nav__mark" aria-hidden="true">D</span>
@@ -153,14 +172,23 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.nav { background: transparent; color: var(--pf-text); transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease; border-bottom: 1px solid transparent; }
-.nav--solid { background: color-mix(in srgb, var(--pf-bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom-color: var(--pf-line); }
-.nav__inner { height: var(--pf-nav); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.nav__brand { display: inline-flex; align-items: center; gap: 12px; font-family: var(--pf-font-display); font-weight: 700; font-size: 18px; }
-.nav__mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: var(--pf-accent); color: var(--pf-accent-ink); font-weight: 800; }
-.nav__links { display: flex; gap: 6px; }
-.nav__links a { padding: 8px 14px; border-radius: 999px; color: var(--pf-muted); font-size: 15px; font-weight: 500; transition: color .2s ease, background .2s ease; }
-.nav__links a:hover, .nav__links a.is-active { color: var(--pf-text); background: var(--pf-surface-2); }
+.nav { background: transparent; color: var(--pf-text); border-bottom: 0; padding-top: 10px; }
+.nav__progress { position: absolute; left: 0; top: 0; height: 2px; width: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, var(--pf-accent), var(--pf-cool)); }
+.nav__inner {
+  height: calc(var(--pf-nav) - 12px); display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  max-width: calc(var(--pf-max) - 24px); border: 1px solid transparent; border-radius: 999px;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.nav--solid .nav__inner {
+  background: color-mix(in srgb, var(--pf-surface) 72%, transparent); backdrop-filter: blur(16px) saturate(1.4);
+  border-color: var(--pf-line); box-shadow: 0 18px 40px -28px rgba(0, 0, 0, .6);
+}
+.nav__brand { display: inline-flex; align-items: center; gap: 12px; font-family: var(--pf-font-display); font-weight: 700; font-size: 17px; }
+.nav__mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(135deg, var(--pf-accent), color-mix(in srgb, var(--pf-accent) 60%, var(--pf-cool))); color: var(--pf-accent-ink); font-weight: 800; }
+.nav__links { display: flex; gap: 2px; }
+.nav__links a { padding: 8px 14px; border-radius: 999px; color: var(--pf-muted); font-size: 14.5px; font-weight: 500; transition: color .2s ease, background .2s ease; }
+.nav__links a:hover { color: var(--pf-text); }
+.nav__links a.is-active { color: var(--pf-accent-ink); background: var(--pf-accent); }
 .nav__tools { display: flex; align-items: center; gap: 4px; }
 .nav__burger { display: none; }
 .nav__drawer { display: none; }
@@ -171,7 +199,7 @@ onBeforeUnmount(() => {
 @media (max-width: 860px) {
   .nav__links { display: none; }
   .nav__burger { display: inline-flex; }
-  .nav__drawer { display: grid; gap: 4px; padding: 6px 18px 18px; background: var(--pf-bg); border-bottom: 1px solid var(--pf-line); }
+  .nav__drawer { display: grid; gap: 4px; margin: 8px 12px 0; padding: 10px 18px 18px; background: var(--pf-surface); border: 1px solid var(--pf-line); border-radius: 22px; }
   .nav__drawer a { padding: 12px 6px; font-size: 18px; font-family: var(--pf-font-display); }
   .nav__name { display: none; }
 }

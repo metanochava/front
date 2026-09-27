@@ -1,45 +1,41 @@
 <template>
 
-<div id="especialidades" class="q-py-xl">
+<div id="especialidades" class="amal-section amal-section--surface">
 
   <!-- TITULO -->
-  <div class="text-center q-mb-xl">
-
-    <div
-      class="text-weight-bold text-primary"
-      :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
-    >
-      {{ tdc('Specialties') }}
-    </div>
-
+  <div class="row justify-center q-mb-xl q-px-md">
+      <div class="text-center col-12">
+        <div class="amal-eyebrow">{{ tdc('Amal Clinic') }}</div>
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('Specialties') }}
+        </h2>
+      </div>
   </div>
 
 
   <!-- ESPECIALIDADES -->
 
-  <div class="row justify-center q-col-gutter-xl q-px-md">
+  <!-- same 10-column width as the other sections (the cards touched the screen edges) -->
+  <div class="row justify-center q-px-md">
+  <div class="col-12 col-md-10 row q-col-gutter-lg">
 
     <div
-      class="col-md-3 col-12"
+      class="col-md-3 col-sm-6 col-12"
       v-for="s in services"
       :key="s.title"
     >
 
-      <s-card class="service-card text-center">
+      <s-card class="amal-card amal-card--hover text-center">
 
-        <q-card-section>
+        <q-card-section class="q-pa-lg">
 
-          <q-icon
-            :name="s.icon"
-            size="50px"
-            color="primary"
-          />
+          <span class="amal-icon"><q-icon :name="s.icon" size="28px" /></span>
 
-          <div class="text-h6 q-mt-md">
+          <div class="text-h6 text-weight-bold q-mt-md">
             {{ tdc(s.title) }}
           </div>
 
-          <div class="text-caption text-grey-7 q-mt-sm">
+          <div class="q-mt-sm amal-muted specialty-desc">
             {{ tdc(s.desc) }}
           </div>
 
@@ -49,6 +45,7 @@
 
     </div>
 
+  </div>
   </div>
 
 </div>
@@ -111,15 +108,8 @@ services
 
 
 <style scoped>
-
-.service-card{
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-transition:.3s;
+.specialty-desc{
+  font-size:14px;
+  line-height:1.55;
 }
-
-.service-card:hover{
-transform:translateY(-8px);
-}
-
 </style>

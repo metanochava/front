@@ -51,6 +51,15 @@ function loadFonts() {
 
 const onScroll = () => { scrolled.value = window.scrollY > 12 }
 
+// the card spotlight (.mt-card / .mt-spot in mytech.css): one listener for the page
+function onPointerMove(event) {
+  const target = event.target.closest?.('.mt-card, .mt-spot')
+  if (!target) return
+  const rect = target.getBoundingClientRect()
+  target.style.setProperty('--mx', `${event.clientX - rect.left}px`)
+  target.style.setProperty('--my', `${event.clientY - rect.top}px`)
+}
+
 // The client portal is the RESAAS admin app itself, not a parallel auth
 // system for the corporate site - see nginx's saas.conf: saas.mytech.co.mz
 // in production, saas.dev.mytech.co.mz in dev (proxied to the live quasar
@@ -79,6 +88,7 @@ onMounted(() => {
   loadFonts()
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('pointermove', onPointerMove, { passive: true })
   Entity.getSettings().then(() => {
     if (User.Entity?.id) {
       console.log('[MyTech] Entity found for this site:', User.Entity)
@@ -88,7 +98,10 @@ onMounted(() => {
   })
 })
 
-onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('pointermove', onPointerMove)
+})
 </script>
 
 <template>
@@ -171,7 +184,9 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
         <div class="foot__col" v-if="contact.email || contact.phone || contact.whatsapp">
           <div class="foot__heading">{{ tdc('Contact') }}</div>
           <a v-if="contact.email" :href="`mailto:${contact.email}`">{{ contact.email }}</a>
-          <a v-if="contact.phone" :href="`tel:${contact.phone}`">{{ contact.phone }}</a>
+          <a v-if="contact.phone" :href="`tel:${contact.phone.replace(/\s+/g, '')}`">{{ contact.phone }}</a>
+          <a v-if="contact.whatsapp" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a v-if="contact.linkedin" :href="contact.linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         </div>
       </div>
 
@@ -183,11 +198,19 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 </template>
 
 <style scoped>
-.nav { background: transparent; color: var(--mt-text); transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease; border-bottom: 1px solid transparent; }
-.nav--solid { background: color-mix(in srgb, var(--mt-bg) 86%, transparent); backdrop-filter: blur(14px); border-bottom-color: var(--mt-line); }
-.nav__inner { height: var(--mt-nav); display: flex; align-items: center; gap: 20px; }
+/* a floating pill: transparent at the top, frosted glass once the page scrolls */
+.nav { background: transparent; color: var(--mt-text); border-bottom: 0; padding-top: 12px; }
+.nav__inner {
+  height: calc(var(--mt-nav) - 24px); display: flex; align-items: center; gap: 20px;
+  max-width: calc(var(--mt-max) - 16px); border: 1px solid transparent; border-radius: 999px;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.nav--solid .nav__inner {
+  background: color-mix(in srgb, var(--mt-surface) 78%, transparent); backdrop-filter: blur(16px) saturate(1.4);
+  border-color: var(--mt-line); box-shadow: 0 18px 40px -26px rgba(10, 20, 35, .35);
+}
 .nav__brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mt-font-display); font-weight: 700; font-size: 19px; color: var(--mt-text); text-decoration: none; }
-.nav__mark { height: 64px; width: auto; object-fit: contain; }
+.nav__mark { height: 52px; width: auto; object-fit: contain; }
 .nav__links { display: flex; align-items: center; gap: 4px; margin-left: 12px; flex: 1; }
 .nav__link { padding: 8px 14px; border-radius: 999px; color: var(--mt-muted); font-size: 15px; font-weight: 500; text-decoration: none; transition: color .2s ease, background .2s ease; }
 .nav__link:hover, .nav__link.router-link-active { color: var(--mt-text); background: var(--mt-surface-2); }
@@ -210,7 +233,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   .nav__links { display: none; }
   .nav__burger { display: inline-flex; }
   .nav__cta { display: none; }
-  .nav__drawer { display: grid; gap: 4px; padding: 6px 18px 18px; background: var(--mt-bg); border-bottom: 1px solid var(--mt-line); }
+  .nav__drawer { display: grid; gap: 4px; margin: 8px 12px 0; padding: 10px 18px 18px; background: var(--mt-surface); border: 1px solid var(--mt-line); border-radius: 22px; }
   .nav__drawer a { padding: 12px 6px; font-size: 17px; font-family: var(--mt-font-display); color: var(--mt-text); text-decoration: none; }
   .foot__grid { grid-template-columns: 1fr 1fr; }
 }

@@ -14,7 +14,8 @@ const links = computed(() => [
 <template>
   <section id="contact" class="pf-section contact" aria-labelledby="contact-title">
     <div class="pf-wrap contact__inner">
-      <p class="pf-path pf-reveal">~/contact</p>
+      <div class="contact__card pf-card pf-gradient-border">
+      <p class="pf-path pf-kicker pf-reveal">06 · ~/contact</p>
       <h2 id="contact-title" class="contact__title pf-reveal">{{ tdc("Let's build something dependable.") }}</h2>
       <p class="pf-lead pf-reveal">{{ tdc('Open to software projects, collaboration and digital forensics consulting.') }}</p>
 
@@ -45,14 +46,21 @@ const links = computed(() => [
         <q-icon name="translate" size="18px" />
         {{ tdc('Available in Portuguese, English, Spanish and French.') }} · {{ profile.location }}
       </p>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.contact { position: relative; border-top: 1px solid var(--pf-line); overflow: hidden; }
+.contact { position: relative; overflow: hidden; }
 .contact::before { content: ''; position: absolute; inset: auto -10% -40% auto; width: 60vw; max-width: 720px; aspect-ratio: 1; background: radial-gradient(closest-side, var(--pf-glow), transparent 70%); pointer-events: none; }
 .contact__inner { position: relative; }
+.contact__card { padding: clamp(32px, 6vw, 72px); border-radius: calc(var(--pf-radius) + 14px); overflow: hidden; }
+.contact__card::after {
+  content: ''; position: absolute; inset: auto -20% -60% auto; width: 70%; aspect-ratio: 1; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--pf-accent) 22%, transparent), transparent 70%);
+}
+.contact__card:hover { transform: none; }
 .contact__title { font-size: clamp(38px, 7vw, 84px); max-width: 16ch; }
 .contact__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
 .contact__note { display: flex; align-items: center; gap: 10px; margin-top: 30px; color: var(--pf-muted); font-size: 15px; }

@@ -1,6 +1,8 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
+import { education, experience, certifications } from '../portfolio.config'
+
 // Real facts from Metano's own CV. Dates, institutions and employers are kept exactly as
 // given; only the phrasing was tightened for the page. Institution names are proper
 // nouns and are deliberately not wrapped in tdc() (same convention as amal/DoctorsPage's
@@ -9,64 +11,11 @@ const summary = 'REST-focused developer with a degree in systems development eng
 
 const objective = ['Information systems analysis', 'Project management', 'Digital forensics']
 
-const education = [
-  {
-    period: 'In progress',
-    title: 'PhD in Computer Science and Digital Forensics',
-    place: 'National Forensic Sciences University'
-  },
-  {
-    period: '2020 – 2022',
-    title: 'Master in Digital Forensics and Information Security',
-    place: 'Gujarat Forensic Sciences University'
-  },
-  {
-    period: '2017 – 2019',
-    title: 'Master in Information Systems for Environmental Management',
-    place: 'Universidade Pedagógica'
-  },
-  {
-    period: '2012 – 2017',
-    title: "Bachelor's degree in Systems Development Engineering",
-    place: 'Universidade Pedagógica'
-  }
-]
-
-const experience = [
-  {
-    period: '2017 – 2020',
-    title: 'Information systems lecturer',
-    place: 'Universidade São Tomás',
-    text: 'Helped students build web and desktop applications in Java, C++, PHP, HTML, CSS and JavaScript, set assignments after each module and reported on student performance.'
-  },
-  {
-    period: '2015 – 2017',
-    title: 'Project manager',
-    place: 'Setma Tic',
-    text: 'Analysed and developed information systems, organised development teams per project, and reported weekly progress and results at each development phase.'
-  },
-  {
-    period: '2013 – 2015',
-    title: 'Web designer',
-    place: 'Universidade Pedagógica',
-    text: "Built web applications and helped manage information across the institution's departments, producing weekly reports with suggestions to overcome development issues."
-  }
-]
-
 const skillGroups = [
   { group: 'Programming languages', items: ['Java', 'Python', 'C#', 'C++', 'PHP', 'TypeScript'] },
   { group: 'Frameworks and libraries', items: ['Django', 'Laravel', 'Angular', 'Vue', 'jQuery', 'Bootstrap', 'Quasar'] },
   { group: 'Databases', items: ['MySQL', 'SQL Server', 'PostgreSQL'] },
   { group: 'Version control', items: ['Git', 'Gitflow'] }
-]
-
-const certifications = [
-  'Cyber Security Expert',
-  'AWS Academy – Introduction to Cloud',
-  'CEH',
-  'CISM',
-  'CISSP',
-  'CCSP – Certified Cloud Security Professional'
 ]
 
 const personalSkills = [
@@ -84,7 +33,7 @@ const languages = [
 <template>
   <section id="resume" class="pf-section resume" aria-labelledby="resume-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-reveal">~/resume</p>
+      <p class="pf-path pf-kicker pf-reveal">02 · ~/resume</p>
       <h2 id="resume-title" class="pf-title pf-reveal">{{ tdc('Full resume') }}</h2>
       <p class="pf-lead pf-reveal">{{ tdc(summary) }}</p>
 
@@ -164,17 +113,26 @@ const languages = [
 .resume__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; margin-top: 52px; }
 .resume__col-title { font-size: 22px; margin-bottom: 26px; }
 
-.resume__timeline { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--pf-line); }
-.resume__timeline li { position: relative; padding: 0 0 30px 26px; }
-.resume__timeline li:last-child { padding-bottom: 0; }
-.resume__timeline li::before {
-  content: ''; position: absolute; left: -5px; top: 6px; width: 9px; height: 9px;
-  border-radius: 50%; background: var(--pf-accent); box-shadow: 0 0 0 3px var(--pf-surface);
+/* each entry is a small card on a glowing thread */
+.resume__timeline { position: relative; list-style: none; margin: 0; padding: 0 0 0 22px; display: grid; gap: 14px; }
+.resume__timeline::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(var(--pf-accent), var(--pf-cool), transparent); opacity: .6; }
+.resume__timeline li {
+  position: relative; padding: 16px 18px; border-radius: calc(var(--pf-radius) + 2px);
+  border: 1px solid var(--pf-line); background: color-mix(in srgb, var(--pf-surface) 80%, transparent);
+  transition: border-color .25s ease, transform .25s ease;
 }
-.resume__period { font-family: var(--pf-font-mono); font-size: 13px; color: var(--pf-accent); }
-.resume__timeline h4 { font-size: 18px; margin: 6px 0 2px; }
+.resume__timeline li:hover { border-color: color-mix(in srgb, var(--pf-accent) 50%, var(--pf-line)); transform: translateX(4px); }
+.resume__timeline li::before {
+  content: ''; position: absolute; left: -22px; top: 22px; width: 11px; height: 11px;
+  border-radius: 50%; background: var(--pf-accent); box-shadow: 0 0 0 4px var(--pf-bg), 0 0 14px var(--pf-accent);
+}
+.resume__period {
+  display: inline-block; font-family: var(--pf-font-mono); font-size: 12px; letter-spacing: .03em; color: var(--pf-accent);
+  padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--pf-accent) 12%, transparent);
+}
+.resume__timeline h4 { font-size: 17.5px; margin: 10px 0 2px; font-family: var(--pf-font-display); font-weight: 700; }
 .resume__place { color: var(--pf-muted); font-size: 14.5px; }
-.resume__desc { color: var(--pf-muted); font-size: 15px; margin-top: 8px; }
+.resume__desc { color: var(--pf-muted); font-size: 14.5px; margin-top: 8px; }
 
 .resume__panels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-top: 56px; }
 .resume__panels .pf-card h3 { font-size: 18px; margin-bottom: 16px; }

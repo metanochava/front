@@ -81,7 +81,7 @@ body.body--light .pf {
   margin-bottom: 14px;
 }
 
-.pf-title { font-size: clamp(30px, 4.6vw, 52px); max-width: 18ch; }
+.pf-title { font-size: clamp(32px, 5vw, 58px); max-width: 18ch; letter-spacing: -0.03em; }
 .pf-lead { color: var(--pf-muted); max-width: 62ch; margin-top: 18px; }
 
 .pf-btn {
@@ -106,13 +106,44 @@ body.body--light .pf {
 }
 
 .pf-card {
-  background: var(--pf-surface);
+  background: color-mix(in srgb, var(--pf-surface) 88%, transparent);
   border: 1px solid var(--pf-line);
-  border-radius: var(--pf-radius);
+  border-radius: calc(var(--pf-radius) + 4px);
   padding: 28px;
-  transition: transform .25s ease, border-color .25s ease;
+  backdrop-filter: blur(6px);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.pf-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--pf-accent) 55%, var(--pf-line)); }
+.pf-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--pf-accent) 55%, var(--pf-line)); box-shadow: 0 24px 60px -32px rgba(0, 0, 0, .55); }
+
+/* SPOTLIGHT: cards (and anything with .pf-spot) light up under the pointer. The layout
+   sets --mx / --my on the hovered element (PortfolioLayout: one pointermove listener). */
+.pf-card, .pf-spot { position: relative; isolation: isolate; }
+.pf-card::before, .pf-spot::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
+  opacity: 0; transition: opacity .3s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--pf-glow), transparent 60%);
+}
+.pf-card:hover::before, .pf-spot:hover::before { opacity: 1; }
+
+/* a gradient hairline around featured blocks */
+.pf-gradient-border {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(var(--pf-surface), var(--pf-surface)) padding-box,
+    linear-gradient(135deg, color-mix(in srgb, var(--pf-accent) 70%, transparent), var(--pf-line) 45%, color-mix(in srgb, var(--pf-cool) 60%, transparent)) border-box;
+}
+
+/* soft colour fields behind the page (fixed, so sections scroll over them) */
+.pf-backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.pf-backdrop span { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .5; }
+.pf-backdrop span:nth-child(1) { width: 42vw; height: 42vw; left: -12vw; top: 30vh; background: color-mix(in srgb, var(--pf-cool) 18%, transparent); animation: pf-drift 26s ease-in-out infinite alternate; }
+.pf-backdrop span:nth-child(2) { width: 36vw; height: 36vw; right: -10vw; top: 110vh; background: color-mix(in srgb, var(--pf-accent) 14%, transparent); animation: pf-drift 32s ease-in-out infinite alternate-reverse; }
+@keyframes pf-drift { to { transform: translate(6vw, -8vh) scale(1.1); } }
+.pf .q-page-container, .pf footer { position: relative; z-index: 1; }
+
+/* the section label: an index and a name, e.g. "01 — about" */
+.pf-kicker { display: inline-flex; align-items: center; gap: 12px; }
+.pf-kicker::after { content: ''; width: 48px; height: 1px; background: color-mix(in srgb, var(--pf-accent) 60%, transparent); }
 
 /* scroll reveal: visible at rest, only animated from a resting state */
 .pf-reveal { opacity: 1; transform: none; }

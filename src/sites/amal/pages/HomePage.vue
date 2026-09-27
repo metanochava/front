@@ -8,7 +8,6 @@
     <SobreNosPage />
     <DepoimentoPage />
     <EspecialidadesPage />
-    <EstiloPage />
     <DoctorsPage />
     <MarcacaoPage />
     <ExamesPage />
@@ -34,7 +33,6 @@ import MarcacaoPage from "./MarcacaoPage.vue"
 import ExamesPage from "./ExamesPage.vue"
 import BlogPage from "./BlogPage.vue"
 import ContactsPage from "./ContactsPage.vue"
-import EstiloPage from "./EstiloPage.vue"
 
 import { tdc,useUserStore } from 'quasar_resaas'
 import DepoimentoPage from './DepoimentoPage.vue'
@@ -55,7 +53,6 @@ export default defineComponent({
     BlogPage,
     SliderPage,
     DepoimentoPage,
-    EstiloPage,
   },
 
   setup(){

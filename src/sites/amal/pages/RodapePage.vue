@@ -2,23 +2,52 @@
 
 <div class="footer-wrapper">
 
-  <!-- MAPA -->
-  <div class="map-container">
+  <!-- MAPA: the clinic's branches (GET site/branches/, from each Branch's
+       main address) - one map, a button per branch when there are several -->
+  <div v-if="located.length" class="map-container" data-test="branches-map">
+
+    <div class="map-caption">
+      <template v-if="located.length > 1">
+        <s-btn
+          v-for="branch in located"
+          :key="branch.id"
+          no-caps
+          unelevated
+          size="sm"
+          icon="location_on"
+          class="amal-btn"
+          :color="branch.id === current.id ? 'white' : 'transparent'"
+          :text-color="branch.id === current.id ? 'primary' : 'white'"
+          :label="branch.name"
+          data-test="map-branch"
+          @click="currentId = branch.id"
+        />
+        <span v-if="current.address" class="map-address">{{ current.address }}</span>
+      </template>
+
+      <template v-else>
+        <q-icon name="location_on" size="18px" />
+        <b>{{ current.name }}</b>
+        <span v-if="current.address" class="map-address">· {{ current.address }}</span>
+      </template>
+    </div>
 
     <iframe
+      :key="current.id"
       width="100%"
       height="380"
       style="border:0"
       loading="lazy"
       allowfullscreen
-      src="https://www.google.com/maps?q=-25.9639738,32.5866938&z=17&output=embed"
+      :title="current.name"
+      :src="mapUrl(current)"
     ></iframe>
 
   </div>
 
 
   <!-- FOOTER -->
-  <div class="footer-glass q-pa-xl text-white">
+  <div class="footer-glass q-pa-xl">
 
     <div class="row q-col-gutter-xl">
 
@@ -120,14 +149,43 @@
 
 
 <script>
-import { defineComponent } from "vue"
-import { tdc } from "quasar_resaas"
+import { defineComponent, computed, onMounted, ref } from "vue"
+import { tdc, HTTPClient, url } from "quasar_resaas"
 
 export default defineComponent({
 
   setup(){
+
+    // the clinic's branches with a location (public: the clinic is found
+    // from this site's Origin); the map used to be one fixed coordinate
+    const branches = ref([])
+    const currentId = ref(null)
+
+    const located = computed(() => branches.value.filter(b => b.coordinates))
+    const current = computed(() =>
+      located.value.find(b => b.id === currentId.value) || located.value[0] || {}
+    )
+
+    function mapUrl (branch) {
+      const { lat, lng } = branch.coordinates || {}
+      return `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`
+    }
+
+    onMounted(async () => {
+      try {
+        const response = await HTTPClient.get(url({ type: "u", url: "site/branches/" }))
+        branches.value = Array.isArray(response.data) ? response.data : []
+      } catch {
+        branches.value = []   // no map rather than a wrong one
+      }
+    })
+
     return{
-      tdc
+      tdc,
+      located,
+      current,
+      currentId,
+      mapUrl
     }
   }
 
@@ -136,77 +194,57 @@ export default defineComponent({
 
 
 <style scoped>
-
-/* GRADIENTE MEDICO */
-
+/* the theme's footer colours (Theme.footer / footer_text), a subtle brand glow */
 .footer-wrapper{
-
   background:
-  linear-gradient(
-    135deg,
-    #43CEA2,
-    #185A9D
-  );
-
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--amal-secondary) 45%, transparent), transparent 55%),
+    var(--amal-footer);
+  color:var(--amal-footer-text);
 }
-
-
-/* MAPA */
-
+.body--dark .footer-wrapper{
+  background:
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--amal-primary) 30%, transparent), transparent 55%),
+    var(--amal-surface);
+  color:var(--amal-text);
+}
+.map-container{
+  position:relative;
+}
+.map-caption{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 16px;
+  font-size:14px;
+  background:color-mix(in srgb, var(--amal-footer) 92%, #000);
+}
+.map-address{
+  opacity:.85;
+}
 .map-container iframe{
-
-  /* border-bottom-left-radius:60px;
-  border-bottom-right-radius:60px; */
-
-  filter:contrast(1.1) saturate(1.1);
-
+  display:block;
+  filter:contrast(1.05) saturate(1.05);
 }
-
-
-/* GLASS EFFECT */
-
+.body--dark .map-container iframe{
+  filter:invert(.9) hue-rotate(180deg) contrast(.9);
+}
 .footer-glass{
-
-  backdrop-filter: blur(14px);
-  background: rgba(255,255,255,0.08);
-
-  border-top:1px solid rgba(255,255,255,.15);
-
-  box-shadow:
-  0 8px 32px rgba(0,0,0,.15);
-
+  border-top:1px solid color-mix(in srgb, currentColor 15%, transparent);
 }
-
-
-/* REDES SOCIAIS */
-
-.social q-btn{
-
-  margin:0 8px;
-
+.social :deep(.q-btn){
+  margin:0 6px;
+  transition:transform .2s;
 }
-
-.social q-btn:hover{
-
-  transform:scale(1.2);
-  transition:.2s;
-
+.social :deep(.q-btn:hover){
+  transform:scale(1.15);
 }
-
-
-/* WHATSAPP */
-
 .whatsapp-btn{
-
   box-shadow:0 8px 25px rgba(0,0,0,.3);
-
 }
-
 .whatsapp-btn:hover{
-
   transform:scale(1.1);
   transition:.2s;
-
 }
-
 </style>

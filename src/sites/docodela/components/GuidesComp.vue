@@ -1,10 +1,10 @@
 <template>
-  <section id="guides" class="q-py-lg q-pa-md" style="padding-top:60px; padding-bottom:60px; background-color:#fff;">
+  <section id="guides" class="guides">
 
     <div class="row justify-center">
       <div class="col-md-10 col-12">
 
-        <div class="text-weight-bold text-grey-9 q-mb-md" style="font-size:24px">
+        <div class="guides__title">
           {{ tdc('Popular finance guides') }}
         </div>
 
@@ -50,8 +50,25 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.guides {
+  padding: 56px 16px 72px;
+  background: #fff;
+}
+
+.guides__title {
+  margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #10233f;
+}
+
 .guide-link {
   display: flex;
+  height: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e3ebf5;
+  transition: border-color .2s, background .2s;
   align-items: center;
   color: #185A9D;
   text-decoration: none;
@@ -59,6 +76,7 @@ export default defineComponent({
 }
 
 .guide-link:hover {
-  text-decoration: underline;
+  border-color: #b9d3ee;
+  background: #f4f8fc;
 }
 </style>

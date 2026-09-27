@@ -71,32 +71,32 @@ const slide= ref(1)
 
 const faqs = [
   {
-    question: 'How can I book a consultation?',
-    answer: 'Call us or send us a message on WhatsApp and our team will schedule your appointment.'
+    question: 'Is Docodela 24horas a health insurance?',
+    answer: 'No. Docodela 24horas does not replace health insurance. It is a complementary solution that helps make access to certain healthcare easier and, when applicable, lets you assess financing solutions.'
   },
   {
-    question: 'Can I finance my treatment at Docodela?',
-    answer: 'Yes. We offer payment plans for most treatments, so you can start your care and pay over time.'
+    question: 'Do I need health insurance?',
+    answer: 'Not necessarily. The options available depend on the care you need, the provider network and the applicable conditions.'
   },
   {
-    question: 'Which treatments can I finance?',
-    answer: 'Consultations, exams, dental care, surgery and most other treatments offered at Docodela can be financed.'
+    question: 'Can I choose my own doctor?',
+    answer: 'Docodela 24horas can help you find and organise care with professionals and providers available in its network. Availability depends on the speciality, location and provider.'
   },
   {
-    question: 'How much can I borrow?',
-    answer: 'Financing is available from small amounts up to larger treatment costs, depending on your treatment plan and approval.'
+    question: 'Can I finance any treatment?',
+    answer: 'No. Financing solutions are only available for eligible care and procedures and are subject to the applicable assessment, eligibility and approval criteria.'
   },
   {
-    question: 'Do I need a good credit score?',
-    answer: 'We look at your application as a whole, not just your credit score. Talk to our team to find the best option for you.'
+    question: 'How much can I finance?',
+    answer: "The amount depends on the cost of the care, the solution available and the assessment of the client's ability to pay."
   },
   {
-    question: 'How long does approval take?',
-    answer: 'In most cases, you will have a decision the same day you apply.'
+    question: 'Do I have to pay everything straight away?',
+    answer: 'When an applicable financing solution exists and is approved, you can organise the payment according to the approved plan and conditions.'
   },
   {
-    question: 'Is financing available outside Mozambique?',
-    answer: 'Our financing is currently available for treatment at Docodela in Mozambique.'
+    question: 'How do I get started?',
+    answer: "It's simple. Tell us what you need. Our team will guide you through the options available and the next steps."
   }
 ]
 

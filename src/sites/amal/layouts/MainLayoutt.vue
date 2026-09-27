@@ -1,6 +1,6 @@
 <template>
 
-  <q-layout view="hHh lpR fFf" class="grediente">
+  <q-layout view="hHh lpR fFf" class="amal-site">
 
     <!-- DRAWER MOBILE -->
     <q-drawer
@@ -92,7 +92,7 @@
         <div
           ref="menuContainer"
           class="row items-center q-px-md shadow-3 q-px-xl no-wrap"
-          style="height:50px;border-bottom-left-radius:60px;border-bottom-right-radius:60px"
+          style="height:50px"
           :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'"
         >
 
@@ -173,7 +173,9 @@
 
     </q-page-container>
 
-    <HomePage />
+    <!-- the home page is rendered by the router-view above (/home); a second
+         <HomePage /> here sat outside q-page-container, so Quasar never showed
+         it and only logged "QPage needs to be child of QPageContainer" -->
 
     <RodapePage />
 
@@ -195,7 +197,6 @@
 
 import { defineComponent } from 'vue'
 
-import HomePage from "../pages/HomePage.vue"
 import RodapePage from '../pages/RodapePage.vue'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
@@ -208,7 +209,6 @@ export default defineComponent({
   name:'MainAmalLayout',
 
   components:{
-    HomePage,
     RodapePage,
     SiteLanguageMenu,
   },
@@ -266,14 +266,18 @@ export default defineComponent({
   },
 
   async mounted(){
+    this.calculateMenu()
+    window.addEventListener("resize",this.calculateMenu)
     await this.Entity.getSettings()
     if (this.User.Entity?.id) {
       console.log('[Amal] Entity found for this site:', this.User.Entity)
     } else {
       console.log('[Amal] No Entity matched this domain (site.py lookup by Origin).')
     }
-    this.calculateMenu()
-    window.addEventListener("resize",this.calculateMenu)
+  },
+
+  unmounted(){
+    window.removeEventListener("resize",this.calculateMenu)
   },
 
   methods:{
@@ -359,20 +363,172 @@ export default defineComponent({
   transform:scale(1.05);
 }
 
-body.body--light{
-  background:#f6f8f7;
-}
-
-body.body--dark{
-  background:#121212;
-}
 
 .s-btn:hover{
   opacity:.85;
 }
 
-html{
-  scroll-behavior:smooth;
+/* no global scroll-behavior:smooth: Quasar locks the page while a dialog is
+   open and puts it back with window.scrollTo() when it closes - with smooth
+   scrolling on <html> that restore became a long visible scroll from the top.
+   Links in this site ask for smooth scrolling themselves (scrollIntoView). */
+
+/* =====================================================================
+   AMAL SITE DESIGN SYSTEM
+   Every colour comes from the Entity's Theme (GET site/ -> applyTheme,
+   which sets one --q-<key> CSS variable per theme colour), the corner
+   radius from its LayoutSetting (--s-radius) and the font from its
+   Typography (applyTypography). The fallbacks are only used until the
+   theme arrives. Dark mode (Quasar adds body--dark) switches the surface,
+   background, text and border tokens to the theme's dark values.
+   ===================================================================== */
+.amal-site{
+  --amal-primary:var(--q-primary, #1976d2);
+  --amal-secondary:var(--q-secondary, #26a69a);
+  --amal-accent:var(--q-accent, #9c27b0);
+  --amal-bg:var(--q-background, #f6f8f7);
+  --amal-surface:var(--q-card, #ffffff);
+  --amal-text:var(--q-text_primary, #0f172a);
+  --amal-muted:var(--q-text_secondary, #5b6475);
+  --amal-border:var(--q-border, #e5e7eb);
+  --amal-on-brand:var(--q-text_light, #ffffff);
+  --amal-footer:var(--q-footer, var(--amal-primary));
+  --amal-footer-text:var(--q-footer_text, #ffffff);
+  --amal-radius:var(--s-radius, 16px);
+  --amal-radius-lg:calc(var(--amal-radius) + 8px);
+  --amal-tint:color-mix(in srgb, var(--amal-primary) 10%, transparent);
+  --amal-tint-strong:color-mix(in srgb, var(--amal-primary) 18%, transparent);
+  --amal-gradient:linear-gradient(135deg, var(--amal-primary) 0%, var(--amal-secondary) 100%);
+  --amal-shadow:0 1px 2px rgba(15, 23, 42, .04), 0 12px 32px rgba(15, 23, 42, .08);
+  --amal-shadow-hover:0 2px 4px rgba(15, 23, 42, .06), 0 20px 44px rgba(15, 23, 42, .14);
+  color:var(--amal-text);
+  background:var(--amal-bg);
 }
+
+.body--dark .amal-site{
+  --amal-bg:var(--q-background_dark, #121212);
+  --amal-surface:var(--q-dark, #1d1d1d);
+  --amal-text:var(--q-text_light, #f5f7fa);
+  --amal-muted:color-mix(in srgb, var(--amal-text) 70%, transparent);
+  --amal-border:color-mix(in srgb, var(--amal-text) 14%, transparent);
+  --amal-tint:color-mix(in srgb, var(--amal-primary) 22%, transparent);
+  --amal-tint-strong:color-mix(in srgb, var(--amal-primary) 32%, transparent);
+  --amal-shadow:0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
+  --amal-shadow-hover:0 2px 4px rgba(0, 0, 0, .35), 0 20px 44px rgba(0, 0, 0, .5);
+}
+
+/* SECTIONS: background / surface / brand, alternated down the page */
+.amal-section{
+  position:relative;
+  padding:96px 16px;
+  background:var(--amal-bg);
+  color:var(--amal-text);
+}
+.amal-section--surface{
+  background:var(--amal-surface);
+}
+.amal-section--brand{
+  background:var(--amal-gradient);
+  color:var(--amal-on-brand);
+}
+@media (max-width:599px){
+  .amal-section{ padding:64px 16px; }
+}
+/* the header (toolbar + menu bar) is fixed: a section reached from the menu
+   must start below it, not under it */
+.amal-site [id]{
+  scroll-margin-top:128px;
+}
+@media (max-width:1023px){
+  .amal-site [id]{ scroll-margin-top:76px; }
+}
+
+/* SECTION TITLES (sizes: the Entity's typography when loaded, else these) */
+.amal-eyebrow{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--amal-primary);
+  background:var(--amal-tint);
+}
+.amal-title{
+  margin:12px 0 0;
+  font-size:clamp(28px, 3.4vw, 42px);
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:-.02em;
+  color:var(--amal-text);
+}
+.amal-subtitle{
+  margin:12px auto 0;
+  max-width:680px;
+  font-size:clamp(16px, 1.5vw, 18px);
+  line-height:1.6;
+  color:var(--amal-muted);
+}
+.amal-section--brand .amal-eyebrow{
+  color:var(--amal-on-brand);
+  background:rgba(255, 255, 255, .16);
+}
+.amal-section--brand .amal-title{ color:var(--amal-on-brand); }
+.amal-section--brand .amal-subtitle{ color:color-mix(in srgb, var(--amal-on-brand) 85%, transparent); }
+
+/* CARDS */
+.amal-card{
+  height:100%;
+  background:var(--amal-surface) !important;
+  color:var(--amal-text);
+  border:1px solid var(--amal-border);
+  border-radius:var(--amal-radius-lg) !important;
+  box-shadow:var(--amal-shadow) !important;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.amal-card--hover:hover{
+  transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--amal-primary) 35%, var(--amal-border));
+  box-shadow:var(--amal-shadow-hover) !important;
+}
+.amal-section--surface .amal-card{
+  background:var(--amal-bg) !important;
+}
+/* glass cards on the brand gradient */
+.amal-section--brand .amal-card{
+  background:rgba(255, 255, 255, .12) !important;
+  border-color:rgba(255, 255, 255, .22);
+  color:var(--amal-on-brand);
+  backdrop-filter:blur(10px);
+}
+.amal-muted{ color:var(--amal-muted); }
+.amal-section--brand .amal-muted{ color:color-mix(in srgb, var(--amal-on-brand) 82%, transparent); }
+
+/* ICON BADGE */
+.amal-icon{
+  width:56px;
+  height:56px;
+  border-radius:calc(var(--amal-radius) - 2px);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--amal-primary);
+  background:var(--amal-tint);
+}
+.amal-section--brand .amal-icon{
+  color:var(--amal-primary);
+  background:#ffffff;
+}
+
+/* PILL BUTTONS */
+.amal-btn{
+  border-radius:999px !important;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+
+/* the old helper, kept for sections that still use it */
+.amal-on-light{}
 
 </style>

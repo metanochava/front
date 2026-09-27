@@ -5,6 +5,7 @@ import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
 import { portfolioSiteRoutes } from 'src/sites/portfolio/routes'
 import { mytechSiteRoutes } from 'src/sites/mytech/routes'
+import { resaasSiteRoutes } from 'src/sites/resaas/routes'
 
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
@@ -23,10 +24,12 @@ const domainRoutes = {
   "metano.dev.mytech.co.mz": portfolioSiteRoutes,
   "mytech.co.mz": mytechSiteRoutes,
   "dev.mytech.co.mz": mytechSiteRoutes,
+  "resaas.mytech.co.mz": resaasSiteRoutes,
+  "resaas.dev.mytech.co.mz": resaasSiteRoutes,
 }
 
 // Preview a site while developing, without its domain:  http://localhost:9000/?site=portfolio
-const previewSites = { portfolio: portfolioSiteRoutes, amal: amalSiteRoutes, docodela: docodelaSiteRoutes, mytech: mytechSiteRoutes }
+const previewSites = { portfolio: portfolioSiteRoutes, amal: amalSiteRoutes, docodela: docodelaSiteRoutes, mytech: mytechSiteRoutes, resaas: resaasSiteRoutes }
 const previewSite = import.meta.env.DEV
   ? previewSites[new URLSearchParams(window.location.search).get('site')]
   : null

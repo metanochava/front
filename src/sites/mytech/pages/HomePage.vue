@@ -8,6 +8,7 @@ import ValueSection from '../components/ValueSection.vue'
 import DivisionSection from '../components/DivisionSection.vue'
 import TrainingSection from '../components/TrainingSection.vue'
 import EquipmentSection from '../components/EquipmentSection.vue'
+import WorkSection from '../components/WorkSection.vue'
 import FinalCtaSection from '../components/FinalCtaSection.vue'
 
 const root = ref(null)
@@ -48,6 +49,7 @@ const development = divisions[2]
     />
     <TrainingSection />
     <EquipmentSection />
+    <WorkSection />
     <FinalCtaSection />
   </div>
 </template>

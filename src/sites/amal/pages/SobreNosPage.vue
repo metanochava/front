@@ -1,49 +1,46 @@
 <template>
 
-<div id="sobrenos" class="q-py-xl">
+<div id="sobrenos" class="amal-section amal-section--surface">
 
   <!-- TITULO -->
-  <div class="text-center q-mb-xl">
-
-    <div
-      class="text-weight-bold text-primary"
-      :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
-    >
-      {{ tdc('About us') }}
-    </div>
-
-    <div class="text-subtitle1 q-mt-sm text-white " :style="{ fontSize: ps?.typography?.font_size_h3 + 'px' }">
-      {{ tdc('We take care of your health with excellence and dedication') }}
-    </div>
-
+  <div class="row justify-center q-mb-xl q-px-md">
+      <div class="text-center col-12">
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('About us') }}
+        </h2>
+        <p class="amal-subtitle">
+          {{ tdc('We take care of your health with excellence and dedication') }}
+        </p>
+      </div>
   </div>
 
 
   <!-- HISTORIA + IMAGEM -->
 
-  <div class="row justify-center q-col-gutter-xl q-px-md">
+  <div class="row justify-center items-center q-col-gutter-xl">
 
     <div class="col-md-5 col-12">
 
       <q-img
-        src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
-        style="border-radius:20px"
+        src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=1200&q=80&auto=format&fit=crop"
+        :ratio="4/3"
+        class="about-image"
       />
 
     </div>
 
 
-    <div class="col-md-5 col-12 items-center justify-center" :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }">
+    <div class="col-md-5 col-12 items-center justify-center" :style="ps?.typography?.font_size_h4 ? { fontSize: ps.typography.font_size_h4 + 'px' } : { fontSize: '17px' }">
 
-      <div class=" text-weight-bold q-mb-md">
+      <div class="about-name q-mb-md">
         {{ tdc('Amal Clinic') }}
       </div>
 
-      <p class="text-white">
+      <p class="about-text">
         {{ tdc('Amal Clinic was created to offer modern, humanised medical care. We work with qualified specialists and advanced technology to ensure accurate diagnoses.') }}
       </p>
 
-      <p class="text-white">
+      <p class="about-text">
         {{ tdc('Our commitment is to provide excellent care, always putting patient well-being and safety first.') }}
       </p>
 
@@ -54,29 +51,25 @@
 
   <!-- MISSÃO VISÃO VALORES -->
 
-  <div class="row justify-center q-col-gutter-md q-mt-xl">
+  <div class="row justify-center q-col-gutter-lg q-mt-xl">
 
     <div
-      class="col-md-3 col-12"
+      class="col-md-3 col-sm-4 col-12"
       v-for="item in about"
       :key="item.title"
     >
 
-      <s-card class="about-card text-center">
+      <s-card class="amal-card amal-card--hover text-center">
 
-        <q-card-section>
+        <q-card-section class="q-pa-lg">
 
-          <q-icon
-            :name="item.icon"
-            size="50px"
-            color="primary"
-          />
+          <span class="amal-icon"><q-icon :name="item.icon" size="28px" /></span>
 
-          <div class="text-h6 q-mt-md">
+          <div class="text-h6 text-weight-bold q-mt-md">
             {{ tdc(item.title) }}
           </div>
 
-          <div class="text-caption q-mt-sm text-grey-7">
+          <div class="q-mt-sm amal-muted about-desc">
             {{ tdc(item.desc) }}
           </div>
 
@@ -173,36 +166,21 @@ doctors
 
 
 <style scoped>
-
-.counters{
-background:#f6f8fb;
-padding:40px 0;
+.about-image{
+  border-radius:var(--amal-radius-lg);
+  box-shadow:var(--amal-shadow);
 }
-
-.counter-number{
-font-size:36px;
-font-weight:bold;
-color:#1976d2;
+.about-name{
+  font-size:22px;
+  font-weight:800;
+  color:var(--amal-primary);
 }
-
-.about-card{
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-transition:.3s;
+.about-text{
+  line-height:1.7;
+  color:var(--amal-text);
 }
-
-.about-card:hover{
-transform:translateY(-8px);
+.about-desc{
+  font-size:14px;
+  line-height:1.55;
 }
-
-.doctor-card{
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-transition:.3s;
-}
-
-.doctor-card:hover{
-transform:translateY(-6px);
-}
-
 </style>

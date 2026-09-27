@@ -2,17 +2,16 @@
 
   <section
     id="contactos"
-    class="contact-section q-py-xl"
+    class="contact-section amal-section amal-section--surface"
   >
 
     <!-- TITULO -->
     <div class="row justify-center q-mb-xl">
 
-      <div
-        class="text-weight-bold text-primary text-center col-12"
-        :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
-      >
-        {{ tdc('Contacts') }}
+      <div class="text-center col-12">
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('Contacts') }}
+        </h2>
       </div>
 
     </div>
@@ -25,52 +24,78 @@
         <!-- FORM -->
         <div class="col-md-6 col-12">
 
-          <s-card class="contact-card">
+          <s-card class="amal-card contact-card">
 
             <q-card-section>
 
-              <div class="text-h6 text-primary q-mb-md">
+              <div class="text-h6 text-weight-bold contact-heading q-mb-md">
                 {{ tdc('Send us a message') }}
               </div>
 
-              <q-form @submit.prevent="submit">
+              <q-form ref="formRef" data-test="contact-form" @submit.prevent="submit">
 
-                <q-input
+                <s-input
                   v-model="form.name"
-                  outlined
-                  :label="tdc('Name')"
-                  class="q-mb-md"
+                  label="Name"
+                  required
+                  maxlength="150"
+                  :error="errors.name"
+                  class="q-mb-sm"
                 />
 
-                <q-input
+                <s-input
                   v-model="form.phone"
-                  outlined
-                  :label="tdc('Phone')"
-                  class="q-mb-md"
+                  label="Phone"
+                  type="tel"
+                  maxlength="30"
+                  :error="errors.phone"
+                  class="q-mb-sm"
                 />
 
-                <q-input
+                <s-input
                   v-model="form.email"
-                  outlined
-                  :label="tdc('Email')"
-                  class="q-mb-md"
+                  label="Email"
+                  type="email"
+                  :error="errors.email"
+                  class="q-mb-sm"
                 />
 
-                <q-input
+                <s-input
                   v-model="form.message"
-                  outlined
+                  label="Message"
                   type="textarea"
-                  :label="tdc('Message')"
                   autogrow
-                  class="q-mb-md"
+                  required
+                  maxlength="2000"
+                  :error="errors.message"
+                  class="q-mb-sm"
                 />
 
-                <q-btn
+                <!-- honeypot: hidden from people, bots fill it in (the server drops those) -->
+                <input
+                  v-model="form.website"
+                  type="text"
+                  name="website"
+                  tabindex="-1"
+                  autocomplete="off"
+                  aria-hidden="true"
+                  class="contact-honeypot"
+                >
+
+                <div class="text-caption text-grey-7 q-mb-md">
+                  {{ tdc('Leave a phone number or an email so we can reply.') }}
+                </div>
+
+                <s-btn
                   type="submit"
                   color="primary"
                   icon="send"
+                  unelevated
+                  no-caps
+                  :loading="sending"
                   :label="tdc('Send message')"
                   class="full-width"
+                  data-test="contact-submit"
                 />
 
               </q-form>
@@ -85,11 +110,11 @@
         <!-- INFO -->
         <div class="col-md-6 col-12">
 
-          <s-card class="contact-card">
+          <s-card class="amal-card contact-card">
 
             <q-card-section>
 
-              <div class="text-h6 text-primary q-mb-md">
+              <div class="text-h6 text-weight-bold contact-heading q-mb-md">
                 {{ tdc('Contact information') }}
               </div>
 
@@ -145,9 +170,8 @@
 
 
 <script>
-import { defineComponent, reactive, computed } from "vue"
-import { tdc,useUserStore } from "quasar_resaas"
-import { Notify } from "quasar"
+import { defineComponent, computed, reactive, ref } from "vue"
+import { tdc, useUserStore, HTTPClient, url, AlertSuccess, parseFieldErrors } from "quasar_resaas"
 
 export default defineComponent({
 
@@ -159,30 +183,44 @@ export default defineComponent({
 
     const ps = computed(() => User.ps || {})
 
-    const form = reactive({
-      name: "",
-      phone: "",
-      email: "",
-      message: ""
-    })
+    const blank = () => ({ name: "", phone: "", email: "", message: "", website: "" })
 
+    const form = reactive(blank())
+    const errors = reactive({})
+    const sending = ref(false)
+    const formRef = ref(null)
 
-    function submit () {
+    // POST site/contact/ (public): the backend finds the clinic from this
+    // site's Origin, stores the message and notifies the clinic. The error
+    // toast comes from the API client (HTTPClient); field errors go on their
+    // fields here.
+    async function submit () {
+      for (const key of Object.keys(errors)) delete errors[key]
+      sending.value = true
 
-      Notify.create({
-        type: "positive",
-        message: 'Message sent successfully'
-      })
+      try {
+        await HTTPClient.post(url({ type: "u", url: "site/contact/" }), { ...form })
 
-      console.log(form)
-
+        AlertSuccess(tdc("Thank you! Your message was sent. We will contact you soon."))
+        Object.assign(form, blank())
+        formRef.value?.resetValidation()
+      } catch (error) {
+        const fields = parseFieldErrors(error?.response?.data)
+        for (const [key, messages] of Object.entries(fields)) {
+          errors[key] = [].concat(messages)[0]
+        }
+      } finally {
+        sending.value = false
+      }
     }
-
 
     return {
       tdc,
       ps,
       form,
+      errors,
+      sending,
+      formRef,
       submit
     }
 
@@ -194,37 +232,22 @@ export default defineComponent({
 
 
 <style scoped>
-
-.contact-section {
-
-  background:
-  linear-gradient(
-    135deg,
-    #43CEA2,
-    #185A9D
-  );
-
-  padding-top:80px;
-  padding-bottom:80px;
-
+.contact-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }
 
-
-/* CARD */
 
 .contact-card {
-
-  border-radius:20px;
-
-  backdrop-filter:blur(12px);
-
-  background:rgba(255,255,255,.9);
-
-  box-shadow:
-  0 10px 25px rgba(0,0,0,.15);
-
+  padding: 8px;
 }
 
+.contact-heading {
+  color: var(--amal-primary);
+}
 
 /* INFO */
 

@@ -1,12 +1,12 @@
 <template>
   <q-page>
     <SliderComp />
+    <HeroComp />
     <InicioComp />
     <FFYTComp />
     <SobreNosComp />
     <ParceirosComp />
     <ReviewsStripComp />
-    <AwardsComp />
     <BlogComp />
     <FAQsComp />
     <GuidesComp />
@@ -19,6 +19,7 @@
 import { defineComponent } from 'vue'
 
 import SliderComp from "../components/SliderComp.vue"
+import HeroComp from "../components/HeroComp.vue"
 import InicioComp from "../components/InicioComp.vue"
 import SobreNosComp from "../components/SobreNosComp.vue"
 import BlogComp from "../components/BlogComp.vue"
@@ -26,7 +27,6 @@ import FAQsComp from "../components/FAQsComp.vue"
 import FFYTComp from "../components/FFYTComp.vue"
 import ParceirosComp from '../components/ParceirosComp.vue'
 import ReviewsStripComp from '../components/ReviewsStripComp.vue'
-import AwardsComp from '../components/AwardsComp.vue'
 import GuidesComp from '../components/GuidesComp.vue'
 
 import { useUserStore } from 'quasar_resaas'
@@ -43,9 +43,9 @@ export default defineComponent({
     FAQsComp,
     BlogComp,
     SliderComp,
+    HeroComp,
     ParceirosComp,
     ReviewsStripComp,
-    AwardsComp,
     GuidesComp,
 
   },

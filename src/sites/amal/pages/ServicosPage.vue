@@ -1,17 +1,17 @@
 <template>
   <section
     id="servicos"
-    class="servicos q-py-xl"
+    class="servicos amal-section amal-section--brand"
   >
 
     <!-- TITULO -->
     <div class="row justify-center q-mb-xl">
 
-      <div
-        class="text-weight-bold text-primary text-center col-12"
-        :style="{ fontSize: ps?.typography?.font_size_h1 + 'px' }"
-      >
-        {{ tdc('Services') }}
+      <div class="text-center col-12">
+        <div class="amal-eyebrow">{{ tdc('Amal Clinic') }}</div>
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('Services') }}
+        </h2>
       </div>
 
     </div>
@@ -28,7 +28,7 @@
           :key="s.title"
         >
 
-          <div class="service-card">
+          <div class="amal-card service-card">
 
             <div class="icon-wrapper">
               <q-icon
@@ -145,126 +145,44 @@ export default defineComponent({
 
 
 <style scoped>
-
-.servicos{
-
-  padding-top:80px;
-  padding-bottom:80px;
-
-  border-top:6px solid var(--q-primary);
-
-  background:
-  linear-gradient(
-    135deg,
-    #43CEA2,
-    #185A9D
-  );
-
-}
-
-
-/* CARD */
-
 .service-card{
-
-  background:rgba(255,255,255,.12);
-
-  backdrop-filter:blur(12px);
-
-  padding:35px;
-
-  border-radius:22px;
-
+  padding:32px 24px;
   text-align:center;
-
-  color:white;
-
-  transform-style:preserve-3d;
-
-  transition:all .35s ease;
-
-  box-shadow:
-  0 12px 30px rgba(0,0,0,.2);
-
+  transition:transform .3s ease, background .3s ease;
 }
-
-
 .service-card:hover{
-
-  transform:
-  perspective(800px)
-  rotateX(6deg)
-  rotateY(-6deg)
-  translateY(-10px);
-
+  transform:translateY(-6px);
+  background:rgba(255, 255, 255, .18) !important;
 }
-
-
-/* ICON */
-
 .icon-wrapper{
-
-  width:70px;
-  height:70px;
-
-  margin:auto;
-
+  width:64px;
+  height:64px;
+  margin:0 auto 16px;
   display:flex;
   align-items:center;
   justify-content:center;
-
-  border-radius:50%;
-
-  background:white;
-
-  color:var(--q-primary);
-
-  margin-bottom:16px;
-
+  border-radius:calc(var(--amal-radius) + 2px);
+  background:#ffffff;
+  color:var(--amal-primary);
 }
-
-
-/* TITULO */
-
 .service-title{
-
   font-size:18px;
-  font-weight:600;
-
-  margin-bottom:12px;
-
+  font-weight:700;
+  margin-bottom:8px;
 }
-
-
-/* DESC */
-
 .service-desc{
-
   font-size:14px;
-
+  line-height:1.55;
   opacity:.9;
-
 }
-
-
 /* SCROLL ANIMATION */
-
 .reveal{
-
   opacity:0;
-
   transform:translateY(40px);
-
-  transition:all .7s ease;
-
+  transition:opacity .6s ease, transform .6s ease;
 }
-
 .reveal.active{
-
   opacity:1;
-
   transform:translateY(0);
-
 }
-
 </style>

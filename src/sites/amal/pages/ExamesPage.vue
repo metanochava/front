@@ -2,18 +2,17 @@
 
   <section
     id="exames"
-    class="exames-section q-py-xl"
+    class="exames-section amal-section amal-section--surface"
   >
 
     <!-- TITULO -->
 
-    <div class="row justify-center q-mb-xl">
+    <div class="row justify-center q-mb-xl amal-on-light">
 
-      <div
-        class="text-weight-bold text-primary text-center col-12"
-        :style="{ fontSize: ps?.typography.font_size_h1 + 'px' }"
-      >
-        {{ tdc('Exams') }}
+      <div class="text-center col-12">
+        <h2 class="amal-title" :style="ps?.typography?.font_size_h1 ? { fontSize: ps.typography.font_size_h1 + 'px' } : null">
+          {{ tdc('Exams') }}
+        </h2>
       </div>
 
     </div>
@@ -32,24 +31,17 @@
           class="col-md-4 col-sm-6 col-12"
         >
 
-          <s-card
-            class="exam-card"
-            bordered
-          >
+          <s-card class="amal-card amal-card--hover">
 
-            <q-card-section class="text-center">
+            <q-card-section class="text-center q-pa-lg">
 
-              <q-icon
-                :name="exam.icon"
-                size="50px"
-                color="primary"
-              />
+              <span class="amal-icon"><q-icon :name="exam.icon" size="28px" /></span>
 
-              <div class="text-h6 q-mt-md">
+              <div class="text-h6 text-weight-bold q-mt-md">
                 {{ tdc(exam.name) }}
               </div>
 
-              <div class="text-caption text-grey-7 q-mt-xs">
+              <div class="amal-muted q-mt-xs exam-desc">
                 {{ tdc(exam.short_desc) }}
               </div>
 
@@ -58,9 +50,11 @@
                 <s-btn
                   color="primary"
                   icon="visibility"
+                  no-caps
+                  outline
+                  class="amal-btn"
                   :label="tdc('View details')"
                   @click="openExam(exam)"
-                  unelevated
                 />
 
               </div>
@@ -258,44 +252,8 @@ export default defineComponent({
 
 
 <style scoped>
-
-.exames-section{
-
-  padding-top:130px;
-  padding-bottom:90px;
-
-  background:
-  linear-gradient(
-    135deg,
-    #a8eed8,
-    #a3c6e9
-  );
-
+.exam-desc{
+  font-size:14px;
+  line-height:1.5;
 }
-
-
-/* CARD */
-
-.exam-card{
-
-  border-radius:20px;
-
-  transition:all .35s;
-
-  box-shadow:
-  0 10px 25px rgba(0,0,0,.15);
-
-}
-
-
-.exam-card:hover{
-
-  transform:translateY(-8px);
-
-}
-
-
-/* MODAL */
-
-
 </style>

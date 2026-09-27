@@ -2,118 +2,98 @@
 
 <div class="inicio">
 
-<div class="row justify-center items-center q-col-gutter-xl q-mt-xl" style="margin-top:20px">
+  <section class="amal-section inicio-hero">
+    <div class="row justify-center">
+      <div class="col-12 col-md-10 row items-center q-col-gutter-xl">
 
-  <div class="col-md-10 row">
+        <div class="col-md-6 col-12">
+          <div class="amal-eyebrow">{{ tdc('Modern, humane care') }}</div>
 
-    <div class="col-md-6 col-12 row">
+          <h1
+            class="inicio-title"
+            :style="ps?.typography?.font_size_h1 ? { fontSize: (ps.typography.font_size_h1 * 1.6) + 'px' } : null"
+          >
+            {{ tdc('WE CARE') }}
+            <span class="inicio-cross">+</span>
+            {{ tdc('UP CLOSE') }}
+          </h1>
 
-      <div class="col-12 col-md-8">
-        <s-card flat class="preview-mini-card text-h6 text-primary justify-center">
-          <q-card-section>
-            <b class="text-h6">{{ tdc('Modern, humane care') }}</b>
-          </q-card-section>
-        </s-card>
+          <p
+            class="inicio-text amal-muted"
+            :style="ps?.typography?.font_size_h5 ? { fontSize: ps.typography.font_size_h5 + 'px' } : null"
+          >
+            {{ tdc('Humane care, qualified specialists, modern technology and simple booking for consultations, exams and check-ups.') }}
+          </p>
+
+          <ul class="inicio-highlights">
+            <li v-for="item in highlights" :key="item.label">
+              <span class="amal-icon inicio-highlight-icon"><q-icon :name="item.icon" size="20px" /></span>
+              {{ tdc(item.label) }}
+            </li>
+          </ul>
+
+          <div class="row q-gutter-sm q-mt-lg">
+            <s-btn
+              unelevated
+              no-caps
+              color="primary"
+              size="lg"
+              icon="event"
+              class="amal-btn"
+              :label="tdc('Book appointment')"
+              @click="scrollTo('marcacao')"
+            />
+
+            <s-btn
+              outline
+              no-caps
+              color="primary"
+              size="lg"
+              class="amal-btn"
+              :label="tdc('View specialties')"
+              @click="scrollTo('especialidades')"
+            />
+          </div>
+
+          <div class="row q-col-gutter-md q-mt-lg">
+            <div v-for="info in contacts" :key="info.label" class="col-sm-6 col-12">
+              <div class="amal-card inicio-info">
+                <span class="amal-icon"><q-icon :name="info.icon" size="22px" /></span>
+                <div>
+                  <div class="inicio-info-label amal-muted">{{ tdc(info.label) }}</div>
+                  <div class="inicio-info-value">{{ info.translate ? tdc(info.value) : info.value }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <ReviewPage />
+        </div>
+
       </div>
+    </div>
+  </section>
 
-      <div
-        class="text-weight-bold q-mb-md text-grey-9"
-        :style="{ fontSize: '50px' }"
-      >
-        {{ tdc('WE CARE') }}&nbsp;
-        <b style="color:#E60000;font-size:50px"> + </b>
-        {{ tdc('UP CLOSE') }}
-      </div>
 
-      <div
-        class="q-mb-lg"
-        :style="{ fontSize: ps?.typography?.font_size_h5 + 'px' }"
-      >
-        {{ tdc('Humane care, qualified specialists, modern technology and simple booking for consultations, exams and check-ups.') }}
-
-        <label
-          :style="{ fontSize: ps?.typography?.font_size_h4 + 'px' }"
-          class="text-white"
+  <!-- CONTADORES -->
+  <section v-if="counters.length" class="amal-section amal-section--surface inicio-counters" data-test="site-stats">
+    <div class="row justify-center">
+      <div class="col-12 col-md-10 row q-col-gutter-lg">
+        <div
+          v-for="c in counters"
+          :key="c.label"
+          :class="['col-6', counterCol]"
         >
-          <b>
-            <br>
-            {{ tdc('Open 24 hours') }}<br>
-            {{ tdc('Maternity and operating theatre') }}<br>
-            {{ tdc('Consultations in different specialties') }}<br>
-          </b>
-        </label>
-      </div>
-
-      <s-btn
-        color="primary"
-        icon="event"
-        :label="tdc('Book appointment')"
-      />
-
-      &nbsp;&nbsp;&nbsp;
-
-      <s-btn
-        color="primary"
-        outline
-        :label="tdc('View specialties')"
-      />
-
-      <div class="row col-md-12 q-pa-0 q-col-gutter-sm q-mt-xl">
-
-        <div class="col-md-6 justify-center">
-          <s-card flat class="q-pa-md">
-            <b class="text-h6 text-primary">{{ tdc('Phone') }}</b>
-            <br>
-            +258 86 555 0550
-          </s-card>
+          <div class="amal-card counter-card text-center">
+            <div class="counter-number">{{ c.value }}</div>
+            <div class="counter-label amal-muted">{{ tdc(c.label) }}</div>
+          </div>
         </div>
-
-        <div class="col-md-6 justify-center">
-          <s-card flat class="q-pa-md">
-            <b class="text-h6 text-primary">{{ tdc('Location') }}</b>
-            <br>
-            {{ tdc('Maputo, Mozambique') }}
-          </s-card>
-        </div>
-
       </div>
-
     </div>
-
-    <s-card
-      flat
-      class="q-pa-0 justify-center col-md-6 col-12 text-center bg-transparent"
-      style="border:solid #cdcdcd00 2px"
-    >
-      <ReviewPage />
-    </s-card>
-
-  </div>
-
-</div>
-
-
-<!-- CONTADORES -->
-
-<div class="row justify-center q-pa-xl counters q-mt-xl">
-
-  <div
-    class="col-md-3 col-6 text-center"
-    v-for="c in counters"
-    :key="c.label"
-  >
-
-    <div class="counter-number">
-      {{ c.value }}+
-    </div>
-
-    <div style="font-size:18px">
-      {{ tdc(c.label) }}
-    </div>
-
-  </div>
-
-</div>
+  </section>
 
 </div>
 
@@ -121,8 +101,8 @@
 
 <script>
 
-import { defineComponent, computed } from "vue"
-import { tdc,useUserStore } from "quasar_resaas"
+import { defineComponent, computed, ref, onMounted } from "vue"
+import { tdc, useUserStore, HTTPClient, url } from "quasar_resaas"
 import ReviewPage from "./ReviewPage.vue"
 
 export default defineComponent({
@@ -136,20 +116,61 @@ setup(){
 const User =useUserStore()
 const ps = computed(()=>User.ps || {})
 
-const counters=[
-
-{value:1200,label:"Pacientes"},
-{value:45,label:"Especialistas"},
-{value:12,label:'Specialties'},
-{value:15,label:'Years of experience'}
-
+const highlights=[
+{icon:'schedule',label:'Open 24 hours'},
+{icon:'pregnant_woman',label:'Maternity and operating theatre'},
+{icon:'medical_services',label:'Consultations in different specialties'}
 ]
+
+const contacts=[
+{icon:'call',label:'Phone',value:'+258 86 555 0550'},
+{icon:'location_on',label:'Location',value:'Maputo, Mozambique',translate:true}
+]
+
+// the figures come from the clinic's own records (GET saude/publicsite/stats/,
+// public - the clinic is found from this site's Origin); a figure the clinic
+// has not recorded (e.g. years without a founding date) is not shown
+const stats = ref(null)
+
+const COUNTERS = [
+{key:'patients',label:'Patients'},
+{key:'specialists',label:'Specialists'},
+{key:'specialties',label:'Specialties'},
+{key:'years_of_experience',label:'Years of experience'}
+]
+
+const counters = computed(() =>
+COUNTERS
+.filter(c => typeof stats.value?.[c.key] === 'number')
+.map(c => ({ label: c.label, value: stats.value[c.key] }))
+)
+
+// 4 figures: a row of 4 on desktop; fewer: they share the row
+const counterCol = computed(() => `col-md-${12 / Math.max(counters.value.length, 1)}`)
+
+onMounted(async () => {
+try {
+const response = await HTTPClient.get(url({ type: 'u', url: 'saude/publicsite/stats/' }))
+stats.value = response.data && typeof response.data === 'object' ? response.data : null
+} catch {
+stats.value = null
+}
+})
+
+// both buttons had no action: the site is one page, so they lead to their section
+function scrollTo (id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+}
 
 return{
 User,
 ps,
 tdc,
-counters
+counters,
+counterCol,
+highlights,
+contacts,
+scrollTo
 }
 
 }
@@ -160,14 +181,86 @@ counters
 
 <style scoped>
 
-.counters{
-background:#f5f7fb;
+.inicio-hero{
+padding-top:72px;
 }
 
+.inicio-title{
+margin:18px 0 0;
+font-size:clamp(36px, 4.6vw, 58px);
+line-height:1.04;
+font-weight:800;
+letter-spacing:-.02em;
+color:var(--amal-text);
+}
+
+.inicio-cross{
+color:var(--q-negative, #e60000);
+margin:0 6px;
+}
+
+.inicio-text{
+margin:18px 0 0;
+max-width:560px;
+font-size:18px;
+line-height:1.65;
+}
+
+.inicio-highlights{
+list-style:none;
+margin:22px 0 0;
+padding:0;
+display:grid;
+gap:12px;
+}
+.inicio-highlights li{
+display:flex;
+align-items:center;
+gap:12px;
+font-weight:600;
+font-size:16px;
+}
+.inicio-highlight-icon{
+width:36px;
+height:36px;
+}
+
+.inicio-info{
+display:flex;
+align-items:center;
+gap:14px;
+padding:14px 16px;
+}
+.inicio-info-label{
+font-size:12px;
+font-weight:600;
+text-transform:uppercase;
+letter-spacing:.06em;
+}
+.inicio-info-value{
+font-weight:700;
+}
+
+.inicio-counters{
+padding-top:56px;
+padding-bottom:56px;
+}
+.counter-card{
+padding:24px 12px;
+}
 .counter-number{
-font-size:36px;
-font-weight:bold;
-color:#1976d2;
+font-size:clamp(30px, 3vw, 40px);
+font-weight:800;
+line-height:1.1;
+background:var(--amal-gradient);
+-webkit-background-clip:text;
+background-clip:text;
+color:transparent;
+}
+.counter-label{
+margin-top:6px;
+font-size:15px;
+font-weight:600;
 }
 
 </style>

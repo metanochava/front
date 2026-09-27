@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { tdc } from 'quasar_resaas'
 
-import { profile } from '../portfolio.config'
+import { profile, highlights } from '../portfolio.config'
 
 // The role line types itself and rotates through the three profiles. With reduced
 // motion (or before mount) it just shows the first role.
@@ -15,6 +15,11 @@ const initials = computed(() => {
   const words = profile.name.trim().split(/\s+/)
   return ((words[0]?.[0] || '') + (words[words.length - 1]?.[0] || '')).toUpperCase()
 })
+// the surname gets the accent gradient
+const nameWords = profile.name.trim().split(/\s+/)
+const surname = nameWords[nameWords.length - 1]
+const nameStart = nameWords.slice(0, -1).join(' ')
+
 const roleIndex = ref(0)
 
 let timer = null
@@ -75,14 +80,11 @@ const lines = [
 
     <div class="pf-wrap hero__inner">
       <div class="hero__copy">
-        <div class="hero__portrait" role="img" :aria-label="profile.name">
-          <img v-if="profile.photo" :src="profile.photo" :alt="profile.name">
-          <span v-else class="hero__portrait-fallback" aria-hidden="true">{{ initials }}</span>
-        </div>
-
         <p class="pf-path">$ whoami</p>
 
-        <h1 id="hero-title" class="hero__name">{{ profile.name }}</h1>
+        <h1 id="hero-title" class="hero__name">
+          {{ nameStart }} <span class="hero__surname">{{ surname }}</span>
+        </h1>
 
         <p class="hero__role" aria-live="off">
           <span class="hero__typed" data-test="hero-role">{{ shown }}</span><span class="hero__caret" aria-hidden="true" />
@@ -99,21 +101,43 @@ const lines = [
           </a>
           <a class="pf-btn" href="#contact" data-test="cta-contact">{{ tdc('Contact me') }}</a>
         </div>
+
+        <dl class="hero__stats" data-test="hero-stats">
+          <div v-for="item in highlights" :key="item.label" class="hero__stat">
+            <dt>{{ item.value }}</dt>
+            <dd>{{ tdc(item.label) }}</dd>
+          </div>
+        </dl>
       </div>
 
-      <div class="hero__terminal" role="img" :aria-label="tdc('A terminal session mixing software engineering and digital forensics')">
-        <div class="hero__bar">
-          <span class="dot dot--r" /><span class="dot dot--y" /><span class="dot dot--g" />
-          <span class="hero__bar-title">metano@lab: ~/cases</span>
+      <!-- the portrait is the centrepiece; the terminal session overlaps it -->
+      <div class="hero__visual">
+        <div class="hero__frame">
+          <div class="hero__portrait" role="img" :aria-label="profile.name" data-test="hero-portrait">
+            <img v-if="profile.photo" :src="profile.photo" :alt="profile.name">
+            <span v-else class="hero__portrait-fallback" aria-hidden="true">{{ initials }}</span>
+          </div>
+
+          <div class="hero__badge">
+            <span class="hero__badge-dot" aria-hidden="true" />
+            {{ tdc('Available for projects') }}
+          </div>
         </div>
 
-        <div class="hero__screen">
-          <div v-for="(line, index) in lines" :key="index" class="hero__line" :style="{ '--i': index }">
-            <div><span class="prompt">$</span> {{ line.text }}</div>
-            <div class="out" :class="{ 'out--ok': line.ok }">{{ line.ok ? '✓ ' : '' }}{{ line.out }}</div>
+        <div class="hero__terminal" role="img" :aria-label="tdc('A terminal session mixing software engineering and digital forensics')">
+          <div class="hero__bar">
+            <span class="dot dot--r" /><span class="dot dot--y" /><span class="dot dot--g" />
+            <span class="hero__bar-title">metano@lab: ~/cases</span>
           </div>
-          <div class="hero__line hero__line--live" :style="{ '--i': lines.length }">
-            <span class="prompt">$</span> <span class="hero__caret hero__caret--block" aria-hidden="true" />
+
+          <div class="hero__screen">
+            <div v-for="(line, index) in lines" :key="index" class="hero__line" :style="{ '--i': index }">
+              <div><span class="prompt">$</span> {{ line.text }}</div>
+              <div class="out" :class="{ 'out--ok': line.ok }">{{ line.ok ? '✓ ' : '' }}{{ line.out }}</div>
+            </div>
+            <div class="hero__line hero__line--live" :style="{ '--i': lines.length }">
+              <span class="prompt">$</span> <span class="hero__caret hero__caret--block" aria-hidden="true" />
+            </div>
           </div>
         </div>
       </div>
@@ -139,24 +163,61 @@ const lines = [
   pointer-events: none;
 }
 
-.hero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.hero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
 
-/* Professional headshot proportions (4:5 portrait, the standard CV/ID-photo ratio),
-   object-fit: cover so any source photo crops cleanly instead of stretching. */
-.hero__portrait {
-  width: 116px; aspect-ratio: 4 / 5; border-radius: var(--pf-radius);
-  overflow: hidden; margin-bottom: 22px;
-  border: 1px solid var(--pf-line); background: var(--pf-surface-2);
-  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .5);
+/* THE VISUAL: a large 4:5 portrait (the CV/ID-photo ratio, object-fit: cover) in an
+   accent frame, with the terminal session overlapping its lower-left corner. */
+.hero__visual { position: relative; justify-self: end; width: min(100%, 440px); padding: 0 0 70px 60px; }
+
+.hero__frame { position: relative; }
+.hero__frame::before {
+  content: ''; position: absolute; inset: -14px -14px 14px 14px; border-radius: calc(var(--pf-radius) + 10px);
+  border: 1px solid color-mix(in srgb, var(--pf-accent) 55%, transparent);
+  background: linear-gradient(150deg, color-mix(in srgb, var(--pf-accent) 22%, transparent), transparent 60%);
 }
-.hero__portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__frame::after {
+  content: ''; position: absolute; inset: 12% -18% -8% 18%; z-index: -1;
+  background: radial-gradient(closest-side, var(--pf-glow), transparent 75%); filter: blur(10px);
+}
+
+.hero__portrait {
+  position: relative; width: 100%; aspect-ratio: 4 / 5; border-radius: calc(var(--pf-radius) + 6px);
+  overflow: hidden; border: 1px solid var(--pf-line); background: var(--pf-surface-2);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7);
+}
+/* scale(1.05) trims the photo's own edges (the source has a light mark in a corner) */
+.hero__portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; transform: scale(1.05); }
+.hero__portrait::after {
+  /* a soft fade at the bottom so the overlapping terminal sits on it cleanly */
+  content: ''; position: absolute; inset: auto 0 0 0; height: 35%;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--pf-bg) 55%, transparent));
+}
 .hero__portrait-fallback {
   width: 100%; height: 100%; display: grid; place-items: center;
-  font-family: var(--pf-font-display); font-weight: 700; font-size: 30px;
+  font-family: var(--pf-font-display); font-weight: 700; font-size: 72px;
   color: var(--pf-accent); background: linear-gradient(160deg, var(--pf-surface-2), var(--pf-surface));
 }
 
-.hero__name { font-size: clamp(44px, 8.4vw, 96px); }
+.hero__badge {
+  position: absolute; top: 18px; right: -12px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
+  color: var(--pf-text); background: color-mix(in srgb, var(--pf-surface) 88%, transparent);
+  border: 1px solid var(--pf-line); backdrop-filter: blur(8px);
+  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, .6);
+}
+.hero__badge-dot {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--pf-ok);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--pf-ok) 60%, transparent); animation: pulse 2.2s ease-out infinite;
+}
+@keyframes pulse { 70% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+.hero__name { font-size: clamp(42px, 6.4vw, 84px); line-height: 1.02; }
+.hero__surname {
+  background: linear-gradient(100deg, var(--pf-accent) 0%, color-mix(in srgb, var(--pf-accent) 55%, #fff) 45%, var(--pf-cool) 55%, var(--pf-accent) 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shine 7s ease-in-out infinite;
+}
+@keyframes shine { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
 
 .hero__role {
   margin-top: 18px; font-family: var(--pf-font-mono); font-size: clamp(16px, 2.2vw, 22px);
@@ -170,17 +231,27 @@ const lines = [
 .hero__pitch { margin-top: 26px; max-width: 54ch; color: var(--pf-muted); font-size: clamp(16px, 1.6vw, 19px); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
 
+.hero__stats { display: flex; flex-wrap: wrap; gap: 14px 36px; margin: 44px 0 0; padding-top: 26px; border-top: 1px solid var(--pf-line); }
+.hero__stat { max-width: 150px; }
+.hero__stat dt {
+  font-family: var(--pf-font-display); font-weight: 800; font-size: clamp(30px, 3.4vw, 42px); line-height: 1;
+  background: linear-gradient(135deg, var(--pf-text), var(--pf-accent)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero__stat dd { margin: 8px 0 0; font-size: 13.5px; line-height: 1.4; color: var(--pf-muted); }
+
 .hero__terminal {
-  background: var(--pf-surface); border: 1px solid var(--pf-line); border-radius: var(--pf-radius);
-  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .55); overflow: hidden;
-  transform: rotate(-1.2deg);
+  position: absolute; left: 0; bottom: 0; width: min(88%, 340px);
+  background: color-mix(in srgb, var(--pf-surface) 94%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid var(--pf-line); border-radius: var(--pf-radius);
+  box-shadow: 0 30px 70px -28px rgba(0, 0, 0, .7); overflow: hidden;
+  transform: rotate(-1.5deg);
 }
 .hero__bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; background: var(--pf-surface-2); border-bottom: 1px solid var(--pf-line); }
 .dot { width: 11px; height: 11px; border-radius: 50%; }
 .dot--r { background: #ff5f57; } .dot--y { background: #febc2e; } .dot--g { background: #28c840; }
 .hero__bar-title { margin-left: 10px; font-family: var(--pf-font-mono); font-size: 12.5px; color: var(--pf-muted); }
 
-.hero__screen { padding: 20px 20px 24px; font-family: var(--pf-font-mono); font-size: 14px; line-height: 1.75; min-height: 250px; }
+.hero__screen { padding: 14px 16px 16px; font-family: var(--pf-font-mono); font-size: 12.5px; line-height: 1.65; min-height: 196px; }
 .hero__line { opacity: 0; animation: line-in .5s ease forwards; animation-delay: calc(var(--i) * .55s + .3s); }
 .hero__line .prompt { color: var(--pf-accent); }
 .hero__line .out { color: var(--pf-muted); padding-left: 1.4ch; }
@@ -191,6 +262,10 @@ const lines = [
 
 @media (max-width: 900px) {
   .hero__inner { grid-template-columns: 1fr; }
-  .hero__terminal { transform: none; }
+  .hero__visual { justify-self: center; order: -1; width: min(100%, 360px); padding: 14px 14px 0 0; }
+  .hero__badge { right: 8px; }
+  /* on a narrow screen the terminal goes under the photo (it would cover the face),
+     just touching its lower edge */
+  .hero__terminal { position: relative; width: 100%; margin-top: -36px; transform: none; }
 }
 </style>
