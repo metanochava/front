@@ -63,6 +63,7 @@
 .rs-md h3 { font-size: 18.5px; margin: 30px 0 10px; scroll-margin-top: calc(var(--rs-header) + 16px); }
 .rs-md h4 { font-size: 16px; margin: 22px 0 8px; }
 .rs-md p, .rs-md ul, .rs-md ol { margin: 0 0 14px; }
+.rs-md p, .rs-md li, .rs-md td { overflow-wrap: anywhere; }
 .rs-md ul, .rs-md ol { padding-left: 22px; }
 .rs-md li { margin: 4px 0; }
 .rs-md a { color: var(--rs-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--rs-accent) 35%, transparent); }

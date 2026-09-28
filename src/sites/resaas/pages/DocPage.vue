@@ -37,7 +37,10 @@ function scrollToId (id, smooth = true) {
 }
 
 async function afterRender () {
+  // the app router's scrollBehavior resets to the top after navigating: scroll after it
+  await router.isReady()
   await nextTick()
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
   const title = rendered.value ? titleOf(raw.value, slug.value) : tdc('Page not found')
   document.title = `${title} — RESAAS`
   const anchor = route.query.a || (route.query.h ? headingId(route.query.h) : '')

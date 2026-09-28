@@ -96,6 +96,7 @@ const activeProduct = computed(() => route.params.product || null)
             dense
             outlined
             type="search"
+            hide-bottom-space
             :placeholder="tdc('Search the docs') + '  ( / )'"
             class="rs-search__input"
             data-test="docs-search"
