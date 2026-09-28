@@ -57,13 +57,6 @@
               {{ tdc('No need to choose a doctor - the patient will be seen by any available doctor at the health unit.') }}
             </div>
 
-            <div class="row justify-end q-mt-md">
-              <q-btn
-                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
-                :disable="!canLeaveStep1"
-                @click="step = isGeral ? 3 : 2"
-              />
-            </div>
           </q-step>
 
           <!-- ============ STEP 2: MÉDICO (skipped for a "GERAL"-code specialty:
@@ -100,15 +93,6 @@
                 </q-item-section>
               </q-item>
             </q-list>
-
-            <div class="row justify-between q-mt-md">
-              <q-btn flat :label="tdc('Back')" icon="arrow_back" @click="step = 1" />
-              <q-btn
-                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
-                :disable="!form.medico"
-                @click="step = 3"
-              />
-            </div>
           </q-step>
 
           <!-- ============ STEP 3: DATA E HORA ============ -->
@@ -193,16 +177,6 @@
                 </template>
               </div>
             </div>
-
-            <div class="row justify-between q-mt-md">
-              <q-btn v-if="!isEditMode" flat :label="tdc('Back')" icon="arrow_back" @click="step = isGeral ? 1 : 2" />
-              <div v-else />
-              <q-btn
-                color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
-                :disable="!form.hora_inicio"
-                @click="step = 4"
-              />
-            </div>
           </q-step>
 
           <!-- ============ STEP 4: CONFIRMAÇÃO ============ -->
@@ -244,20 +218,31 @@
             />
 
             <div v-if="errorMsg" class="text-negative text-caption q-mt-sm">{{ errorMsg }}</div>
-
-            <div class="row justify-between q-mt-md">
-              <q-btn flat :label="tdc('Back')" icon="arrow_back" @click="step = 3" />
-              <q-btn
-                color="primary"
-                :label="isEditMode ? tdc('Save Changes') : tdc('Schedule Consultation')"
-                icon-right="event_available"
-                :loading="saving"
-                @click="save"
-              />
-            </div>
           </q-step>
         </q-stepper>
       </div>
+
+      <!-- static footer (the modal pattern): the step navigation never scrolls away -->
+      <template v-if="!loadingEdit" #footer>
+        <s-btn v-if="prevStep" flat :label="tdc('Back')" icon="arrow_back" data-test="step-back" @click="step = prevStep" />
+        <q-space />
+        <s-btn
+          v-if="step < 4"
+          color="primary" :label="tdc('Continue')" icon-right="arrow_forward"
+          :disable="!canGoNext"
+          data-test="step-next"
+          @click="goNext"
+        />
+        <s-btn
+          v-else
+          color="primary"
+          :label="isEditMode ? tdc('Save Changes') : tdc('Schedule Consultation')"
+          icon-right="event_available"
+          :loading="saving"
+          data-test="step-save"
+          @click="save"
+        />
+      </template>
     </s-modal-card>
   </q-dialog>
 </template>
@@ -348,6 +333,26 @@ const saving = ref(false)
 const errorMsg = ref('')
 
 const canLeaveStep1 = computed(() => !!form.especialidade && !!(props.pacienteId || form.paciente))
+
+// step navigation, shown in the modal's static footer
+const prevStep = computed(() => ({
+  1: null,
+  2: 1,
+  3: isEditMode.value ? null : (isGeral.value ? 1 : 2),
+  4: 3,
+})[step.value] ?? null)
+
+const canGoNext = computed(() => ({
+  1: canLeaveStep1.value,
+  2: !!form.medico,
+  3: !!form.hora_inicio,
+})[step.value] ?? false)
+
+function goNext() {
+  if (!canGoNext.value) return
+  if (step.value === 1) step.value = isGeral.value ? 3 : 2
+  else step.value += 1
+}
 
 // ---------------- ESPECIALIDADE "GERAL" (no doctor chosen at booking time) ----------------
 // especialidadeSelectUrl (?select=true) only returns {id, value, label} - the
