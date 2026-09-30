@@ -9,6 +9,7 @@ import { resaasSiteRoutes } from 'src/sites/resaas/routes'
 
 import { stockRoutes } from './../pages/stock/routes'
 import { saudeRoutes } from './../pages/saude/routes'
+import { hrRoutes } from './../pages/hr/routes'
 import { vendasRoutes } from './../pages/vendas/routes'
 import { farmaciaRoutes } from './../pages/farmacia/routes'
 
@@ -73,6 +74,7 @@ if(siteRoutes.length !== 0 ){
         },
         ...restRoutes,
         ...stockRoutes,
+        ...hrRoutes,
         ...saudeRoutes,
         ...vendasRoutes,
         ...farmaciaRoutes],

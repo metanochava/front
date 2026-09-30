@@ -93,7 +93,8 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { tdc, ds, useEmployeeStore } from 'quasar_resaas'
+import { tdc, ds } from 'quasar_resaas'
+import { useEmployeeStore } from '../../hr/stores/EmployeeStore.js'
 import { useMedicoStore } from '../medico/medicoStore'
 
 const props = defineProps({
