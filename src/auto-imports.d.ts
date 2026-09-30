@@ -100,6 +100,7 @@ declare global {
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useEmployeeStore: typeof import('quasar_resaas').useEmployeeStore
+  const useEntitlementStore: typeof import('quasar_resaas').useEntitlementStore
   const useEntityStore: typeof import('quasar_resaas').useEntityStore
   const useEntityTypeStore: typeof import('quasar_resaas').useEntityTypeStore
   const useGroupStore: typeof import('quasar_resaas').useGroupStore
@@ -226,7 +227,7 @@ declare module 'vue' {
     readonly useBranchStore: UnwrapRef<typeof import('quasar_resaas')['useBranchStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useEmployeeStore: UnwrapRef<typeof import('quasar_resaas')['useEmployeeStore']>
+    readonly useEntitlementStore: UnwrapRef<typeof import('quasar_resaas')['useEntitlementStore']>
     readonly useEntityStore: UnwrapRef<typeof import('quasar_resaas')['useEntityStore']>
     readonly useEntityTypeStore: UnwrapRef<typeof import('quasar_resaas')['useEntityTypeStore']>
     readonly useGroupStore: UnwrapRef<typeof import('quasar_resaas')['useGroupStore']>

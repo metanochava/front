@@ -107,7 +107,7 @@
     "useBranchStore": true,
     "useCssModule": true,
     "useCssVars": true,
-    "useEmployeeStore": true,
+    "useEntitlementStore": true,
     "useEntityStore": true,
     "useEntityTypeStore": true,
     "useGroupStore": true,
