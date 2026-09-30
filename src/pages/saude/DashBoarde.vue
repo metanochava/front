@@ -48,18 +48,12 @@
                 {{ tdc('Consultations in the Last 7 Days') }}
               </div>
 
-              <div v-for="(d, i) in consultasPorDia" :key="d.label + i" class="q-mb-sm">
-                <div class="row items-center justify-between text-caption q-mb-xs">
-                  <span>{{ d.label }}</span>
-                  <span class="text-weight-medium">{{ d.value }}</span>
-                </div>
-                <div class="bar-track">
-                  <div
-                    class="bar-fill"
-                    :style="{ width: d.pct + '%', background: chartColors[i % chartColors.length] }"
-                  />
-                </div>
-              </div>
+              <s-chart
+                type="bar"
+                :labels="consultasPorDia.map(d => d.label)"
+                :series="[{ name: 'Consultations', data: consultasPorDia.map(d => d.value) }]"
+                :height="240"
+              />
             </q-card-section>
           </s-card>
         </div>
@@ -71,33 +65,17 @@
                 {{ tdc('Exam Requests') }}
               </div>
 
-              <div class="row items-center q-col-gutter-md">
-                <div class="col-5">
-                  <svg viewBox="0 0 42 42" class="donut-chart">
-                    <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="rgba(128,128,128,.15)" stroke-width="6" />
-                    <circle
-                      v-for="seg in pedidosDonut" :key="seg.label"
-                      cx="21" cy="21" r="15.9"
-                      fill="transparent"
-                      :stroke="seg.color"
-                      stroke-width="6"
-                      stroke-linecap="round"
-                      :stroke-dasharray="`${seg.pct} ${100 - seg.pct}`"
-                      :stroke-dashoffset="seg.dashoffset"
-                    />
-                    <text x="21" y="24" text-anchor="middle" class="donut-center">{{ pedidos.length }}</text>
-                  </svg>
-                </div>
-                <div class="col-7">
-                  <div v-for="seg in pedidosDonut" :key="'l' + seg.label" class="row items-center q-mb-xs">
-                    <div class="legend-dot" :style="{ background: seg.color }" />
-                    <div class="text-caption q-ml-xs">{{ tdc(seg.label) }} — {{ seg.value }}</div>
-                  </div>
-                  <div v-if="!pedidos.length" class="text-caption text-grey-6">
-                    {{ tdc('No data') }}
-                  </div>
-                </div>
+              <div v-if="!pedidos.length" class="text-caption text-grey-6">
+                {{ tdc('No data') }}
               </div>
+              <s-chart
+                v-else
+                type="donut"
+                :labels="pedidosDonut.map(d => d.label)"
+                :series="pedidosDonut.map(d => d.value)"
+                :colors="pedidosDonut.map(d => d.color)"
+                :height="260"
+              />
             </q-card-section>
           </s-card>
         </div>
@@ -118,18 +96,14 @@
                 {{ tdc('No data') }}
               </div>
 
-              <div v-for="(d, i) in examesPorClasse" :key="d.label" class="q-mb-sm">
-                <div class="row items-center justify-between text-caption q-mb-xs">
-                  <span>{{ d.label }}</span>
-                  <span class="text-weight-medium">{{ d.value }}</span>
-                </div>
-                <div class="bar-track">
-                  <div
-                    class="bar-fill"
-                    :style="{ width: d.pct + '%', background: chartColors[i % chartColors.length] }"
-                  />
-                </div>
-              </div>
+              <s-chart
+                v-else
+                type="bar"
+                horizontal
+                :labels="examesPorClasse.map(d => d.label)"
+                :series="[{ name: 'Exams', data: examesPorClasse.map(d => d.value) }]"
+                :height="Math.max(200, examesPorClasse.length * 34 + 60)"
+              />
             </q-card-section>
           </s-card>
         </div>
@@ -219,11 +193,6 @@ const todayLabel = new Date().toLocaleDateString(undefined, {
   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
 })
 
-const chartColors = [
-  'var(--q-primary)', 'var(--q-secondary)', 'var(--q-accent)',
-  'var(--q-info)', 'var(--q-warning)', 'var(--q-positive)'
-]
-
 onMounted(async () => {
   loading.value = true
 
@@ -279,23 +248,15 @@ const consultasPorDia = computed(() => {
 })
 
 function buildDonut(items) {
-  const total = items.reduce((sum, i) => sum + i.value, 0) || 1
-  let cumulative = 0
-
-  return items.map(i => {
-    const pct = (i.value / total) * 100
-    const seg = { ...i, pct, dashoffset: 25 - cumulative }
-    cumulative += pct
-    return seg
-  })
+  return items
 }
 
 const pedidosUrgentes = computed(() => pedidos.value.filter(p => p.urgente).length)
 const pedidosNormais = computed(() => pedidos.value.length - pedidosUrgentes.value)
 
 const pedidosDonut = computed(() => buildDonut([
-  { label: 'Urgent', value: pedidosUrgentes.value, color: 'var(--q-negative)' },
-  { label: 'Normal', value: pedidosNormais.value, color: 'var(--q-primary)' }
+  { label: 'Urgent', value: pedidosUrgentes.value, color: 'negative' },
+  { label: 'Normal', value: pedidosNormais.value, color: 'primary' }
 ]))
 
 const examesPorClasse = computed(() => {
@@ -371,31 +332,6 @@ const quickLinks = [
   box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
 }
 
-.bar-track {
-  height: 10px;
-  border-radius: 6px;
-  background: rgba(128, 128, 128, .15);
-  overflow: hidden;
-}
-.bar-fill {
-  height: 100%;
-  border-radius: 6px;
-  transition: width .4s ease;
-}
 
-.donut-chart {
-  width: 100%;
-}
-.donut-center {
-  font-size: 8px;
-  font-weight: 700;
-  fill: currentColor;
-}
 
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 </style>
