@@ -293,7 +293,7 @@ const canBookNow = computed(() => !isEditMode.value && User.can('check_in_agenda
 const step = ref(1)
 
 const pacienteSelectUrl = url({ type: 'u', url: 'saude/pacientes', params: { select: 'true' } })
-const especialidadeSelectUrl = url({ type: 'u', url: 'hr/specialties', params: { select: 'true' } })
+const especialidadeSelectUrl = url({ type: 'u', url: 'hr/specialtys/', params: { select: 'true' } })
 const consultorioSelectUrl = url({ type: 'u', url: 'saude/consultorios', params: { select: 'true' } })
 
 const estadoOptions = [
@@ -393,7 +393,7 @@ async function loadEspecialidadeCode() {
   especialidadeCode.value = ''
   if (!form.especialidade) return
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: `hr/specialties/${form.especialidade}/` }))
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: `hr/specialtys/${form.especialidade}/` }))
     especialidadeCode.value = data.code || ''
   } catch {
     especialidadeCode.value = ''
