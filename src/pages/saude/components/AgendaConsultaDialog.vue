@@ -100,14 +100,26 @@
             :name="3"
             :title="tdc('Date and Time')"
             icon="event_available"
-            :done="step > 3 && !!form.hora_inicio"
+            :done="step > 3 && (immediate || !!form.hora_inicio)"
           >
+            <!-- "Now": the patient is here - checked in at once, waiting for vital signs -->
+            <div v-if="canBookNow" class="q-mb-md">
+              <s-toggle
+                v-model="immediate"
+                :label="tdc('Now: the patient is here')"
+                data-test="book-now"
+              />
+              <div v-if="immediate" class="text-caption text-grey-7 q-mt-xs">
+                {{ tdc('The appointment is for today at the current time, already checked in: the patient waits for vital signs.') }}
+              </div>
+            </div>
+
             <div v-if="isEditMode" class="q-mb-md">
               <div class="text-caption text-grey-6">{{ tdc('Doctor') }}</div>
               <div class="text-subtitle1">{{ medicoSelecionadoLabel }}</div>
             </div>
 
-            <div class="row q-col-gutter-md">
+            <div v-if="!immediate" class="row q-col-gutter-md">
               <div class="col-12 col-sm-6 flex flex-center">
                 <q-date
                   v-model="form.data"
@@ -189,8 +201,13 @@
               <div class="text-caption text-grey-7">{{ tdc('Summary') }}</div>
               <div class="text-body2 q-mt-xs">
                 <div><b>{{ tdc('Doctor') }}:</b> {{ isGeral ? tdc('Any available doctor') : medicoSelecionadoLabel }}</div>
-                <div><b>{{ tdc('Date') }}:</b> {{ form.data }}</div>
-                <div><b>{{ tdc('Time') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
+                <template v-if="immediate">
+                  <div><b>{{ tdc('When') }}:</b> {{ tdc('Now') }} — {{ tdc('Checked in, waiting for vital signs') }}</div>
+                </template>
+                <template v-else>
+                  <div><b>{{ tdc('Date') }}:</b> {{ form.data }}</div>
+                  <div><b>{{ tdc('Time') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
+                </template>
               </div>
             </s-card>
 
@@ -204,6 +221,7 @@
             />
 
             <q-select
+              v-if="!immediate"
               v-model="form.estado"
               :options="estadoOptions"
               emit-value map-options
@@ -236,7 +254,7 @@
         <s-btn
           v-else
           color="primary"
-          :label="isEditMode ? tdc('Save Changes') : tdc('Schedule Consultation')"
+          :label="isEditMode ? tdc('Save Changes') : (immediate ? tdc('Check in now') : tdc('Schedule Consultation'))"
           icon-right="event_available"
           :loading="saving"
           data-test="step-save"
@@ -249,7 +267,7 @@
 
 <script setup>
 import { reactive, ref, watch, computed } from 'vue'
-import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage, useUserStore } from 'quasar_resaas'
 import { useAgendaStore } from './../agenda/agendaStore'
 
 const props = defineProps({
@@ -265,6 +283,12 @@ const editMedicoLabel = ref('')
 const emit = defineEmits(['update:modelValue', 'saved'])
 
 const Agenda = useAgendaStore()
+const User = useUserStore()
+
+// "Now" (walk-in): only when booking (not editing) and allowed to check in -
+// the backend refuses it otherwise (403) and decides date, time and state.
+const immediate = ref(false)
+const canBookNow = computed(() => !isEditMode.value && User.can('check_in_agenda'))
 
 const step = ref(1)
 
@@ -345,7 +369,7 @@ const prevStep = computed(() => ({
 const canGoNext = computed(() => ({
   1: canLeaveStep1.value,
   2: !!form.medico,
-  3: !!form.hora_inicio,
+  3: immediate.value || !!form.hora_inicio,
 })[step.value] ?? false)
 
 function goNext() {
@@ -573,6 +597,7 @@ async function loadForEdit(id) {
 // ---------------- DIÁLOGO ----------------
 function resetForm() {
   Object.assign(form, emptyForm())
+  immediate.value = false
   errorMsg.value = ''
   step.value = 1
   slots.value = []
@@ -596,7 +621,7 @@ function extractError(e) {
 async function save() {
   errorMsg.value = ''
 
-  if (!form.paciente || (!form.medico && !isGeral.value) || !form.data || !form.hora_inicio) {
+  if (!form.paciente || (!form.medico && !isGeral.value) || (!immediate.value && (!form.data || !form.hora_inicio))) {
     errorMsg.value = tdc('Patient, doctor, date and start time are required.')
     return
   }
@@ -613,6 +638,17 @@ async function save() {
       estado: form.estado,
       motivo: form.motivo,
       observacao: form.observacao,
+    }
+    if (immediate.value) {
+      // the server sets today / now / waiting; sent only so the form is valid
+      const now = new Date()
+      Object.assign(payload, {
+        immediate: true,
+        data: todayISO(),
+        hora_inicio: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+        hora_fim: null,
+        estado: 'em_espera',
+      })
     }
 
     let result
