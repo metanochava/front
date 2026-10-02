@@ -48,7 +48,7 @@ export const SECTIONS = [
       { key: 'frequencia_respiratoria', label: 'Respiratory rate', icon: 'airline_seat_flat', step: 1 },
       { key: 'pulso', label: 'Pulse', icon: 'timeline', step: 1, cols: 'col-6 col-sm-4' },
       {
-        key: 'glicemia', label: 'Blood glucose', icon: 'water_drop', step: 1,
+        key: 'glicemia', label: 'Blood glucose', icon: 'water_drop', step: 0.1,
         choices: {
           key: 'glicemia_momento',
           options: [
@@ -77,7 +77,7 @@ export const SECTIONS = [
 export const UNITS = {
   peso: 'kg', altura: 'm', circunferencia_abdominal: 'cm', temperatura: '°C',
   frequencia_cardiaca: 'bpm', frequencia_respiratoria: 'rpm', pulso: 'bpm',
-  saturacao_oxigenio: '%', ta_sistolica: 'mmHg', ta_diastolica: 'mmHg', glicemia: 'mg/dL'
+  saturacao_oxigenio: '%', ta_sistolica: 'mmHg', ta_diastolica: 'mmHg', glicemia: 'mmol/L'
 }
 
 export const MEASURED = [...SECTIONS.flatMap(s => s.fields.map(f => f.key)), 'dor']
@@ -126,17 +126,18 @@ export const RULES = {
     [x => x >= 90, 'warning', 'Hypertension'],
     [x => x >= 85, 'attention', 'Elevated']
   ]),
+  // mmol/L (SI) - same cut-offs as saude/services/vital_signs_service.py
   glicemia: (v, values = {}) => {
-    if (v < 54) return { level: 'critical', label: 'Hypoglycaemia' }
-    if (v < 70) return { level: 'warning', label: 'Hypoglycaemia' }
-    if (v > 400) return { level: 'critical', label: 'Severe hyperglycaemia' }
+    if (v < 3.0) return { level: 'critical', label: 'Hypoglycaemia' }
+    if (v < 3.9) return { level: 'warning', label: 'Hypoglycaemia' }
+    if (v > 22.2) return { level: 'critical', label: 'Severe hyperglycaemia' }
     const fasting = values.glicemia_momento === 'jejum'
     if (fasting) {
-      if (v >= 126) return { level: 'warning', label: 'Hyperglycaemia' }
-      if (v >= 100) return { level: 'attention', label: 'Impaired fasting glucose' }
+      if (v >= 7.0) return { level: 'warning', label: 'Hyperglycaemia' }
+      if (v >= 5.6) return { level: 'attention', label: 'Impaired fasting glucose' }
     } else {
-      if (v >= 200) return { level: 'warning', label: 'Hyperglycaemia' }
-      if (v >= 140) return { level: 'attention', label: 'Elevated' }
+      if (v >= 11.1) return { level: 'warning', label: 'Hyperglycaemia' }
+      if (v >= 7.8) return { level: 'attention', label: 'Elevated' }
     }
     return { level: 'normal', label: '' }
   },
