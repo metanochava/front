@@ -137,7 +137,7 @@
                   caption
                 >
                   {{ tdc('Observation') }}:
-                  <span v-html="row.observacao"></span>
+                  <span v-html="sanitizeClinicalHtml(row.observacao)"></span>
                 </q-item-label>
 
               </q-item-section>
@@ -307,6 +307,7 @@ import { useRouter } from 'vue-router'
 import { HTTPAuth, url, tdc } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import { usePacienteStore } from './../paciente/pacienteStore'
+import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 
 const Paciente = usePacienteStore()

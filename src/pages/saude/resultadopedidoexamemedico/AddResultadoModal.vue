@@ -40,8 +40,8 @@
               {{ tdc('This result is validated and cannot be changed. Amend it to create a new revision.') }}
             </div>
             <div v-if="item.resultado.valor_resultado"><b>{{ tdc('Result value') }}:</b> {{ item.resultado.valor_resultado }}</div>
-            <!-- eslint-disable-next-line vue/no-v-html -- the laboratory's own report (s-editor) -->
-            <div v-if="item.resultado.laudo" class="q-mt-sm" v-html="item.resultado.laudo" />
+            <!-- eslint-disable-next-line vue/no-v-html -- the laboratory's report (s-editor), sanitized -->
+            <div v-if="item.resultado.laudo" class="q-mt-sm" v-html="sanitizeClinicalHtml(item.resultado.laudo)" />
             <div v-if="item.resultado.observacao" class="q-mt-sm text-grey-8">{{ plain(item.resultado.observacao) }}</div>
           </template>
 
@@ -131,6 +131,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { tdc, url, HTTPAuth, useUserStore } from 'quasar_resaas'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
 import ExamResultDialog from '../components/ExamResultDialog.vue'
+import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 const props = defineProps({
   modelValue: Boolean

@@ -212,11 +212,11 @@
                 </q-item-label>
 
                 <q-item-label v-if="item.instrucoes" caption>
-                  <span v-html="item.instrucoes"></span>
+                  <span v-html="sanitizeClinicalHtml(item.instrucoes)"></span>
                 </q-item-label>
 
                 <q-item-label v-if="item.observacao" caption>
-                  <span v-html="item.observacao"></span>
+                  <span v-html="sanitizeClinicalHtml(item.observacao)"></span>
                 </q-item-label>
               </q-item-section>
 
@@ -332,6 +332,7 @@ import ClassExameModal from './ClassExameModal.vue'
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore.js'
 
 import { usePacienteStore } from './../paciente/pacienteStore'
+import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 
 const Paciente = usePacienteStore()

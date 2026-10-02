@@ -157,14 +157,14 @@
                   v-if="item.instrucoes"
                   caption
                 >
-                  <span v-html="item.instrucoes"></span>
+                  <span v-html="sanitizeClinicalHtml(item.instrucoes)"></span>
                 </q-item-label>
 
                 <q-item-label
                   v-if="item.observacao"
                   caption
                 >
-                  <span v-html="item.observacao"></span>
+                  <span v-html="sanitizeClinicalHtml(item.observacao)"></span>
                 </q-item-label>
               </q-item-section>
 
@@ -431,6 +431,7 @@ import { useTipoexamemedicoStore } from '../tipoexamemedico/tipoexamemedicoStore
 import { useClasseexamemedicoStore } from '../classeexamemedico/classeexamemedicoStore.js'
 import { useExamemedicoStore } from '../examemedico/examemedicoStore.js'
 import { useItempedidoexamemedicoStore } from './itempedidoexamemedicoStore.js'
+import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 const route = useRoute()
 const router = useRouter()
