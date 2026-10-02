@@ -147,7 +147,6 @@ declare module 'vue' {
     readonly HTTPClient: UnwrapRef<typeof import('quasar_resaas')['HTTPClient']>
     readonly HTTPClientBlob: UnwrapRef<typeof import('quasar_resaas')['HTTPClientBlob']>
     readonly JSONSafeParse: UnwrapRef<typeof import('quasar_resaas')['JSONSafeParse']>
-    readonly ascii: UnwrapRef<typeof import('quasar_resaas')['ascii']>
     readonly authRoutes: UnwrapRef<typeof import('quasar_resaas')['authRoutes']>
     readonly autoLabel: UnwrapRef<typeof import('quasar_resaas')['autoLabel']>
     readonly buildFormFromSchema: UnwrapRef<typeof import('quasar_resaas')['buildFormFromSchema']>

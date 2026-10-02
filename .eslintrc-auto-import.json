@@ -27,7 +27,6 @@
     "Slots": true,
     "VNode": true,
     "WritableComputedRef": true,
-    "ascii": true,
     "authRoutes": true,
     "autoLabel": true,
     "buildFormFromSchema": true,
