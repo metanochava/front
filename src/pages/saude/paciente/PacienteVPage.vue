@@ -252,23 +252,10 @@
           <div v-else-if="!consultas.data.length" class="text-caption text-grey-6 q-pa-md text-center">
             {{ tdc('No consultations recorded') }}
           </div>
-          <q-list v-else separator>
-            <q-item
-              v-for="c in consultas.data" :key="c.id" clickable
-              :to="{ name: 'view_consulta', params: { id: c.id } }"
-            >
-              <q-item-section avatar>
-                <q-icon name="event_available" color="primary" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ c.diagnostico || c.dc || tdc('No diagnosis recorded') }}</q-item-label>
-                <q-item-label caption>{{ c.employee?.label || '—' }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label caption>{{ c.data }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <!-- every consultation with all its content (ConsultationCard) -->
+          <div v-else class="q-pa-sm">
+            <ConsultationCard v-for="c in consultas.data" :key="c.id" :consulta="c" />
+          </div>
         </s-card>
 
 
@@ -427,6 +414,7 @@ import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 import LabEvolutionDialog from './../components/LabEvolutionDialog.vue'
+import ConsultationCard from './../components/ConsultationCard.vue'
 import { useUserStore } from 'quasar_resaas'
 
 const User = useUserStore()

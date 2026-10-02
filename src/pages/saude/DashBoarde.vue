@@ -115,24 +115,10 @@
                 {{ tdc('Recent Consultations') }}
               </div>
 
-              <q-list v-if="consultasRecentes.length" separator>
-                <q-item
-                  v-for="c in consultasRecentes" :key="c.id"
-                  clickable
-                  @click="router.push({ name: 'view_consulta', params: { id: c.id } })"
-                >
-                  <q-item-section avatar>
-                    <q-avatar color="primary" text-color="white" icon="person" size="36px" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ c.paciente?.label || tdc('Patient') }}</q-item-label>
-                    <q-item-label caption lines="1">{{ c.diagnostico || c.dc || '—' }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-item-label caption>{{ c.data }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
+              <!-- every consultation with all its content (ConsultationCard) -->
+              <div v-if="consultasRecentes.length">
+                <ConsultationCard v-for="c in consultasRecentes" :key="c.id" :consulta="c" show-patient />
+              </div>
 
               <div v-else class="text-caption text-grey-6">
                 {{ tdc('No data') }}
@@ -174,6 +160,7 @@ import { usePedidoexamemedicoStore } from './pedidoexamemedico/pedidoexamemedico
 import { useExamemedicoStore } from './examemedico/examemedicoStore'
 import { useReceitamedicaStore } from './receitamedica/receitamedicaStore'
 import { useAtestadomedicoStore } from './atestadomedico/atestadomedicoStore'
+import ConsultationCard from './components/ConsultationCard.vue'
 import { useGuiatransferenciaStore } from './guiatransferencia/guiatransferenciaStore'
 
 const router = useRouter()
