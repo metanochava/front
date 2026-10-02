@@ -1,14 +1,25 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <q-dialog v-model="open" persistent full-width full-height>
+    <!-- full width and height: the card fills the dialog (s-modal-card fullscreen);
+         header and footer stay in place, only the body scrolls -->
     <s-modal-card
       :title="tdc('Record vital signs')"
       icon="monitor_heart"
-      width="1080px"
+      fullscreen
       form
       data-test="vital-signs-dialog"
       @close="open = false"
       @submit="save"
     >
+      <!-- record now / the patient's earlier records as charts (view_dadovital) -->
+      <template v-if="ctx && canSeeCharts" #subheader>
+        <q-tabs v-model="tab" dense no-caps align="justify" class="text-primary full-width">
+          <q-tab name="record" icon="edit_note" :label="tdc('Record')" data-test="vital-signs-tab-record" />
+          <q-tab name="charts" icon="show_chart" :label="tdc('Charts')" data-test="vital-signs-tab-charts" />
+          <q-tab name="all" icon="stacked_line_chart" :label="tdc('All')" data-test="vital-signs-tab-all" />
+        </q-tabs>
+      </template>
+
       <div v-if="loading" class="flex flex-center q-pa-xl">
         <q-spinner color="primary" size="42px" />
       </div>
@@ -18,7 +29,7 @@
         <div class="q-mt-sm text-center">{{ loadError }}</div>
       </div>
 
-      <div v-else-if="ctx" class="vitals">
+      <div v-else-if="ctx && tab === 'record'" class="vitals">
         <!-- ============ who / what: filled in by the server, read only ============ -->
         <div class="row q-col-gutter-sm q-mb-md">
           <div class="col-12 col-md-5">
@@ -203,9 +214,13 @@
         </div>
       </div>
 
+      <VitalSignsCharts v-else-if="ctx && tab === 'charts'" :paciente-id="String(ctx.patient.id)" mode="grouped" />
+      <VitalSignsCharts v-else-if="ctx && tab === 'all'" :paciente-id="String(ctx.patient.id)" mode="all" />
+
       <template #footer>
         <s-btn flat :label="tdc('Cancel')" @click="open = false" />
         <s-btn
+          v-if="tab === 'record'"
           color="primary" icon="save" type="submit" unelevated
           :label="tdc('Save vital signs')"
           :loading="saving"
@@ -226,7 +241,8 @@
 // professional, the patient and the consultation (vital_signs_service).
 // Status colours and calculations are decision support, not a diagnosis.
 import { computed, reactive, ref, watch } from 'vue'
-import { HTTPAuth, url, tdc, displayValue, AlertSuccess } from 'quasar_resaas'
+import { HTTPAuth, url, tdc, displayValue, AlertSuccess, useUserStore } from 'quasar_resaas'
+import VitalSignsCharts from './VitalSignsCharts.vue'
 import {
   TIPOS, CONSCIOUSNESS, SECTIONS, MEASURED, LEVEL_COLORS,
   num, round, vitalStatus, vitalCalculations, vitalAlerts
@@ -247,6 +263,13 @@ const open = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
 })
+
+// "Record" (the form) or "Charts" (earlier records; view_dadovital - UX only,
+// the backend checks it again). Every opening starts on "Record".
+const User = useUserStore()
+const tab = ref('record')
+const canSeeCharts = computed(() => User.can('view_dadovital'))
+watch(() => props.modelValue, (isOpen) => { if (isOpen) tab.value = 'record' })
 
 // ------------------------------------------------------------ definitions
 // definitions, reference bands and calculations: ./vitalSigns.js (shared)
