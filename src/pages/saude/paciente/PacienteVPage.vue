@@ -100,29 +100,12 @@
           <q-tab-panel name="clinical" class="q-pa-md">
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-6 q-gutter-md">
-            <!-- ALERGIAS -->
-            <s-card flat bordered :class="alergias.data.length ? 'border-negative' : ''">
-              <q-card-section class="row items-center">
-                <q-icon name="warning" color="negative" class="q-mr-xs" />
-                <div class="text-subtitle2 text-weight-medium">{{ tdc('Allergies') }}</div>
-                <q-space />
-                <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_alergiacorrente' }" />
-              </q-card-section>
-              <q-separator />
-              <q-card-section>
-                <div v-if="alergias.loading" class="flex flex-center q-pa-sm">
-                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-                </div>
-                <div v-else-if="!alergias.data.length" class="text-caption text-grey-6">
-                  {{ tdc('No allergy recorded') }}
-                </div>
-                <div v-else class="row q-gutter-xs">
-                  <q-badge v-for="a in alergias.data" :key="a.id" color="negative" outline>
-                    {{ a.nome }}
-                  </q-badge>
-                </div>
-              </q-card-section>
-            </s-card>
+            <!-- ALERGIAS: managed in place (ClinicalListCard) -->
+            <ClinicalListCard
+              title="Allergies" add-label="Add allergy" empty-text="No allergy recorded"
+              icon="warning" color="negative" highlight
+              model="alergiacorrente" endpoint="saude/alergiacorrentes" :paciente-id="route.params.id"
+            />
 
             <!-- ÚLTIMOS SINAIS VITAIS -->
             <s-card flat bordered>
@@ -180,53 +163,19 @@
 
               </div>
               <div class="col-12 col-md-6 q-gutter-md">
-            <!-- DOENÇAS CORRENTES -->
-            <s-card flat bordered>
-              <q-card-section class="row items-center">
-                <q-icon name="coronavirus" color="warning" class="q-mr-xs" />
-                <div class="text-subtitle2 text-weight-medium">{{ tdc('Current Conditions') }}</div>
-                <q-space />
-                <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_doencacorrente' }" />
-              </q-card-section>
-              <q-separator />
-              <q-card-section>
-                <div v-if="doencas.loading" class="flex flex-center q-pa-sm">
-                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-                </div>
-                <div v-else-if="!doencas.data.length" class="text-caption text-grey-6">
-                  {{ tdc('No condition recorded') }}
-                </div>
-                <div v-else class="row q-gutter-xs">
-                  <q-badge v-for="d in doencas.data" :key="d.id" color="warning" outline>
-                    {{ d.nome }}
-                  </q-badge>
-                </div>
-              </q-card-section>
-            </s-card>
+            <!-- DOENÇAS CORRENTES: managed in place (ClinicalListCard) -->
+            <ClinicalListCard
+              title="Current Conditions" add-label="Add condition" empty-text="No condition recorded"
+              icon="coronavirus" color="warning"
+              model="doencacorrente" endpoint="saude/doencacorrentes" :paciente-id="route.params.id"
+            />
 
-            <!-- MEDICAÇÃO CORRENTE -->
-            <s-card flat bordered>
-              <q-card-section class="row items-center">
-                <q-icon name="medication_liquid" color="secondary" class="q-mr-xs" />
-                <div class="text-subtitle2 text-weight-medium">{{ tdc('Current Medication') }}</div>
-                <q-space />
-                <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_medicacaocorrente' }" />
-              </q-card-section>
-              <q-separator />
-              <q-card-section>
-                <div v-if="medicacao.loading" class="flex flex-center q-pa-sm">
-                  <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-                </div>
-                <div v-else-if="!medicacao.data.length" class="text-caption text-grey-6">
-                  {{ tdc('No medication recorded') }}
-                </div>
-                <div v-else class="row q-gutter-xs">
-                  <q-badge v-for="m in medicacao.data" :key="m.id" color="secondary" outline>
-                    {{ m.nome }}
-                  </q-badge>
-                </div>
-              </q-card-section>
-            </s-card>
+            <!-- MEDICAÇÃO CORRENTE: managed in place (ClinicalListCard) -->
+            <ClinicalListCard
+              title="Current Medication" add-label="Add medication" empty-text="No medication recorded"
+              icon="medication_liquid" color="secondary"
+              model="medicacaocorrente" endpoint="saude/medicacaocorrentes" :paciente-id="route.params.id"
+            />
 
               </div>
             </div>
@@ -415,6 +364,7 @@ import PacienteHeader from './PacienteHeaderPage.vue'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 import LabEvolutionDialog from './../components/LabEvolutionDialog.vue'
 import ConsultationCard from './../components/ConsultationCard.vue'
+import ClinicalListCard from './../components/ClinicalListCard.vue'
 import { useUserStore } from 'quasar_resaas'
 
 const User = useUserStore()
@@ -602,9 +552,6 @@ function section(initial = []) {
 
 const consultas = section([])
 const agendas = section([])
-const alergias = section([])
-const doencas = section([])
-const medicacao = section([])
 const vitais = section(null)
 const timeline = section([])
 
@@ -691,15 +638,6 @@ async function fetchAgendas() {
     agendas.loading = false
   }
 }
-function fetchAlergias() {
-  return fetchList(alergias, 'saude/alergiacorrentes', { page_size: 20, ordering: 'nome' })
-}
-function fetchDoencas() {
-  return fetchList(doencas, 'saude/doencacorrentes', { page_size: 20, ordering: 'nome' })
-}
-function fetchMedicacao() {
-  return fetchList(medicacao, 'saude/medicacaocorrentes', { page_size: 20, ordering: 'nome' })
-}
 
 async function fetchVitais() {
   vitais.loading = true
@@ -719,9 +657,6 @@ async function fetchVitais() {
 function loadAllSections() {
   fetchConsultas()
   fetchAgendas()
-  fetchAlergias()
-  fetchDoencas()
-  fetchMedicacao()
   fetchVitais()
   fetchTimeline()
 }
