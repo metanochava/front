@@ -8,8 +8,9 @@
           <template v-if="showPatient">{{ consulta.data }} · </template>{{ consulta.employee?.label || '—' }}
         </div>
       </div>
-      <ConsultationActions :consulta="consulta" />
+      <ConsultationActions :consulta="consulta" :hide-documents="standalone" />
       <s-btn
+        v-if="!standalone"
         flat round dense color="primary" icon="open_in_new" data-test="consultation-open"
         @click="router.push({ name: 'view_consulta', params: { id: consulta.id } })"
       >
@@ -48,6 +49,8 @@ const props = defineProps({
   consulta: { type: Object, required: true },
   // lists of several patients (the saude dashboard) show whose it is
   showPatient: { type: Boolean, default: false },
+  // the consultation's own page: no "open", and its documents are listed beside it
+  standalone: { type: Boolean, default: false },
 })
 
 const router = useRouter()

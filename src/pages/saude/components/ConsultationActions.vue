@@ -18,7 +18,7 @@
       <s-tooltip>{{ tdc('Edit consultation') }}</s-tooltip>
     </s-btn>
     <s-btn
-      v-if="canSeeDocuments"
+      v-if="canSeeDocuments && !hideDocuments"
       flat round dense color="primary" icon="folder_open" data-test="consultation-documents"
       @click="showDocuments = true"
     >
@@ -45,6 +45,7 @@ import ConsultationDocumentsDialog from './ConsultationDocumentsDialog.vue'
 
 const props = defineProps({
   consulta: { type: Object, required: true },
+  hideDocuments: { type: Boolean, default: false },
 })
 
 const User = useUserStore()
