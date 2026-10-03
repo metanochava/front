@@ -27,10 +27,13 @@
 
           <div class="row q-col-gutter-md q-mt-md">
             <div v-for="item in about" :key="item.title" class="col-12 col-sm-4">
-              <div class="pillar">
+              <div class="pillar" :data-test="`about-${item.title.toLowerCase()}`">
                 <q-icon :name="item.icon" size="24px" />
                 <div class="pillar__title">{{ tdc(item.title) }}</div>
-                <div class="pillar__text">{{ tdc(item.desc) }}</div>
+                <div v-if="item.desc" class="pillar__text">{{ tdc(item.desc) }}</div>
+                <ol v-else class="pillar__list">
+                  <li v-for="value in item.list" :key="value">{{ tdc(value) }}</li>
+                </ol>
               </div>
             </div>
           </div>
@@ -61,28 +64,12 @@
 import { defineComponent } from "vue"
 import { tdc } from "quasar_resaas"
 import fotoAbout from './../images/docodela24.jpeg'
+import { about } from '../about'
 
 export default defineComponent({
 
   setup () {
 
-    const about = [
-      {
-        icon: "flag",
-        title: 'Mission',
-        desc: 'Offer quality medical care with humane service.'
-      },
-      {
-        icon: "visibility",
-        title: 'Vision',
-        desc: 'Be a reference in innovation and excellence in healthcare.'
-      },
-      {
-        icon: "favorite",
-        title: 'Values',
-        desc: 'Ethics, commitment, respect and dedication to patients.'
-      }
-    ]
 
     return {
       tdc,
@@ -100,6 +87,14 @@ export default defineComponent({
   padding: 88px 16px;
   color: #fff;
   background: linear-gradient(135deg, #1f8f6b 0%, #185a9d 100%);
+}
+
+.pillar__list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: .9;
 }
 
 .section-eyebrow {

@@ -39,7 +39,10 @@
             <q-icon :name="item.icon" size="28px" color="white" class="q-mr-md q-mt-xs" />
             <div>
               <div class="text-weight-bold text-white">{{ tdc(item.title) }}</div>
-              <div class="text-white" style="opacity: .85">{{ tdc(item.desc) }}</div>
+              <div v-if="item.desc" class="text-white" style="opacity: .85">{{ tdc(item.desc) }}</div>
+              <ol v-else class="text-white q-my-none q-pl-md" style="opacity: .85">
+                <li v-for="value in item.list" :key="value">{{ tdc(value) }}</li>
+              </ol>
             </div>
           </div>
         </div>
@@ -76,6 +79,7 @@
 import { defineComponent, computed } from "vue"
 import { tdc,useUserStore } from "quasar_resaas"
 import fotoAbout from './../images/docodela24.jpeg'
+import { about } from '../about'
 
 export default defineComponent({
 
@@ -86,27 +90,6 @@ const User =useUserStore()
 const ps = computed(()=>User.ps || {})
 
 
-const about=[
-
-{
-icon:"flag",
-title:'Mission',
-desc:'Offer quality medical care with humane service.'
-},
-
-{
-icon:"visibility",
-title:'Vision',
-desc:'Be a reference in innovation and excellence in healthcare.'
-},
-
-{
-icon:"favorite",
-title:'Values',
-desc:'Ethics, commitment, respect and dedication to patients.'
-}
-
-]
 
 
 const doctors=[

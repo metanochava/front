@@ -10,16 +10,14 @@
 
         <div class="row q-col-gutter-lg">
           <div
-            v-for="post in posts"
-            :key="post.id"
+            v-for="post in articles"
+            :key="post.slug"
             class="col-md-4 col-sm-6 col-12"
           >
-            <s-card
+            <router-link
               class="post"
-              tabindex="0"
-              role="button"
-              @click="openPost(post)"
-              @keyup.enter="openPost(post)"
+              :to="{ name: 'artigo', params: { slug: post.slug } }"
+              :data-test="`blog-card-${post.slug}`"
             >
               <q-img :src="post.image" :ratio="16 / 10" class="post__image">
                 <div class="post__category">{{ tdc(post.category) }}</div>
@@ -30,112 +28,32 @@
                 <div class="post__excerpt">{{ tdc(post.excerpt) }}</div>
 
                 <div class="post__meta">
-                  <span><q-icon name="event" size="14px" class="q-mr-xs" />{{ post.date }}</span>
-                  <span><q-icon name="schedule" size="14px" class="q-mr-xs" />{{ tdc(post.read_time) }}</span>
+                  <span><q-icon name="schedule" size="14px" class="q-mr-xs" />{{ post.readMinutes }} {{ tdc('min read') }}</span>
+                  <span class="post__more">{{ tdc('Read the article') }} <q-icon name="arrow_forward" size="14px" /></span>
                 </div>
               </div>
-            </s-card>
+            </router-link>
           </div>
         </div>
 
       </div>
     </div>
-
-    <!-- MODAL ARTIGO -->
-    <q-dialog v-model="postModal">
-
-      <s-modal-card :title="tdc(selectedPost.title)" width="600px">
-        <q-img :src="selectedPost.image" height="200px" />
-
-        <div class="text-caption text-grey q-mt-sm">
-          {{ tdc(selectedPost.category) }} • {{ selectedPost.date }}
-        </div>
-
-        <div class="text-body1 q-mt-md">
-          {{ tdc(selectedPost.content) }}
-        </div>
-
-        <template #footer>
-          <s-btn
-            flat
-            no-caps
-            :label="tdc('Close')"
-            v-close-popup
-          />
-        </template>
-      </s-modal-card>
-
-    </q-dialog>
-
   </section>
 </template>
 
 
 <script>
-import { defineComponent, ref } from "vue"
+import { defineComponent } from "vue"
 import { tdc } from "quasar_resaas"
+import { articles } from "../blog"
 
 export default defineComponent({
 
   setup () {
-
-    const postModal = ref(false)
-    const selectedPost = ref({})
-
-    const posts = [
-
-      {
-        id:1,
-        title:'The importance of regular check-ups',
-        category:'Prevention',
-        excerpt:'Having regular exams helps prevent disease...',
-        content:'Check-ups allow problems to be identified early and increase the chances of effective treatment.',
-        date:"10 Mar 2026",
-        read_time:'5 min',
-        image:"https://images.unsplash.com/photo-1584515933487-779824d29309?w=900&q=70&auto=format&fit=crop"
-      },
-
-      {
-        id:2,
-        title:'Taking care of your heart',
-        category:'Cardiology',
-        excerpt:'Learn how to keep your heart healthy...',
-        content:'A balanced diet and regular physical exercise are essential.',
-        date:"05 Mar 2026",
-        read_time:"4 min",
-        image:"https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=70&auto=format&fit=crop"
-      },
-
-      {
-        id:3,
-        title:'Mental health in everyday life',
-        category:'Psychology',
-        excerpt:'Tips for looking after your mental health...',
-        content:'Sleeping well, avoiding stress and seeking help are essential.',
-        date:"01 Mar 2026",
-        read_time:"6 min",
-        image:"https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=900&q=70&auto=format&fit=crop"
-      }
-
-    ]
-
-
-    function openPost (post) {
-
-      selectedPost.value = post
-      postModal.value = true
-
-    }
-
-
     return {
       tdc,
-      posts,
-      postModal,
-      selectedPost,
-      openPost
+      articles,
     }
-
   }
 
 })
@@ -167,10 +85,13 @@ export default defineComponent({
 .post {
   height: 100%;
   display: flex;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  border-radius: 20px !important;
+  border-radius: 20px;
   border: 1px solid #e3ebf5;
   transition: transform .25s, box-shadow .25s;
 }
@@ -208,6 +129,10 @@ export default defineComponent({
 }
 .post__excerpt {
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   margin-top: 8px;
   font-size: 14px;
   line-height: 1.55;
@@ -219,6 +144,10 @@ export default defineComponent({
   margin-top: 16px;
   font-size: 12px;
   color: #6b7280;
+}
+.post__more {
+  font-weight: 600;
+  color: #185a9d;
 }
 .post__meta span {
   display: inline-flex;

@@ -64,7 +64,9 @@ export default {
   align-items: center;
   justify-content: center;
 
-  overflow: hidden;
+  /* no overflow:hidden: it clipped the card's shadow into a tinted box, so the
+     container looked filled instead of transparent */
+  overflow: visible;
 }
 
 /* ÁREA DO CARTÃO */
@@ -167,7 +169,6 @@ export default {
 @media (max-width: 600px) {
   .carousel-bg {
     height: 450px;
-    border-radius: 25px;
   }
 
   .flip-card {

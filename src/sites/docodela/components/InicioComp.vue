@@ -1,5 +1,5 @@
 <template>
-  <section class="intro" data-test="docodela-intro">
+  <section id="como-funciona" class="intro" data-test="docodela-intro">
     <div class="row justify-center">
       <div class="col-12 col-md-10 row q-col-gutter-xl items-center">
 

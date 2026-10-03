@@ -91,6 +91,15 @@ export let docodelaSiteRoutes = [
         },
       },
       {
+        path:"/blog/:slug",
+        component:()=>import("./pages/ArticlePage.vue"),
+        name:"artigo",
+        meta: {
+          title: tdc('Health blog'),
+          icon: 'article',
+        },
+      },
+      {
         path:"/guia/:slug",
         component:()=>import("./pages/GuidePage.vue"),
         name:"guia",

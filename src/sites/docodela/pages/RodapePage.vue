@@ -22,60 +22,32 @@
 
     <div class="row q-col-gutter-xl">
 
-      <!-- CLINICA -->
-      <div class="col-md-4 col-12">
+      <!-- each column: a title and its links (routes of this site; an anchor
+           scrolls to that section of the page) -->
+      <div v-for="column in columns" :key="column.title" class="col-6 col-md-3" :data-test="`footer-${column.key}`">
+        <div class="footer-title q-mb-md">{{ column.brand ? column.title : tdc(column.title) }}</div>
 
-        <div class="text-h6 text-weight-bold q-mb-md">
-          Docodela
+        <div v-for="link in column.links" :key="link.label" class="footer-link-row">
+          <a
+            v-if="link.href"
+            :href="link.href"
+            :target="link.external ? '_blank' : undefined"
+            :rel="link.external ? 'noopener noreferrer' : undefined"
+            class="footer-link"
+          >
+            <q-icon v-if="link.icon" :name="link.icon" size="16px" class="q-mr-xs" />{{ tdc(link.label) }}
+            <span v-if="link.detail" class="footer-link__detail">{{ link.detail }}</span>
+          </a>
+          <a v-else href="#" class="footer-link" @click.prevent="open(link)">{{ tdc(link.label) }}</a>
         </div>
-
-        <div>
-          {{ tdc('Modern medical care with advanced technology and qualified specialists to look after your health.') }}
-        </div>
-
-      </div>
-
-
-      <!-- HORARIO -->
-      <div class="col-md-4 col-12">
-
-        <div class="text-h6 text-weight-bold q-mb-md">
-          {{ tdc('Opening hours') }}
-        </div>
-
-        <div>{{ tdc('Monday - Friday: 08:00 - 18:00') }}</div>
-        <div>{{ tdc('Saturday: 08:00 - 13:00') }}</div>
-        <div>{{ tdc('Sunday: Closed') }}</div>
-
-      </div>
-
-
-      <!-- CONTACTOS -->
-      <div class="col-md-4 col-12">
-
-        <div class="text-h6 text-weight-bold q-mb-md">
-          {{ tdc('Contacts') }}
-        </div>
-
-        <div>📧 info@docodela.co.mz</div>
-        <div>📞 +258 86 055 5999</div>
-
-        <div class="q-mt-md">
-
-          <q-btn
-            color="green"
-            icon="fab fa-whatsapp"
-            label="WhatsApp"
-            href="https://wa.me/258860555999"
-            target="_blank"
-          />
-
-        </div>
-
       </div>
 
     </div>
 
+    <!-- FRASE DE MARCA -->
+    <div class="footer-tagline text-center q-mt-xl" data-test="footer-tagline">
+      {{ tdc('Healthcare with access. Financing with purpose.') }}
+    </div>
 
     <!-- REDES SOCIAIS -->
     <div class="row justify-center q-mt-xl social">
@@ -102,14 +74,73 @@
 
 
 <script>
-import { defineComponent } from "vue"
+import { defineComponent, nextTick } from "vue"
+import { useRouter } from "vue-router"
 import { tdc } from "quasar_resaas"
+
+const PHONE = '+258 86 055 5999'
+const EMAIL = 'info@docodela.co.mz'
+
+// Docodela 24horas / Clients / Partners / Contact. `route` is a route name of
+// this site (routes.js); `anchor` a section id on that page to scroll to.
+const columns = [
+  {
+    key: 'docodela', title: 'Docodela 24horas', brand: true,
+    links: [
+      { label: 'About Docodela', route: 'sobrenos' },
+      { label: 'How it works', route: 'home', anchor: 'como-funciona' },
+      { label: 'Care', route: 'utentes' },
+      { label: 'Financing', route: 'categoria-financiamento', params: { categoria: 'financiamento-saude' } },
+    ],
+  },
+  {
+    key: 'clients', title: 'Clients',
+    links: [
+      { label: 'Start now', route: 'contacto' },
+      { label: 'Find care', route: 'home', anchor: 'ffyt' },
+      { label: 'Assess financing', route: 'calculadora' },
+      { label: 'Frequently asked questions', route: 'faqs' },
+      { label: 'Guides', route: 'home', anchor: 'guides' },
+    ],
+  },
+  {
+    key: 'partners', title: 'Partners',
+    links: [
+      { label: 'Become a partner', route: 'parceiros' },
+      { label: 'For clinics', route: 'parceiros' },
+      { label: 'For professionals', route: 'parceiros' },
+      { label: 'Contact us', route: 'contacto' },
+    ],
+  },
+  {
+    key: 'contact', title: 'Contact',
+    links: [
+      { label: 'Phone', icon: 'phone', detail: PHONE, href: `tel:${PHONE.replace(/\s/g, '')}` },
+      { label: 'WhatsApp', icon: 'fab fa-whatsapp', detail: PHONE, href: 'https://wa.me/258860555999', external: true },
+      { label: 'Email', icon: 'mail', detail: EMAIL, href: `mailto:${EMAIL}` },
+    ],
+  },
+]
 
 export default defineComponent({
 
   setup(){
+    const router = useRouter()
+
+    async function open (link) {
+      await router.push({ name: link.route, params: link.params || {} })
+      if (!link.anchor) {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        return
+      }
+      await nextTick()
+      document.getElementById(link.anchor)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
     return{
-      tdc
+      tdc,
+      columns,
+      open
     }
   }
 
@@ -159,6 +190,50 @@ export default defineComponent({
 
 }
 
+
+/* COLUNAS */
+
+.footer-title{
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.footer-link-row{
+  margin-bottom:8px;
+}
+
+.footer-link{
+  color:rgba(255,255,255,.85);
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  transition:color .2s;
+}
+
+.footer-link:hover{
+  color:#fff;
+  text-decoration:underline;
+}
+
+.footer-link__detail{
+  display:block;
+  text-transform:none;
+  letter-spacing:0;
+  opacity:.75;
+  margin-left:20px;
+}
+
+/* FRASE DE MARCA */
+
+.footer-tagline{
+  font-size:18px;
+  font-style:italic;
+  font-weight:500;
+  opacity:.95;
+}
 
 /* REDES SOCIAIS */
 
