@@ -1,8 +1,27 @@
 <template>
   <s-card flat bordered :class="highlight && rows.length ? 'border-negative' : ''" :data-test="`clinical-list-${model}`">
-    <q-card-section class="row items-center">
+    <!-- title on the left, the "add" field on its right with the button inside it -->
+    <q-card-section class="row items-center no-wrap q-py-xs">
       <q-icon :name="icon" :color="color" class="q-mr-xs" />
-      <div class="text-subtitle2 text-weight-medium">{{ tdc(title) }}</div>
+      <div class="text-subtitle2 text-weight-medium no-wrap q-mr-md">{{ tdc(title) }}</div>
+      <q-space />
+
+      <s-input
+        v-if="canAdd"
+        v-model="newName" dense hide-bottom-space class="col-5" :placeholder="tdc(addLabel)"
+        :data-test="`clinical-new-${model}`"
+        @keyup.enter="add"
+      >
+        <template #append>
+          <s-btn
+            flat round dense size="sm" :color="color" icon="add" :loading="saving"
+            :disable="!newName.trim()" :data-test="`clinical-add-${model}`"
+            @click="add"
+          >
+            <s-tooltip>{{ tdc('Add') }}</s-tooltip>
+          </s-btn>
+        </template>
+      </s-input>
     </q-card-section>
     <q-separator />
 
@@ -12,9 +31,9 @@
       </div>
 
       <template v-else>
-        <div v-if="!rows.length" class="text-caption text-grey-6 q-mb-sm">{{ tdc(emptyText) }}</div>
+        <div v-if="!rows.length" class="text-caption text-grey-6">{{ tdc(emptyText) }}</div>
 
-        <div v-else class="row q-gutter-xs q-mb-sm">
+        <div v-else class="row q-gutter-xs">
           <q-chip
             v-for="row in rows" :key="row.id"
             dense outline :color="color"
@@ -36,20 +55,6 @@
           </q-chip>
         </div>
 
-        <div v-if="canAdd" class="row items-center no-wrap q-gutter-x-sm">
-          <s-input
-            v-model="newName" dense class="col" :label="tdc(addLabel)"
-            :data-test="`clinical-new-${model}`"
-            @keyup.enter="add"
-          />
-          <s-btn
-            flat round dense :color="color" icon="add" :loading="saving"
-            :disable="!newName.trim()" :data-test="`clinical-add-${model}`"
-            @click="add"
-          >
-            <s-tooltip>{{ tdc('Add') }}</s-tooltip>
-          </s-btn>
-        </div>
       </template>
     </q-card-section>
   </s-card>

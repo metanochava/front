@@ -3,7 +3,7 @@
     <!-- full width and height: the card fills the dialog (s-modal-card fullscreen);
          header and footer stay in place, only the body scrolls -->
     <s-modal-card
-      :title="tdc('Record vital signs')"
+      :title="editingId ? tdc('Edit last record') : tdc('Record vital signs')"
       icon="monitor_heart"
       fullscreen
       form
@@ -203,8 +203,27 @@
                 <span>{{ tdc(a.field) }}: {{ tdc(a.label) }}</span>
               </div>
 
-              <div v-if="ctx.previous" class="text-caption text-grey-6 q-mt-md">
-                {{ tdc('Previous record') }}: {{ dateTimeOf(ctx.previous.created_at) }}
+              <div v-if="ctx.previous" class="row items-center q-mt-md">
+                <div class="text-caption text-grey-6 col">
+                  <template v-if="editingId">{{ tdc('Editing the record of') }} {{ dateTimeOf(ctx.previous.created_at) }}</template>
+                  <template v-else>{{ tdc('Previous record') }}: {{ dateTimeOf(ctx.previous.created_at) }}</template>
+                </div>
+                <!-- the last record can be corrected by its author within the edit
+                     window (backend flag `editable` + change_dadovital, UX only) -->
+                <s-btn
+                  v-if="!editingId && canEditPrevious"
+                  flat dense no-caps size="sm" color="primary" icon="edit"
+                  :label="tdc('Edit last record')"
+                  data-test="vital-signs-edit-last"
+                  @click="editPrevious"
+                />
+                <s-btn
+                  v-if="editingId"
+                  flat dense no-caps size="sm" color="primary" icon="add"
+                  :label="tdc('New record')"
+                  data-test="vital-signs-new-record"
+                  @click="newRecord"
+                />
               </div>
               <div class="text-caption text-grey-6 q-mt-sm">
                 {{ tdc('Reference values for adults. They support, and never replace, clinical judgement.') }}
@@ -222,7 +241,7 @@
         <s-btn
           v-if="tab === 'record'"
           color="primary" icon="save" type="submit" unelevated
-          :label="tdc('Save vital signs')"
+          :label="editingId ? tdc('Save changes') : tdc('Save vital signs')"
           :loading="saving"
           :disable="!canSave"
           data-test="vital-signs-save"
@@ -282,6 +301,9 @@ const ctx = ref(null)
 const tipo = ref('triagem')
 const values = reactive({})
 const errors = reactive({})
+// id of the record being corrected ("Edit last record"); null = a new record
+const editingId = ref(null)
+const canEditPrevious = computed(() => !!ctx.value?.previous?.editable && User.can('change_dadovital'))
 
 const patient = computed(() => ctx.value?.patient?.person || null)
 
@@ -300,6 +322,7 @@ async function load() {
   const params = agendaId ? { agenda: agendaId } : props.patientId ? { paciente: props.patientId } : null
   if (!params) return
   blank()
+  editingId.value = null
   ctx.value = null
   loadError.value = null
   loading.value = true
@@ -326,6 +349,7 @@ function timeOf(iso) { return iso ? new Date(iso).toLocaleTimeString([], { hour:
 function dateTimeOf(iso) { return iso ? new Date(iso).toLocaleString() : '-' }
 
 function previousOf(key) {
+  if (editingId.value) return null
   const value = ctx.value?.previous?.[key]
   return value === null || value === undefined ? null : Number(value)
 }
@@ -370,6 +394,30 @@ function statusOf(key) {
 const calculations = computed(() => vitalCalculations(values))
 const alerts = computed(() => vitalAlerts(values, calculations.value, statusOf))
 
+// ------------------------------------------------------------ edit the last record
+function editPrevious() {
+  const previous = ctx.value?.previous
+  if (!previous) return
+  blank()
+  for (const key of MEASURED) {
+    const value = previous[key]
+    values[key] = value === null || value === undefined ? null : Number(value)
+  }
+  if (previous.temperatura_local) values.temperatura_local = previous.temperatura_local
+  if (previous.glicemia_momento) values.glicemia_momento = previous.glicemia_momento
+  values.estado_consciencia = previous.estado_consciencia || null
+  values.observacao = previous.observacao || ''
+  if (previous.tipo) tipo.value = previous.tipo
+  for (const key of MEASURED) checkField(key)
+  editingId.value = previous.id
+}
+
+function newRecord() {
+  blank()
+  editingId.value = null
+  tipo.value = ctx.value?.tipo || 'triagem'
+}
+
 // ------------------------------------------------------------ save
 const hasMeasurement = computed(() =>
   MEASURED.some(key => num(values[key]) !== null) || !!values.estado_consciencia
@@ -377,6 +425,7 @@ const hasMeasurement = computed(() =>
 const canSave = computed(() => !!ctx.value && hasMeasurement.value && !Object.keys(errors).length && !saving.value)
 
 function payload() {
+  if (editingId.value) return editPayload()
   const body = ctx.value.agenda
     ? { agenda: ctx.value.agenda.id, tipo: tipo.value }
     : { paciente: ctx.value.patient.id, tipo: tipo.value }
@@ -391,12 +440,26 @@ function payload() {
   return body
 }
 
+// a correction sends every value (null clears one that was removed) and never
+// the patient or the appointment (the backend refuses moving the record)
+function editPayload() {
+  const body = { tipo: tipo.value }
+  for (const key of MEASURED) body[key] = num(values[key])
+  body.temperatura_local = values.temperatura_local
+  body.glicemia_momento = values.glicemia_momento
+  body.estado_consciencia = values.estado_consciencia || null
+  body.observacao = values.observacao?.trim() || ''
+  return body
+}
+
 async function save() {
   if (!canSave.value) return
   saving.value = true
   try {
-    const { data } = await HTTPAuth.post(url({ type: 'u', url: 'saude/dadovitals/' }), payload())
-    AlertSuccess(tdc('Vital signs recorded.'))
+    const { data } = editingId.value
+      ? await HTTPAuth.patch(url({ type: 'u', url: `saude/dadovitals/${editingId.value}/` }), payload())
+      : await HTTPAuth.post(url({ type: 'u', url: 'saude/dadovitals/' }), payload())
+    AlertSuccess(editingId.value ? tdc('Vital signs updated.') : tdc('Vital signs recorded.'))
     emit('saved', data)
   } catch (error) {
     // field errors stay on their tiles; the message goes through the alert funnel
