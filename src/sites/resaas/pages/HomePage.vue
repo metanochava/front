@@ -75,7 +75,7 @@ onMounted(() => { document.title = 'RESAAS — documentation' })
       <div class="rs-hero__glow" aria-hidden="true" />
       <div class="rs-wrap">
         <div class="rs-hero__badge">
-          <span class="rs-dot" /> {{ tdc('Open-source SaaS framework') }}
+          <span class="rs-dot" /> {{ tdc('Full-stack multi-tenant framework') }}
         </div>
         <h1 class="rs-hero__title">
           {{ tdc('Build multi-tenant business systems') }}

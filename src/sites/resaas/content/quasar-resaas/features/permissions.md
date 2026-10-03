@@ -91,9 +91,18 @@ The real admin screen is `pages/permission/PermissionManager.vue`, bound to
     (checked/indeterminate) for the per-app and per-model checkboxes.
 -   `toggle(permission)` / `toggleModel()` / `toggleApp()` — change the
     selection **locally** only and mark the store `dirty`.
--   `saveGroupPermissions()` — sends the whole selection in one request,
-    `POST auth/permissions/setGroupPermissions/` (`{group, permissions}`);
-    `resetChanges()` discards it.
+-   `saveGroupPermissions()` — sends only the changes against what was
+    loaded, in one request: `POST auth/permissions/setGroupPermissions/`
+    (`{group, add, remove}`, the backend's delta mode). A permission the user
+    did not touch is never sent, so an editor that opened without the group's
+    current permissions can only add, never wipe. `resetChanges()` discards
+    the local changes.
+
+The group managers (`GroupManagerEntity.vue`, `GroupManagerEntityType.vue`)
+and `GroupSEPage.vue` load the group's current permissions from
+`GET auth/groups/{id}/permissions/` (`view_group`) - the group detail
+(`GroupSerializer`) does not carry them. If that load fails, the managers close
+the editor instead of showing an empty selection.
 
 On screen (`PermissionManager.vue`):
 
@@ -101,7 +110,7 @@ On screen (`PermissionManager.vue`):
     permissions) are static; only the list scrolls. The component fills the
     height it is given, so a modal hosting it is a `flush`
     [`s-modal-card`](../components/modal-card.md) with a height (the group
-    managers use 80vh).
+    managers use a full-width dialog, 80vh high).
 -   While searching, every app section left by the filter opens, and the
     matching text (app, model, permission) is highlighted
     (`HighlightText`). A permission found by its own codename gets the

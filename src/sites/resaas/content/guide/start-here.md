@@ -1,11 +1,17 @@
 # Start here
 
-RESAAS is two libraries that build multi-tenant business systems together:
+RESAAS is a full-stack framework for building secure, multi-tenant business applications with
+Django and Quasar. It is two libraries:
 
 | Library | What it is | Install from |
 |---|---|---|
 | **django_resaas** | Django REST backend: tenants (Entity → Branch), users, groups and permissions, a CRUD engine, a JSON schema of every model, dashboards, notifications, PDF | PyPI: `pip install django_resaas` |
 | **quasar_resaas** | Vue 3 + Quasar frontend: reads that schema and renders forms, tables, filters, permissions-aware menus and dashboards | GitHub: `github:metanochava/quasar_resaas` |
+
+Both are distributed under the RESAAS Commercial License: they can be installed and used within
+the terms of that license and the **entitlements** (features, capacities, modules) enabled for
+the installation or tenant. Entitlements are enforced by the backend, never replace permissions,
+and are not a billing system.
 
 The backend **describes** (models, permissions, schema); the frontend **renders** it. You write a
 model, a serializer and a view — and get a full, tenant-scoped, permission-checked CRUD API plus a
@@ -153,11 +159,11 @@ class ProductSerializer(BaseSerializer):
 
 ```python
 # catalog/views.py
-from django_resaas.saas.core.base.views import BaseAPIView, registerView
+from django_resaas.saas.core.base.views import BaseAPIView, register_view
 from catalog.models import Product
 from catalog.serializers import ProductSerializer
 
-@registerView(module="catalog")
+@register_view(module="catalog")
 class ProductAPIView(BaseAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
