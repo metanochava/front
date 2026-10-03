@@ -62,7 +62,7 @@
             @filter="filterMedicamentos"
           />
 
-          <div v-if="defaultsSource" class="text-caption text-grey-7 q-mt-xs" data-test="prescription-defaults-source">
+          <div v-if="defaultsSource" class="text-caption q-mt-xs" style="opacity: .7" data-test="prescription-defaults-source">
             <q-icon name="auto_fix_high" size="14px" />
             {{ defaultsSource === 'last_prescription'
               ? tdc('Dosage and quantity filled in from the last prescription of this medication.')
@@ -257,10 +257,11 @@
   </q-page>
 </template>
 
-<style >
-  .prescription-banner {
-  background: #f8fbff;
-  border: 2px solid #2563eb;
+<style scoped>
+/* day / night: the theme's primary colour, a light tint of it as background */
+.prescription-banner {
+  background: color-mix(in srgb, var(--q-primary) 6%, transparent);
+  border: 2px solid var(--q-primary);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 20px;
@@ -268,21 +269,25 @@
 
 .rx-symbol {
   font-size: 48px;
-  color: #2563eb;
+  color: var(--q-primary);
   font-weight: bold;
 }
 
 .banner-title {
   font-size: 26px;
   font-weight: bold;
-  color: #2563eb;
+  color: var(--q-primary);
   letter-spacing: 2px;
 }
 
 .banner-subtitle {
   font-size: 12px;
-  color: #666;
+  opacity: .7;
   margin-top: 4px;
+}
+
+.body--dark .prescription-banner {
+  background: color-mix(in srgb, var(--q-primary) 14%, transparent);
 }
 </style>
 

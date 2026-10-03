@@ -30,7 +30,7 @@
 
     <div class="row q-col-gutter-md">
       <!-- ESQUERDA -->
-      <div class="col-md-7 col-sm-12 col-xs-12">
+      <div class="col-md-8 col-sm-12 col-xs-12">
         <div class="q-pa-md col-12">
 
           <s-btn
@@ -117,43 +117,33 @@
                           </q-item-section>
                         </template>
 
-                        <div class="q-pa-sm">
-                          <div class="row q-col-gutter-sm">
+                        <!-- one compact line per exam: name + code, and a button that adds
+                             it (a check once it is in the request) -->
+                        <div class="q-pa-xs">
+                          <div class="row q-col-gutter-xs">
                             <div
                               v-for="exame in classe.exames"
                               :key="exame.id"
-                              class="col-md-6 col-sm-6 col-xs-12"
+                              class="col-12 col-sm-6"
                             >
-                              <q-card
-                                flat
-                                bordered
-                                class="exame-card cursor-pointer"
-                                @click="selectExame(tipo, classe, exame)"
+                              <div
+                                class="exame-row row items-center no-wrap cursor-pointer"
+                                :class="{ 'exame-row--added': isAdded(exame) }"
+                                data-test="exame-row"
+                                @click="selectAndAdd(tipo, classe, exame)"
                               >
-                                <q-card-section class="q-pa-sm">
-                                  <div class="text-body2 text-weight-medium ellipsis">
-                                    {{ exame.nome }}
-                                  </div>
-
-                                  <div
-                                    v-if="exame.codigo"
-                                    class="text-caption text-grey-7"
-                                  >
-                                    {{ exame.codigo }}
-                                  </div>
-
-                                  <div class="row justify-end q-mt-xs">
-                                    <s-btn
-                                      dense
-                                      flat
-                                      round
-                                      color="primary"
-                                      icon="add"
-                                      @click="selectAndAdd(tipo, classe, exame)"
-                                    />
-                                  </div>
-                                </q-card-section>
-                              </q-card>
+                                <div class="col ellipsis text-body2">
+                                  {{ exame.nome }}
+                                  <span v-if="exame.codigo" class="text-caption q-ml-xs" style="opacity: .7">{{ exame.codigo }}</span>
+                                  <s-tooltip>{{ exame.codigo ? `${exame.codigo} - ${exame.nome}` : exame.nome }}</s-tooltip>
+                                </div>
+                                <q-icon
+                                  :name="isAdded(exame) ? 'check_circle' : 'add_circle_outline'"
+                                  :color="isAdded(exame) ? 'positive' : 'primary'"
+                                  size="18px"
+                                  class="q-ml-xs"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -168,7 +158,7 @@
       </div>
 
       <!-- DIREITA mantém igual -->
-      <div class="col-md-5 col-sm-12 col-xs-12">
+      <div class="col-md-4 col-sm-12 col-xs-12">
         <s-card flat bordered class="q-pa-md">
           <div class="row items-center q-mb-md">
             <div class="text-h6 text-weight-bold">
@@ -292,10 +282,11 @@
   </q-page>
 </template>
 
-<style >
-  .prescription-banner {
-  background: #f8fbff;
-  border: 2px solid #2563eb;
+<style scoped>
+/* day / night: the theme's primary colour, a light tint of it as background */
+.prescription-banner {
+  background: color-mix(in srgb, var(--q-primary) 6%, transparent);
+  border: 2px solid var(--q-primary);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 20px;
@@ -303,21 +294,25 @@
 
 .rx-symbol {
   font-size: 48px;
-  color: #2563eb;
+  color: var(--q-primary);
   font-weight: bold;
 }
 
 .banner-title {
   font-size: 26px;
   font-weight: bold;
-  color: #2563eb;
+  color: var(--q-primary);
   letter-spacing: 2px;
 }
 
 .banner-subtitle {
   font-size: 12px;
-  color: #666;
+  opacity: .7;
   margin-top: 4px;
+}
+
+.body--dark .prescription-banner {
+  background: color-mix(in srgb, var(--q-primary) 14%, transparent);
 }
 </style>
 
@@ -545,6 +540,10 @@ function addExame() {
   }
 }
 
+function isAdded(exame) {
+  return items.value.some(item => String(item.exame) === String(exame.id))
+}
+
 function removeExame(index) {
   items.value.splice(index, 1)
 }
@@ -555,16 +554,29 @@ function removeExame(index) {
   border: 1px solid rgba(0, 0, 0, .08);
   border-radius: 10px;
   overflow: hidden;
-  background: #fff;
 }
 
-.exame-card {
-  border-radius: 10px;
-  transition: .15s;
+.body--dark .classe-box {
+  border-color: rgba(255, 255, 255, .12);
 }
 
-.exame-card:hover {
+.exame-row {
+  border: 1px solid rgba(0, 0, 0, .08);
+  border-radius: 6px;
+  padding: 2px 6px;
+  min-height: 28px;
+  transition: border-color .15s;
+}
+
+.exame-row:hover {
   border-color: var(--q-primary);
-  transform: translateY(-1px);
+}
+
+.exame-row--added {
+  border-color: var(--q-positive);
+}
+
+.body--dark .exame-row:not(.exame-row--added):not(:hover) {
+  border-color: rgba(255, 255, 255, .12);
 }
 </style>
