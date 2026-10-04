@@ -1,6 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
-    <PacienteHeader />
+    <!-- the request's patient (patient_id: its own or its consultation's) -
+         the route :id is the request, not the patient -->
+    <PacienteHeader v-if="patientId" :patient-id="patientId" />
     <!-- FORM -->
     <div v-if="Pedidoexamemedico.loading" class="flex flex-center q-pa-lg">
       <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
@@ -16,7 +18,7 @@
 
 
 <script setup>
-// import { onMounted, watch } from 'vue'
+import { computed } from 'vue'
 // import { useRoute } from 'vue-router'
 
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore'
@@ -26,6 +28,8 @@ import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 // const route = useRoute()
 
 const Pedidoexamemedico = usePedidoexamemedicoStore()
+
+const patientId = computed(() => Pedidoexamemedico.row?.patient_id || Pedidoexamemedico.form?.patient_id || null)
 
 // watch(() => route.params,
 //   async () => {

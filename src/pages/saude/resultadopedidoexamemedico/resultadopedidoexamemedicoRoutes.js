@@ -3,6 +3,7 @@ import { tdc } from 'quasar_resaas'
 
 export let resultadopedidoexamemedicoRoutes = [
   {
+    // the results of the current patient (pacienteStore row, as the other clinical pages)
     path: '/list_resultadopedidoexamemedico',
     name: 'list_resultadopedidoexamemedico',
     component: () => import('./ResultadopedidoexamemedicoLPage.vue'),
@@ -10,7 +11,7 @@ export let resultadopedidoexamemedicoRoutes = [
       title: tdc('View of') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'list',
-      requiredRole: 'list_resultadopedidoexamemedico',
+      requiredRole: 'list_resultadoexamemedico',
     },
   },
   {
@@ -21,7 +22,7 @@ export let resultadopedidoexamemedicoRoutes = [
       title: tdc('Add') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'add',
-      requiredRole: 'add_resultadopedidoexamemedico',
+      requiredRole: 'add_resultadoexamemedico',
     },
   },
   {
@@ -32,7 +33,7 @@ export let resultadopedidoexamemedicoRoutes = [
       title: tdc('Edit') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'edit',
-      requiredRole: 'change_resultadopedidoexamemedico',
+      requiredRole: 'change_resultadoexamemedico',
     },
   },
   {
@@ -43,7 +44,7 @@ export let resultadopedidoexamemedicoRoutes = [
       title: tdc('View') + ' ' + tdc('exam request result'),
       requiresAuth: true,
       icon: 'visibility',
-      requiredRole: 'view_resultadopedidoexamemedico',
+      requiredRole: 'view_resultadoexamemedico',
     },
   }
 ]

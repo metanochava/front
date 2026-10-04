@@ -5,10 +5,10 @@
       <!-- IDENTIDADE: foto + nome, com o NID logo por baixo (mesma altura da foto).
            Foto, nome e NID abrem o view_paciente deste paciente. -->
       <component
-        :is="pacienteId ? 'router-link' : 'div'"
-        v-bind="pacienteId ? { to: viewRoute } : {}"
+        :is="canOpenPatient ? 'router-link' : 'div'"
+        v-bind="canOpenPatient ? { to: viewRoute } : {}"
         class="row items-center no-wrap identity"
-        :class="{ 'identity--link': pacienteId }"
+        :class="{ 'identity--link': canOpenPatient }"
       >
         <q-avatar size="44px" color="primary" text-color="white" class="q-mr-md">
           <img v-if="photoUrl" :src="photoUrl" :alt="name">
@@ -36,7 +36,7 @@
           <s-tooltip>{{ row.clinical_alert }}</s-tooltip>
         </q-icon>
 
-        <s-tooltip v-if="pacienteId">{{ tdc('View patient') }}</s-tooltip>
+        <s-tooltip v-if="canOpenPatient">{{ tdc('View patient') }}</s-tooltip>
       </component>
 
       <q-space />
@@ -55,7 +55,7 @@
         </s-btn>
       </div>
 
-      <q-separator vertical inset class="q-mx-sm gt-sm" />
+      <q-separator v-if="actions.length" vertical inset class="q-mx-sm gt-sm" />
 
       <!-- Record vital signs of this patient (same dialog as the dashboards) -->
       <s-btn
@@ -69,25 +69,25 @@
         <s-tooltip>{{ tdc('Record vital signs') }}</s-tooltip>
       </s-btn>
 
-      <s-btn flat round dense icon="event" :disable="!pacienteId" @click="showAgendaDialog = true">
+      <s-btn v-if="User.can('add_agenda')" flat round dense icon="event" :disable="!pacienteId" @click="showAgendaDialog = true">
         <s-tooltip>{{ tdc('Appointment Schedule') }}</s-tooltip>
       </s-btn>
 
       <s-btn flat round dense icon="more_vert" :disable="!pacienteId">
         <q-menu auto-close>
           <q-list style="min-width: 200px">
-            <q-item clickable :to="{ name: 'change_paciente', params: { id: pacienteId } }">
+            <q-item v-if="User.can('change_paciente')" clickable :to="{ name: 'change_paciente', params: { id: pacienteId } }">
               <q-item-section avatar><q-icon name="edit" /></q-item-section>
               <q-item-section>{{ tdc('Edit Data') }}</q-item-section>
             </q-item>
 
-            <q-item clickable @click="Paciente.getPdf(pacienteId)">
+            <q-item v-if="User.can('pdf_paciente')" clickable @click="Paciente.getPdf(pacienteId)">
               <q-item-section avatar><q-icon name="picture_as_pdf" /></q-item-section>
               <q-item-section>{{ tdc('Patient card (PDF)') }}</q-item-section>
             </q-item>
 
             <!-- Same clinical shortcuts as the toolbar, for narrow screens -->
-            <q-separator class="lt-md" />
+            <q-separator v-if="actions.length" class="lt-md" />
             <q-item
               v-for="action in actions"
               :key="action.icon"
@@ -193,6 +193,15 @@ const statusColor = computed(() => ({
 
 // Shortcuts to the clinical documents of THIS patient (the id used to be
 // read from the store root, where it does not exist - the row holds it).
+// Each shortcut is shown only when the user may open its page: the permission
+// is the route's own meta.requiredRole (the same the router guard checks), so
+// the button and the page never disagree. UX only - the backend checks again.
+const canOpenRoute = (to) => {
+  const required = router.resolve(to)?.meta?.requiredRole
+  return !required || User.can(required)
+}
+const canOpenPatient = computed(() => !!pacienteId.value && User.can('view_paciente'))
+
 const actions = computed(() => {
   const params = { id: pacienteId.value }
 
@@ -204,7 +213,7 @@ const actions = computed(() => {
     { icon: 'science', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
     { icon: 'bar_chart', label: tdc('Results'), to: { name: 'list_resultadopedidoexamemedico', params } },
     { icon: 'description', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } }
-  ]
+  ].filter(action => canOpenRoute(action.to))
 })
 
 async function load(id) {

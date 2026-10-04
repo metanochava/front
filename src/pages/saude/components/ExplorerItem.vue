@@ -7,7 +7,7 @@
   >
     <q-icon
       :name="icon"
-      :color="item.tipo === 'Folder' ? 'amber-8' : 'primary'"
+      :color="isFolder ? 'amber-8' : 'primary'"
       size="64px"
     />
 
@@ -36,16 +36,28 @@ defineEmits([
   'open'
 ])
 
+// The API answers tipo as a choice ({id: 'Folder'|'File', ...}) and file as an
+// object ({url, name, ext, mime_type}) - reading either as a string threw and
+// the item (and the grid with it) did not render.
+const isFolder = computed(() => (props.item.tipo?.id ?? props.item.tipo) === 'Folder')
+
 const icon = computed(() => {
-  if (props.item.tipo === 'Folder') return 'folder'
+  if (isFolder.value) return 'folder'
+  // the backend already picks the icon from the extension (serializer `icon`)
+  if (props.item.icon) return props.item.icon
 
-  const f = (props.item.file || props.item.nome || '').toLowerCase()
+  const file = props.item.file
+  const f = String(
+    props.item.extensao || (typeof file === 'string' ? file : file?.name) || props.item.nome || ''
+  ).toLowerCase()
 
-  if (f.endsWith('.pdf')) return 'picture_as_pdf'
-  if (f.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) return 'image'
-  if (f.match(/\.(doc|docx)$/)) return 'description'
-  if (f.match(/\.(xls|xlsx)$/)) return 'table_view'
-  if (f.match(/\.(zip|rar|7z)$/)) return 'folder_zip'
+  if (f.endsWith('pdf')) return 'picture_as_pdf'
+  if (f.match(/(jpg|jpeg|png|gif|bmp|webp|svg)$/)) return 'image'
+  if (f.match(/(doc|docx|odt|txt|rtf)$/)) return 'description'
+  if (f.match(/(xls|xlsx|ods|csv)$/)) return 'table_view'
+  if (f.match(/(zip|rar|7z)$/)) return 'folder_zip'
+  if (f.match(/(mp4|webm|mov)$/)) return 'movie'
+  if (f.match(/(mp3|wav|ogg|m4a)$/)) return 'audiotrack'
 
   return 'insert_drive_file'
 })

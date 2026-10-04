@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <div class="row items-center q-mb-md q-gutter-sm">
+        <div class="row items-center justify-center q-mb-md q-gutter-sm">
           <span class="text-caption text-grey-7">{{ tdc('Type') }}</span>
           <q-btn-toggle
             v-model="tipo"
@@ -94,8 +94,31 @@
           <!-- ============ what is typed: the vital signs only ============ -->
           <div class="col-12 col-md-8">
             <div v-for="section in SECTIONS" :key="section.name" class="q-mb-md">
-              <div class="vitals-section-title">
-                <q-icon :name="section.icon" size="18px" /> {{ tdc(section.label) }}
+              <div class="vitals-section-title vitals-section-title--actions">
+                <span class="vitals-section-title__label">
+                  <q-icon :name="section.icon" size="18px" /> {{ tdc(section.label) }}
+                </span>
+                <!-- right after "Vital signs": the last record can be corrected by its
+                     author within the edit window (backend flag `editable` +
+                     change_dadovital, UX only) -->
+                <template v-if="section.name === 'vitals'">
+                  <s-btn
+                    v-if="!editingId && canEditPrevious"
+                    flat dense no-caps size="sm" color="primary" icon="edit"
+                    class="q-ml-sm"
+                    :label="tdc('Edit last record')"
+                    data-test="vital-signs-edit-last"
+                    @click="editPrevious"
+                  />
+                  <s-btn
+                    v-if="editingId"
+                    flat dense no-caps size="sm" color="primary" icon="add"
+                    class="q-ml-sm"
+                    :label="tdc('New record')"
+                    data-test="vital-signs-new-record"
+                    @click="newRecord"
+                  />
+                </template>
               </div>
 
               <div class="row q-col-gutter-sm">
@@ -208,22 +231,6 @@
                   <template v-if="editingId">{{ tdc('Editing the record of') }} {{ dateTimeOf(ctx.previous.created_at) }}</template>
                   <template v-else>{{ tdc('Previous record') }}: {{ dateTimeOf(ctx.previous.created_at) }}</template>
                 </div>
-                <!-- the last record can be corrected by its author within the edit
-                     window (backend flag `editable` + change_dadovital, UX only) -->
-                <s-btn
-                  v-if="!editingId && canEditPrevious"
-                  flat dense no-caps size="sm" color="primary" icon="edit"
-                  :label="tdc('Edit last record')"
-                  data-test="vital-signs-edit-last"
-                  @click="editPrevious"
-                />
-                <s-btn
-                  v-if="editingId"
-                  flat dense no-caps size="sm" color="primary" icon="add"
-                  :label="tdc('New record')"
-                  data-test="vital-signs-new-record"
-                  @click="newRecord"
-                />
               </div>
               <div class="text-caption text-grey-6 q-mt-sm">
                 {{ tdc('Reference values for adults. They support, and never replace, clinical judgement.') }}
@@ -493,6 +500,22 @@ async function save() {
   margin: 4px 0 8px;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  opacity: .75;
+}
+
+/* a section title with buttons: only the label keeps the muted uppercase
+   look, the buttons stay at full contrast */
+.vitals-section-title--actions {
+  opacity: 1;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.vitals-section-title__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   letter-spacing: .06em;
   text-transform: uppercase;
   opacity: .75;

@@ -33,11 +33,15 @@
       <div class="col-md-8 col-sm-12 col-xs-12">
         <div class="q-pa-md col-12">
 
+          <!-- catalogue maintenance: each "+" only with its own add_ permission
+               (UX only - the backend checks it again) -->
           <s-btn
+            v-if="can.addType"
             class="full-width q-mb-sm"
             color="primary"
             icon="add"
             :label="tdc('Add exam type')"
+            data-test="exam-add-type"
             @click="dialogs.tipo = true"
           />
 
@@ -67,13 +71,18 @@
               <template #header>
                 <q-item-section avatar>
                   <s-btn
+                    v-if="can.addClass"
                     dense
                     flat
                     round
                     color="primary"
                     icon="add"
-                    @click="openClasseModal(tipo)"
-                  />
+                    data-test="exam-add-class"
+                    @click.stop="openClasseModal(tipo)"
+                  >
+                    <s-tooltip>{{ tdc('Add exam class') }}</s-tooltip>
+                  </s-btn>
+                  <q-icon v-else name="science" color="primary" size="20px" />
                 </q-item-section>
 
                 <q-item-section>
@@ -101,13 +110,18 @@
                         <template #header>
                           <q-item-section avatar>
                             <s-btn
+                              v-if="can.addExam"
                               dense
                               flat
                               round
                               color="primary"
                               icon="add"
-                              @click="openExameModal(classe)"
-                            />
+                              data-test="exam-add-exam"
+                              @click.stop="openExameModal(classe)"
+                            >
+                              <s-tooltip>{{ tdc('Add exam') }}</s-tooltip>
+                            </s-btn>
+                            <q-icon v-else name="category" color="primary" size="18px" />
                           </q-item-section>
 
                           <q-item-section>
@@ -250,7 +264,7 @@
               icon="save"
               :label="tdc('Save request')"
               :loading="saving"
-              :disable="!items.length"
+              :disable="!items.length || !can.saveRequest"
               @click="savePedido"
             />
           </div>
@@ -319,7 +333,7 @@
 <script setup>
 
 import { ref, computed, onMounted } from 'vue'
-import { HTTPAuth, url, tdc } from 'quasar_resaas'
+import { HTTPAuth, url, tdc, useUserStore } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import TipoExameModal from './TipoExameModal.vue'
 import ExameModal from './ExameModal.vue'
@@ -331,6 +345,16 @@ import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 
 const Paciente = usePacienteStore()
+
+// what this user may add (UX only - every endpoint checks it again):
+// the exam catalogue (type / class / exam) and the request with its items
+const User = useUserStore()
+const can = computed(() => ({
+  addType: User.can('add_tipoexamemedico'),
+  addClass: User.can('add_classeexamemedico'),
+  addExam: User.can('add_examemedico'),
+  saveRequest: User.can('add_pedidoexamemedico') && User.can('add_itempedidoexamemedico'),
+}))
 
 const Pedidoexamemedico = usePedidoexamemedicoStore()
 

@@ -64,7 +64,7 @@ function onPointerMove(event) {
 // system for the corporate site - see nginx's saas.conf: saas.mytech.co.mz
 // in production, saas.dev.mytech.co.mz in dev (proxied to the live quasar
 // dev server). Not derived from process.env.API - that resolves to
-// app.teste.mytech.co.mz in dev, a different host with a different purpose.
+// app.dev.mytech.co.mz in dev, a different host with a different purpose.
 function clientArea() {
   const saasDomain = import.meta.env.DEV
     ? 'https://saas.dev.mytech.co.mz'

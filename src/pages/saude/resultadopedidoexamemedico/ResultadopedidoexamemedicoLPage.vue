@@ -31,7 +31,13 @@
       </table>
     </div>
 
-    <s-card flat bordered class="explorer-card-main">
+    <!-- the results are always one patient's: none open, nothing to show -->
+    <div v-if="!Resultadopedidoexamemedico.paciente" class="text-center text-grey-7 q-pa-xl" data-test="results-no-patient">
+      <q-icon name="person_search" size="40px" />
+      <div class="q-mt-sm">{{ tdc('Open a patient to see their results.') }}</div>
+    </div>
+
+    <s-card v-else flat bordered class="explorer-card-main">
 
 
       <ExplorerToolbar
@@ -43,7 +49,11 @@
         @refresh="refresh"
         @search="search"
       />
-      {{ Resultadopedidoexamemedico.ficheiros.length }} / {{ Resultadopedidoexamemedico.pastas.length }}
+      <!-- files / folders in the current folder -->
+      <div class="text-center text-weight-bold text-primary text-subtitle1 q-py-xs" data-test="explorer-counts">
+        {{ Resultadopedidoexamemedico.ficheiros.length }} / {{ Resultadopedidoexamemedico.pastas.length }}
+        <s-tooltip>{{ tdc('Files') }} / {{ tdc('Folders') }}</s-tooltip>
+      </div>
 
       <ExplorerBreadcrumb
         :caminho="Resultadopedidoexamemedico.caminho"
@@ -74,6 +84,8 @@
       @save="uploadFile"
     />
 
+    <FilePreviewDialog v-model="previewOpen" :file="previewFile" />
+
 
   </q-page>
 </template>
@@ -82,17 +94,21 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
+import { usePacienteStore } from './../paciente/pacienteStore'
 
 
 
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
+
+const Paciente = usePacienteStore()
 
 import ExplorerToolbar from './../components/ExplorerToolbar.vue'
 import ExplorerBreadcrumb from './../components/ExplorerBreadcrumb.vue'
 import ExplorerGrid from './../components/ExplorerGrid.vue'
 import FolderDialog from './../components/FolderDialog.vue'
 import UploadDialog from './../components/UploadDialog.vue'
+import FilePreviewDialog from './../components/FilePreviewDialog.vue'
 
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore'
 import { useResultadopedidoexamemedicoStore } from './resultadopedidoexamemedicoStore'
@@ -135,13 +151,16 @@ async function openFolder(folder){
 
 }
 
+// a file opens in a modal that shows it by type (image, PDF, video, audio,
+// text; anything else offers the download) - FilePreviewDialog
+const previewFile = ref(null)
+const previewOpen = ref(false)
+
 function openFile(file){
 
-    if(file.file){
-
-        window.open(file.file,'_blank')
-
-    }
+    if(!file?.file) return
+    previewFile.value = file
+    previewOpen.value = true
 
 }
 
@@ -166,6 +185,8 @@ function explorerData() {
     return {
 
         pai: Resultadopedidoexamemedico.currentFolder,
+        // a folder / file always belongs to the open patient
+        paciente: Resultadopedidoexamemedico.paciente,
         // item_pedido: Pedidoexamemedico.row.id,
 
     }
@@ -189,28 +210,30 @@ async function createFolder(data) {
 }
 
 async function uploadFile(data) {
-    console.log(data)
-    const form1 = new FormData()
-    form1.append("file", data.file, data.name)
-    await Resultadopedidoexamemedico.createExplorer({
-
+    // multipart: the file itself plus the fields (a JSON body cannot carry it;
+    // the old code sent form1.file, always undefined, so nothing was uploaded)
+    const form = new FormData()
+    const fields = {
         ...explorerData(),
-
         tipo: 'File',
-
         nome: data.file?.name,
-
-        file: form1.file,
-
         valor_resultado: data.valor_resultado,
-
         observacao: data.observacao,
-
         laudo: data.laudo,
+    }
+    for (const [key, value] of Object.entries(fields)) {
+        if (value !== undefined && value !== null && value !== '') form.append(key, value)
+    }
+    if (data.file) form.append('file', data.file, data.name || data.file.name)
 
-    })
+    const created = await Resultadopedidoexamemedico.createExplorer(form)
 
     await refresh()
+
+    // the list shows it right away (refresh above); open it too, so the user
+    // sees what was uploaded without looking for it
+    const item = created?.data || created
+    if (item?.file) openFile(item)
 
 }
 
@@ -256,12 +279,21 @@ async function deleteSelected(){
 
 }
 
+// the current patient (pacienteStore row - persisted, like the other clinical
+// pages): the explorer shows and creates only their results
+async function loadPatient(id) {
+    Resultadopedidoexamemedico.paciente = id || null
+    if (id) await Resultadopedidoexamemedico.goRoot()
+}
+
 onMounted(async()=>{
 
     await Resultadopedidoexamemedico.init()
-    await Resultadopedidoexamemedico.goRoot()
+    await loadPatient(Paciente.row?.id)
 
 })
+
+watch(() => Paciente.row?.id, (id, old) => { if (id && id !== old) loadPatient(id) })
 
 </script>
 

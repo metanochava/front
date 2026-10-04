@@ -14,6 +14,9 @@ export const useResultadopedidoexamemedicoStore = createBaseStore(
 
     state: () => ({
 
+      // the patient whose results the explorer shows (route :id)
+      paciente: null,
+
       pastas: [],
       ficheiros: [],
 
@@ -50,11 +53,10 @@ export const useResultadopedidoexamemedicoStore = createBaseStore(
               url: `${this.safeUrl}/explorer/`,
 
               params: {
-
                 pai: folder,
-
-                search
-
+                search,
+                // only the open patient's results (the page sets it)
+                paciente: this.paciente
               }
 
             })

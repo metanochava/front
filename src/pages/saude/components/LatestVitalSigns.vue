@@ -14,10 +14,26 @@
       <q-badge v-if="record && isOld" color="orange-8" class="q-mr-sm" data-test="latest-vital-signs-old">
         {{ tdc('More than 24 hours ago') }}
       </q-badge>
+      <!-- every recorded vital sign over time, in one chart (view_dadovital: UX
+           only, GET dadovitals/history/ checks it again) -->
+      <s-btn
+        v-if="record && canSeeCharts"
+        flat round size="md" icon="show_chart"
+        data-test="latest-vital-signs-chart"
+        @click="chartOpen = true"
+      >
+        <s-tooltip>{{ tdc('Vital signs chart') }}</s-tooltip>
+      </s-btn>
       <s-btn flat round size="md" icon="refresh" :loading="loading" @click="load">
         <s-tooltip>{{ tdc('Refresh') }}</s-tooltip>
       </s-btn>
     </q-card-section>
+
+    <q-dialog v-model="chartOpen" full-width full-height>
+      <s-modal-card :title="tdc('Vital signs chart')" icon="show_chart" fullscreen data-test="latest-vital-signs-chart-dialog" @close="chartOpen = false">
+        <VitalSignsCharts v-if="chartOpen" :paciente-id="String(pacienteId)" mode="all" />
+      </s-modal-card>
+    </q-dialog>
 
     <q-card-section v-if="loading && !record" class="flex flex-center q-py-lg">
       <q-spinner color="primary" size="32px" />
@@ -96,7 +112,8 @@
 // reference bands and calculations as the recording dialog (./vitalSigns.js).
 // GET saude/dadovitals/?paciente=<id> - the backend scopes it to the tenant.
 import { computed, ref, watch } from 'vue'
-import { HTTPAuth, url, tdc, displayValue, rawValue } from 'quasar_resaas'
+import { HTTPAuth, url, tdc, displayValue, rawValue, useUserStore } from 'quasar_resaas'
+import VitalSignsCharts from './VitalSignsCharts.vue'
 import {
   SECTIONS, UNITS, FIELD_LABELS, LEVEL_COLORS, CONSCIOUSNESS,
   num, vitalStatus, vitalCalculations, vitalAlerts
@@ -106,6 +123,10 @@ const props = defineProps({
   pacienteId: { type: [String, Number], default: null }
 })
 const emit = defineEmits(['loaded'])
+
+const User = useUserStore()
+const canSeeCharts = computed(() => User.can('view_dadovital'))
+const chartOpen = ref(false)
 
 const loading = ref(false)
 const record = ref(null)
