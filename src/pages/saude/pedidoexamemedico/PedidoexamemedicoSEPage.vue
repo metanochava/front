@@ -356,7 +356,6 @@ import ClassExameModal from './ClassExameModal.vue'
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore.js'
 
 import { usePacienteStore } from './../paciente/pacienteStore'
-import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 
 const Paciente = usePacienteStore()
