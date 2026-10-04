@@ -45,30 +45,32 @@
 
           <!-- PERSONAL: shared person profile -->
           <q-tab-panel name="personal" class="q-pa-md">
-            <!-- patient portal access (UX only: the backend enforces
-                 grant_portal_access_paciente) -->
-            <div v-if="User.can('grant_portal_access_paciente')" class="row items-center q-gutter-sm q-mb-md" data-test="portal-access">
-              <q-badge :color="Paciente.row?.portal_access ? 'positive' : 'grey-6'"
-                       :label="tdc(Paciente.row?.portal_access ? 'Patient portal active' : 'No patient portal access')" />
-              <s-btn v-if="!Paciente.row?.portal_access" dense flat color="primary" icon="key"
-                     :label="tdc('Grant portal access')" :loading="portalBusy" @click="grantPortal" />
-              <s-btn v-else dense flat color="negative" icon="key_off"
-                     :label="tdc('Revoke portal access')" :loading="portalBusy" @click="revokePortal" />
-            </div>
             <s-person-profile v-if="Paciente.row?.person_data" :person="Paciente.row.person_data" />
           </q-tab-panel>
 
           <!-- PATIENT DATA -->
           <q-tab-panel name="patient" class="q-pa-md">
             <s-card flat bordered class="patient-data">
-              <q-card-section class="section-title">
+              <q-card-section class="section-title row items-center no-wrap">
                 <q-icon name="medical_information" size="20px" />
                 {{ tdc('Patient data') }}
+                <q-space />
+                <!-- patient portal access, on the right of the card header (UX only:
+                     the backend enforces grant_portal_access_paciente) -->
+                <div v-if="User.can('grant_portal_access_paciente')" class="row items-center no-wrap q-gutter-sm" data-test="portal-access">
+                  <q-badge :color="Paciente.row?.portal_access ? 'positive' : 'grey-6'"
+                           :label="tdc(Paciente.row?.portal_access ? 'Patient portal active' : 'No patient portal access')" />
+                  <s-btn v-if="!Paciente.row?.portal_access" dense flat no-caps color="primary" icon="key"
+                         :label="tdc('Grant portal access')" :loading="portalBusy" @click="grantPortal" />
+                  <s-btn v-else dense flat no-caps color="negative" icon="key_off"
+                         :label="tdc('Revoke portal access')" :loading="portalBusy" @click="revokePortal" />
+                </div>
               </q-card-section>
               <q-separator />
 
-              <q-list class="patient-data__list">
-                <q-item v-for="item in patientFacts" :key="item.label" dense class="patient-data__item">
+              <!-- two columns from sm up (one on a phone) -->
+              <q-list class="patient-data__list row">
+                <q-item v-for="item in patientFacts" :key="item.label" dense class="patient-data__item col-12 col-sm-6">
                   <q-item-section avatar class="patient-data__icon">
                     <q-icon :name="item.icon" size="18px" />
                   </q-item-section>
@@ -445,15 +447,19 @@ function portalUrl (action) {
   return url({ type: 'u', url: `saude/pacientes/${Paciente.row?.id}/${action}/` })
 }
 
-async function reloadPaciente () {
-  Paciente.row = await Paciente.getById(Paciente.row?.id)
+// after granting / revoking: show the new state at once, then re-read the
+// record from the server (force: getById returns the cached row otherwise -
+// that is why the badge and the button did not change)
+async function reloadPaciente (portalAccess) {
+  if (Paciente.row && portalAccess !== undefined) Paciente.row = { ...Paciente.row, portal_access: portalAccess }
+  Paciente.row = await Paciente.getById(Paciente.row?.id, { force: true })
 }
 
 async function grantPortal () {
   portalBusy.value = true
   try {
     const { data } = await HTTPAuth.post(portalUrl('grant_portal_access'))
-    await reloadPaciente()
+    await reloadPaciente(true)
     // the temporary password is shown once, here only
     sDialog({
       title: tdc('Patient portal access granted'),
@@ -479,7 +485,7 @@ function revokePortal () {
     portalBusy.value = true
     try {
       await HTTPAuth.post(portalUrl('revoke_portal_access'))
-      await reloadPaciente()
+      await reloadPaciente(false)
     } finally {
       portalBusy.value = false
     }
@@ -692,6 +698,8 @@ onMounted(async () => {
   font-size: 15px;
 }
 .section-title .q-icon { color: var(--q-primary); }
+/* the portal buttons in the Patient data header keep their own colour */
+.section-title [data-test="portal-access"] .q-icon { color: inherit; }
 
 .patient-data__item { min-height: 44px; }
 .patient-data__icon { min-width: 36px; color: var(--q-primary); }

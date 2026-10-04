@@ -24,12 +24,16 @@
       <div v-if="!sections.length" class="text-caption text-grey-6">
         {{ tdc('No content recorded') }}
       </div>
-      <div v-for="section in sections" :key="section.field" class="q-mb-sm">
-        <div class="text-caption text-weight-medium text-grey-8">
-          <q-icon :name="section.icon" size="16px" class="q-mr-xs" />{{ tdc(section.label) }}
+      <!-- the same layout as the form and the PDF: the complaint across the
+           whole width, diagnosis and plan side by side (from md up) -->
+      <div v-else class="row q-col-gutter-md">
+        <div v-for="section in sections" :key="section.field" :class="section.cols" class="q-mb-sm">
+          <div class="text-caption text-weight-medium text-grey-8">
+            <q-icon :name="section.icon" size="16px" class="q-mr-xs" />{{ tdc(section.label) }}
+          </div>
+          <!-- clinical rich text, sanitized (allowlist, no attributes): clinicalHtml.js -->
+          <div class="consultation-text" v-html="section.html" />
         </div>
-        <!-- clinical rich text, sanitized (allowlist, no attributes): clinicalHtml.js -->
-        <div class="consultation-text" v-html="section.html" />
       </div>
     </q-card-section>
   </s-card>
@@ -57,14 +61,21 @@ const router = useRouter()
 
 // the same sections (and labels) as the consultation form, ConsultaSEPage
 const SECTIONS = [
-  { field: 'dc', icon: 'record_voice_over', label: 'Chief complaint and history of present illness' },
-  { field: 'diagnostico', icon: 'fact_check', label: 'Diagnosis' },
-  { field: 'conduta_a_estabelecer', icon: 'assignment', label: 'Plan' },
+  { field: 'dc', icon: 'record_voice_over', label: 'Chief complaint and history of present illness', pair: false },
+  { field: 'diagnostico', icon: 'fact_check', label: 'Diagnosis', pair: true },
+  { field: 'conduta_a_estabelecer', icon: 'assignment', label: 'Plan', pair: true },
 ]
 
-const sections = computed(() => SECTIONS
-  .filter(section => hasClinicalText(props.consulta[section.field]))
-  .map(section => ({ ...section, html: sanitizeClinicalHtml(props.consulta[section.field]) })))
+// diagnosis and plan share a row when both are filled; one alone takes the row
+const sections = computed(() => {
+  const shown = SECTIONS.filter(section => hasClinicalText(props.consulta[section.field]))
+  const paired = shown.filter(section => section.pair).length === 2
+  return shown.map(section => ({
+    ...section,
+    cols: section.pair && paired ? 'col-12 col-md-6' : 'col-12',
+    html: sanitizeClinicalHtml(props.consulta[section.field]),
+  }))
+})
 </script>
 
 <style scoped>
