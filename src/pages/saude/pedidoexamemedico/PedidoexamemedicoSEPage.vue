@@ -59,10 +59,13 @@
           </div>
 
           <q-list v-else bordered class="rounded-borders">
+            <!-- while searching every type / class found opens (no accordion group)
+                 and the matching text is highlighted, as in the left menu -->
             <q-expansion-item
               v-for="tipo in filteredCatalogo"
               :key="tipo.id"
-              group="tipo-exame"
+              v-model="expanded[`t-${tipo.id}`]"
+              :group="searching ? undefined : 'tipo-exame'"
               icon="science"
               :label="tipo.nome"
               header-class="text-primary text-weight-bold"
@@ -87,7 +90,7 @@
 
                 <q-item-section>
                   <q-item-label class="text-weight-bold">
-                    {{ tipo.nome }}
+                    <s-highlight :text="tipo.nome" :search="search" />
                   </q-item-label>
                 </q-item-section>
 
@@ -103,6 +106,7 @@
                       class="col-md-6 col-sm-12 col-xs-12"
                     >
                       <q-expansion-item
+                        v-model="expanded[`c-${classe.id}`]"
                         dense
                         expand-separator
                         class="classe-box"
@@ -126,7 +130,7 @@
 
                           <q-item-section>
                             <q-item-label class="text-weight-medium">
-                              {{ classe.nome }}
+                              <s-highlight :text="classe.nome" :search="search" />
                             </q-item-label>
                           </q-item-section>
                         </template>
@@ -147,8 +151,8 @@
                                 @click="selectAndAdd(tipo, classe, exame)"
                               >
                                 <div class="col ellipsis text-body2">
-                                  {{ exame.nome }}
-                                  <span v-if="exame.codigo" class="text-caption q-ml-xs" style="opacity: .7">{{ exame.codigo }}</span>
+                                  <s-highlight :text="exame.nome" :search="search" />
+                                  <span v-if="exame.codigo" class="text-caption q-ml-xs" style="opacity: .7"><s-highlight :text="exame.codigo" :search="search" /></span>
                                   <s-tooltip>{{ exame.codigo ? `${exame.codigo} - ${exame.nome}` : exame.nome }}</s-tooltip>
                                 </div>
                                 <q-icon
@@ -193,46 +197,57 @@
             class="q-mb-sm"
           />
 
-          <q-list v-if="items.length" bordered separator>
+          <!-- every added exam: its priority (always visible) and, folded, its
+               instructions and notes; one control sets the priority of all -->
+          <div v-if="items.length > 1" class="row items-center no-wrap q-mb-sm priority-all" data-test="exam-priority-all">
+            <span class="text-caption text-grey-7 q-mr-sm">{{ tdc('Set the priority of every exam') }}</span>
+            <q-btn-toggle
+              :model-value="commonPriority"
+              dense no-caps rounded unelevated size="sm"
+              :options="priorityToggle"
+              @update:model-value="setAllPriorities"
+            />
+          </div>
+
+          <q-list v-if="items.length" bordered separator class="rounded-borders">
             <q-item
               v-for="(item, index) in items"
-              :key="index"
+              :key="item.exame"
+              class="column q-py-sm"
+              :data-test="`added-exam-${index}`"
             >
-              <q-item-section>
-                <q-item-label class="text-weight-bold">
-                  {{ item.exame_label }}
-                </q-item-label>
+              <div class="row items-start no-wrap full-width">
+                <div class="col">
+                  <div class="text-weight-bold">{{ item.exame_label }}</div>
+                  <div class="text-caption text-grey-7">{{ item.tipo_label }} · {{ item.classe_label }}</div>
+                </div>
+                <s-btn flat round dense color="negative" icon="delete" @click="removeExame(index)">
+                  <s-tooltip>{{ tdc('Remove') }}</s-tooltip>
+                </s-btn>
+              </div>
 
-                <q-item-label caption>
-                  {{ tdc('Type') }}: {{ item.tipo_label }}
-                </q-item-label>
-
-                <q-item-label caption>
-                  {{ tdc('Class') }}: {{ item.classe_label }}
-                </q-item-label>
-
-                <q-item-label caption>
-                  {{ tdc('Priority') }}: {{ item.prioridade_label }}
-                </q-item-label>
-
-                <q-item-label v-if="item.instrucoes" caption>
-                  <span v-html="sanitizeClinicalHtml(item.instrucoes)"></span>
-                </q-item-label>
-
-                <q-item-label v-if="item.observacao" caption>
-                  <span v-html="sanitizeClinicalHtml(item.observacao)"></span>
-                </q-item-label>
-              </q-item-section>
-
-              <q-item-section side>
-                <s-btn
-                  flat
-                  round
-                  color="negative"
-                  icon="delete"
-                  @click="removeExame(index)"
+              <div class="row items-center no-wrap q-mt-xs">
+                <span class="text-caption text-grey-7 q-mr-sm">{{ tdc('Priority') }}</span>
+                <q-btn-toggle
+                  v-model="item.prioridade"
+                  dense no-caps rounded unelevated size="sm"
+                  :options="priorityToggle"
+                  :data-test="`added-exam-priority-${index}`"
                 />
-              </q-item-section>
+              </div>
+
+              <q-expansion-item
+                dense dense-toggle
+                class="q-mt-xs"
+                header-class="q-px-none text-caption text-primary"
+                icon="edit_note"
+                :label="item.instrucoes || item.observacao ? tdc('Instructions and notes') + ' ✓' : tdc('Instructions and notes')"
+              >
+                <div class="q-pt-xs q-gutter-y-sm">
+                  <s-input v-model="item.instrucoes" type="textarea" autogrow dense :label="tdc('Instructions')" />
+                  <s-input v-model="item.observacao" type="textarea" autogrow dense :label="tdc('Notes')" />
+                </div>
+              </q-expansion-item>
             </q-item>
           </q-list>
 
@@ -332,7 +347,7 @@
 
 <script setup>
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { HTTPAuth, url, tdc, useUserStore } from 'quasar_resaas'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import TipoExameModal from './TipoExameModal.vue'
@@ -385,6 +400,36 @@ const prioridadeOptions = [
   { label: tdc('Urgent'), value: 'urgente' },
   { label: tdc('Very urgent'), value: 'muito_urgente' }
 ]
+
+// the priority buttons of each added exam: grey / orange / red when chosen
+const PRIORITY_COLORS = { normal: 'grey-7', urgente: 'orange-8', muito_urgente: 'negative' }
+const priorityToggle = prioridadeOptions.map(o => ({ ...o, toggleColor: PRIORITY_COLORS[o.value] }))
+
+// the shared priority when every exam has the same one (else none is lit)
+const commonPriority = computed(() => {
+  const values = new Set(items.value.map(item => item.prioridade))
+  return values.size === 1 ? [...values][0] : null
+})
+
+function setAllPriorities(value) {
+  for (const item of items.value) item.prioridade = value
+}
+
+// which type / class panels are open; a search opens every one it found and
+// clearing it closes them again (the left menu's behaviour)
+const expanded = ref({})
+const searching = computed(() => !!normalize(search.value))
+
+watch(search, () => {
+  const open = {}
+  if (searching.value) {
+    for (const tipo of filteredCatalogo.value) {
+      open[`t-${tipo.id}`] = true
+      for (const classe of tipo.classes || []) open[`c-${classe.id}`] = true
+    }
+  }
+  expanded.value = open
+})
 
 const filteredCatalogo = computed(() => {
   const q = normalize(search.value)
@@ -545,9 +590,6 @@ function addExame() {
       : selectedExame.value.nome,
 
     prioridade: form.value.prioridade,
-    prioridade_label:
-      prioridadeOptions.find(x => x.value === form.value.prioridade)?.label ||
-      'Normal',
 
     instrucoes: form.value.instrucoes,
     observacao: form.value.observacao
