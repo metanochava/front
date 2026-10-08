@@ -157,10 +157,23 @@
 
                 <q-separator class="q-my-md" />
 
-                <s-switch
-                  v-model="Resultadoexamemedico.form.validado"
-                  :label="tdc('Validated result')"
-                />
+                <!-- validation is its own step (POST .../validate/,
+                     validate_resultadoexamemedico): validado is read-only in
+                     the API since lab phase 10 -->
+                <div class="row items-center q-gutter-sm q-mb-sm">
+                  <q-badge
+                    :color="Resultadoexamemedico.form.validado ? 'positive' : 'grey'"
+                    :label="tdc(Resultadoexamemedico.form.validado ? 'Validated' : 'Not validated')"
+                  />
+                  <s-btn
+                    v-if="canValidate"
+                    dense no-caps color="positive" icon="verified"
+                    :label="tdc('Validate')"
+                    :loading="validating"
+                    data-test="result-validate"
+                    @click="validate"
+                  />
+                </div>
 
                 <s-switch
                   v-model="Resultadoexamemedico.form.assinado_digitalmente"
@@ -205,8 +218,8 @@
 </template>
 
 <script setup>
-import { tdc } from 'quasar_resaas'
-import { computed, onMounted, watch } from 'vue'
+import { HTTPAuth, url, tdc, useUserStore } from 'quasar_resaas'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 
@@ -221,6 +234,25 @@ const route = useRoute()
 const Resultadoexamemedico = useResultadopedidoexamemedicoStore()
 const Itempedidoexamemedico = useItempedidoexamemedicoStore()
 const Paciente = usePacienteStore()
+const User = useUserStore()
+
+// a saved, not yet validated result, and the caller may validate
+const canValidate = computed(() =>
+  !!Resultadoexamemedico.form.id &&
+  !Resultadoexamemedico.form.validado &&
+  User.can('validate_resultadoexamemedico')
+)
+const validating = ref(false)
+
+async function validate () {
+  validating.value = true
+  try {
+    await HTTPAuth.post(url({ type: 'u', url: `saude/resultadoexamemedicos/${Resultadoexamemedico.form.id}/validate/` }), {})
+    await Resultadoexamemedico.getById(Resultadoexamemedico.form.id, { force: true })
+  } finally {
+    validating.value = false
+  }
+}
 
 const itemPedidoOptions = computed(() =>
   (Itempedidoexamemedico.rows || []).map(item => ({
@@ -268,7 +300,6 @@ async function load(id) {
     Resultadoexamemedico.resetForm()
 
     Resultadoexamemedico.form.numero_revisao = 1
-    Resultadoexamemedico.form.validado = false
     Resultadoexamemedico.form.assinado_digitalmente = false
 
     const itemPedidoId = route.query.item_pedido || route.params.item_pedido

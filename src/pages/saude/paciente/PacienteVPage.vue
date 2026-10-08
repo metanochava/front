@@ -124,6 +124,14 @@
                 >
                   <s-tooltip>{{ tdc('Lab evolution') }}</s-tooltip>
                 </s-btn>
+                <s-btn
+                  v-if="User.can('lab_evolution_paciente')"
+                  flat dense round size="sm" icon="history"
+                  data-test="open-lab-history"
+                  @click="showLabHistory = true"
+                >
+                  <s-tooltip>{{ tdc('Lab history') }}</s-tooltip>
+                </s-btn>
                 <s-btn flat dense round size="sm" icon="open_in_new" :to="{ name: 'list_dadovital' }" />
               </q-card-section>
               <q-separator />
@@ -352,6 +360,7 @@
     />
 
     <lab-evolution-dialog v-model="showLabEvolution" :paciente-id="Paciente.row?.id" />
+    <lab-history-dialog v-model="showLabHistory" :paciente-id="Paciente.row?.id" />
   </q-page>
 </template>
 
@@ -365,12 +374,14 @@ import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 import LabEvolutionDialog from './../components/LabEvolutionDialog.vue'
+import LabHistoryDialog from './../components/LabHistoryDialog.vue'
 import ConsultationCard from './../components/ConsultationCard.vue'
 import ClinicalListCard from './../components/ClinicalListCard.vue'
 import { useUserStore } from 'quasar_resaas'
 
 const User = useUserStore()
 const showLabEvolution = ref(false)
+const showLabHistory = ref(false)
 
 const route = useRoute()
 const $q = useQuasar()

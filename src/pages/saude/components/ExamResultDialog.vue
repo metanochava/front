@@ -51,6 +51,14 @@
             :label="labelOf(p)"
             :disable="locked"
           />
+          <s-date
+            v-else-if="p.data_type === 'date'"
+            v-model="values[p.code]"
+            :label="labelOf(p)"
+            :readonly="locked"
+            :error="!!errors[p.code]"
+            :error-message="errors[p.code]"
+          />
           <s-input
             v-else
             v-model="values[p.code]"

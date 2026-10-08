@@ -44,9 +44,9 @@
             </div>
           </div>
 
-          <!-- a chart only for numeric parameters with at least two points:
+          <!-- a chart only for graphable (numeric) parameters with at least two points:
                never a chart built from text -->
-          <LineChartWidget v-if="evolution.parameter.numeric && evolution.points.length > 1" :data="chart" class="q-mb-md" />
+          <LineChartWidget v-if="evolution.parameter.graphable && evolution.points.length > 1" :data="chart" :options="chartOptions" class="q-mb-md" />
 
           <q-markup-table flat bordered dense separator="horizontal">
             <thead>
@@ -78,6 +78,7 @@
 // values are filtered by the database (parameter + date range).
 import { computed, ref, watch } from 'vue'
 import { HTTPAuth, url, tdc, resolveWidgetComponent } from 'quasar_resaas'
+import { labChartData, labChartOptions } from './labChart'
 
 // the dashboard engine's line chart, through the package's public API
 // (only '.', './auto-imports' and './core/*' are exported)
@@ -106,10 +107,8 @@ const parameterOptions = computed(() =>
   parameters.value.map((p) => ({ value: p.code, label: `${tdc(p.name)}${p.unit ? ` (${p.unit})` : ''}` }))
 )
 
-const chart = computed(() => ({
-  labels: evolution.value.points.map((p) => new Date(p.date).toLocaleDateString()),
-  series: [{ name: evolution.value.parameter.name, data: evolution.value.points.map((p) => Number(p.value)) }]
-}))
+const chart = computed(() => labChartData(evolution.value, (d) => new Date(d).toLocaleDateString()))
+const chartOptions = computed(() => labChartOptions(evolution.value))
 
 function referenceText (ref) {
   if (!ref || (ref.low == null && ref.high == null)) return '-'

@@ -18,6 +18,8 @@
 
     <template v-else>
       <LatestVitalSigns :paciente-id="patientId" />
+      <!-- UX only: GET .../lab_summary/ checks lab_evolution_paciente -->
+      <LatestLabResults v-if="User.can('lab_evolution_paciente')" :paciente-id="patientId" />
 
       <s-card flat bordered class="consultation-card" data-test="consultation-form">
         <q-card-section class="row items-center q-gutter-sm">
@@ -97,6 +99,7 @@ import { useConsultaStore } from './consultaStore'
 import { usePacienteStore } from '../paciente/pacienteStore'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import LatestVitalSigns from '../components/LatestVitalSigns.vue'
+import LatestLabResults from '../components/LatestLabResults.vue'
 
 const route = useRoute()
 const router = useRouter()

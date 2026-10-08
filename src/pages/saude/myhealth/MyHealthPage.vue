@@ -58,7 +58,7 @@
             <div v-if="!sections.results?.length" class="text-grey-7">{{ tdc('No results available yet.') }}</div>
             <s-card v-for="r in sections.results" :key="r.id" flat bordered class="q-mb-sm">
               <q-card-section class="q-pb-xs">
-                <div class="text-subtitle2">{{ r.exam }}</div>
+                <div class="text-subtitle2">{{ tdc(r.exam) }}</div>
                 <div class="text-caption text-grey-7">{{ formatDate(r.released_at) }}</div>
               </q-card-section>
               <q-markup-table v-if="r.values.length" flat dense separator="horizontal">
@@ -70,6 +70,10 @@
                   </tr>
                 </tbody>
               </q-markup-table>
+              <!-- a free-form result: its value (no structured values) -->
+              <q-card-section v-if="!r.values.length && r.value" class="text-body2" data-test="my-result-value">
+                {{ tdc('Result') }}: <b>{{ r.value }}</b>
+              </q-card-section>
               <q-card-section v-if="r.report" class="text-body2 pre-line">{{ r.report }}</q-card-section>
             </s-card>
           </q-tab-panel>
@@ -87,7 +91,7 @@
                 style="max-width: 420px"
               />
               <div v-if="trend && trend.points.length < 2" class="text-grey-7">{{ tdc('Not enough results to show a trend yet.') }}</div>
-              <LineChartWidget v-else-if="trend" :data="trendChart" />
+              <LineChartWidget v-else-if="trend" :data="trendChart" :options="trendOptions" />
             </template>
           </q-tab-panel>
 
@@ -137,6 +141,7 @@
 // patient from the authenticated user; this page never sends a patient id.
 import { computed, onMounted, ref, watch } from 'vue'
 import { HTTPAuth, url, tdc, useUserStore, resolveWidgetComponent } from 'quasar_resaas'
+import { labChartData, labChartOptions } from '../components/labChart'
 
 // the dashboard engine's line chart, through the package's public API
 // (only '.', './auto-imports' and './core/*' are exported)
@@ -163,10 +168,8 @@ const trendParameter = ref(null)
 const trend = ref(null)
 
 
-const trendChart = computed(() => ({
-  labels: trend.value.points.map((p) => formatDate(p.date)),
-  series: [{ name: trend.value.parameter.name, data: trend.value.points.map((p) => Number(p.value)) }]
-}))
+const trendChart = computed(() => labChartData(trend.value, formatDate))
+const trendOptions = computed(() => labChartOptions(trend.value))
 
 function me (section, params = {}) {
   return url({ type: 'u', url: `saude/me/${section}/`, params })
