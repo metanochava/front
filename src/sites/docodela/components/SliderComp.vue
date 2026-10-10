@@ -48,7 +48,6 @@
             class="q-mt-lg"
             :label="tdc(slide.button)"
             :size="$q.screen.lt.md ? 'md' : 'lg'"
-            no-caps
             @click="goToSlideRoute(slide)"
           />
         </div>
@@ -72,34 +71,32 @@ const IMAGES = {
 
 const router = useRouter()
 
-const currentSlide = ref('pacientes')
+const currentSlide = ref('cuidado')
 const autoplay = ref(5000)
 
 const slides = [
   {
-    name: 'pacientes',
-    title: 'Patient management',
-    desc: 'Register and view patient data.',
-    button: 'View patients',
-    // public pages of the site - the old routes were the internal system
-    // screens (list_paciente, list_consulta, ...), closed to site visitors
+    name: 'cuidado',
+    title: 'Your health should not wait for your liquidity.',
+    desc: 'Find the right care. Organise your treatment. Plan the payment.',
+    button: 'Start now',
     route: { name: 'utentes' },
     image: IMAGES.clinic
   },
   {
-    name: 'consultas',
-    title: 'Appointment management',
-    desc: 'Organise and follow medical appointments.',
-    button: 'View appointments',
-    route: { name: 'categoria-financiamento', params: { categoria: 'consultas-medicas' } },
+    name: 'financiamento',
+    title: 'Take care of yourself now. Organise the payment with peace of mind.',
+    desc: 'When you need health care but prefer not to commit all your liquidity right away.',
+    button: 'Assess financing',
+    route: { name: 'calculadora' },
     image: IMAGES.consultation
   },
   {
-    name: 'exames',
-    title: 'Medical exams',
-    desc: 'Register medical exam requests and results.',
-    button: 'View exams',
-    route: { name: 'categoria-financiamento', params: { categoria: 'exames-diagnostico' } },
+    name: 'consultor',
+    title: 'A simpler path to caring for your health.',
+    desc: 'Less time searching. Less hassle organising. More peace of mind to move forward.',
+    button: 'Talk to an advisor',
+    route: { name: 'contacto' },
     image: IMAGES.laboratory
   }
 ]

@@ -262,6 +262,7 @@ import { defineComponent} from 'vue'
 import RodapePage from '../pages/RodapePage.vue'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
+import { siteLoginUrl } from '../../shared/siteLoginUrl'
 import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
 import { useRouter } from 'vue-router'
 
@@ -383,13 +384,9 @@ export default defineComponent({
 
     go(item){
 
-      console.log(item?.route)
       if(item?.route === 'login'){
-        const dominio = process.env.API.replace('docodela','app')
-        // Entity.getSettings() (called on mount) never populates Entity.row -
-        // only User.Entity, from the same /site response. Entity.row.id was
-        // always undefined here.
-        window.location.href = `${dominio}/#/auth/login?entity=${this.User?.Entity?.id}`
+        // the front of the site Entity's type (saude., seguradora., ...)
+        window.location.href = siteLoginUrl(this.User?.Entity)
       }else {
           this.router.push({
           name: item?.route
