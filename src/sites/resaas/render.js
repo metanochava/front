@@ -32,7 +32,8 @@ export function renderDoc (raw, product, slug) {
 
   renderer.code = (code, lang) => {
     const language = (lang || '').split(/\s/)[0]
-    return `<div class="rs-code"><div class="rs-code__bar"><span>${escapeHtml(language || 'text')}</span>` +
+    // the editor (colours, line numbers) is mounted on it by codeBlocks.js
+    return `<div class="rs-code" data-lang="${escapeHtml(language || 'text')}"><div class="rs-code__bar"><span>${escapeHtml(language || 'text')}</span>` +
       '<button type="button" class="rs-code__copy" data-copy>copy</button></div>' +
       `<pre><code>${escapeHtml(code)}</code></pre></div>`
   }

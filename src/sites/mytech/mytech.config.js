@@ -7,6 +7,8 @@
 // real screenshots of the live sites below (captured from the running sites)
 import workAmal from './images/work-amal.jpg'
 import workDocodela from './images/work-docodela.jpg'
+import workResaas from './images/work-resaas.jpg'
+import workSaude from './images/work-saude.jpg'
 
 export const profile = {
   name: 'MyTech',
@@ -80,6 +82,25 @@ export const work = [
     image: workDocodela,
     text: 'Website for a healthcare access and financing service: care categories, a loan calculator and guides to financing treatment.',
     tags: ['Healthcare', 'Financing', 'Loan calculator']
+  },
+  {
+    id: 'saude',
+    name: 'Health system',
+    domain: 'saude.mytech.co.mz',
+    url: 'https://saude.mytech.co.mz/',
+    // a fictitious demo patient (the system shows real data only after sign-in)
+    image: workSaude,
+    text: 'The health system Clínica Amal works with: patient records, appointments, a laboratory with structured results and their evolution, pharmacy and sales.',
+    tags: ['Healthcare', 'Laboratory', 'Patient records']
+  },
+  {
+    id: 'resaas',
+    name: 'RESAAS',
+    domain: 'resaas.mytech.co.mz',
+    url: 'https://resaas.mytech.co.mz/',
+    image: workResaas,
+    text: 'Documentation of RESAAS, the multi-tenant platform behind our systems: a guide, the backend and frontend reference, search and code examples.',
+    tags: ['Platform', 'Documentation', 'Multi-tenant']
   }
 ]
 

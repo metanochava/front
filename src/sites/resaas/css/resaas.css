@@ -16,8 +16,13 @@
   --rs-line: rgba(15, 23, 42, 0.09);
   --rs-text: #0f172a;
   --rs-muted: #5b6474;
-  --rs-code-bg: #0f172a;
-  --rs-code-text: #e2e8f0;
+  /* code blocks follow the site theme: light here, dark under .body--dark */
+  --rs-code-bg: #f6f8fa;
+  --rs-code-text: #1f2328;
+  --rs-code-bar: #eaeef2;
+  --rs-code-bar-text: #57606a;
+  --rs-code-hover: rgba(15, 23, 42, .06);
+  --rs-code-gutter-line: rgba(15, 23, 42, .08);
   --rs-inline-code: rgba(79, 70, 229, 0.08);
   --rs-radius: 12px;
   --rs-header: 64px;
@@ -41,6 +46,11 @@
   --rs-back: #34d399;
   --rs-front: #60a5fa;
   --rs-code-bg: #0a0e15;
+  --rs-code-text: #e2e8f0;
+  --rs-code-bar: #151b26;
+  --rs-code-bar-text: #94a3b8;
+  --rs-code-hover: rgba(255, 255, 255, .08);
+  --rs-code-gutter-line: rgba(255, 255, 255, .06);
   --rs-inline-code: rgba(129, 140, 248, 0.14);
 }
 
@@ -78,11 +88,13 @@
 }
 
 .rs-md .rs-code { position: relative; margin: 0 0 18px; border-radius: var(--rs-radius); overflow: hidden; background: var(--rs-code-bg); border: 1px solid var(--rs-line); }
-.rs-md .rs-code__bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 6px 14px; background: color-mix(in srgb, var(--rs-code-bg) 80%, #fff 6%); color: #94a3b8; font-family: var(--rs-mono); font-size: 12px; }
-.rs-md .rs-code__copy { border: 0; background: transparent; color: #94a3b8; cursor: pointer; font: inherit; padding: 4px 8px; border-radius: 6px; }
-.rs-md .rs-code__copy:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.rs-md .rs-code__bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 6px 14px; background: var(--rs-code-bar); color: var(--rs-code-bar-text); border-bottom: 1px solid var(--rs-code-gutter-line); font-family: var(--rs-mono); font-size: 12px; }
+.rs-md .rs-code__copy { border: 0; background: transparent; color: var(--rs-code-bar-text); cursor: pointer; font: inherit; padding: 4px 8px; border-radius: 6px; }
+.rs-md .rs-code__copy:hover { color: var(--rs-code-text); background: var(--rs-code-hover); }
 .rs-md pre { margin: 0; padding: 14px 16px; overflow-x: auto; }
 .rs-md pre code { font-family: var(--rs-mono); font-size: 13.5px; line-height: 1.6; color: var(--rs-code-text); background: none; }
+.rs-md .rs-code__editor .cm-editor { max-height: 640px; }
+.rs-md .rs-code__editor .cm-scroller { overflow: auto; }
 
 .rs-md table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 14.5px; display: block; overflow-x: auto; }
 .rs-md th, .rs-md td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rs-line); vertical-align: top; }

@@ -47,6 +47,11 @@ imported `.json` files.
   - GitHub URLs into either library's docs → pages of this site too, so a library can link to
     the other one with a URL that also works on GitHub;
   - links to source files or tests → the file on GitHub, in a new tab.
+- `codeBlocks.js` — every code block gets the Scaffold IDE's editor (CodeMirror 6), read only,
+  following the site theme: light by default (`defaultHighlightStyle`, `--rs-code-*` in
+  `css/resaas.css`), One Dark under `body--dark`, switched live with the theme toggle: syntax colours per language (python, js/ts, json, vue/html, css,
+  bash), line numbers, active line and code folding. `DocPage.vue` mounts the editors after
+  each render; the hidden `<pre>` stays as the source of the copy button and as the fallback.
 - `pages/DocPage.vue` — `/docs/:product/:slug`; `?a=<heading-id>` scrolls to a heading.
 - `pages/HomePage.vue`, `layouts/ResaasLayout.vue` — landing page, header, search (`/` focuses
   it), light/dark toggle (remembered in `localStorage`).

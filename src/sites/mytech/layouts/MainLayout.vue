@@ -9,6 +9,7 @@ import { profile, contact, divisions } from '../mytech.config'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
 import { useSeo } from '../../shared/useSeo'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
+import { siteLoginUrl } from '../../shared/siteLoginUrl'
 import logoMark from '../images/logo-mark.png'
 
 const $q = useQuasar()
@@ -61,19 +62,13 @@ function onPointerMove(event) {
 }
 
 // The client portal is the RESAAS admin app itself, not a parallel auth
-// system for the corporate site - see nginx's saas.conf: saas.mytech.co.mz
-// in production, saas.dev.mytech.co.mz in dev (proxied to the live quasar
-// dev server). Not derived from process.env.API - that resolves to
-// app.dev.mytech.co.mz in dev, a different host with a different purpose.
+// system for the corporate site: the front of this site Entity's type
+// (MyTech is a "SaaS" Entity -> saas.<domain>, from process.env.API - see
+// shared/siteLoginUrl.js, the same rule as amal/docodela). The Entity comes
+// from Entity.getSettings() (GET /site, below) so the login screen
+// pre-selects it.
 function clientArea() {
-  const saasDomain = import.meta.env.DEV
-    ? 'https://saas.dev.mytech.co.mz'
-    : 'https://saas.mytech.co.mz'
-  // Entity.getSettings() (below) resolves the tenant from this site's own
-  // domain (GET /site) and stores it on User.Entity, not Entity.row - see
-  // amal/docodela's same pattern. Passing it on lets the login screen
-  // pre-select the right Entity instead of a blank/first-Entity fallback.
-  window.location.href = `${saasDomain}/#/auth/login?entity=${User.Entity?.id}`
+  window.location.href = siteLoginUrl(User.Entity)
 }
 
 onMounted(() => {
@@ -97,6 +92,10 @@ onMounted(() => {
     }
   })
 })
+
+function toTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
@@ -154,10 +153,44 @@ onBeforeUnmount(() => {
       <router-view />
     </q-page-container>
 
-    <footer class="foot">
+    <footer class="foot" data-test="mt-footer">
+      <!-- the four colours of the logo -->
+      <div class="foot__stripe" aria-hidden="true"><span /><span /><span /><span /></div>
+
+      <div class="mt-wrap foot__cta">
+        <div>
+          <div class="foot__eyebrow">{{ tdc('One team, four disciplines') }}</div>
+          <h2 class="foot__cta-title">{{ tdc('Technology built for real business.') }}</h2>
+        </div>
+        <div class="foot__cta-actions">
+          <router-link class="foot__btn foot__btn--light" :to="{ name: 'contact' }">
+            <q-icon name="chat" size="18px" />{{ tdc('Talk to MyTech') }}
+          </router-link>
+          <a
+            v-if="contact.whatsapp"
+            class="foot__btn foot__btn--ghost"
+            :href="`https://wa.me/${contact.whatsapp}`"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <q-icon name="fab fa-whatsapp" size="18px" />WhatsApp
+          </a>
+        </div>
+      </div>
+
       <div class="mt-wrap foot__grid">
         <div class="foot__brand">
-          <img :src="logoMark" class="foot__mark" :alt="profile.name">
+          <ul class="foot__divisions">
+            <li v-for="d in divisions" :key="d.id">
+              <q-icon :name="d.icon" size="18px" color="white" />{{ tdc(d.title) }}
+            </li>
+          </ul>
+          <div class="foot__social">
+            <a v-if="contact.email" :href="`mailto:${contact.email}`" aria-label="Email"><q-icon name="mail" size="20px" /></a>
+            <a v-if="contact.phone" :href="`tel:${contact.phone.replace(/\s+/g, '')}`" :aria-label="tdc('Phone')"><q-icon name="call" size="20px" /></a>
+            <a v-if="contact.whatsapp" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><q-icon name="fab fa-whatsapp" size="20px" /></a>
+            <a v-if="contact.linkedin" :href="contact.linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><q-icon name="fab fa-linkedin-in" size="20px" /></a>
+          </div>
         </div>
 
         <div class="foot__col">
@@ -166,32 +199,27 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="foot__col">
-          <div class="foot__heading">{{ tdc('Learn') }}</div>
-          <router-link :to="{ name: 'training' }">{{ tdc('Training') }}</router-link>
-        </div>
-
-        <div class="foot__col">
-          <div class="foot__heading">{{ tdc('Technology') }}</div>
-          <router-link :to="{ name: 'equipment' }">{{ tdc('Equipment') }}</router-link>
-        </div>
-
-        <div class="foot__col">
           <div class="foot__heading">{{ tdc('Company') }}</div>
+          <router-link :to="{ name: 'training' }">{{ tdc('Training') }}</router-link>
+          <router-link :to="{ name: 'equipment' }">{{ tdc('Equipment') }}</router-link>
           <router-link :to="{ name: 'company' }">{{ tdc('About MyTech') }}</router-link>
           <router-link :to="{ name: 'contact' }">{{ tdc('Contact') }}</router-link>
         </div>
 
         <div class="foot__col" v-if="contact.email || contact.phone || contact.whatsapp">
           <div class="foot__heading">{{ tdc('Contact') }}</div>
-          <a v-if="contact.email" :href="`mailto:${contact.email}`">{{ contact.email }}</a>
-          <a v-if="contact.phone" :href="`tel:${contact.phone.replace(/\s+/g, '')}`">{{ contact.phone }}</a>
-          <a v-if="contact.whatsapp" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a v-if="contact.linkedin" :href="contact.linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a v-if="contact.email" class="foot__contact" :href="`mailto:${contact.email}`"><q-icon name="mail" size="18px" />{{ contact.email }}</a>
+          <a v-if="contact.phone" class="foot__contact" :href="`tel:${contact.phone.replace(/\s+/g, '')}`"><q-icon name="call" size="18px" />{{ contact.phone }}</a>
+          <a v-if="contact.whatsapp" class="foot__contact" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer"><q-icon name="fab fa-whatsapp" size="18px" />WhatsApp</a>
+          <span v-if="contact.address" class="foot__contact"><q-icon name="place" size="18px" />{{ contact.address }}</span>
         </div>
       </div>
 
       <div class="mt-wrap foot__bottom">
-        <span>© {{ new Date().getFullYear() }} {{ profile.name }}</span>
+        <span>© {{ new Date().getFullYear() }} {{ profile.name }} · {{ tdc('All rights reserved') }}</span>
+        <button type="button" class="foot__top" :aria-label="tdc('Back to top')" @click="toTop">
+          <q-icon name="arrow_upward" size="20px" />
+        </button>
       </div>
     </footer>
   </q-layout>
@@ -199,35 +227,28 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* a floating pill: transparent at the top, frosted glass once the page scrolls */
-.nav { background: transparent; color: var(--mt-text); border-bottom: 0; padding-top: 12px; }
+.nav { background: transparent; color: var(--mt-text); border-bottom: 0; }
+/* a full-width bar, the same background as the footer (--mt-chrome, mytech.css) */
 .nav__inner {
   height: calc(var(--mt-nav) - 24px); display: flex; align-items: center; gap: 20px;
-  max-width: calc(var(--mt-max) - 16px); border: 1px solid transparent; border-radius: 999px;
+  max-width: none; width: 100%; margin: 0; padding-inline: max(16px, calc((100% - var(--mt-max)) / 2 + 16px));
+  border: 0; border-radius: 0;
+  color: #fff;
+  background: color-mix(in srgb, var(--mt-chrome) var(--mt-chrome-opacity), transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
   transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.nav--solid .nav__inner {
-  background: color-mix(in srgb, var(--mt-surface) 78%, transparent); backdrop-filter: blur(16px) saturate(1.4);
-  border-color: var(--mt-line); box-shadow: 0 18px 40px -26px rgba(10, 20, 35, .35);
-}
+.nav--solid .nav__inner { box-shadow: 0 18px 40px -26px rgba(10, 20, 35, .45); }
 .nav__brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mt-font-display); font-weight: 700; font-size: 19px; color: var(--mt-text); text-decoration: none; }
 .nav__mark { height: 52px; width: auto; object-fit: contain; }
 .nav__links { display: flex; align-items: center; gap: 4px; margin-left: 12px; flex: 1; }
-.nav__link { padding: 8px 14px; border-radius: 999px; color: var(--mt-muted); font-size: 15px; font-weight: 500; text-decoration: none; transition: color .2s ease, background .2s ease; }
-.nav__link:hover, .nav__link.router-link-active { color: var(--mt-text); background: var(--mt-surface-2); }
+.nav__link { padding: 8px 14px; border-radius: 999px; color: rgba(255, 255, 255, .82); font-size: 15px; font-weight: 500; text-decoration: none; transition: color .2s ease, background .2s ease; }
+.nav__link:hover, .nav__link.router-link-active { color: #fff; background: rgba(255, 255, 255, .16); }
 .nav__tools { display: flex; align-items: center; gap: 10px; }
-.nav__cta { padding: 9px 18px; font-size: 14px; }
+.nav__cta { padding: 9px 18px; font-size: 14px; background: #fff; color: var(--q-primary); }
 .nav__burger { display: none; }
 .nav__drawer { display: none; }
 
-.foot { border-top: 1px solid var(--mt-line); padding-block: 48px 24px; color: var(--mt-muted); font-size: 14px; background: var(--mt-surface); }
-.foot__grid { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 28px; }
-.foot__brand { display: flex; align-items: center; gap: 10px; font-family: var(--mt-font-display); font-weight: 700; font-size: 18px; color: var(--mt-text); }
-.foot__mark { height: 34px; width: auto; object-fit: contain; }
-.foot__col { display: flex; flex-direction: column; gap: 10px; }
-.foot__heading { color: var(--mt-text); font-weight: 600; margin-bottom: 4px; }
-.foot__col a { color: var(--mt-muted); text-decoration: none; }
-.foot__col a:hover { color: var(--mt-accent); }
-.foot__bottom { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--mt-line); }
 
 @media (max-width: 900px) {
   .nav__links { display: none; }
@@ -235,6 +256,57 @@ onBeforeUnmount(() => {
   .nav__cta { display: none; }
   .nav__drawer { display: grid; gap: 4px; margin: 8px 12px 0; padding: 10px 18px 18px; background: var(--mt-surface); border: 1px solid var(--mt-line); border-radius: 22px; }
   .nav__drawer a { padding: 12px 6px; font-size: 17px; font-family: var(--mt-font-display); color: var(--mt-text); text-decoration: none; }
+}
+
+/* footer: the brand navy, the logo's four colours on top */
+/* the same background as the header (--mt-chrome, mytech.css) */
+.foot {
+  position: relative; color: rgba(255, 255, 255, .82); font-size: 14.5px;
+  background: color-mix(in srgb, var(--mt-chrome) var(--mt-chrome-opacity), transparent);
+  backdrop-filter: blur(16px) saturate(1.4); }
+.foot__stripe { display: grid; grid-template-columns: repeat(4, 1fr); height: 4px; }
+.foot__stripe span:nth-child(1) { background: var(--mt-blue); }
+.foot__stripe span:nth-child(2) { background: var(--mt-green); }
+.foot__stripe span:nth-child(3) { background: var(--mt-gold); }
+.foot__stripe span:nth-child(4) { background: var(--mt-red); }
+.foot a { color: inherit; text-decoration: none; transition: color .2s ease, background .2s ease, transform .2s ease; }
+
+.foot__cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding-block: 56px 40px; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+.foot__eyebrow { font-family: var(--mt-font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #9cc6f2; }
+.foot__cta-title { margin: 10px 0 0; color: #fff; font-family: var(--mt-font-display); font-size: clamp(26px, 3.4vw, 40px); line-height: 1.15; font-weight: 700; }
+.foot__cta-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.foot__btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 600; font-size: 15px; }
+.foot__btn--light { background: #fff; color: var(--mt-blue-dark) !important; }
+.foot__btn--light:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -12px rgba(0, 0, 0, .6); }
+.foot__btn--ghost { border: 1px solid rgba(255, 255, 255, .35); color: #fff !important; }
+.foot__btn--ghost:hover { background: rgba(255, 255, 255, .1); }
+
+.foot__grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 36px; padding-block: 44px; }
+.foot__divisions { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.foot__divisions li { display: flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, .86); }
+.foot__social { display: flex; gap: 10px; margin-top: 22px; }
+.foot__social a { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); color: #fff; }
+.foot__social a:hover { background: #fff; color: var(--mt-blue-dark); transform: translateY(-2px); }
+.foot__col { display: flex; flex-direction: column; gap: 11px; }
+.foot__heading { color: #fff; font-family: var(--mt-font-display); font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.foot__col a:hover { color: #fff; }
+.foot__contact { display: inline-flex; align-items: center; gap: 10px; word-break: break-word; }
+.foot__contact .q-icon { color: #9cc6f2; }
+
+.foot__bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding-block: 18px 22px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13.5px; color: rgba(255, 255, 255, .6); }
+.foot__top { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .25); background: transparent;
+  color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background .2s ease, transform .2s ease; }
+.foot__top:hover { background: rgba(255, 255, 255, .12); transform: translateY(-2px); }
+
+@media (max-width: 900px) {
   .foot__grid { grid-template-columns: 1fr 1fr; }
+  .foot__brand { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .foot__grid { grid-template-columns: 1fr; }
+  .foot__cta { padding-block: 40px 28px; }
 }
 </style>

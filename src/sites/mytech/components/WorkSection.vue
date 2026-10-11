@@ -34,7 +34,7 @@ import { work } from '../mytech.config'
 
           <div class="work__body">
             <div class="work__head">
-              <h3>{{ item.name }}</h3>
+              <h3>{{ tdc(item.name) }}</h3>
               <q-icon name="north_east" size="20px" class="work__arrow" />
             </div>
             <p class="work__text">{{ tdc(item.text) }}</p>

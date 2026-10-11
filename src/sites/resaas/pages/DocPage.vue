@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { tdc } from 'quasar_resaas'
 
 import { renderDoc, headingId } from '../render'
+import { destroyCodeBlocks, mountCodeBlocks } from '../codeBlocks'
 import { docs, docKey, editUrl, groupedNav, neighbours, productByKey, products, titleOf, versions } from '../docs'
 
 const route = useRoute()
@@ -40,6 +41,8 @@ async function afterRender () {
   // the app router's scrollBehavior resets to the top after navigating: scroll after it
   await router.isReady()
   await nextTick()
+  // the code blocks get the Scaffold IDE's editor (codeBlocks.js)
+  mountCodeBlocks(body.value)
   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
   const title = rendered.value ? titleOf(raw.value, slug.value) : tdc('Page not found')
   document.title = `${title} — RESAAS`
@@ -66,7 +69,7 @@ function observeHeadings () {
 function onBodyClick (event) {
   const copy = event.target.closest('[data-copy]')
   if (copy) {
-    const code = copy.closest('.rs-code')?.querySelector('code')?.innerText || ''
+    const code = copy.closest('.rs-code')?.querySelector('pre code')?.textContent || ''
     navigator.clipboard?.writeText(code).then(() => {
       copy.textContent = tdc('Copied')
       setTimeout(() => { copy.textContent = 'copy' }, 1400)
@@ -95,7 +98,7 @@ function sidebarTo (item) {
 }
 
 onMounted(afterRender)
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => { observer?.disconnect(); destroyCodeBlocks() })
 </script>
 
 <template>
