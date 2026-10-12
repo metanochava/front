@@ -151,6 +151,8 @@
               <th class="text-left">{{ tdc('Product') }}</th>
               <th class="text-right">{{ tdc('Outstanding') }}</th>
               <th class="text-right" style="width: 140px">{{ tdc('Received') }}</th>
+              <th v-if="anyTracked" style="width: 150px">{{ tdc('Lot') }}</th>
+              <th v-if="anyTracked" style="width: 160px">{{ tdc('Expiry date') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -159,6 +161,13 @@
               <td class="text-right">{{ line.outstanding_quantity }}</td>
               <td>
                 <s-input v-model.number="receiveForm.quantities[line.id]" type="number" step="0.001" min="0" :max="line.outstanding_quantity" />
+              </td>
+              <td v-if="anyTracked">
+                <s-input v-if="line.track_batches" v-model="receiveForm.lots[line.id].lot_number" dense
+                  :rules="[v => !receiveForm.quantities[line.id] || !!v || tdc('Required')]" />
+              </td>
+              <td v-if="anyTracked">
+                <s-date v-if="line.track_batches" v-model="receiveForm.lots[line.id].expiry_date" dense />
               </td>
             </tr>
           </tbody>
@@ -290,10 +299,12 @@ function removeLine(line) {
 
 // ---------------- RECEIVE ----------------
 const showReceive = ref(false)
-const receiveForm = reactive({ quantities: {}, warehouse_id: null, notes: '', idempotency_key: null })
+const receiveForm = reactive({ quantities: {}, lots: {}, warehouse_id: null, notes: '', idempotency_key: null })
+const anyTracked = computed(() => openLines.value.some(line => line.track_batches))
 
 function openReceive() {
   receiveForm.quantities = Object.fromEntries(openLines.value.map(line => [line.id, Number(line.outstanding_quantity)]))
+  receiveForm.lots = Object.fromEntries(openLines.value.map(line => [line.id, { lot_number: '', expiry_date: null }]))
   receiveForm.warehouse_id = order.value?.warehouse_id || null
   receiveForm.notes = ''
   // one key per opened dialog: a double click or a retry records one receipt
@@ -304,7 +315,7 @@ function openReceive() {
 async function receive() {
   const lines = Object.entries(receiveForm.quantities)
     .filter(([, quantity]) => Number(quantity) > 0)
-    .map(([line, quantity]) => ({ line, quantity }))
+    .map(([line, quantity]) => ({ line, quantity, ...(receiveForm.lots[line] || {}) }))
 
   await run(async () => {
     await PurchaseOrder.receive(id.value, {

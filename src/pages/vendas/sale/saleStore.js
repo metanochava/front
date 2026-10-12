@@ -21,6 +21,13 @@ export const useSaleStore = createBaseStore(
         return data.data
       },
 
+      async reservar(id) {
+        const { data } = await HTTPAuth.post(
+          url({ type: 'u', url: `${this.safeUrl}/${id}/reservar` })
+        )
+        return data.data
+      },
+
       async anular(id) {
         const { data } = await HTTPAuth.post(
           url({ type: 'u', url: `${this.safeUrl}/${id}/anular` })

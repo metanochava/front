@@ -8,6 +8,9 @@ import { stockitemRoutes } from './stockitem/stockitemRoutes'
 import { stockmovementRoutes } from './stockmovement/stockmovementRoutes'
 import { inventorycountRoutes } from './inventorycount/inventorycountRoutes'
 import { inventorysettingRoutes } from './inventorysetting/inventorysettingRoutes'
+import { batchRoutes } from './batch/batchRoutes'
+import { reservationRoutes } from './reservation/reservationRoutes'
+import { pricelistRoutes } from './pricelist/pricelistRoutes'
 
 export let stockRoutes = [
   {
@@ -28,5 +31,8 @@ export let stockRoutes = [
   ...stockitemRoutes,
   ...stockmovementRoutes,
   ...inventorycountRoutes,
+  ...batchRoutes,
+  ...reservationRoutes,
+  ...pricelistRoutes,
   ...inventorysettingRoutes,
 ]

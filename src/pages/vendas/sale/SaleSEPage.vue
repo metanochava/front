@@ -212,6 +212,14 @@
                 :label="tdc('Warehouse')"
                 :hint="!warehouseId ? tdc('Without a warehouse, the sale does not move stock') : ''"
               />
+              <s-select
+                v-if="taxOptions.length"
+                v-model="taxId"
+                :options="taxOptions"
+                emit-value map-options clearable
+                :label="tdc('Tax')"
+                data-test="pos-tax"
+              />
             </q-card-section>
           </s-card>
 
@@ -224,6 +232,10 @@
               <div class="row justify-between text-caption q-py-xs">
                 <span>{{ tdc('Discount') }}</span>
                 <span>{{ formatMoney(totals.desconto) }}</span>
+              </div>
+              <div v-if="totals.tax" class="row justify-between text-caption q-py-xs">
+                <span>{{ tdc('Tax') }}</span>
+                <span>{{ formatMoney(totals.tax) }}</span>
               </div>
               <q-separator class="q-my-xs" />
               <div class="row justify-between text-h5 text-weight-bold q-py-xs">
@@ -503,10 +515,28 @@ function recompute() {
   // no-op trigger — totals é computed, só aqui para clareza no template
 }
 
+// ---------------- TAX ----------------
+// One tax for the whole cart (optional). Same rule as the backend
+// (sales.services.recalculate_totals): per line, on the net amount, rounded
+// to cents - the server total is still the one charged (see goToCheckout).
+const taxId = ref(null)
+const taxOptions = ref([])
+const taxRate = computed(() => Number(taxOptions.value.find(o => o.value === taxId.value)?.rate || 0))
+
+async function loadTaxes() {
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'sales/taxes', params: { active: 'true', page_size: 100 } }))
+    taxOptions.value = (data.results || data || []).filter(t => t.active !== false).map(t => ({ label: t.display_name || t.name, value: t.id, rate: t.rate }))
+  } catch {
+    taxOptions.value = []
+  }
+}
+
 const totals = computed(() => {
   const subtotal = cart.value.reduce((sum, l) => sum + Number(l.quantidade || 0) * Number(l.preco_unitario || 0), 0)
   const desconto = cart.value.reduce((sum, l) => sum + Number(l.desconto_valor || 0), 0)
-  return { subtotal, desconto, total: subtotal - desconto }
+  const tax = cart.value.reduce((sum, l) => sum + Math.round(lineSubtotal(l) * taxRate.value) / 100, 0)
+  return { subtotal, desconto, tax, total: subtotal - desconto + tax }
 })
 
 function formatMoney(v) {
@@ -538,6 +568,7 @@ async function ensureSaleAndItems() {
       quantidade: line.quantidade,
       preco_unitario: line.preco_unitario,
       desconto_valor: line.desconto_valor || 0,
+      tax: taxId.value || null,
     }
     const item = await Saleitem.create()
     line.synced = true
@@ -554,10 +585,11 @@ async function goToCheckout() {
   checkingOut.value = true
   try {
     await ensureSaleAndItems()
-    await Sale.confirmar(pendingSaleId.value)
+    const confirmed = await Sale.confirmar(pendingSaleId.value)
 
     paymentsDone.value = []
-    resetPaymentForm(totals.value.total)
+    // the backend total is authoritative (taxes, rounding)
+    resetPaymentForm(Number(confirmed?.total ?? totals.value.total))
     paymentError.value = ''
     showPaymentDialog.value = true
   } catch (e) {
@@ -667,7 +699,10 @@ async function cancelPOS() {
   resetPOS()
 }
 
-onMounted(loadQuickProducts)
+onMounted(() => {
+  loadQuickProducts()
+  loadTaxes()
+})
 </script>
 
 <style scoped>

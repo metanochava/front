@@ -9,6 +9,12 @@
       </q-badge>
       <q-space />
 
+      <s-btn
+        v-if="estado === 'rascunho' && Sale.row.warehouse_id && User.can('reservar_sale')"
+        flat icon="lock" :label="tdc('Reserve stock')"
+        :disable="!Saleitem.rows.length" :loading="acting" class="q-mr-sm" data-test="sale-reserve"
+        @click="reservar"
+      />
       <q-btn
         v-if="estado === 'rascunho'"
         color="positive" icon="check_circle" :label="tdc('Confirm Sale')"
@@ -44,6 +50,12 @@
         <s-card flat bordered><q-card-section>
           <div class="text-caption text-grey-6">{{ tdc('Discount') }}</div>
           <div class="text-h6">{{ Sale.row.desconto_total }}</div>
+        </q-card-section></s-card>
+      </div>
+      <div class="col-12 col-sm-3" v-if="Number(Sale.row.tax_total) > 0">
+        <s-card flat bordered><q-card-section>
+          <div class="text-caption text-grey-6">{{ tdc('Tax') }}</div>
+          <div class="text-h6">{{ Sale.row.tax_total }}</div>
         </q-card-section></s-card>
       </div>
       <div class="col-12 col-sm-3">
@@ -97,15 +109,21 @@
 
         <!-- NOVA LINHA -->
         <div v-if="estado === 'rascunho'" class="row q-col-gutter-sm items-end q-mt-md">
-          <div class="col-12 col-sm-4">
+          <div class="col-12 col-sm-3">
             <s-select
-              v-model="newItem.product"
+              v-model="newItem.product" clearable
               :api="productSelectUrl"
               option-label="label" option-value="value"
               emit-value map-options
               :label="tdc('Product')"
               @update:model-value="onProductPicked"
             />
+          </div>
+          <div class="col-12 col-sm-3" v-if="!newItem.product">
+            <s-input v-model="newItem.product_nome" :label="tdc('Description')" />
+          </div>
+          <div class="col-6 col-sm-2" v-if="taxOptions.length">
+            <s-select v-model="newItem.tax" :options="taxOptions" emit-value map-options clearable :label="tdc('Tax')" />
           </div>
           <div class="col-6 col-sm-2">
             <q-input v-model.number="newItem.quantidade" type="number" step="0.001" :label="tdc('Quantity')" />
@@ -172,12 +190,13 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage, useUserStore } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
 import { useSaleitemStore } from './saleitemStore'
 import { usePaymentStore } from './../payment/paymentStore'
 
 const route = useRoute()
+const User = useUserStore()
 const Sale = useSaleStore()
 const Saleitem = useSaleitemStore()
 const Payment = usePaymentStore()
@@ -194,6 +213,7 @@ const itemColumns = [
   { name: 'quantidade', label: tdc('Quantity'), field: 'quantidade', align: 'right' },
   { name: 'preco_unitario', label: tdc('Price'), field: 'preco_unitario', align: 'right' },
   { name: 'desconto_valor', label: tdc('Discount'), field: 'desconto_valor', align: 'right' },
+  { name: 'tax_amount', label: tdc('Tax'), field: row => Number(row.tax_rate) ? `${row.tax_amount} (${row.tax_rate}%)` : '—', align: 'right' },
   { name: 'disponivel', label: tdc('Stock'), field: 'disponivel', align: 'center' },
   { name: 'acoes', label: '', field: 'acoes', align: 'center' },
 ]
@@ -224,7 +244,18 @@ async function refreshAll() {
 }
 
 // ---------------- NOVA LINHA ----------------
-const newItem = reactive({ product: null, quantidade: null, preco_unitario: null, desconto_valor: 0 })
+const newItem = reactive({ product: null, product_nome: '', tax: null, quantidade: null, preco_unitario: null, desconto_valor: 0 })
+
+const taxOptions = ref([])
+
+async function loadTaxes() {
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'sales/taxes', params: { active: 'true', page_size: 100 } }))
+    taxOptions.value = (data.results || data || []).filter(t => t.active !== false).map(t => ({ label: t.display_name || t.name, value: t.id }))
+  } catch {
+    taxOptions.value = []
+  }
+}
 const addingItem = ref(false)
 
 const previewSubtotal = computed(() => {
@@ -237,27 +268,35 @@ const previewSubtotal = computed(() => {
 async function onProductPicked(productId) {
   if (!productId) return
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: `inventory/products/${productId}/` }))
-    newItem.preco_unitario = Number(data.preco_base) || 0
+    // the customer's price list (quantity breaks), else the product's base price
+    const { data } = await HTTPAuth.get(url({
+      type: 'u',
+      url: `sales/sales/${route.params.id}/preco/`,
+      params: { product: productId, quantidade: newItem.quantidade || 1 },
+    }))
+    newItem.preco_unitario = Number((data.data ?? data).price) || 0
   } catch {
     // preço fica em branco, utilizador preenche manualmente
   }
 }
 
 async function addItem() {
-  if (!newItem.product || !newItem.quantidade || newItem.preco_unitario === null) return
+  if ((!newItem.product && !newItem.product_nome) || !newItem.quantidade || newItem.preco_unitario === null) return
 
   addingItem.value = true
   try {
     Saleitem.form = {
       sale: route.params.id,
-      product_id: newItem.product,
+      product_id: newItem.product || null,
+      product_nome: newItem.product ? undefined : newItem.product_nome,
+      tax: newItem.tax || null,
       quantidade: newItem.quantidade,
       preco_unitario: newItem.preco_unitario,
       desconto_valor: newItem.desconto_valor || 0,
     }
     await Saleitem.create()
     newItem.product = null
+    newItem.product_nome = ''
     newItem.quantidade = null
     newItem.preco_unitario = null
     newItem.desconto_valor = 0
@@ -288,6 +327,19 @@ async function confirmar() {
     await refreshAll()
   } catch (e) {
     actionError.value = errorMessage(e) || tdc('Error confirming sale.')
+  } finally {
+    acting.value = false
+  }
+}
+
+async function reservar() {
+  acting.value = true
+  actionError.value = ''
+  try {
+    await Sale.reservar(route.params.id)
+    await fetchDisponibilidade()
+  } catch (e) {
+    actionError.value = errorMessage(e) || tdc('Error reserving stock.')
   } finally {
     acting.value = false
   }
@@ -336,6 +388,7 @@ async function pagar() {
 }
 
 onMounted(async () => {
+  loadTaxes()
   await refreshAll()
   paymentForm.valor = Number(Sale.row?.saldo_devedor) || null
 })

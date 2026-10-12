@@ -14,6 +14,8 @@ import { vendasRoutes } from './../pages/vendas/routes'
 import { farmaciaRoutes } from './../pages/farmacia/routes'
 import { purchasesRoutes } from './../pages/purchases/routes'
 import { accountingRoutes } from './../pages/accounting/routes'
+import { crmRoutes } from './../pages/crm/routes'
+import { workflowRoutes } from './../pages/workflow/routes'
 
 const host = window.location.hostname
 
@@ -81,7 +83,9 @@ if(siteRoutes.length !== 0 ){
         ...vendasRoutes,
         ...farmaciaRoutes,
         ...purchasesRoutes,
-        ...accountingRoutes],
+        ...accountingRoutes,
+        ...crmRoutes,
+        ...workflowRoutes],
     },
 
     {

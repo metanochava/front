@@ -5,6 +5,7 @@ import { customerRoutes } from './customer/customerRoutes'
 import { customercontactRoutes } from './customercontact/customercontactRoutes'
 import { saleRoutes } from './sale/saleRoutes'
 import { paymentRoutes } from './payment/paymentRoutes'
+import { taxRoutes } from './tax/taxRoutes'
 
 export let vendasRoutes = [
   {
@@ -22,4 +23,5 @@ export let vendasRoutes = [
   ...customercontactRoutes,
   ...saleRoutes,
   ...paymentRoutes,
+  ...taxRoutes,
 ]
