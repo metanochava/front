@@ -20,6 +20,13 @@ export const resaasSiteRoutes = [
         name: 'doc',
         component: () => import('./pages/DocPage.vue'),
         meta: { title: tdc('Documentation') }
+      },
+      {
+        // this site's own 404, inside its layout
+        path: '/:catchAll(.*)*',
+        name: 'resaas-404',
+        component: () => import('./pages/NotFoundPage.vue'),
+        meta: { title: tdc('Page not found') }
       }
     ]
   }

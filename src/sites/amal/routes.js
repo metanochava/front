@@ -24,6 +24,13 @@ export let amalSiteRoutes = [
       //   name:"especialidades",
       //   component:()=>import("./pages/EspecialidadesPage.vue")
       // },
+      {
+        // this site's own 404, inside its layout (header, footer, style)
+        path: '/:catchAll(.*)*',
+        name: 'amal-404',
+        component: () => import('./pages/NotFoundPage.vue'),
+        meta: { title: tdc('Page not found') },
+      },
     ],
   }
 ]

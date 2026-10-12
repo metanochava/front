@@ -16,7 +16,14 @@ export const portfolioSiteRoutes = [
         meta: {
           title: tdc('Portfolio')
         }
-      }
+      },
+      {
+        // this site's own 404, inside its layout (header, footer, style)
+        path: '/:catchAll(.*)*',
+        name: 'portfolio-404',
+        component: () => import('./pages/NotFoundPage.vue'),
+        meta: { title: tdc('Page not found') },
+      },
     ]
   }
 ]

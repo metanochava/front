@@ -17,7 +17,26 @@ import { installAuthGuard, installPageTitle } from 'quasar_resaas'
  * with the Router instance.
  */
 
+// Hash mode only reads the part after "#": a path typed before it
+// (https://site/nao-existe) was ignored and the home page opened. Move it
+// into the hash, so the router resolves it - a real page, or the site's 404.
+function movePathIntoHash() {
+  if (process.env.SERVER || process.env.VUE_ROUTER_MODE === 'history') return
+
+  const base = (process.env.VUE_ROUTER_BASE || '/').replace(/\/?$/, '/')
+  const { pathname, search, hash } = window.location
+  if (!pathname.startsWith(base)) return
+
+  const path = pathname.slice(base.length - 1)
+  if (path === '/' || path === '/index.html') return
+
+  const target = hash && hash !== '#/' ? hash : `#${path}${search}`
+  window.history.replaceState(null, '', `${base}${target}`)
+}
+
 export default defineRouter(function (/* { store, ssrContext } */) {
+  movePathIntoHash()
+
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'
