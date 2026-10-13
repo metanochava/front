@@ -488,8 +488,7 @@ const activeContextLabel = computed(() => {
 function goToDashboard() {
 
   /*
-   * Nesta fase continuamos compatíveis
-   * com a rota actual "home".
+   * The dashboards route ("dashboard").
    *
    * Quando DashboardStore +
    * DashboardRenderer estiverem integrados,
@@ -498,7 +497,7 @@ function goToDashboard() {
    */
 
   router.push({
-    name: 'home',
+    name: 'dashboard',
   })
 
 }

@@ -361,13 +361,15 @@ export default defineComponent({
       loadSchedule()
     }
 
-    // "Book appointment" on a doctor card (Our doctors section)
+    // "Book appointment" on a doctor card (Our doctors section) or a
+    // specialty card (Specialties section, no doctor yet)
     watch(() => booking.preselect, (choice) => {
       if (!choice) return
       form.doctor = choice.doctor
       form.specialty = choice.specialty
       booking.preselect = null
-      onDoctorChange()
+      if (form.doctor) onDoctorChange()
+      else { form.time = ""; loadSchedule() }
     })
 
     function onDateChange () {

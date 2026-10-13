@@ -51,6 +51,13 @@ function bookWith (doctor) {
   document.getElementById('marcacao')?.scrollIntoView({ behavior: 'smooth' })
 }
 
+// A specialty card (Specialties section): preselect only the specialty - the
+// booking form then offers that specialty's doctors.
+function bookSpecialty (specialty) {
+  state.preselect = { doctor: null, specialty: specialty.id }
+  document.getElementById('marcacao')?.scrollIntoView({ behavior: 'smooth' })
+}
+
 export function usePublicBooking () {
-  return { state, loadDoctors, bookWith }
+  return { state, loadDoctors, bookWith, bookSpecialty }
 }

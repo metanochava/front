@@ -56,15 +56,19 @@ if(siteRoutes.length !== 0 ){
       component: MainLayout,
       children: [
         {
-          path: '/home',
+          // the dashboards (was '/home' / name 'home')
+          path: '/dashboard',
           component: () => import('src/pages/IndexPage.vue'),
-          name: 'home'
+          name: 'dashboard'
         },
         {
-          path: 'authwelcome',
+          // the Entity's welcome (was '/authwelcome' / name 'authwelcome');
+          // '/home' is now quasar_resaas' start page without an Entity
+          path: 'welcome',
           component: () => import('src/pages/WelcomePage.vue'),
-          name: 'authwelcome',
+          name: 'welcome',
         },
+        { path: 'authwelcome', redirect: { name: 'welcome' } },
         {
           path: 'crud',
           component:CrudPage,
