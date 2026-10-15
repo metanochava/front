@@ -3,7 +3,7 @@ import { /* HTTPAuth, url,*/ createBaseStore } from 'quasar_resaas'
 
 export const useTipoexamemedicoStore = createBaseStore(
   'tipoexamemedico',
-  { app: 'saude', model: 'Tipoexamemedico' },
+  { app: 'saude', model: 'Tipoexamemedico', url: 'saude/catalogoexames' },
   {
     state: () => ({
 

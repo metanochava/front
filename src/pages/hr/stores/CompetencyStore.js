@@ -4,7 +4,7 @@ export const useCompetencyStore = createBaseStore(
   'competency',
   {
     app: 'hr',
-    model: 'Competency'
+    model: 'Competency', url: 'hr/competencies'
   },
   {
     state: () => ({

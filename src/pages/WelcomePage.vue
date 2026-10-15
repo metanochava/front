@@ -307,18 +307,19 @@
           </div>
 
 
-          <!-- LOGOUT -->
+          <!-- SITE: the public site of this EntityType ('/', route 'site');
+               signing out stays in the header's user menu -->
 
           <div class="col-auto">
 
             <s-btn
               dense
               outline
-              color="negative"
-              icon="logout"
-              :label="tdc('Logout')"
-              :loading="logoutLoading"
-              @click="logout"
+              color="primary"
+              icon="public"
+              :label="tdc('Go to site')"
+              :to="{ name: 'site' }"
+              data-test="welcome-go-to-site"
             />
 
           </div>
@@ -397,7 +398,6 @@ onMounted(async () => {
 // STATE
 // =============================================================
 
-const logoutLoading = ref(false)
 
 
 // =============================================================
@@ -503,40 +503,6 @@ function goToDashboard() {
 }
 
 
-// =============================================================
-// LOGOUT
-// =============================================================
-
-async function logout() {
-
-  if (logoutLoading.value) {
-    return
-  }
-
-  logoutLoading.value = true
-
-  try {
-
-    await User.logout()
-
-    await router.replace({
-      name: 'login',
-    })
-
-  } catch (error) {
-
-    console.error(
-      '[Welcome] Logout error:',
-      error,
-    )
-
-  } finally {
-
-    logoutLoading.value = false
-
-  }
-
-}
 
 </script>
 

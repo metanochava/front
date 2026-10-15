@@ -8,7 +8,7 @@ const copied = ref('')
 
 const installs = [
   { key: 'back', label: 'django_resaas', command: 'pip install django_resaas' },
-  { key: 'front', label: 'quasar_resaas', command: 'npm install github:metanochava/quasar_resaas' }
+  { key: 'front', label: 'quasar_resaas', command: 'npm install quasar_resaas' }
 ]
 
 const libraries = [

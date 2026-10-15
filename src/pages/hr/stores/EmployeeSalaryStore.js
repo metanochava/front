@@ -4,7 +4,7 @@ export const useEmployeeSalaryStore = createBaseStore(
   'employeesalary',
   {
     app: 'hr',
-    model: 'EmployeeSalary'
+    model: 'EmployeeSalary', url: 'hr/employeesalaries'
   },
   {
     state: () => ({

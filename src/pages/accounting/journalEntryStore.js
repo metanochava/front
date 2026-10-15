@@ -2,7 +2,7 @@ import { HTTPAuth, url, createBaseStore } from 'quasar_resaas'
 
 export const useJournalEntryStore = createBaseStore(
   'journalentry',
-  { app: 'accounting', model: 'JournalEntry' },
+  { app: 'accounting', model: 'JournalEntry', url: 'accounting/journalentries' },
   {
     state: () => ({}),
     getters: { actual: (state) => state.row },

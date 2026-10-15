@@ -4,7 +4,7 @@ export const useLeaveBalanceEntryStore = createBaseStore(
   'leavebalanceentry',
   {
     app: 'hr',
-    model: 'LeaveBalanceEntry'
+    model: 'LeaveBalanceEntry', url: 'hr/leavebalanceentries'
   },
   {
     state: () => ({

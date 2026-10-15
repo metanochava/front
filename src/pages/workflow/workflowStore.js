@@ -2,7 +2,7 @@ import { HTTPAuth, url, createBaseStore } from 'quasar_resaas'
 
 export const useWorkflowInstanceStore = createBaseStore(
   'workflowinstance',
-  { app: 'workflow', model: 'WorkflowInstance' },
+  { app: 'workflow', model: 'WorkflowInstance', url: 'workflow/instances' },
   {
     state: () => ({ inbox: [] }),
     getters: { actual: (state) => state.row },

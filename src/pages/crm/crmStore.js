@@ -19,7 +19,7 @@ export const useLeadStore = createBaseStore(
 
 export const useOpportunityStore = createBaseStore(
   'opportunity',
-  { app: 'crm', model: 'Opportunity' },
+  { app: 'crm', model: 'Opportunity', url: 'crm/opportunities' },
   {
     state: () => ({ pipeline: null }),
     getters: { actual: (state) => state.row },
@@ -45,7 +45,7 @@ export const useStageStore = createBaseStore(
 
 export const useActivityStore = createBaseStore(
   'activity',
-  { app: 'crm', model: 'Activity' },
+  { app: 'crm', model: 'Activity', url: 'crm/activities' },
   {
     state: () => ({}),
     getters: { actual: (state) => state.row },
