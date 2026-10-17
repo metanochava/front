@@ -1,0 +1,43 @@
+name: CI
+
+# Validation only: this application is deployed by hand (Makefile), never
+# from here. Lint, the vitest suite and the production build must pass.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # public values only: the build inlines process.env into the bundle
+      API_PRO: https://api.example.test
+      API_DEV: https://api.example.test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # the lockfile pins quasar_resaas as git+ssh (a "github:" dependency);
+      # the runner has no SSH key, so fetch the public repository over HTTPS
+      - run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

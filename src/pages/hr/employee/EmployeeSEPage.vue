@@ -285,7 +285,10 @@ async function save() {
     else await saveNew()
   } catch (error) {
     const status = error?.response?.status
-    const existingEmployeeId = error?.response?.data?.existing_employee_id
+    // error contract: {error: {code: 'employee_already_exists', details: {existing_employee_id}}}
+    // (a top-level existing_employee_id is the older answer)
+    const data = error?.response?.data
+    const existingEmployeeId = data?.error?.details?.existing_employee_id ?? data?.existing_employee_id
 
     if (status === 409 && existingEmployeeId) {
       $q.notify({

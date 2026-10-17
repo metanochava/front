@@ -24,6 +24,25 @@ yarn lint
 npm run lint
 ```
 
+### Run the tests
+
+```bash
+npm test
+```
+
+vitest (`vitest.config.js` mirrors the aliases and auto-imports of `quasar.config.js`):
+`src/router/routes.spec.js` checks which route table each domain gets, that every table ends in a
+catch-all, that route names are unique and that every lazily loaded page of the app resolves;
+`src/entity-type-sites/index.spec.js` checks the registration of the EntityType sites.
+
+### Environment
+
+Everything in `.env` that `quasar.config.js` passes to `build.env` is compiled into the public
+JavaScript bundle. Put no secret there. `FRONT_END_KEY` / `FRONT_END_PASSWORD` identify this
+client to the backend (`FEK`/`FEP` headers) and are readable by anyone who opens the site; they
+grant no permission by themselves. The architecture of the four repositories is described in
+`back/docs/architecture/ecosystem.md`.
+
 ### Format the files
 
 ```bash
