@@ -69,6 +69,9 @@ export default defineConfig((ctx) => {
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
+      // QUASAR_DIST_DIR builds somewhere else than dist/spa - for validating a
+      // build (CI, audits) without replacing the dist/spa the web server serves
+      ...(process.env.QUASAR_DIST_DIR ? { distDir: process.env.QUASAR_DIST_DIR } : {}),
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},

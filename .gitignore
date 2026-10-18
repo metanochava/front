@@ -90,3 +90,10 @@ yarn-error.log*
 # local .env files
 .env.local*
 .vscode
+
+# secrets and local runtime output - never versioned
+.env
+.env.*
+!.env.example
+*.log
+a.out

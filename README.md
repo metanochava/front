@@ -57,6 +57,13 @@ npm run format
 quasar build
 ```
 
+`quasar build` first empties `dist/spa`, which the web server serves for the dev sites; an
+interrupted build leaves them without a site. To only validate a build, write it elsewhere:
+
+```bash
+QUASAR_DIST_DIR=/tmp/front-build npm run build
+```
+
 ### Customize the configuration
 
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).

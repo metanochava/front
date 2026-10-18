@@ -29,21 +29,27 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      // the client build, not the SSR one (no ssrContext in the tests)
-      quasar: 'quasar/dist/quasar.client.js',
-      src: at('./src'),
-      app: at('./'),
-      components: at('./src/components'),
-      layouts: at('./src/layouts'),
-      pages: at('./src/pages'),
-      assets: at('./src/assets'),
-      boot: at('./src/boot'),
-      stores: at('./src/stores'),
-    },
+    alias: [
+      // the client build, not the SSR one (no ssrContext in the tests); exact
+      // match only, so 'quasar/wrappers' etc. keep resolving normally
+      { find: /^quasar$/, replacement: 'quasar/dist/quasar.client.js' },
+      ...Object.entries({
+        src: './src',
+        app: './',
+        components: './src/components',
+        layouts: './src/layouts',
+        pages: './src/pages',
+        assets: './src/assets',
+        boot: './src/boot',
+        stores: './src/stores',
+      }).map(([name, path]) => ({ find: new RegExp(`^${name}(?=/|$)`), replacement: at(path) })),
+    ],
   },
   test: {
     environment: 'happy-dom',
+    // quasar_resaas ships source (.vue, extensionless imports) for Vite to
+    // compile, exactly as the app build does - never as a plain Node module
+    server: { deps: { inline: ['quasar_resaas'] } },
     include: ['src/**/*.spec.js'],
     // importing every page compiles a large part of the app
     testTimeout: 60000,
