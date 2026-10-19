@@ -51,33 +51,80 @@ let info = null
 let markers = []
 let here = null
 
+function formatDistance (km) {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`
+}
+
+// small DOM builder: text always through textContent (names, addresses and
+// phones are tenant data, never HTML)
+function el (tag, className, text) {
+  const node = document.createElement(tag)
+  if (className) node.className = className
+  if (text !== undefined && text !== null) node.textContent = text
+  return node
+}
+function icon (name) {
+  const node = el('i', 'material-icons pharmacy-pin__icon', name)
+  node.setAttribute('aria-hidden', 'true')
+  return node
+}
+
 function infoContent (pharmacy) {
-  // text nodes only: names and addresses are tenant data, never HTML
-  const box = document.createElement('div')
-  const line = (text, bold = false) => {
-    if (!text) return
-    const el = document.createElement('div')
-    el.textContent = text
-    if (bold) el.style.fontWeight = '600'
-    box.appendChild(el)
+  const card = el('div', 'pharmacy-pin')
+
+  const head = el('div', 'pharmacy-pin__head')
+  const avatar = el('div', 'pharmacy-pin__avatar')
+  avatar.appendChild(icon('local_pharmacy'))
+  const titles = el('div', 'pharmacy-pin__titles')
+  titles.appendChild(el('div', 'pharmacy-pin__name', pharmacy.name))
+  if (pharmacy.organisation && pharmacy.organisation !== pharmacy.name) {
+    titles.appendChild(el('div', 'pharmacy-pin__org', pharmacy.organisation))
   }
-  line(pharmacy.name, true)
-  line(pharmacy.organisation)
-  line(pharmacy.address)
-  line(pharmacy.phone)
-  line(pharmacy.opening_hours)
+  head.append(avatar, titles)
   if (pharmacy.distance_km !== null && pharmacy.distance_km !== undefined) {
-    line(pharmacy.distance_km < 1 ? `${Math.round(pharmacy.distance_km * 1000)} m` : `${pharmacy.distance_km.toFixed(1)} km`)
+    head.appendChild(el('span', 'pharmacy-pin__distance', formatDistance(pharmacy.distance_km)))
   }
+  card.appendChild(head)
+
+  const rows = el('div', 'pharmacy-pin__rows')
+  const row = (iconName, text, href) => {
+    if (!text) return
+    const line = el(href ? 'a' : 'div', 'pharmacy-pin__row')
+    if (href) line.href = href
+    line.append(icon(iconName), el('span', null, text))
+    rows.appendChild(line)
+  }
+  row('place', pharmacy.address)
+  row('call', pharmacy.phone, pharmacy.phone ? `tel:${pharmacy.phone.replace(/[^\d+]/g, '')}` : null)
+  row('schedule', pharmacy.opening_hours)
+  if (rows.childNodes.length) card.appendChild(rows)
+
+  card.appendChild(el(
+    'span',
+    `pharmacy-pin__badge ${pharmacy.online_orders ? 'pharmacy-pin__badge--online' : ''}`,
+    pharmacy.online_orders ? tdc('Online reservation') : tdc('In-store only'),
+  ))
+
+  const actions = el('div', 'pharmacy-pin__actions')
   if (props.selectable) {
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.textContent = tdc('Medicines at this pharmacy')
-    button.style.marginTop = '6px'
-    button.addEventListener('click', () => emit('select', pharmacy))
-    box.appendChild(button)
+    const primary = el('button', 'pharmacy-pin__btn pharmacy-pin__btn--primary')
+    primary.type = 'button'
+    primary.append(icon('search'), el('span', null, tdc('Medicines at this pharmacy')))
+    primary.addEventListener('click', () => emit('select', pharmacy))
+    actions.appendChild(primary)
   }
-  return box
+  const lat = Number(pharmacy.coordinates?.lat)
+  const lng = Number(pharmacy.coordinates?.lng)
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    const directions = el('a', 'pharmacy-pin__btn pharmacy-pin__btn--ghost')
+    directions.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+    directions.target = '_blank'
+    directions.rel = 'noopener noreferrer'
+    directions.append(icon('directions'), el('span', null, tdc('Directions')))
+    actions.appendChild(directions)
+  }
+  card.appendChild(actions)
+  return card
 }
 
 async function render () {
@@ -168,5 +215,149 @@ onBeforeUnmount(() => {
   bottom: 24px;
   left: 10px;
   z-index: 1;
+}
+</style>
+
+<!-- not scoped: the marker's card lives in Google's InfoWindow, outside this
+     component's DOM. Every rule is under .pharmacy-pin. -->
+<style>
+.pharmacy-pin {
+  width: 260px;
+  max-width: 72vw;
+  font-family: inherit;
+  color: #1f2937;
+  line-height: 1.35;
+}
+.pharmacy-pin__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.pharmacy-pin__avatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--q-primary), color-mix(in srgb, var(--q-primary) 60%, #000));
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--q-primary) 35%, transparent);
+}
+.pharmacy-pin__avatar .pharmacy-pin__icon {
+  font-size: 22px;
+  color: #fff;
+}
+.pharmacy-pin__titles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.pharmacy-pin__name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+.pharmacy-pin__org {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 1px;
+}
+.pharmacy-pin__distance {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--q-primary);
+  background: color-mix(in srgb, var(--q-primary) 12%, #fff);
+}
+.pharmacy-pin__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0;
+  border-top: 1px solid #eef0f3;
+  border-bottom: 1px solid #eef0f3;
+  margin-bottom: 10px;
+}
+.pharmacy-pin__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+  text-decoration: none;
+  white-space: pre-line;
+}
+a.pharmacy-pin__row:hover span {
+  color: var(--q-primary);
+  text-decoration: underline;
+}
+.pharmacy-pin__icon {
+  font-size: 17px;
+  color: var(--q-primary);
+  line-height: 1.2;
+}
+.pharmacy-pin__badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: #6b7280;
+  background: #f3f4f6;
+  margin-bottom: 12px;
+}
+.pharmacy-pin__badge--online {
+  color: #047857;
+  background: #d1fae5;
+}
+.pharmacy-pin__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pharmacy-pin__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.pharmacy-pin__btn .pharmacy-pin__icon {
+  font-size: 18px;
+  color: inherit;
+}
+.pharmacy-pin__btn--primary {
+  border: 0;
+  color: #fff;
+  background: var(--q-primary);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--q-primary) 35%, transparent);
+}
+.pharmacy-pin__btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--q-primary) 45%, transparent);
+}
+.pharmacy-pin__btn--ghost {
+  border: 1px solid color-mix(in srgb, var(--q-primary) 40%, transparent);
+  color: var(--q-primary);
+  background: #fff;
+}
+.pharmacy-pin__btn--ghost:hover {
+  background: color-mix(in srgb, var(--q-primary) 8%, #fff);
+}
+.pharmacy-pin__btn:focus-visible {
+  outline: 2px solid var(--q-primary);
+  outline-offset: 2px;
 }
 </style>
