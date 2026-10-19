@@ -33,7 +33,7 @@ npm test
 vitest (`vitest.config.js` mirrors the aliases and auto-imports of `quasar.config.js`):
 `src/router/routes.spec.js` checks which route table each domain gets, that every table ends in a
 catch-all, that route names are unique and that every lazily loaded page of the app resolves;
-`src/entity-type-sites/index.spec.js` checks the registration of the EntityType sites.
+`src/pages/index.spec.js` checks the registration of the EntityType sites (`src/pages/<type>/site.js` and, when the type has its own site, `src/pages/<type>/SitePage.vue`).
 
 ### Environment
 

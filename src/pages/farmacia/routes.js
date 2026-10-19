@@ -2,6 +2,8 @@ import { tdc } from 'quasar_resaas'
 
 import { filafarmaciaRoutes } from './filafarmacia/filafarmaciaRoutes'
 import { dispensaRoutes } from './dispensa/dispensaRoutes'
+import { marketplaceRoutes } from './marketplace/marketplaceRoutes'
+import { counterRoutes } from './counter/counterRoutes'
 
 export let farmaciaRoutes = [
   {
@@ -17,4 +19,6 @@ export let farmaciaRoutes = [
   },
   ...filafarmaciaRoutes,
   ...dispensaRoutes,
+  ...marketplaceRoutes,
+  ...counterRoutes,
 ]
