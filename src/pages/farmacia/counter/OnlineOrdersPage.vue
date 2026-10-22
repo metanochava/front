@@ -11,7 +11,9 @@
           @update:model-value="reload" />
       </div>
       <div class="col-4 col-sm-3 text-right">
-        <s-btn flat icon="refresh" :aria-label="tdc('Refresh')" @click="reload" />
+        <s-btn flat icon="refresh" :aria-label="tdc('Refresh')" @click="reload">
+          <s-tooltip>{{ tdc('Refresh') }}</s-tooltip>
+        </s-btn>
       </div>
     </div>
 
@@ -38,15 +40,21 @@
         <q-item-section side top>
           <q-item-label class="text-weight-medium">{{ Number(order.total).toFixed(2) }} {{ order.currency }}</q-item-label>
           <div v-if="order.effective_status === 'reserved'" class="q-gutter-xs">
-            <s-btn dense color="primary" icon="point_of_sale" label="Collect" data-test="order-collect" @click="openCollect(order)" />
-            <s-btn dense flat color="negative" label="Cancel" @click="cancel(order)" />
+            <s-btn dense color="primary" icon="point_of_sale" label="Collect" data-test="order-collect" @click="openCollect(order)">
+              <s-tooltip>{{ tdc('Collect') }}</s-tooltip>
+            </s-btn>
+            <s-btn dense flat color="negative" label="Cancel" @click="cancel(order)">
+              <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+            </s-btn>
           </div>
         </q-item-section>
       </q-item>
     </q-list>
 
     <div v-if="next" class="text-center q-mt-md">
-      <s-btn flat label="Show more" :loading="loading" @click="load(page + 1)" />
+      <s-btn flat label="Show more" :loading="loading" @click="load(page + 1)">
+        <s-tooltip>{{ tdc('Show more') }}</s-tooltip>
+      </s-btn>
     </div>
 
     <q-dialog v-model="collecting" persistent>
@@ -55,8 +63,12 @@
         <div class="text-h6 q-mb-md">{{ tdc('Total') }}: {{ Number(current?.total || 0).toFixed(2) }} {{ current?.currency }}</div>
         <payment-fields v-model="payment" :prescription-required="Boolean(current?.prescription_required)" />
         <template #footer>
-          <s-btn flat label="Cancel" @click="collecting = false" />
-          <s-btn color="primary" type="submit" label="Sell" :loading="saving" />
+          <s-btn flat label="Cancel" @click="collecting = false">
+            <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+          </s-btn>
+          <s-btn color="primary" type="submit" label="Sell" :loading="saving">
+            <s-tooltip>{{ tdc('Sell') }}</s-tooltip>
+          </s-btn>
         </template>
       </s-modal-card>
     </q-dialog>

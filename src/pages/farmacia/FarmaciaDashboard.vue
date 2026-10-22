@@ -34,8 +34,9 @@
             v-for="link in quickLinks" :key="link.route"
             outline no-caps color="primary"
             :icon="link.icon" :label="tdc(link.label)"
-            @click="router.push({ name: link.route })"
-          />
+            @click="router.push({ name: link.route })">
+            <s-tooltip>{{ tdc(link.label) }}</s-tooltip>
+          </s-btn>
         </div>
       </q-card-section>
     </s-card>

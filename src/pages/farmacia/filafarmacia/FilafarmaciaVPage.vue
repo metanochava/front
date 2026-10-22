@@ -11,20 +11,23 @@
         v-if="estado === 'pendente' || estado === 'em_revisao'"
         color="primary" icon="fact_check" :label="tdc('Review')"
         :loading="acting" class="q-mr-sm"
-        @click="showRevisarDialog = true"
-      />
+        @click="showRevisarDialog = true">
+        <s-tooltip>{{ tdc('Review') }}</s-tooltip>
+      </q-btn>
       <q-btn
         v-if="estado === 'aprovada' || estado === 'dispensada_parcial'"
         color="positive" icon="medication" :label="tdc('Dispense')"
         :loading="acting" class="q-mr-sm"
-        @click="openDispensarDialog"
-      />
+        @click="openDispensarDialog">
+        <s-tooltip>{{ tdc('Dispense') }}</s-tooltip>
+      </q-btn>
       <q-btn
         v-if="estado === 'dispensada_parcial'"
         color="secondary" icon="task_alt" :label="tdc('Complete')"
         :loading="acting"
-        @click="concluir"
-      />
+        @click="concluir">
+        <s-tooltip>{{ tdc('Complete') }}</s-tooltip>
+      </q-btn>
     </div>
 
     <div v-if="actionError" class="q-mb-md">
@@ -96,7 +99,7 @@
     <q-dialog v-model="showRevisarDialog">
       <s-modal-card :title="tdc('Review Prescription')" width="380px">
         <div class="q-gutter-md">
-          <s-select
+          <s-select dense
             v-model="revisarForm.employee_id"
             :api="employeeSelectUrl"
             option-label="label" option-value="value"
@@ -111,7 +114,7 @@
             ]"
             inline
           />
-          <q-input
+          <q-input dense
             v-if="revisarForm.aprovado === false"
             v-model="revisarForm.motivo_rejeicao"
             type="textarea"
@@ -121,12 +124,15 @@
         </div>
 
         <template #footer>
-          <q-btn flat :label="tdc('Cancel')" v-close-popup />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup>
+            <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+          </q-btn>
           <q-btn
             color="primary" :label="tdc('Confirm')" :loading="acting"
             :disable="!revisarForm.employee_id || revisarForm.aprovado === null || (revisarForm.aprovado === false && !revisarForm.motivo_rejeicao)"
-            @click="revisar"
-          />
+            @click="revisar">
+            <s-tooltip>{{ tdc('Confirm') }}</s-tooltip>
+          </q-btn>
 
         </template>
       </s-modal-card>
@@ -138,7 +144,7 @@
         <div class="q-gutter-md">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-sm-6">
-              <s-select
+              <s-select dense
                 v-model="dispensarForm.employee_id"
                 :api="employeeSelectUrl"
                 option-label="label" option-value="value"
@@ -147,7 +153,7 @@
               />
             </div>
             <div class="col-12 col-sm-6">
-              <s-select
+              <s-select dense
                 v-model="dispensarForm.warehouse_id"
                 :api="warehouseSelectUrl"
                 option-label="label" option-value="value"
@@ -163,7 +169,7 @@
           <div v-for="line in dispensarLines" :key="line.item_receita_id" class="q-mb-sm">
             <div class="row q-col-gutter-sm items-center">
               <div class="col-1">
-                <q-checkbox v-model="line.incluir" />
+                <q-checkbox dense v-model="line.incluir" />
               </div>
               <div class="col-11 col-sm-3">
                 <div class="text-body2">{{ line.medicamento_label }}</div>
@@ -199,12 +205,15 @@
         </div>
 
         <template #footer>
-          <q-btn flat :label="tdc('Cancel')" v-close-popup />
+          <q-btn flat :label="tdc('Cancel')" v-close-popup>
+            <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+          </q-btn>
           <q-btn
             color="positive" :label="tdc('Dispense')" :loading="acting"
             :disable="!dispensarForm.employee_id || !dispensarLines.some(l => l.incluir && l.quantidade > 0)"
-            @click="dispensar"
-          />
+            @click="dispensar">
+            <s-tooltip>{{ tdc('Dispense') }}</s-tooltip>
+          </q-btn>
 
         </template>
       </s-modal-card>

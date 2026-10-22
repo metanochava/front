@@ -1,45 +1,28 @@
 <template>
   <section class="marketplace-pharmacies" data-test="nearby-pharmacies">
-    <div class="row items-center q-col-gutter-sm q-mb-sm">
-      <div class="col-12 col-sm-auto">
-        <div class="text-h6">{{ tdc('Nearby pharmacies') }}</div>
-      </div>
-      <div class="col-12 col-sm-auto q-ml-sm-auto">
-        <s-btn
-          flat
-          icon="my_location"
-          label="Use my location"
-          :loading="locating"
-          data-test="use-location"
-          @click="locate"
-        />
-      </div>
-    </div>
+    <!-- no map (no key, or it failed): the field above the list -->
+    <template v-if="!showMap">
+      <pharmacy-search-field
+        v-model="filters.q"
+        class="q-mb-sm"
+        :located="Boolean(position)"
+        :locating="locating"
+        @update:model-value="search"
+        @locate="locate"
+      />
+    </template>
 
     <div v-if="positionMessage" class="text-caption text-grey q-mb-sm" data-test="location-message">
       {{ tdc(positionMessage) }}
-    </div>
-
-    <div class="row q-col-gutter-sm q-mb-md">
-      <div class="col-12">
-        <s-input v-model="filters.q" label="Name or address" clearable dense @update:model-value="search" />
-      </div>
-      <div class="col-6 col-md-4">
-        <s-input v-model="filters.city" label="City" clearable dense @update:model-value="search" />
-      </div>
-      <div class="col-6 col-md-4">
-        <s-input v-model="filters.neighborhood" label="Neighbourhood" clearable dense @update:model-value="search" />
-      </div>
-      <div class="col-12 col-md-4">
-        <s-input v-model="filters.country" label="Country" clearable dense @update:model-value="search" />
-      </div>
     </div>
 
     <q-inner-loading :showing="state.loading && !state.rows.length" />
 
     <div v-if="state.error && !state.rows.length" class="text-negative q-pa-md" data-test="pharmacies-error">
       {{ tdc('Could not load the pharmacies.') }}
-      <s-btn flat label="Try again" @click="search" />
+      <s-btn flat label="Try again" @click="search">
+        <s-tooltip>{{ tdc('Try again') }}</s-tooltip>
+      </s-btn>
     </div>
 
     <div v-else-if="state.loaded && !state.rows.length" class="text-grey q-pa-md" data-test="pharmacies-empty">
@@ -48,14 +31,32 @@
 
     <pharmacies-map
       v-if="showMap"
+      ref="map"
       :pharmacies="state.rows"
       :position="position"
       :selectable="selectable"
+      :route="route"
+      :radius-km="radiusKm"
       expandable
       @select="$emit('select', $event)"
       @failed="mapFailed = true"
       @expand="expanded = true"
-    />
+    >
+      <!-- on top of the map, centred: the field (its text names the section) -->
+      <template #top>
+        <pharmacy-search-field
+          v-model="filters.q"
+          :located="Boolean(position)"
+          :locating="locating"
+          @update:model-value="search"
+          @locate="locate"
+        />
+      </template>
+      <!-- at the bottom of the map: the pharmacies inside the radius, - / + -->
+      <template v-if="position" #bottom>
+        <nearby-radius v-model="radiusKm" :count="nearbyCount" />
+      </template>
+    </pharmacies-map>
 
     <!-- the same pharmacies on the whole screen -->
     <q-dialog v-model="expanded" maximized data-test="pharmacies-map-dialog">
@@ -65,9 +66,24 @@
           :pharmacies="state.rows"
           :position="position"
           :selectable="selectable"
+          :route="route"
+          :radius-km="radiusKm"
           @select="selectFromMap"
           @failed="expanded = false"
-        />
+        >
+          <template #top>
+            <pharmacy-search-field
+              v-model="filters.q"
+              :located="Boolean(position)"
+              :locating="locating"
+              @update:model-value="search"
+              @locate="locate"
+            />
+          </template>
+          <template v-if="position" #bottom>
+            <nearby-radius v-model="radiusKm" :count="nearbyCount" />
+          </template>
+        </pharmacies-map>
       </s-modal-card>
     </q-dialog>
 
@@ -101,14 +117,18 @@
             <div v-else class="text-grey">{{ tdc('Opening hours not provided') }}</div>
           </q-card-section>
           <q-card-actions v-if="selectable" align="right">
-            <s-btn flat icon="search" label="Medicines at this pharmacy" @click="$emit('select', pharmacy)" />
+            <s-btn flat icon="search" label="Medicines at this pharmacy" @click="$emit('select', pharmacy)">
+              <s-tooltip>{{ tdc('Medicines at this pharmacy') }}</s-tooltip>
+            </s-btn>
           </q-card-actions>
         </s-card>
       </div>
     </div>
 
     <div v-if="state.rows.length < state.count" class="text-center q-mt-md">
-      <s-btn flat label="Show more" :loading="state.loading" @click="more" />
+      <s-btn flat label="Show more" :loading="state.loading" @click="more">
+        <s-tooltip>{{ tdc('Show more') }}</s-tooltip>
+      </s-btn>
     </div>
   </section>
 </template>
@@ -117,8 +137,10 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { debounce } from 'quasar'
 import { tdc } from 'quasar_resaas'
-import { currentPosition, hasMapsKey, mapPoints, usePharmacies } from './useMarketplace'
+import { NEARBY_RADIUS_KM, currentPosition, hasMapsKey, isNearby, mapPoints, useMapRoute, usePharmacies } from './useMarketplace'
 import PharmaciesMap from './PharmaciesMap.vue'
+import PharmacySearchField from './PharmacySearchField.vue'
+import NearbyRadius from './NearbyRadius.vue'
 
 defineProps({
   // show "Medicines at this pharmacy" (only for signed-in users: the search needs a session)
@@ -127,19 +149,25 @@ defineProps({
 const emit = defineEmits(['select', 'position'])
 
 const { state, load, more } = usePharmacies()
-const filters = reactive({ q: '', city: '', neighborhood: '', country: '' })
+const filters = reactive({ q: '' })
 const position = ref(null)
 const locating = ref(false)
 const positionMessage = ref('')
 const mapFailed = ref(false)
 const expanded = ref(false)
+const map = ref(null)
+// one route for the page's map and the full-screen map (kept when the full screen opens or closes)
+const route = useMapRoute()
 const showMap = computed(() => hasMapsKey() && !mapFailed.value)
 const unplaced = computed(() => state.rows.length - mapPoints(state.rows).length)
+// the "near you" radius, changed with - / + on the map (both maps share it)
+const radiusKm = ref(NEARBY_RADIUS_KM)
+const nearbyCount = computed(() => state.rows.filter((pharmacy) => isNearby(pharmacy, radiusKm.value)).length)
 
 const POSITION_MESSAGES = {
-  denied: 'Location was not allowed: search by city or address instead.',
-  unsupported: 'This device cannot share its location: search by city or address instead.',
-  unavailable: 'Your location is not available right now: search by city or address instead.',
+  denied: 'Location was not allowed: search by name or address instead.',
+  unsupported: 'This device cannot share its location: search by name or address instead.',
+  unavailable: 'Your location is not available right now: search by name or address instead.',
 }
 
 function run () {
@@ -167,11 +195,20 @@ function selectFromMap (pharmacy) {
   emit('select', pharmacy)
 }
 
+// the page shows the map again after hiding it (phone tabs): fit it to its size
+defineExpose({ refreshMap: () => map.value?.refresh() })
+
 function formatDistance (km) {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`
 }
 
-onMounted(run)
+// the list at once, then the device position by default (the browser asks
+// the first time); a refused or unavailable position leaves the list as it
+// is, with the usual message, and the button tries again
+onMounted(() => {
+  run()
+  locate()
+})
 </script>
 
 <style scoped>
@@ -180,5 +217,14 @@ onMounted(run)
 }
 .marketplace-card {
   backdrop-filter: blur(6px);
+}
+/* phones: the map is the section's main content */
+@media (max-width: 1023px) {
+  /* MarketplaceLayout sets --marketplace-map-height so the map ends where
+     the tab bar starts; 62vh without it */
+  .marketplace-pharmacies :deep(.pharmacies-map:not(.pharmacies-map--fill)) {
+    height: var(--marketplace-map-height, 62vh);
+    max-height: none;
+  }
 }
 </style>

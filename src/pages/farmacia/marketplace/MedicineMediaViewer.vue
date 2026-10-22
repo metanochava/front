@@ -15,7 +15,8 @@
             @click="current = index"
             @mouseenter="current = index"
           >
-            <video v-if="item.kind === 'video'" :src="item.src" muted preload="metadata" />
+            <!-- #t=0.1: the browser paints the first frame instead of a blank box -->
+            <video v-if="item.kind === 'video'" :src="`${item.src}#t=0.1`" muted preload="metadata" />
             <img v-else :src="item.src" alt="">
             <q-icon v-if="item.kind === 'video'" name="play_circle" size="24px" class="media-viewer__play" />
           </button>
@@ -32,7 +33,22 @@
             playsinline
             class="media-viewer__media"
           />
-          <img v-else :src="active.src" :alt="active.caption || title" class="media-viewer__media">
+          <!-- photos zoom under the mouse, like a shop's product gallery -->
+          <div
+            v-else
+            class="media-viewer__zoom"
+            :class="{ 'media-viewer__zoom--on': zoom.on }"
+            data-test="media-zoom"
+            @mousemove="moveZoom"
+            @mouseleave="zoom.on = false"
+          >
+            <img
+              :src="active.src"
+              :alt="active.caption || title"
+              class="media-viewer__media"
+              :style="zoom.on ? { transformOrigin: zoom.origin } : null"
+            >
+          </div>
           <s-btn
             v-if="items.length > 1"
             round
@@ -42,8 +58,9 @@
             icon="chevron_left"
             class="media-viewer__nav media-viewer__nav--prev"
             :aria-label="tdc('Previous')"
-            @click="go(-1)"
-          />
+            @click="go(-1)">
+            <s-tooltip>{{ tdc('Previous') }}</s-tooltip>
+          </s-btn>
           <s-btn
             v-if="items.length > 1"
             round
@@ -53,8 +70,9 @@
             icon="chevron_right"
             class="media-viewer__nav media-viewer__nav--next"
             :aria-label="tdc('Next')"
-            @click="go(1)"
-          />
+            @click="go(1)">
+            <s-tooltip>{{ tdc('Next') }}</s-tooltip>
+          </s-btn>
           <div class="media-viewer__caption text-caption">
             <span v-if="active.caption">{{ active.caption }} · </span>{{ current + 1 }} / {{ items.length }}
           </div>
@@ -65,7 +83,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { tdc } from 'quasar_resaas'
 import { medicineMedia } from './useMarketplace'
 
@@ -82,12 +100,26 @@ const title = computed(() =>
   props.medicine ? `${props.medicine.name} ${props.medicine.strength}` : tdc('Photos of the medicine'),
 )
 
+// hover zoom (mouse only: on touch screens the photo stays fitted)
+const zoom = reactive({ on: false, origin: '50% 50%' })
+const canHover = typeof window !== 'undefined' && window.matchMedia?.('(hover: hover) and (pointer: fine)').matches
+
+function moveZoom (event) {
+  if (!canHover) return
+  const box = event.currentTarget.getBoundingClientRect()
+  const x = ((event.clientX - box.left) / box.width) * 100
+  const y = ((event.clientY - box.top) / box.height) * 100
+  zoom.origin = `${Math.min(Math.max(x, 0), 100)}% ${Math.min(Math.max(y, 0), 100)}%`
+  zoom.on = true
+}
+
 function go (delta) {
   const count = items.value.length
   if (count > 1) current.value = (current.value + delta + count) % count
 }
 
 watch(open, (value) => { if (value) current.value = 0 })
+watch(current, () => { zoom.on = false })
 </script>
 
 <style scoped>
@@ -123,6 +155,9 @@ watch(open, (value) => { if (value) current.value = 0 })
   border-color: var(--q-primary);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--q-primary) 30%, transparent);
 }
+.media-viewer__thumb video {
+  background: #111;
+}
 .media-viewer__thumb img,
 .media-viewer__thumb video {
   width: 100%;
@@ -149,6 +184,21 @@ watch(open, (value) => { if (value) current.value = 0 })
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+}
+.media-viewer__zoom {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.media-viewer__zoom img {
+  transition: transform 0.15s ease;
+}
+.media-viewer__zoom--on img {
+  transform: scale(2.2);
 }
 .media-viewer__nav {
   position: absolute;

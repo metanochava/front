@@ -5,11 +5,13 @@
     <s-card class="q-pa-md q-mb-md">
       <form class="row q-col-gutter-sm items-start" @submit.prevent="find">
         <div class="col-12 col-sm-8">
-          <s-input v-model="code" label="Patient code" :hint="tdc('NID or another identifier of the patient')"
+          <s-input dense v-model="code" label="Patient code" :hint="tdc('NID or another identifier of the patient')"
             data-test="patient-code" autocomplete="off" />
         </div>
         <div class="col-12 col-sm-4">
-          <s-btn type="submit" color="primary" icon="person_search" label="Find" :loading="loading" class="full-width" />
+          <s-btn type="submit" color="primary" icon="person_search" label="Find" :loading="loading" class="full-width">
+            <s-tooltip>{{ tdc('Find') }}</s-tooltip>
+          </s-btn>
         </div>
       </form>
       <div class="text-caption text-grey q-mt-sm">
@@ -62,7 +64,9 @@
           <q-item-section side>
             <q-badge v-if="prescription.queue_status" color="primary">{{ tdc(queueLabel[prescription.queue_status] || prescription.queue_status) }}</q-badge>
             <s-btn v-else dense color="primary" icon="playlist_add" label="Add to queue" :loading="adding === prescription.id"
-              @click="enqueue(prescription)" />
+              @click="enqueue(prescription)">
+              <s-tooltip>{{ tdc('Add to queue') }}</s-tooltip>
+            </s-btn>
           </q-item-section>
         </q-item>
       </q-list>

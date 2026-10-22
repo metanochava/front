@@ -24,7 +24,9 @@
             </q-item-section>
             <q-item-section side>
               <s-btn flat round icon="add" :disable="Number(offer.available_quantity) <= 0" :aria-label="tdc('Add')"
-                @click="add(offer)" />
+                @click="add(offer)">
+                <s-tooltip>{{ tdc('Add') }}</s-tooltip>
+              </s-btn>
             </q-item-section>
           </q-item>
         </q-list>
@@ -43,7 +45,9 @@
               </q-item-section>
               <q-item-section side>{{ money(line.offer.price * line.quantity) }}</q-item-section>
               <q-item-section side>
-                <s-btn flat round dense icon="close" :aria-label="tdc('Remove')" @click="removeLine(line)" />
+                <s-btn flat round dense icon="close" :aria-label="tdc('Remove')" @click="removeLine(line)">
+                  <s-tooltip>{{ tdc('Remove') }}</s-tooltip>
+                </s-btn>
               </q-item-section>
             </q-item>
           </q-list>
@@ -51,7 +55,9 @@
           <payment-fields v-model="payment" :prescription-required="needsPrescription" />
           <div class="row justify-end q-mt-md">
             <s-btn color="primary" icon="point_of_sale" label="Sell" :disable="!lines.length" :loading="saving"
-              data-test="counter-sell" @click="sell" />
+              data-test="counter-sell" @click="sell">
+              <s-tooltip>{{ tdc('Sell') }}</s-tooltip>
+            </s-btn>
           </div>
         </s-card>
       </div>

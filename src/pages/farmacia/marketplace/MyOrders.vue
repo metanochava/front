@@ -2,7 +2,9 @@
   <section data-test="my-orders">
     <div class="row items-center q-mb-sm">
       <div class="text-h6 col">{{ tdc('My reservations') }}</div>
-      <s-btn flat dense icon="refresh" :aria-label="tdc('Refresh')" @click="reload" />
+      <s-btn flat dense icon="refresh" :aria-label="tdc('Refresh')" @click="reload">
+        <s-tooltip>{{ tdc('Refresh') }}</s-tooltip>
+      </s-btn>
     </div>
 
     <q-inner-loading :showing="state.loading && !state.rows.length" />
@@ -27,13 +29,17 @@
         </q-item-section>
         <q-item-section side top>
           <q-item-label class="text-weight-medium">{{ formatMoney(order.total, order.currency) }}</q-item-label>
-          <s-btn v-if="order.status === 'reserved'" flat dense color="negative" label="Cancel" @click="cancel(order)" />
+          <s-btn v-if="order.status === 'reserved'" flat dense color="negative" label="Cancel" @click="cancel(order)">
+            <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+          </s-btn>
         </q-item-section>
       </q-item>
     </q-list>
 
     <div v-if="state.rows.length < state.count" class="text-center q-mt-md">
-      <s-btn flat label="Show more" :loading="state.loading" @click="more" />
+      <s-btn flat label="Show more" :loading="state.loading" @click="more">
+        <s-tooltip>{{ tdc('Show more') }}</s-tooltip>
+      </s-btn>
     </div>
   </section>
 </template>
