@@ -71,3 +71,13 @@
 .q-field__control {
   border-radius: var(--s-radius) !important;
 }
+
+// Installed app (PWA): a downward swipe at the top of the page must not
+// trigger the browser's pull-to-refresh (it reloads the app and loses what
+// is on screen). In a normal browser tab pull-to-refresh is kept.
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  html,
+  body {
+    overscroll-behavior-y: contain;
+  }
+}
