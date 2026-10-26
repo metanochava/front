@@ -102,5 +102,13 @@ kill:
 		echo "No process found on port $$port."
 	fi
 
+# PWA mode: the app can be installed and updates itself at a safe moment
+# (src-pwa/update-policy.js). `make dev-spa` is the previous plain SPA.
 dev:
+	quasar dev -m pwa
+
+dev-spa:
 	quasar dev
+
+build-pwa:
+	quasar build -m pwa

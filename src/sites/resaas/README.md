@@ -56,7 +56,7 @@ imported `.json` files.
 - `pages/HomePage.vue`, `layouts/ResaasLayout.vue` — landing page, header, search (`/` focuses
   it), light/dark toggle (remembered in `localStorage`).
 
-UI strings go through `tdc()`; their pt/es/fr translations are in the backend lang files. The
+UI strings go through `tdc()`; their Portuguese translations are in the backend lang files. The
 documentation content itself is English, like the libraries' docs.
 
 ## Writing docs that render well here

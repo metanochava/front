@@ -20,7 +20,7 @@ export default defineConfig((ctx) => {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
 
-    boot: ['pinia', 'quasar_saas', 'i18n', 'axios', 'app_ready',  'theme_engine', 'firebase', 'right_menus', 'entity_type_sites'],
+    boot: ['pinia', 'quasar_saas', 'i18n', 'axios', 'app_ready',  'theme_engine', 'firebase', 'right_menus', 'entity_type_sites', 'pwa_update', 'pwa_manifest'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -251,6 +251,19 @@ export default defineConfig((ctx) => {
       // extendPWACustomSWConf (esbuildConf) {},
       // extendGenerateSWOptions (cfg) {},
       // extendInjectManifestOptions (cfg) {}
+
+      // A new version waits (no skipWaiting/clientsClaim) until
+      // src-pwa/register-service-worker.js finds a safe moment to apply it.
+      // Only the app shell is precached: the API is another origin and has
+      // no runtime route, so clinical data never enters the cache.
+      extendGenerateSWOptions (cfg) {
+        cfg.skipWaiting = false
+        cfg.clientsClaim = false
+        if (ctx.prod) {
+          cfg.globPatterns = ['**/*.{js,css,html,png,ico,svg,woff2,json}']
+          cfg.maximumFileSizeToCacheInBytes = 5 * 1024 * 1024
+        }
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova

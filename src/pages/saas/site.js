@@ -1,5 +1,5 @@
 // Site at '/' of the SaaS EntityType (quasar_resaas EntityTypeDefaultSite).
-// Canonical English; translations in django_resaas saas/lang/{ptpt,eses,frfr}.py.
+// Canonical English; translations in django_resaas saas/lang/ptpt.py.
 export default {
   "cta": {
     "text": "Create the account in minutes and add your team when you are ready.",
