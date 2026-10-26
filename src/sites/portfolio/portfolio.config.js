@@ -90,9 +90,15 @@ const firstRoleYear = Math.min(...experience.map(item => parseInt(item.period, 1
 
 export const highlights = [
   { value: String(new Date().getFullYear() - firstRoleYear), label: 'Years of professional experience' },
-  // a degree counts once it is finished (a period with an end year, not "2026 – Present")
-  { value: String(education.filter(item => /\d{4}\s*–\s*\d{4}/.test(item.period)).length), label: 'Academic degrees' },
-  { value: String(certifications.length), label: 'Certifications' }
+  // every degree in the CV, the PhD in progress included (owner's choice)
+  { value: String(education.length), label: 'Academic degrees' },
+  { value: String(certifications.length), label: 'Certifications' },
+  // ReSaaS facts: business modules registered in production (sync_actions: "Modules found: 11"),
+  // public websites the platform serves (clinicaamal.co.mz, docodela, resaas and mytech.co.mz)
+  // and the published packages (django_resaas on PyPI, quasar_resaas on npm)
+  { value: '11', label: 'ReSaaS modules' },
+  { value: '4', label: 'Public websites' },
+  { value: '2', label: 'Published packages' }
 ]
 
 // A link left empty is not shown. Add yours here.

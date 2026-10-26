@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { tdc } from 'quasar_resaas'
 
 import { profile, highlights } from '../portfolio.config'
@@ -26,11 +26,14 @@ let timer = null
 const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 function type() {
-  const word = roles.value[roleIndex.value % roles.value.length]
   let position = 0
   let deleting = false
 
+  // read the role on every step: the translations can arrive while a word is being typed
   const step = () => {
+    const word = roles.value[roleIndex.value % roles.value.length]
+    position = Math.min(position, word.length)
+
     if (!deleting) {
       position += 1
       shown.value = word.slice(0, position)
@@ -61,6 +64,9 @@ onMounted(() => {
   shown.value = roles.value[0]
   if (!reduce) type()
 })
+
+// without the animation the first role stays on screen: keep it in the current language
+watch(roles, value => { if (reduce) shown.value = value[0] })
 
 onBeforeUnmount(() => clearTimeout(timer))
 
@@ -211,7 +217,9 @@ const lines = [
 }
 @keyframes pulse { 70% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
-.hero__name { font-size: clamp(42px, 6.4vw, 84px); line-height: 1.02; }
+/* the name sits on two lines (given names, then the surname) and shrinks with the column */
+.hero__name { font-size: clamp(28px, 4vw, 54px); line-height: 1.06; letter-spacing: -0.03em; max-width: 100%; }
+.hero__name .hero__surname { display: block; }
 .hero__surname {
   background: linear-gradient(100deg, var(--pf-accent) 0%, color-mix(in srgb, var(--pf-accent) 55%, #fff) 45%, var(--pf-cool) 55%, var(--pf-accent) 100%);
   background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -231,13 +239,18 @@ const lines = [
 .hero__pitch { margin-top: 26px; max-width: 54ch; color: var(--pf-muted); font-size: clamp(16px, 1.6vw, 19px); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
 
-.hero__stats { display: flex; flex-wrap: wrap; gap: 14px 36px; margin: 44px 0 0; padding-top: 26px; border-top: 1px solid var(--pf-line); }
-.hero__stat { max-width: 150px; }
+/* the highlights: small cards in a grid that fits the column (3 per row, 2 on a phone) */
+.hero__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 40px 0 0; }
+.hero__stat {
+  min-width: 0; padding: 14px 16px; border-radius: var(--pf-radius);
+  border: 1px solid var(--pf-line); background: color-mix(in srgb, var(--pf-surface) 70%, transparent);
+}
 .hero__stat dt {
-  font-family: var(--pf-font-display); font-weight: 800; font-size: clamp(30px, 3.4vw, 42px); line-height: 1;
+  font-family: var(--pf-font-display); font-weight: 800; font-size: clamp(24px, 2.4vw, 32px); line-height: 1;
   background: linear-gradient(135deg, var(--pf-text), var(--pf-accent)); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.hero__stat dd { margin: 8px 0 0; font-size: 13.5px; line-height: 1.4; color: var(--pf-muted); }
+.hero__stat dd { margin: 6px 0 0; font-size: 12.5px; line-height: 1.35; color: var(--pf-muted); }
+@media (max-width: 560px) { .hero__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .hero__terminal {
   position: absolute; left: 0; bottom: 0; width: min(88%, 340px);
