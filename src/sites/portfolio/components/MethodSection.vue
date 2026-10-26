@@ -13,7 +13,7 @@ const steps = [
 <template>
   <section id="method" class="pf-section method" aria-labelledby="method-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-kicker pf-reveal">03 · ~/method</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">03</span><span class="pf-kicker__label">{{ tdc('How I work') }}</span></p>
       <h2 id="method-title" class="pf-title pf-reveal">{{ tdc('The same method in the lab and in the code') }}</h2>
 
       <ol class="method__steps">

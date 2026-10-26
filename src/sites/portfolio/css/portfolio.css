@@ -11,18 +11,18 @@
   --pf-max: 1160px;
   --pf-nav: 68px;
 
-  /* dark (default): graphite ink, evidence-tag amber */
-  --pf-bg: #0a0f14;
-  --pf-surface: #101821;
-  --pf-surface-2: #16212d;
-  --pf-line: rgba(150, 180, 210, 0.16);
-  --pf-text: #e7eef5;
-  --pf-muted: #93a7b9;
-  --pf-accent: #ffb020;
-  --pf-accent-ink: #1b1305;
-  --pf-cool: #5cc8ff;
-  --pf-ok: #4ade80;
-  --pf-glow: rgba(255, 176, 32, 0.14);
+  /* dark (default): neutral only - black, greys and white, no hue (owner's choice) */
+  --pf-bg: #0d0d0d;
+  --pf-surface: #161616;
+  --pf-surface-2: #202020;
+  --pf-line: rgba(255, 255, 255, 0.13);
+  --pf-text: #f2f2f2;
+  --pf-muted: #a3a3a3;
+  --pf-accent: #ffffff;
+  --pf-accent-ink: #111111;
+  --pf-cool: #b8b8b8;
+  --pf-ok: #d4d4d4;
+  --pf-glow: rgba(255, 255, 255, 0.07);
 
   background: var(--pf-bg);
   color: var(--pf-text);
@@ -33,17 +33,17 @@
 }
 
 body.body--light .pf {
-  --pf-bg: #eef2f6;
+  --pf-bg: #f4f4f4;
   --pf-surface: #ffffff;
-  --pf-surface-2: #e2e9f0;
-  --pf-line: rgba(20, 45, 70, 0.14);
-  --pf-text: #0d1a26;
-  --pf-muted: #4a5e72;
-  --pf-accent: #b45309;
+  --pf-surface-2: #e8e8e8;
+  --pf-line: rgba(0, 0, 0, 0.13);
+  --pf-text: #111111;
+  --pf-muted: #555555;
+  --pf-accent: #111111;
   --pf-accent-ink: #ffffff;
-  --pf-cool: #0b6fa4;
-  --pf-ok: #15803d;
-  --pf-glow: rgba(180, 83, 9, 0.1);
+  --pf-cool: #6e6e6e;
+  --pf-ok: #404040;
+  --pf-glow: rgba(0, 0, 0, 0.05);
 }
 
 .pf *,
@@ -51,6 +51,10 @@ body.body--light .pf {
 .pf *::after { box-sizing: border-box; }
 
 .pf a { color: inherit; text-decoration: none; }
+
+/* text always stays inside its box: long words, e-mails and URLs wrap instead of overflowing */
+.pf { overflow-wrap: break-word; }
+.pf-btn { max-width: 100%; min-width: 0; overflow-wrap: anywhere; text-align: left; }
 
 .pf h1, .pf h2, .pf h3 {
   font-family: var(--pf-font-display);
@@ -81,7 +85,8 @@ body.body--light .pf {
   margin-bottom: 14px;
 }
 
-.pf-title { font-size: clamp(32px, 5vw, 58px); max-width: 18ch; letter-spacing: -0.03em; }
+/* section titles span the full width of the section (col-12) at a moderate size */
+.pf-title { font-size: clamp(26px, 3.2vw, 40px); width: 100%; max-width: none; letter-spacing: -0.025em; line-height: 1.15; }
 .pf-lead { color: var(--pf-muted); max-width: 62ch; margin-top: 18px; }
 
 .pf-btn {
@@ -142,8 +147,18 @@ body.body--light .pf {
 .pf .q-page-container, .pf footer { position: relative; z-index: 1; }
 
 /* the section label: an index and a name, e.g. "01 — about" */
-.pf-kicker { display: inline-flex; align-items: center; gap: 12px; }
-.pf-kicker::after { content: ''; width: 48px; height: 1px; background: color-mix(in srgb, var(--pf-accent) 60%, transparent); }
+/* section heading: a numbered tile, the section's name and a fading rule */
+.pf-kicker { display: flex; align-items: center; gap: 14px; max-width: 100%; margin: 0 0 18px; }
+.pf-kicker__num {
+  flex: none; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px;
+  font-family: var(--pf-font-display); font-weight: 800; font-size: 15px; letter-spacing: -0.01em;
+  color: var(--pf-accent-ink); background: var(--pf-accent);
+}
+.pf-kicker__label {
+  min-width: 0; font-family: var(--pf-font-body); font-weight: 600; font-size: 13px;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--pf-muted);
+}
+.pf-kicker::after { content: ''; flex: 0 1 72px; min-width: 16px; height: 1px; background: linear-gradient(90deg, var(--pf-line), transparent); }
 
 /* scroll reveal: visible at rest, only animated from a resting state */
 .pf-reveal { opacity: 1; transform: none; }

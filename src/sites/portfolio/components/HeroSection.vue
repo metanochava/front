@@ -199,7 +199,7 @@ const lines = [
 }
 
 .hero__badge {
-  position: absolute; top: 18px; right: -12px; display: inline-flex; align-items: center; gap: 8px;
+  position: absolute; top: 18px; right: 12px; max-width: calc(100% - 24px); display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600;
   color: var(--pf-text); background: color-mix(in srgb, var(--pf-surface) 88%, transparent);
   border: 1px solid var(--pf-line); backdrop-filter: blur(8px);
@@ -248,7 +248,7 @@ const lines = [
 }
 .hero__bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; background: var(--pf-surface-2); border-bottom: 1px solid var(--pf-line); }
 .dot { width: 11px; height: 11px; border-radius: 50%; }
-.dot--r { background: #ff5f57; } .dot--y { background: #febc2e; } .dot--g { background: #28c840; }
+.dot--r { background: #8a8a8a; } .dot--y { background: #6e6e6e; } .dot--g { background: #525252; }
 .hero__bar-title { margin-left: 10px; font-family: var(--pf-font-mono); font-size: 12.5px; color: var(--pf-muted); }
 
 .hero__screen { padding: 14px 16px 16px; font-family: var(--pf-font-mono); font-size: 12.5px; line-height: 1.65; min-height: 196px; }

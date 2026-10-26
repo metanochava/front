@@ -9,7 +9,7 @@ const copy = {
   resaas: {
     title: 'RESAAS platform',
     kind: 'Flagship',
-    text: 'A reusable multi-tenant SaaS platform: a Django framework and a Quasar / Vue framework that give every business system metadata-driven CRUD, permissions, dashboards, notifications and four languages.',
+    text: 'A reusable multi-tenant SaaS platform: a Django framework and a Quasar / Vue framework that give every business system metadata-driven CRUD, permissions, dashboards and notifications, in Portuguese and English.',
     points: [
       'Tenant isolation by entity and branch, enforced in the backend',
       'Forms and tables generated from the model metadata',
@@ -25,7 +25,7 @@ const copy = {
   pharmacy: {
     title: 'Pharmacy, inventory and sales',
     kind: 'Product',
-    text: 'Prescription review and dispensing, stock with movements and counts, sales and payments.',
+    text: 'An online pharmacy and medicines marketplace, prescription review and dispensing, stock with movements and counts, sales and payments.',
     points: []
   },
   security: {
@@ -37,7 +37,7 @@ const copy = {
   sites: {
     title: 'Public websites',
     kind: 'Product',
-    text: 'Branded websites for clinics, served by the same application by domain and available in several languages.',
+    text: 'Branded websites for clinics and the RESAAS documentation site, served by the same application according to the domain.',
     points: []
   }
 }
@@ -46,7 +46,7 @@ const copy = {
 <template>
   <section id="projects" class="pf-section projects" aria-labelledby="projects-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-kicker pf-reveal">05 · ~/projects</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">05</span><span class="pf-kicker__label">{{ tdc('Projects') }}</span></p>
       <h2 id="projects-title" class="pf-title pf-reveal">{{ tdc('Systems I designed and built') }}</h2>
 
       <div class="projects__grid">
@@ -67,7 +67,7 @@ const copy = {
                   <span /><span /><span />
                   <em>{{ shot.url }}</em>
                 </div>
-                <img :src="shot.src" :alt="shot.alt" loading="lazy">
+                <img :src="shot.src" :alt="tdc(shot.alt)" loading="lazy">
               </figure>
             </div>
 
@@ -152,14 +152,17 @@ const copy = {
 
 /* real screenshots in browser frames, overlapping */
 .shots { position: absolute; inset: 0; }
-.shot { position: absolute; margin: 0; width: 56%; border-radius: 10px; overflow: hidden; border: 1px solid var(--pf-line); background: var(--pf-surface); box-shadow: 0 24px 50px -22px rgba(0, 0, 0, .65); transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
-.shot--0 { left: 5%; top: 46px; transform: rotate(-4deg); z-index: 1; }
-.shot--1 { right: 5%; top: 78px; transform: rotate(4deg); z-index: 2; }
-.project:hover .shot--0 { transform: rotate(-4deg) translate(-6px, -6px); }
-.project:hover .shot--1 { transform: rotate(4deg) translate(6px, -8px); }
+.shot { position: absolute; margin: 0; width: 48%; border-radius: 10px; overflow: hidden; border: 1px solid var(--pf-line); background: var(--pf-surface); box-shadow: 0 24px 50px -22px rgba(0, 0, 0, .65); transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
+/* three frames: two tilted at the sides, the middle one in front */
+.shot--0 { left: 3%; top: 40px; transform: rotate(-5deg); z-index: 1; }
+.shot--1 { left: 26%; top: 96px; transform: none; z-index: 3; }
+.shot--2 { right: 3%; top: 48px; transform: rotate(5deg); z-index: 2; }
+.project:hover .shot--0 { transform: rotate(-5deg) translate(-8px, -4px); }
+.project:hover .shot--1 { transform: translateY(-8px); }
+.project:hover .shot--2 { transform: rotate(5deg) translate(8px, -4px); }
 .shot__bar { display: flex; align-items: center; gap: 4px; padding: 6px 8px; background: var(--pf-surface-2); border-bottom: 1px solid var(--pf-line); }
 .shot__bar span { width: 6px; height: 6px; border-radius: 50%; background: var(--pf-line); }
-.shot__bar em { margin-left: 8px; font-style: normal; font-family: var(--pf-font-mono); font-size: 9.5px; color: var(--pf-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shot__bar em { min-width: 0; margin-left: 8px; font-style: normal; font-family: var(--pf-font-mono); font-size: 9.5px; line-height: 1.2; color: var(--pf-muted); overflow-wrap: anywhere; }
 .shot img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
 
 .project__body { display: flex; flex-direction: column; flex: 1; padding: 26px 28px 28px; }

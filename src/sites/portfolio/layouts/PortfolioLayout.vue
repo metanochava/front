@@ -88,6 +88,9 @@ function go(id) {
 }
 
 onMounted(() => {
+  // the page keeps to neutral colours: Quasar's request loading bar is red by default
+  $q.loadingBar?.setDefaults({ color: 'grey-6' })
+
   let stored = null
 
   try {

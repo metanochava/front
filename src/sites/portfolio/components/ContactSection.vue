@@ -15,7 +15,7 @@ const links = computed(() => [
   <section id="contact" class="pf-section contact" aria-labelledby="contact-title">
     <div class="pf-wrap contact__inner">
       <div class="contact__card pf-card pf-gradient-border">
-      <p class="pf-path pf-kicker pf-reveal">06 · ~/contact</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">06</span><span class="pf-kicker__label">{{ tdc('Contact') }}</span></p>
       <h2 id="contact-title" class="contact__title pf-reveal">{{ tdc("Let's build something dependable.") }}</h2>
       <p class="pf-lead pf-reveal">{{ tdc('Open to software projects, collaboration and digital forensics consulting.') }}</p>
 
@@ -61,7 +61,7 @@ const links = computed(() => [
   background: radial-gradient(closest-side, color-mix(in srgb, var(--pf-accent) 22%, transparent), transparent 70%);
 }
 .contact__card:hover { transform: none; }
-.contact__title { font-size: clamp(38px, 7vw, 84px); max-width: 16ch; }
+.contact__title { font-size: clamp(28px, 4vw, 48px); width: 100%; max-width: none; line-height: 1.12; }
 .contact__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
 .contact__note { display: flex; align-items: center; gap: 10px; margin-top: 30px; color: var(--pf-muted); font-size: 15px; }
 </style>

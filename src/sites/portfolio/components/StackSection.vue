@@ -10,7 +10,7 @@ const band = [...new Set(stack.flatMap(group => group.items))]
 <template>
   <section id="stack" class="pf-section" aria-labelledby="stack-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-kicker pf-reveal">04 · ~/stack</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">04</span><span class="pf-kicker__label">{{ tdc('Stack') }}</span></p>
       <h2 id="stack-title" class="pf-title pf-reveal">{{ tdc('Tools I work with') }}</h2>
       <p class="pf-lead pf-reveal">{{ tdc('Chosen for reliability and for how well they can be tested and audited, not for fashion.') }}</p>
     </div>

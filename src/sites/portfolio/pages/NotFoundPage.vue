@@ -62,9 +62,9 @@ const shortPath = computed(() => path.value.replace(/^\//, '').slice(0, 32))
   background: var(--pf-surface-2);
   border-bottom: 1px solid var(--pf-line);
 }
-.pf-404__bar span { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
-.pf-404__bar span:nth-child(2) { background: #febc2e; }
-.pf-404__bar span:nth-child(3) { background: #28c840; }
+.pf-404__bar span { width: 11px; height: 11px; border-radius: 50%; background: #8a8a8a; }
+.pf-404__bar span:nth-child(2) { background: #6e6e6e; }
+.pf-404__bar span:nth-child(3) { background: #525252; }
 .pf-404__bar em { margin-left: 10px; font-style: normal; font-family: var(--pf-font-mono); font-size: 12px; color: var(--pf-muted); }
 .pf-404__body {
   margin: 0;
@@ -77,7 +77,7 @@ const shortPath = computed(() => path.value.replace(/^\//, '').slice(0, 32))
   color: var(--pf-text);
 }
 .pf-404__prompt { color: var(--pf-ok); }
-.pf-404__err { color: #ff7b72; }
+.pf-404__err { color: var(--pf-muted); }
 .pf-404__code { color: var(--pf-accent); font-weight: 700; }
 .pf-404__cursor {
   display: inline-block;

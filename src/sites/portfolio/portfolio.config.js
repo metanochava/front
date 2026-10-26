@@ -9,6 +9,7 @@ import photo from './images/foto-web.jpg'
 // real screenshots of the public websites (captured from the running sites)
 import shotAmal from './images/site-amal.jpg'
 import shotDocodela from './images/site-docodela.jpg'
+import shotResaas from './images/site-resaas.jpg'
 
 export const profile = {
   name: 'Dias Metano Salvador Chavana',
@@ -26,14 +27,14 @@ export const profile = {
 // section shows them; the hero's highlights are counted from them.
 export const education = [
   {
-    period: 'In progress',
+    period: '2026 – Present',
     title: 'PhD in Computer Science and Digital Forensics',
     place: 'National Forensic Sciences University'
   },
   {
     period: '2020 – 2022',
     title: 'Master in Digital Forensics and Information Security',
-    place: 'Gujarat Forensic Sciences University'
+    place: 'National Forensic Sciences University'
   },
   {
     period: '2017 – 2019',
@@ -48,6 +49,12 @@ export const education = [
 ]
 
 export const experience = [
+  {
+    period: '2026 – Present',
+    title: 'Creator and developer',
+    place: 'ReSaaS',
+    text: 'Designed and built ReSaaS, my own multi-tenant SaaS framework (django_resaas on PyPI, quasar_resaas on npm), and the systems built on it: a hospital information system, an online pharmacy and medicines marketplace, inventory, sales, purchasing, accounting, human resources and CRM.'
+  },
   {
     period: '2017 – 2020',
     title: 'Information systems lecturer',
@@ -83,7 +90,8 @@ const firstRoleYear = Math.min(...experience.map(item => parseInt(item.period, 1
 
 export const highlights = [
   { value: String(new Date().getFullYear() - firstRoleYear), label: 'Years of professional experience' },
-  { value: String(education.filter(item => /\d{4}/.test(item.period)).length), label: 'Academic degrees' },
+  // a degree counts once it is finished (a period with an end year, not "2026 – Present")
+  { value: String(education.filter(item => /\d{4}\s*–\s*\d{4}/.test(item.period)).length), label: 'Academic degrees' },
   { value: String(certifications.length), label: 'Certifications' }
 ]
 
@@ -117,7 +125,7 @@ export const stack = [
   {
     group: 'Delivery',
     icon: 'rocket_launch',
-    items: ['Linux', 'Nginx', 'Git', 'REST APIs', 'Firebase', 'i18n']
+    items: ['Linux', 'Nginx', 'Docker', 'Git', 'GitHub Actions', 'REST APIs', 'PWA', 'Firebase', 'i18n']
   }
 ]
 
@@ -140,6 +148,7 @@ export const projects = [
     // shown in browser frames on the card
     shots: [
       { src: shotAmal, alt: 'Clínica Amal', url: 'clinicaamal.co.mz' },
+      { src: shotResaas, alt: 'RESAAS documentation', url: 'resaas.mytech.co.mz' },
       { src: shotDocodela, alt: 'Docodela 24 Horas', url: 'docodela.mytech.co.mz' }
     ]
   }

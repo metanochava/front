@@ -25,7 +25,7 @@ const disciplines = [
 <template>
   <section id="about" class="pf-section" aria-labelledby="about-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-kicker pf-reveal">01 · ~/about</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">01</span><span class="pf-kicker__label">{{ tdc('About') }}</span></p>
       <h2 id="about-title" class="pf-title pf-reveal">{{ tdc('Three disciplines, one way of working') }}</h2>
 
       <!-- a bento grid: the story in the large tile, facts from the CV around it -->

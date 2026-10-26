@@ -7,15 +7,16 @@ import { education, experience, certifications } from '../portfolio.config'
 // given; only the phrasing was tightened for the page. Institution names are proper
 // nouns and are deliberately not wrapped in tdc() (same convention as amal/DoctorsPage's
 // university names).
-const summary = 'REST-focused developer with a degree in systems development engineering, comfortable across Linux, Windows and macOS. Six years teaching information systems and seven years as a computer technician led to two personal projects — an electronic patient record and a school management system with an entity/reference payment module — both built with Laravel. I am currently building an academic management system on the REST philosophy: Vue 3, Quasar and Vuex on the front end, Django on the back end.'
+const summary = 'Systems development engineer with experience in software development, IT systems administration and teaching information systems, comfortable across Linux, Windows and macOS. I am building ReSaaS, a modular, secure and scalable multi-tenant SaaS framework based on Django, Django REST Framework, Vue 3 and Quasar, already in production in healthcare and pharmacy. In parallel, I research digital forensics and artificial intelligence, focusing on multimodal detection of audio and video deepfakes.'
 
-const objective = ['Information systems analysis', 'Project management', 'Digital forensics']
+const objective = ['Information systems analysis', 'Project management', 'Digital forensics', 'Information security', 'Teaching information technology']
 
 const skillGroups = [
   { group: 'Programming languages', items: ['Java', 'Python', 'C#', 'C++', 'PHP', 'TypeScript'] },
-  { group: 'Frameworks and libraries', items: ['Django', 'Laravel', 'Angular', 'Vue', 'jQuery', 'Bootstrap', 'Quasar'] },
+  { group: 'Frameworks and libraries', items: ['Django', 'Django REST Framework', 'Laravel', 'Vue 3', 'Pinia', 'Quasar', 'Angular', 'jQuery', 'Bootstrap'] },
   { group: 'Databases', items: ['MySQL', 'SQL Server', 'PostgreSQL'] },
-  { group: 'Version control', items: ['Git', 'Gitflow'] }
+  { group: 'Version control', items: ['Git', 'GitFlow'] },
+  { group: 'Infrastructure and DevOps', items: ['Linux (Ubuntu)', 'Nginx', 'Gunicorn', 'Docker', 'GitHub Actions', 'Cloudflare'] }
 ]
 
 const personalSkills = [
@@ -26,16 +27,17 @@ const personalSkills = [
 
 const languages = [
   { name: 'Portuguese', level: 'Fluent' },
-  { name: 'English', level: 'Good' }
+  { name: 'English', level: 'Fluent' },
+  { name: 'Ronga', level: 'Fluent' }
 ]
 </script>
 
 <template>
   <section id="resume" class="pf-section resume" aria-labelledby="resume-title">
     <div class="pf-wrap">
-      <p class="pf-path pf-kicker pf-reveal">02 · ~/resume</p>
+      <p class="pf-kicker pf-reveal"><span class="pf-kicker__num">02</span><span class="pf-kicker__label">{{ tdc('Resume') }}</span></p>
       <h2 id="resume-title" class="pf-title pf-reveal">{{ tdc('Full resume') }}</h2>
-      <p class="pf-lead pf-reveal">{{ tdc(summary) }}</p>
+      <p class="pf-lead resume__summary pf-reveal">{{ tdc(summary) }}</p>
 
       <p class="resume__objective pf-reveal">
         <span class="resume__label">{{ tdc('Objective') }}</span>
@@ -58,7 +60,7 @@ const languages = [
           <h3 class="resume__col-title">{{ tdc('Professional experience') }}</h3>
           <ol class="resume__timeline">
             <li v-for="item in experience" :key="item.title">
-              <span class="resume__period">{{ item.period }}</span>
+              <span class="resume__period">{{ tdc(item.period) }}</span>
               <h4>{{ tdc(item.title) }}</h4>
               <p class="resume__place">{{ item.place }}</p>
               <p class="resume__desc">{{ tdc(item.text) }}</p>
@@ -106,6 +108,8 @@ const languages = [
 
 <style scoped>
 .resume { background: var(--pf-surface); border-block: 1px solid var(--pf-line); }
+/* the summary spans the whole width of the section (no reading-width cap) */
+.resume__summary { max-width: none; width: 100%; }
 
 .resume__objective { display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 22px; font-size: 15px; color: var(--pf-muted); }
 .resume__label { font-family: var(--pf-font-mono); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--pf-accent); }
