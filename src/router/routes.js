@@ -3,7 +3,7 @@ import {  MainLayout, CrudPage } from 'quasar_resaas'
 
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
-import { portfolioSiteRoutes } from 'src/sites/portfolio/routes'
+import { portfolioSiteRoutes } from 'src/sites/metano/routes'
 import { mytechSiteRoutes } from 'src/sites/mytech/routes'
 import { resaasSiteRoutes } from 'src/sites/resaas/routes'
 
@@ -25,8 +25,13 @@ const domainRoutes = {
   "docodela.mytech.co.mz": docodelaSiteRoutes,
   "docodela.dev.mytech.co.mz": docodelaSiteRoutes,
   // the portfolio: add the real domain here (e.g. "metanochava.dev": portfolioSiteRoutes)
+
+  "cv.metano.cc": portfolioSiteRoutes,
+  "cv.metanochavana.link": portfolioSiteRoutes,
+  "metano.metano.cc": portfolioSiteRoutes,
+  "metano.metanochavana.link": portfolioSiteRoutes,
   "metano.mytech.co.mz": portfolioSiteRoutes,
-  "metano.dev.mytech.co.mz": portfolioSiteRoutes,
+
   "mytech.co.mz": mytechSiteRoutes,
   "dev.mytech.co.mz": mytechSiteRoutes,
   "resaas.mytech.co.mz": resaasSiteRoutes,

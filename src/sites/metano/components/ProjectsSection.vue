@@ -1,7 +1,7 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
-import { projects } from '../portfolio.config'
+import { projects } from '../metano.config'
 
 // The words of each project (English source; tdc translates). The metadata (icon, tags,
 // which one is the flagship) is data in portfolio.config.js.

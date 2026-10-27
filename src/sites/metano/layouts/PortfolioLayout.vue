@@ -4,7 +4,7 @@ import { useQuasar } from 'quasar'
 import { tdc } from 'quasar_resaas'
 
 import '../css/portfolio.css'
-import { profile, sections } from '../portfolio.config'
+import { profile, sections } from '../metano.config'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
 

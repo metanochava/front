@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { tdc } from 'quasar_resaas'
 
-import { contact, profile } from '../portfolio.config'
+import { contact, profile } from '../metano.config'
 
 const links = computed(() => [
   contact.github && { label: 'GitHub', href: contact.github, icon: 'code' },

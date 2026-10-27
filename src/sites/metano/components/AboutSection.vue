@@ -1,7 +1,7 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
-import { profile } from '../portfolio.config'
+import { profile } from '../metano.config'
 
 const disciplines = [
   {

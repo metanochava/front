@@ -1,7 +1,7 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
-import { education, experience, certifications } from '../portfolio.config'
+import { education, experience, certifications } from '../metano.config'
 
 // Real facts from Metano's own CV. Dates, institutions and employers are kept exactly as
 // given; only the phrasing was tightened for the page. Institution names are proper

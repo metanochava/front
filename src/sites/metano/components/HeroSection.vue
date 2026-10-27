@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { tdc } from 'quasar_resaas'
 
-import { profile, highlights } from '../portfolio.config'
+import { profile, highlights } from '../metano.config'
 
 // The role line types itself and rotates through the three profiles. With reduced
 // motion (or before mount) it just shows the first role.

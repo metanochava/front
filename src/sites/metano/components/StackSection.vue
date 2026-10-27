@@ -1,7 +1,7 @@
 <script setup>
 import { tdc } from 'quasar_resaas'
 
-import { stack } from '../portfolio.config'
+import { stack } from '../metano.config'
 
 // every tool once, for the moving band (the list is drawn twice so the loop has no seam)
 const band = [...new Set(stack.flatMap(group => group.items))]
