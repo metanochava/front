@@ -22,8 +22,9 @@
     <!-- quasar:entry-point -->
     <div id="loading-screen">
       <div class="loader-container">
+        <!-- the host EntityType's icon (see the script below), small loader under it -->
+        <img id="splash-icon" class="splash-icon" alt="" />
         <div class="spinner"></div>
-        <div class="loading-text">Loading</div>
       </div>
       <!-- the maker's mark at the foot of the splash, like "from Meta" -->
       <div class="splash-from">
@@ -31,6 +32,42 @@
         <span class="splash-from__brand">MytecH</span>
       </div>
     </div>
+    <script>
+      // Splash icon: the icon of this host's EntityType (saude.example.com ->
+      // "saude", on an IP the first path segment - same rule as quasar_resaas
+      // utils/entityTypeHost.js), read from the PUBLIC EntityType catalogue and
+      // remembered per host so the next opening shows it at once. Hosts with no
+      // EntityType (client sites) show the app icon.
+      (function () {
+        var img = document.getElementById('splash-icon')
+        if (!img) return
+        var FALLBACK = 'icons/favicon-128x128.png'
+        var host = location.hostname
+        var isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.indexOf(':') !== -1
+        var parts = host.split('.')
+        var key = (isIp ? (location.pathname.split('/').filter(Boolean)[0] || '') : (parts[0] === 'www' ? parts[1] : parts[0]) || '').toLowerCase()
+        var cacheKey = 'splashIcon:' + key
+        function show (src) {
+          img.onload = function () { img.classList.add('splash-icon--ready') }
+          img.onerror = function () { if (img.src.indexOf(FALLBACK) === -1) img.src = FALLBACK }
+          img.src = src
+        }
+        var cached = null
+        try { cached = localStorage.getItem(cacheKey) } catch (e) {}
+        show(cached || FALLBACK)
+        if (!key) return
+        fetch('<%= splashApi %>/django_resaas/entitytypes/?format=json')
+          .then(function (r) { return r.ok ? r.json() : [] })
+          .then(function (data) {
+            var rows = Array.isArray(data) ? data : (data && data.results) || []
+            var type = rows.find(function (t) { return String(t && t.name || '').toLowerCase() === key })
+            var src = type && type.icon && type.icon.url
+            try { src ? localStorage.setItem(cacheKey, src) : localStorage.removeItem(cacheKey) } catch (e) {}
+            if (src && src !== cached) show(src)
+          })
+          .catch(function () {})
+      })()
+    </script>
   </body>
 
   <style>
@@ -49,24 +86,31 @@
       text-align: center;
     }
 
+    .splash-icon {
+      display: block;
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      margin: 0 auto 20px;
+      border-radius: 22px;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .splash-icon--ready {
+      opacity: 1;
+    }
+
     .spinner {
-      width: 70px;
-      height: 70px;
-      border: 6px solid rgba(6, 107, 209, 0.35);
-      border-top: 6px solid #1976d2;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(6, 107, 209, 0.25);
+      border-top: 3px solid #1976d2;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto;
     }
 
-    .loading-text {
-      margin-top: 18px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #1976d2;
-      letter-spacing: 1px;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
 
     .splash-from {
       position: absolute;

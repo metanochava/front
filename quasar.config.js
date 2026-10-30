@@ -39,6 +39,12 @@ export default defineConfig((ctx) => {
       'material-icons', // optional, you are not bound to it
     ],
 
+    // index.html: the splash fetches the host EntityType's icon from the
+    // public catalogue (django_resaas/entitytypes/) before the app loads
+    htmlVariables: {
+      splashApi: `${ctx.dev ? process.env.API_DEV : process.env.API_PRO}/${process.env.API_PREFIX}`,
+    },
+
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       env: {
