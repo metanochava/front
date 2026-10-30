@@ -54,7 +54,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   installAuthGuard(Router)
-  installPageTitle(Router)
+  // the tab shows the page title alone, without " | <productName>"
+  installPageTitle(Router, { suffix: false })
 
   return Router
 })

@@ -201,6 +201,8 @@ import RodapePage from '../pages/RodapePage.vue'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
 import { siteLoginUrl } from '../../shared/siteLoginUrl'
+import { useSiteFavicon } from '../../shared/useSiteFavicon'
+import siteLogo from '../public/logo.png'
 
 
 import { tdc,useUserStore, useEntityStore } from 'quasar_resaas'
@@ -215,6 +217,8 @@ export default defineComponent({
   },
 
   setup(){
+    // the tab icon is the clinic's logo
+    useSiteFavicon(siteLogo)
 
     const User = useUserStore()
     const Entity = useEntityStore()

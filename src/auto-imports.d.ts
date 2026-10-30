@@ -13,13 +13,11 @@ declare global {
   const AlertInfo: typeof import('quasar_resaas').AlertInfo
   const AlertSuccess: typeof import('quasar_resaas').AlertSuccess
   const EffectScope: typeof import('vue').EffectScope
-  const HTTP: typeof import('quasar_resaas').HTTP
   const HTTPAuth: typeof import('quasar_resaas').HTTPAuth
   const HTTPAuthBlob: typeof import('quasar_resaas').HTTPAuthBlob
   const HTTPClient: typeof import('quasar_resaas').HTTPClient
   const HTTPClientBlob: typeof import('quasar_resaas').HTTPClientBlob
   const JSONSafeParse: typeof import('quasar_resaas').JSONSafeParse
-  const ascii: typeof import('quasar_resaas').ascii
   const authRoutes: typeof import('quasar_resaas').authRoutes
   const autoLabel: typeof import('quasar_resaas').autoLabel
   const buildFormFromSchema: typeof import('quasar_resaas').buildFormFromSchema
@@ -99,7 +97,6 @@ declare global {
   const useBranchStore: typeof import('quasar_resaas').useBranchStore
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
-  const useEmployeeStore: typeof import('quasar_resaas').useEmployeeStore
   const useEntitlementStore: typeof import('quasar_resaas').useEntitlementStore
   const useEntityStore: typeof import('quasar_resaas').useEntityStore
   const useEntityTypeStore: typeof import('quasar_resaas').useEntityTypeStore
