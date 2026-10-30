@@ -109,7 +109,7 @@ const Paciente = usePacienteStore()
 const SECTIONS = [
   {
     field: 'dc', icon: 'record_voice_over', required: true, minHeight: '160px', cols: 'col-12',
-    label: 'Chief complaint and history of present illness',
+    label: 'Chief complaint, history of present illness and physical examination',
     hint: 'What brings the patient, since when, how it evolved.'
   },
   {

@@ -2,8 +2,7 @@
   <q-card flat bordered class="pedido-resumo q-pa-sm">
     <div class="row q-col-gutter-sm">
       <div class="col"><div class="text-caption text-grey-7">{{ tdc('Total') }}</div><div class="text-h6 text-weight-bold">{{ total }}</div></div>
-      <div class="col"><div class="text-caption text-grey-7">{{ tdc('Urgent') }}</div><div class="text-h6 text-weight-bold text-orange-8">{{ urgentes }}</div></div>
-      <div class="col"><div class="text-caption text-grey-7">{{ tdc('Very urgent') }}</div><div class="text-h6 text-weight-bold text-red-8">{{ muitoUrgentes }}</div></div>
+      <div class="col"><div class="text-caption text-grey-7">{{ tdc('Urgent') }}</div><div class="text-h6 text-weight-bold text-negative">{{ urgentes }}</div></div>
     </div>
   </q-card>
 </template>
@@ -14,7 +13,6 @@ import { computed } from 'vue'
 const props = defineProps({ items: { type: Array, default: () => [] } })
 const total = computed(() => props.items.length)
 const urgentes = computed(() => props.items.filter(i => i.prioridade === 'urgente').length)
-const muitoUrgentes = computed(() => props.items.filter(i => i.prioridade === 'muito_urgente').length)
 </script>
 
 <style scoped>

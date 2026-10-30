@@ -504,10 +504,6 @@ const prioridadeOptions = [
   {
     label: tdc('Urgent'),
     value: 'urgente'
-  },
-  {
-    label: tdc('Very urgent'),
-    value: 'muito_urgente'
   }
 ]
 

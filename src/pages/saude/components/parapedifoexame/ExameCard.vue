@@ -25,7 +25,7 @@ import { computed } from 'vue'
 import { sanitizeClinicalHtml } from '../clinicalHtml'
 const props = defineProps({ item: { type: Object, required: true } })
 defineEmits(['remove'])
-const priorityColor = computed(() => props.item.prioridade === 'muito_urgente' ? 'red-8' : props.item.prioridade === 'urgente' ? 'orange-8' : 'primary')
+const priorityColor = computed(() => props.item.prioridade === 'urgente' ? 'negative' : 'primary')
 </script>
 
 <style scoped>

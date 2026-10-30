@@ -173,7 +173,7 @@ export default defineConfig((ctx) => {
     devServer: {
       host: '0.0.0.0',
       port: 9000,
-      allowedHosts: ['.dev.mytech.co.mz'],
+      allowedHosts: ['.dev.mytech.co.mz', 'metano.mytech.co.mz', 'metano.metano.cc', 'metano.metanochavana.link'],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

@@ -396,12 +396,11 @@ const form = ref({
 
 const prioridadeOptions = [
   { label: tdc('Normal'), value: 'normal' },
-  { label: tdc('Urgent'), value: 'urgente' },
-  { label: tdc('Very urgent'), value: 'muito_urgente' }
+  { label: tdc('Urgent'), value: 'urgente' }
 ]
 
-// the priority buttons of each added exam: grey / orange / red when chosen
-const PRIORITY_COLORS = { normal: 'grey-7', urgente: 'orange-8', muito_urgente: 'negative' }
+// the priority buttons of each added exam: grey / red (danger) when chosen
+const PRIORITY_COLORS = { normal: 'grey-7', urgente: 'negative' }
 const priorityToggle = prioridadeOptions.map(o => ({ ...o, toggleColor: PRIORITY_COLORS[o.value] }))
 
 // the shared priority when every exam has the same one (else none is lit)

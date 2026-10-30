@@ -61,7 +61,7 @@ const router = useRouter()
 
 // the same sections (and labels) as the consultation form, ConsultaSEPage
 const SECTIONS = [
-  { field: 'dc', icon: 'record_voice_over', label: 'Chief complaint and history of present illness', pair: false },
+  { field: 'dc', icon: 'record_voice_over', label: 'Chief complaint, history of present illness and physical examination', pair: false },
   { field: 'diagnostico', icon: 'fact_check', label: 'Diagnosis', pair: true },
   { field: 'conduta_a_estabelecer', icon: 'assignment', label: 'Plan', pair: true },
 ]
