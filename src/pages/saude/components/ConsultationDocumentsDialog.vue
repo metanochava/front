@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="v => emit('update:modelValue', v)">
+  <q-dialog persistent :model-value="modelValue" @update:model-value="v => emit('update:modelValue', v)">
     <s-modal-card :title="tdc('Consultation documents')" icon="folder_open" width="640px" @close="close">
       <ConsultationDocumentsList :consulta-id="modelValue ? consultaId : null" />
     </s-modal-card>

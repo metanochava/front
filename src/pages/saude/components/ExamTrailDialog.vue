@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <q-dialog persistent v-model="open">
     <s-modal-card :title="tdc('Exam trail')" icon="history" width="640px" data-test="exam-trail-dialog" @close="open = false">
       <div v-if="loading" class="flex flex-center q-pa-lg"><q-spinner size="40px" /></div>
 

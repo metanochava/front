@@ -73,6 +73,18 @@
         <s-tooltip>{{ tdc('Appointment Schedule') }}</s-tooltip>
       </s-btn>
 
+      <!-- Enter exam results of this patient (record_result_itempedidoexamemedico) -->
+      <s-btn
+        v-if="User.can('record_result_itempedidoexamemedico')"
+        flat round dense
+        icon="science"
+        :disable="!pacienteId"
+        data-test="patient-header-enter-results"
+        @click="resultEntry?.trigger(pacienteId, name)"
+      >
+        <s-tooltip>{{ tdc('Enter results: click for the latest exam request, double click to choose') }}</s-tooltip>
+      </s-btn>
+
       <s-btn flat round dense icon="more_vert" :disable="!pacienteId">
         <q-menu auto-close>
           <q-list style="min-width: 200px">
@@ -116,6 +128,8 @@
       @saved="showVitalsDialog = false"
     />
 
+    <result-entry-dialog ref="resultEntry" />
+
     <agenda-consulta-dialog
       v-model="showAgendaDialog"
       :paciente-id="pacienteId"
@@ -140,6 +154,7 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePacienteStore } from './pacienteStore'
 import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
+import ResultEntryDialog from './../components/ResultEntryDialog.vue'
 import VitalSignsDialog from './../components/VitalSignsDialog.vue'
 
 import { tdc, displayValue, rawValue, useUserStore } from 'quasar_resaas'
@@ -156,6 +171,7 @@ const props = defineProps({
 
 const Paciente = usePacienteStore()
 const showAgendaDialog = ref(false)
+const resultEntry = ref(null)
 const showVitalsDialog = ref(false)
 const User = useUserStore()
 

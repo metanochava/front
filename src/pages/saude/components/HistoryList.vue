@@ -127,6 +127,12 @@ const props = defineProps({
   dateFields: {
     type: Array,
     default: () => []
+  },
+  // extra filters sent with every page (e.g. { patient: id }: one patient's
+  // records); remount the list (:key) when they change
+  params: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -237,7 +243,8 @@ const listRef = ref(null)
 
 const positionName = computed(() => {
   const list = props.routeKey || props.store?.$id || 'history'
-  return `history:${list}:${User.Entity?.id || '-'}:${User.Branch?.id || '-'}`
+  const scope = Object.keys(props.params || {}).length ? `:${JSON.stringify(props.params)}` : ''
+  return `history:${list}:${User.Entity?.id || '-'}:${User.Branch?.id || '-'}${scope}`
 })
 
 function readPosition() {
@@ -256,6 +263,7 @@ let anchorId = restored?.id || null
 
 async function fetch(page) {
   const result = await props.store.fetchPage({
+    ...props.params,
     page,
     page_size: PAGE_SIZE,
     ordering: '-created_at',

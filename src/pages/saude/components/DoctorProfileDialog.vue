@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" @show="load">
+  <q-dialog persistent v-model="open" @show="load">
     <s-modal-card
       :title="fullName || fallbackName || tdc('Doctor')"
       icon="medical_services"

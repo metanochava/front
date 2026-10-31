@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <q-dialog persistent v-model="open">
     <s-modal-card :title="tdc('Lab history')" icon="history" width="860px" data-test="lab-history-dialog" @close="open = false">
       <template #subheader>
         <div class="row q-col-gutter-sm q-pa-sm">

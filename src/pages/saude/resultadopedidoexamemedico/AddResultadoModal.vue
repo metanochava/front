@@ -1,12 +1,12 @@
 <template>
-  <q-dialog v-model="dialog" full-width full-height>
-    <s-modal-card :title="tdc('Results')" icon="fact_check" fullscreen @close="dialog = false">
-      <div v-if="!Pedidoexamemedico.items.length" class="text-grey-6 text-center q-pa-lg">
+  <q-dialog v-model="dialog" full-width full-height persistent>
+    <s-modal-card :title="title" icon="fact_check" fullscreen @close="dialog = false">
+      <div v-if="!Pedidoexamemedico.requestItems.length" class="text-grey-6 text-center q-pa-lg">
         {{ tdc('No exams in this request.') }}
       </div>
 
       <q-card
-        v-for="item in Pedidoexamemedico.items"
+        v-for="item in Pedidoexamemedico.requestItems"
         :key="item.id"
         class="q-mb-lg"
         flat
@@ -53,14 +53,47 @@
               :error="!!errorsOf(item).valor_resultado"
               :error-message="errorsOf(item).valor_resultado"
             />
-            <s-editor v-model="draftOf(item).laudo" :label="tdc('Findings')" min-height="120px" class="q-mt-sm" />
-            <s-editor v-model="draftOf(item).observacao" :label="tdc('Observation')" min-height="80px" class="q-mt-sm" />
-            <s-file v-model="draftOf(item).file" :label="tdc('File')" class="q-mt-sm" />
+            <!-- findings and observation side by side, one full-width row -->
+            <div class="row q-col-gutter-sm q-mt-xs">
+              <div class="col-12 col-md-6">
+                <s-editor v-model="draftOf(item).laudo" :label="tdc('Findings')" min-height="120px" />
+              </div>
+              <div class="col-12 col-md-6">
+                <s-editor v-model="draftOf(item).observacao" :label="tdc('Observation')" min-height="120px" />
+              </div>
+            </div>
+            <div class="row q-col-gutter-sm q-mt-xs">
+              <div class="col-12 col-sm-6">
+                <s-file v-model="draftOf(item).file" :label="tdc('File')" />
+              </div>
+              <!-- the patient's results folder the file goes into (empty = the patient's root) -->
+              <div class="col-12 col-sm-6">
+                <s-select
+                  v-model="draftOf(item).pai"
+                  :label="tdc('Patient folder')"
+                  :options="folderOptions"
+                  emit-value
+                  map-options
+                  clearable
+                  :error="!!errorsOf(item).pai"
+                  :error-message="errorsOf(item).pai"
+                  :data-test="`result-folder-${item.id}`"
+                />
+              </div>
+            </div>
           </template>
 
-          <div v-if="item.resultado?.file" class="q-mt-sm">
-            <q-icon name="attach_file" class="q-mr-xs" />
-            <a :href="item.resultado.file" target="_blank" rel="noopener noreferrer">{{ item.resultado.nome || tdc('File') }}</a>
+          <!-- the file already attached: viewed in the modal (PDF / image) or opened -->
+          <div v-if="fileOf(item)" class="row items-center q-gutter-sm q-mt-sm" :data-test="`result-file-${item.id}`">
+            <q-icon name="attach_file" />
+            <span class="ellipsis">{{ fileOf(item).name || item.resultado.nome || tdc('File') }}</span>
+            <q-space />
+            <s-btn v-if="isViewable(fileOf(item))" flat dense no-caps color="primary" icon="visibility" :label="tdc('View')" @click="viewFile(item)">
+              <s-tooltip>{{ tdc('View the attached file') }}</s-tooltip>
+            </s-btn>
+            <s-btn flat dense no-caps color="primary" icon="open_in_new" :label="tdc('Open')" :href="fileOf(item).url" target="_blank" rel="noopener noreferrer">
+              <s-tooltip>{{ tdc('Open the attached file') }}</s-tooltip>
+            </s-btn>
           </div>
         </q-card-section>
 
@@ -116,6 +149,7 @@
     @saved="reload"
     @changed="reload"
   />
+  <s-pdf-render v-model="viewer.open" :src="viewer.src" :title="viewer.title" />
 </template>
 
 <script setup>
@@ -128,6 +162,7 @@
 // Validating and releasing have their own permissions and are offered only in
 // the state the backend accepts them; the backend enforces both (403 / 409).
 import { computed, reactive, ref, watch } from 'vue'
+import { date } from 'quasar'
 import { tdc, url, HTTPAuth, useUserStore } from 'quasar_resaas'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
 import ExamResultDialog from '../components/ExamResultDialog.vue'
@@ -146,6 +181,15 @@ const dialog = computed({
 const Pedidoexamemedico = usePedidoexamemedicoStore()
 const User = useUserStore()
 
+// "Results of <patient> — request of <date>" (the request's label is its patient)
+const title = computed(() => {
+  const request = Pedidoexamemedico.row || {}
+  const patient = request.label
+  const created = request.created_at ? date.formatDate(request.created_at, 'DD/MM/YYYY HH:mm') : ''
+  const head = patient ? `${tdc('Results of')} ${patient}` : tdc('Results')
+  return created ? `${head} — ${tdc('request of')} ${created}` : head
+})
+
 // ---------------------------------------------------------------- structured form
 const structuredOpen = ref(false)
 const structuredItemId = ref(null)
@@ -159,13 +203,51 @@ const drafts = reactive({})
 const errors = reactive({})
 const saving = ref(null)
 
+// a relation comes as {id, value, label} when read
+const idOf = (value) => (value && typeof value === 'object' ? value.id : value) || null
+
 function fromResult (resultado) {
+  const pai = idOf(resultado?.pai)
   return {
     valor_resultado: resultado?.valor_resultado || '',
     laudo: resultado?.laudo || '',
     observacao: resultado?.observacao || '',
-    file: null
+    file: null,
+    // the folder is sent only when changed (record_report keeps it otherwise)
+    pai,
+    paiInitial: pai
   }
+}
+
+// ---------------------------------------------------------------- patient folders
+const folders = ref([])
+const folderOptions = computed(() => folders.value.map(folder => ({ label: folder.path, value: folder.id })))
+
+async function loadFolders () {
+  folders.value = []
+  const paciente = Pedidoexamemedico.row?.patient_id
+  if (!paciente) return
+  const { data } = await HTTPAuth.get(url({ type: 'u', url: 'saude/resultadoexamemedicos/folders/', params: { paciente } }))
+  folders.value = Array.isArray(data) ? data : []
+}
+
+watch(() => [props.modelValue, Pedidoexamemedico.row?.patient_id], ([open]) => {
+  if (open) loadFolders()
+}, { immediate: true })
+
+// ---------------------------------------------------------------- attached file
+const fileOf = (item) => {
+  const file = item?.resultado?.file
+  return file && typeof file === 'object' && file.url ? file : null
+}
+const isViewable = (file) => /^(application\/pdf|image\/)/.test(file?.mime_type || '')
+const viewer = reactive({ open: false, src: null, title: '' })
+
+function viewFile (item) {
+  const file = fileOf(item)
+  viewer.src = file.url
+  viewer.title = file.name || item.resultado.nome || tdc('File')
+  viewer.open = true
 }
 
 function draftOf (item) {
@@ -178,7 +260,7 @@ function errorsOf (item) {
 }
 
 // every (re)load shows what the server has
-watch(() => Pedidoexamemedico.items, (items) => {
+watch(() => Pedidoexamemedico.requestItems, (items) => {
   for (const item of items || []) drafts[item.id] = fromResult(item.resultado)
 }, { immediate: true })
 
@@ -196,6 +278,7 @@ async function saveReport (item) {
   const body = new FormData()
   for (const field of ['valor_resultado', 'laudo', 'observacao']) body.append(field, draft[field] ?? '')
   if (draft.file instanceof File) body.append('file', draft.file)
+  if ((draft.pai || null) !== (draft.paiInitial || null)) body.append('pai', draft.pai || '')
 
   saving.value = item.id
   errors[item.id] = {}

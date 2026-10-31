@@ -1,6 +1,6 @@
 <template>
 
-<q-dialog v-model="dialog">
+<q-dialog persistent v-model="dialog">
   <s-modal-card :title="tdc('New folder')" icon="create_new_folder" width="500px">
     <s-input
         v-model="form.nome"

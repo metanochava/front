@@ -7,7 +7,9 @@ export const usePedidoexamemedicoStore = createBaseStore(
   {
     state: () => ({
       showDialogModal: false,
-      items: []
+      // the request's exams (items action). Not `items`: BaseStore's getter
+      // `items` (= rows, the list) shadows a state of that name
+      requestItems: []
     }),
 
     getters: {
@@ -20,8 +22,16 @@ export const usePedidoexamemedicoStore = createBaseStore(
         const { data } = await HTTPAuth.get(
           url({ type: 'u', url: `${this.safeUrl}/${id}/items` })
         )
-        this.items = data.data
+        this.requestItems = data.data
         this.loading = false
+      },
+
+      // only the request's exams (items action), without reloading the request
+      async loadItems(id){
+        const { data } = await HTTPAuth.get(
+          url({ type: 'u', url: `${this.safeUrl}/${id}/items` })
+        )
+        this.requestItems = data.data || []
       }
     },
 

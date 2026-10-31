@@ -29,7 +29,7 @@
       </s-btn>
     </q-card-section>
 
-    <q-dialog v-model="chartOpen" full-width full-height>
+    <q-dialog persistent v-model="chartOpen" full-width full-height>
       <s-modal-card :title="tdc('Vital signs chart')" icon="show_chart" fullscreen data-test="latest-vital-signs-chart-dialog" @close="chartOpen = false">
         <VitalSignsCharts v-if="chartOpen" :paciente-id="String(pacienteId)" mode="all" />
       </s-modal-card>

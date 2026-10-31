@@ -1,7 +1,7 @@
 <template>
   <!-- the same patient list as list_paciente, in a full-screen modal
        (reception queue: double click on "Patients") -->
-  <q-dialog :model-value="modelValue" full-width full-height @update:model-value="v => emit('update:modelValue', v)">
+  <q-dialog persistent :model-value="modelValue" full-width full-height @update:model-value="v => emit('update:modelValue', v)">
     <s-modal-card :title="tdc('Patients')" icon="groups" fullscreen @close="emit('update:modelValue', false)">
       <PacienteList v-if="modelValue" />
     </s-modal-card>

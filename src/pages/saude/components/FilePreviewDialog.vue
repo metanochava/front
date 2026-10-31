@@ -1,7 +1,7 @@
 <template>
   <!-- a stored file shown in place: image, PDF, video, audio or text; any other
        type offers the download. Full screen (s-modal-card), only the body scrolls -->
-  <q-dialog :model-value="modelValue" full-width full-height @update:model-value="v => emit('update:modelValue', v)">
+  <q-dialog persistent :model-value="modelValue" full-width full-height @update:model-value="v => emit('update:modelValue', v)">
     <s-modal-card :title="name || tdc('Preview')" :icon="icon" fullscreen flush data-test="file-preview" @close="close">
       <template #bar-actions>
         <s-btn v-if="url" dense flat round icon="open_in_new" :href="url" target="_blank" rel="noopener">

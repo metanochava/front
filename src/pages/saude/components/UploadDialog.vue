@@ -1,6 +1,6 @@
 <template>
 
-<q-dialog v-model="dialog">
+<q-dialog persistent v-model="dialog">
   <s-modal-card :title="tdc('New result')" icon="attach_file" width="900px">
     <div class="row q-col-gutter-lg">
 

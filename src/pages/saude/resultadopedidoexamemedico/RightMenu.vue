@@ -10,7 +10,11 @@
   <AddResultadoModal
     v-model="PedidoexamemedicoStore.showDialogModal"
   />
+  <!-- only the open patient's exam requests (the results page is one patient's) -->
   <HistoryList
+    v-if="patientId"
+    :key="patientId"
+    :params="{ patient: patientId }"
     :title="tdc('Exam request result')"
     :store="PedidoexamemedicoStore"
     :actions="['Pdf', 'Ad. Resultado', 'Edit', 'delete']"
@@ -20,14 +24,20 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { tdc } from 'quasar_resaas'
 
 import HistoryList from '../components/HistoryList.vue'
 import { usePedidoexamemedicoStore } from './../../saude/pedidoexamemedico/pedidoexamemedicoStore'
 
 import  AddResultadoModal  from './AddResultadoModal.vue'
+import { useResultadopedidoexamemedicoStore } from './resultadopedidoexamemedicoStore'
 
 const PedidoexamemedicoStore = usePedidoexamemedicoStore()
+const Resultadopedidoexamemedico = useResultadopedidoexamemedicoStore()
+
+// the patient the results page shows (route :id)
+const patientId = computed(() => Resultadopedidoexamemedico.paciente || null)
 
 
 function onClick(item, action) {

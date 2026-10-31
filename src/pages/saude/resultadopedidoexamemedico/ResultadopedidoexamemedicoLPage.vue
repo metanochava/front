@@ -41,6 +41,7 @@
 
 
       <ExplorerToolbar
+        v-model:view="view"
         :selected="selected"
         @new-folder="dialogs.folder = true"
         @upload="dialogs.upload = true"
@@ -48,29 +49,36 @@
         @delete="deleteSelected"
         @refresh="refresh"
         @search="search"
-      />
-      <!-- files / folders in the current folder -->
-      <div class="text-center text-weight-bold text-primary text-subtitle1 q-py-xs" data-test="explorer-counts">
-        {{ Resultadopedidoexamemedico.ficheiros.length }} / {{ Resultadopedidoexamemedico.pastas.length }}
-        <s-tooltip>{{ tdc('Files') }} / {{ tdc('Folders') }}</s-tooltip>
-      </div>
+      >
+        <!-- files / folders in the current folder, on the buttons' row -->
+        <div class="text-weight-bold text-primary text-subtitle1" data-test="explorer-counts">
+          {{ Resultadopedidoexamemedico.ficheiros.length }} / {{ Resultadopedidoexamemedico.pastas.length }}
+          <s-tooltip>{{ tdc('Files') }} / {{ tdc('Folders') }}</s-tooltip>
+        </div>
+      </ExplorerToolbar>
 
-      <ExplorerBreadcrumb
-        :caminho="Resultadopedidoexamemedico.caminho"
-        @root="goRoot"
-        @go-to="goTo"
-      />
+      <!-- Files: the explorer (folders and files) -->
+      <template v-if="view === 'files'">
+        <ExplorerBreadcrumb
+          :caminho="Resultadopedidoexamemedico.caminho"
+          @root="goRoot"
+          @go-to="goTo"
+        />
 
-      <q-separator />
+        <q-separator />
 
-      <ExplorerGrid
-        :folders="Resultadopedidoexamemedico.pastas"
-        :files="Resultadopedidoexamemedico.ficheiros"
-        :selected="selected"
-        @select="selectItem"
-        @open-folder="openFolder"
-        @open-file="openFile"
-      />
+        <ExplorerGrid
+          :folders="Resultadopedidoexamemedico.pastas"
+          :files="Resultadopedidoexamemedico.ficheiros"
+          :selected="selected"
+          @select="selectItem"
+          @open-folder="openFolder"
+          @open-file="openFile"
+        />
+      </template>
+
+      <!-- Data: what was entered for the exams, by parameter -->
+      <ResultsDataView v-else :paciente="Resultadopedidoexamemedico.paciente" :search="dataSearch" />
 
     </s-card>
 
@@ -106,6 +114,7 @@ const Paciente = usePacienteStore()
 import ExplorerToolbar from './../components/ExplorerToolbar.vue'
 import ExplorerBreadcrumb from './../components/ExplorerBreadcrumb.vue'
 import ExplorerGrid from './../components/ExplorerGrid.vue'
+import ResultsDataView from './../components/ResultsDataView.vue'
 import FolderDialog from './../components/FolderDialog.vue'
 import UploadDialog from './../components/UploadDialog.vue'
 import FilePreviewDialog from './../components/FilePreviewDialog.vue'
@@ -117,6 +126,10 @@ const Pedidoexamemedico = usePedidoexamemedicoStore()
 const Resultadopedidoexamemedico = useResultadopedidoexamemedicoStore()
 
 const selected = ref(null)
+// 'files' (explorer) or 'data' (entered results by parameter)
+const view = ref('files')
+// the toolbar's search text, applied to the Data view
+const dataSearch = ref('')
 
 const dialogs = reactive({
     folder: false,
@@ -131,11 +144,19 @@ async function refresh(){
 
 }
 
+// one search box for both views: the explorer (Files) or the results (Data)
 async function search(text){
 
-    await Resultadopedidoexamemedico.searchExplorer(text)
+    dataSearch.value = text || ''
+
+    if (view.value === 'files') await Resultadopedidoexamemedico.searchExplorer(text)
 
 }
+
+// back to Files: the explorer follows what was typed while in Data
+watch(view, (value) => {
+    if (value === 'files') Resultadopedidoexamemedico.searchExplorer(dataSearch.value)
+})
 
 function selectItem(item){
 
