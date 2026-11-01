@@ -9,6 +9,7 @@
       <div class="col-12 col-sm-6">
         <s-select
           v-model="parameter"
+          dense
           :label="tdc('Parameter')"
           :options="parameterOptions"
           emit-value
@@ -17,8 +18,8 @@
           data-test="lab-evolution-parameter"
         />
       </div>
-      <div class="col-6 col-sm-3"><s-input v-model="dateFrom" type="date" :label="tdc('From')" /></div>
-      <div class="col-6 col-sm-3"><s-input v-model="dateTo" type="date" :label="tdc('To')" /></div>
+      <div class="col-6 col-sm-3"><s-input v-model="dateFrom" dense type="date" :label="tdc('From')" /></div>
+      <div class="col-6 col-sm-3"><s-input v-model="dateTo" dense type="date" :label="tdc('To')" /></div>
     </div>
 
     <div v-if="!loadingParameters && !parameters.length" class="text-grey-7 q-pa-md" data-test="lab-evolution-empty">
@@ -48,9 +49,14 @@
 
         <!-- a chart only for graphable (numeric) parameters with at least two points:
              never a chart built from text -->
-        <LineChartWidget v-if="evolution.parameter.graphable && evolution.points.length > 1" :data="chart" :options="chartOptions" class="q-mb-md" />
+        <template v-if="mode !== 'table'">
+          <LineChartWidget v-if="canChart" :data="chart" :options="chartOptions" class="q-mb-md" data-test="lab-evolution-chart" />
+          <div v-else-if="mode === 'chart'" class="text-grey-7 q-pa-md" data-test="lab-evolution-no-chart">
+            {{ tdc('This parameter needs at least two numeric results for a chart.') }}
+          </div>
+        </template>
 
-        <q-markup-table flat bordered dense separator="horizontal">
+        <q-markup-table v-if="mode !== 'chart'" flat bordered dense separator="horizontal">
           <thead>
             <tr>
               <th class="text-left">{{ tdc('Date') }}</th>
@@ -85,7 +91,9 @@ const LineChartWidget = resolveWidgetComponent('line_chart')
 const props = defineProps({
   pacienteId: { type: [String, Number], default: null },
   // load when shown (the dialog passes its open state)
-  active: { type: Boolean, default: true }
+  active: { type: Boolean, default: true },
+  // 'all' (chart + table, the dialog), 'table' or 'chart' (the Data view's tabs)
+  mode: { type: String, default: 'all' }
 })
 
 const parameters = ref([])
@@ -103,6 +111,7 @@ const parameterOptions = computed(() =>
   parameters.value.map((p) => ({ value: p.code, label: `${tdc(p.name)}${p.unit ? ` (${p.unit})` : ''}` }))
 )
 
+const canChart = computed(() => evolution.value?.parameter?.graphable && evolution.value.points.length > 1)
 const chart = computed(() => labChartData(evolution.value, (d) => new Date(d).toLocaleDateString()))
 const chartOptions = computed(() => labChartOptions(evolution.value))
 

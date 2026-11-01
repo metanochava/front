@@ -15,6 +15,7 @@ import { itempedidoexamemedicoRoutes } from './itempedidoexamemedico/itempedidoe
 import { resultadopedidoexamemedicoRoutes } from './resultadopedidoexamemedico/resultadopedidoexamemedicoRoutes'
 import { guiatransferenciaRoutes } from './guiatransferencia/guiatransferenciaRoutes'
 import { relatoriomedicoRoutes } from './relatoriomedico/relatoriomedicoRoutes'
+import { clinicalsummaryRoutes } from './clinicalsummary/clinicalsummaryRoutes'
 import { atestadomedicoRoutes } from './atestadomedico/atestadomedicoRoutes'
 import { receitamedicaRoutes } from './receitamedica/receitamedicaRoutes'
 import { consultaRoutes } from './consulta/consultaRoutes'
@@ -96,6 +97,7 @@ export let saudeRoutes = [
   ...receitamedicaRoutes,
   ...atestadomedicoRoutes,
   ...relatoriomedicoRoutes,
+  ...clinicalsummaryRoutes,
   ...guiatransferenciaRoutes,
   ...pedidoexamemedicoRoutes,
   ...itempedidoexamemedicoRoutes,

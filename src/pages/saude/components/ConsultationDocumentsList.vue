@@ -55,6 +55,7 @@ import { useReceitamedicaStore } from '../receitamedica/receitamedicaStore'
 import { useAtestadomedicoStore } from '../atestadomedico/atestadomedicoStore'
 import { useGuiatransferenciaStore } from '../guiatransferencia/guiatransferenciaStore'
 import { useRelatoriomedicoStore } from '../relatoriomedico/relatoriomedicoStore'
+import { useClinicalsummaryStore } from '../clinicalsummary/clinicalsummaryStore'
 import { usePedidoexamemedicoStore } from '../pedidoexamemedico/pedidoexamemedicoStore'
 
 const props = defineProps({
@@ -68,6 +69,7 @@ const DOCUMENT_SECTIONS = [
   { key: 'atestadomedico', label: 'Medical certificates', icon: 'description', endpoint: 'saude/atestadomedicos/', store: useAtestadomedicoStore },
   { key: 'guiatransferencia', label: 'Referrals', icon: 'forward_to_inbox', endpoint: 'saude/guiatransferencias/', store: useGuiatransferenciaStore },
   { key: 'relatoriomedico', label: 'Medical reports', icon: 'summarize', endpoint: 'saude/relatoriomedicos/', store: useRelatoriomedicoStore },
+  { key: 'clinicalsummary', label: 'Clinical summaries', icon: 'summarize', endpoint: 'saude/clinicalsummaries/', store: useClinicalsummaryStore },
   { key: 'pedidoexamemedico', label: 'Exam requests', icon: 'biotech', endpoint: 'saude/pedidoexamemedicos/', store: usePedidoexamemedicoStore },
 ]
 

@@ -34,15 +34,28 @@
         </q-bar>
 
         <q-card-section>
-          <!-- a validated result is read-only: corrections are an amendment (new revision) -->
+          <!-- a validated result is read-only: corrections are an amendment (new
+               revision). The whole result beside its file. -->
           <template v-if="item.resultado?.validado">
             <div class="text-caption text-grey-7 q-mb-sm">
               {{ tdc('This result is validated and cannot be changed. Amend it to create a new revision.') }}
             </div>
-            <div v-if="item.resultado.valor_resultado"><b>{{ tdc('Result value') }}:</b> {{ item.resultado.valor_resultado }}</div>
-            <!-- eslint-disable-next-line vue/no-v-html -- the laboratory's report (s-editor), sanitized -->
-            <div v-if="item.resultado.laudo" class="q-mt-sm" v-html="sanitizeClinicalHtml(item.resultado.laudo)" />
-            <div v-if="item.resultado.observacao" class="q-mt-sm text-grey-8">{{ plain(item.resultado.observacao) }}</div>
+            <div class="row q-col-gutter-md">
+              <div :class="fileOf(item) ? 'col-12 col-md-8' : 'col-12'">
+                <!-- everything entered: value, report, observation, parameter values (exam_values) -->
+                <ResultValuesCard v-if="details[item.resultado.id]" :row="details[item.resultado.id]" :header="false" :data-test="`result-details-${item.id}`" />
+                <template v-else>
+                  <div v-if="item.resultado.valor_resultado"><b>{{ tdc('Result value') }}:</b> {{ item.resultado.valor_resultado }}</div>
+                  <!-- eslint-disable-next-line vue/no-v-html -- the laboratory's report (s-editor), sanitized -->
+                  <div v-if="item.resultado.laudo" class="q-mt-sm" v-html="sanitizeClinicalHtml(item.resultado.laudo)" />
+                  <!-- eslint-disable-next-line vue/no-v-html -- sanitized -->
+                  <div v-if="item.resultado.observacao" class="q-mt-sm text-grey-8" v-html="sanitizeClinicalHtml(item.resultado.observacao)" />
+                </template>
+              </div>
+              <div v-if="fileOf(item)" class="col-12 col-md-4">
+                <ResultFileCard :item="item" :file="fileOf(item)" @view="viewFile(item)" />
+              </div>
+            </div>
           </template>
 
           <template v-else>
@@ -83,17 +96,11 @@
             </div>
           </template>
 
-          <!-- the file already attached: viewed in the modal (PDF / image) or opened -->
-          <div v-if="fileOf(item)" class="row items-center q-gutter-sm q-mt-sm" :data-test="`result-file-${item.id}`">
-            <q-icon name="attach_file" />
-            <span class="ellipsis">{{ fileOf(item).name || item.resultado.nome || tdc('File') }}</span>
-            <q-space />
-            <s-btn v-if="isViewable(fileOf(item))" flat dense no-caps color="primary" icon="visibility" :label="tdc('View')" @click="viewFile(item)">
-              <s-tooltip>{{ tdc('View the attached file') }}</s-tooltip>
-            </s-btn>
-            <s-btn flat dense no-caps color="primary" icon="open_in_new" :label="tdc('Open')" :href="fileOf(item).url" target="_blank" rel="noopener noreferrer">
-              <s-tooltip>{{ tdc('Open the attached file') }}</s-tooltip>
-            </s-btn>
+          <!-- the file already attached (a draft): its preview; click to view it -->
+          <div v-if="fileOf(item) && !item.resultado?.validado" class="row q-mt-sm" :data-test="`result-file-${item.id}`">
+            <div class="col-12 col-sm-6 col-md-4">
+              <ResultFileCard :item="item" :file="fileOf(item)" @view="viewFile(item)" />
+            </div>
           </div>
         </q-card-section>
 
@@ -166,6 +173,8 @@ import { date } from 'quasar'
 import { tdc, url, HTTPAuth, useUserStore } from 'quasar_resaas'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
 import ExamResultDialog from '../components/ExamResultDialog.vue'
+import ResultValuesCard from '../components/ResultValuesCard.vue'
+import ResultFileCard from '../components/ResultFileCard.vue'
 import { sanitizeClinicalHtml } from '../components/clinicalHtml'
 
 const props = defineProps({
@@ -240,7 +249,6 @@ const fileOf = (item) => {
   const file = item?.resultado?.file
   return file && typeof file === 'object' && file.url ? file : null
 }
-const isViewable = (file) => /^(application\/pdf|image\/)/.test(file?.mime_type || '')
 const viewer = reactive({ open: false, src: null, title: '' })
 
 function viewFile (item) {
@@ -248,6 +256,25 @@ function viewFile (item) {
   viewer.src = file.url
   viewer.title = file.name || item.resultado.nome || tdc('File')
   viewer.open = true
+}
+
+// ---------------------------------------------------------------- full result
+// everything entered with each result (resultadoexamemedicos/{id}/exam_values/,
+// view_resultadoexamemedico), by result id
+const details = reactive({})
+
+async function loadDetails (items) {
+  if (!User.can('view_resultadoexamemedico')) return
+  await Promise.all((items || []).filter((item) => item.resultado?.id).map(async (item) => {
+    const id = item.resultado.id
+    try {
+      const { data } = await HTTPAuth.get(url({ type: 'u', url: `saude/resultadoexamemedicos/${id}/exam_values/` }))
+      details[id] = data
+    } catch {
+      // already shown by the HTTP funnel: the modal keeps the basic fields
+      delete details[id]
+    }
+  }))
 }
 
 function draftOf (item) {
@@ -262,11 +289,10 @@ function errorsOf (item) {
 // every (re)load shows what the server has
 watch(() => Pedidoexamemedico.requestItems, (items) => {
   for (const item of items || []) drafts[item.id] = fromResult(item.resultado)
+  if (props.modelValue) loadDetails(items)
 }, { immediate: true })
 
-function plain (html) {
-  return String(html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-}
+watch(() => props.modelValue, (open) => { if (open) loadDetails(Pedidoexamemedico.requestItems) })
 
 async function reload () {
   const pedidoId = Pedidoexamemedico.row?.id

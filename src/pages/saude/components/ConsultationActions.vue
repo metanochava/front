@@ -53,7 +53,7 @@ const Consulta = useConsultaStore()
 const router = useRouter()
 
 // UX only - the backend checks each permission again
-const DOCUMENT_MODELS = ['receitamedica', 'atestadomedico', 'guiatransferencia', 'relatoriomedico', 'pedidoexamemedico']
+const DOCUMENT_MODELS = ['receitamedica', 'atestadomedico', 'guiatransferencia', 'relatoriomedico', 'clinicalsummary', 'pedidoexamemedico']
 const canPdf = computed(() => User.can('pdf_consulta'))
 const canSeeDocuments = computed(() => DOCUMENT_MODELS.some(model => User.can(`list_${model}`)))
 const canEdit = computed(() => User.can('change_consulta') && canEditDocument(props.consulta, User.data?.id))

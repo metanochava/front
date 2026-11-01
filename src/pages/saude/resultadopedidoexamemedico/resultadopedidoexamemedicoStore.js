@@ -110,6 +110,19 @@ export const useResultadopedidoexamemedicoStore = createBaseStore(
       },
 
       //----------------------------------------------
+      // Abrir Pasta num nível do caminho (vista em colunas): a pasta
+      // clicada na coluna `level` substitui o caminho a partir daí
+      //----------------------------------------------
+
+      async openFolderAt(level, folder) {
+
+        this.caminho = [...this.caminho.slice(0, level), folder]
+
+        await this.loadExplorer(folder.id)
+
+      },
+
+      //----------------------------------------------
       // Raiz
       //----------------------------------------------
 

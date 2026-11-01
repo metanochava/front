@@ -1,8 +1,58 @@
 <template>
-  <!-- a stored file shown in place: image, PDF, video, audio or text; any other
-       type offers the download. Full screen (s-modal-card), only the body scrolls -->
-  <q-dialog persistent :model-value="modelValue" full-width full-height @update:model-value="v => emit('update:modelValue', v)">
-    <s-modal-card :title="name || tdc('Preview')" :icon="icon" fullscreen flush data-test="file-preview" @close="close">
+  <!-- A stored result file: what was entered with it (exam_values) takes most
+       of the modal; the file is a card beside it, and a click on the card
+       opens a second, full-screen modal that renders it by type (image, PDF,
+       video, audio, text; anything else offers the download). -->
+  <q-dialog persistent :model-value="modelValue" @update:model-value="v => emit('update:modelValue', v)">
+    <s-modal-card :title="values?.exam?.name || name || tdc('Preview')" icon="science" width="1100px" data-test="file-preview" @close="close">
+      <div class="row q-col-gutter-md">
+        <!-- the information: exam, status, value, report, observation, parameters -->
+        <div class="col-12 col-md-8" data-test="file-preview-values">
+          <div v-if="loadingValues" class="flex flex-center q-pa-lg"><q-spinner color="primary" size="40px" /></div>
+          <ResultValuesCard v-else-if="values?.exam" :row="values" />
+          <div v-else class="text-grey-7 q-pa-md">{{ tdc('No exam values were entered with this file.') }}</div>
+        </div>
+
+        <!-- the file: click to see it in its own modal -->
+        <div class="col-12 col-md-4">
+          <s-card
+            v-if="url"
+            flat bordered
+            class="file-preview__file cursor-pointer"
+            data-test="file-preview-file"
+            @click="viewerOpen = true"
+          >
+            <!-- a small preview of what the browser can show (image, PDF, text,
+                 video, audio); the overlay keeps the click for the full modal -->
+            <div class="file-preview__thumb flex flex-center" :data-test="`file-preview-thumb-${kind}`">
+              <img v-if="kind === 'image'" :src="url" :alt="name" class="file-preview__thumb-image">
+              <iframe v-else-if="kind === 'pdf'" :src="`${url}#toolbar=0&navpanes=0&view=FitH`" class="file-preview__thumb-frame" :title="name" tabindex="-1" />
+              <iframe v-else-if="kind === 'text'" :src="url" class="file-preview__thumb-frame" :title="name" tabindex="-1" />
+              <video v-else-if="kind === 'video'" :src="url" muted preload="metadata" class="file-preview__thumb-image" />
+              <q-icon v-else :name="icon" size="72px" color="primary" />
+              <div v-if="kind !== 'audio'" class="file-preview__thumb-overlay" />
+            </div>
+            <!-- audio: playable right here -->
+            <audio v-if="kind === 'audio'" :src="url" controls class="full-width q-px-sm" @click.stop />
+            <q-separator />
+            <div class="q-pa-sm row items-center no-wrap">
+              <div class="col ellipsis text-caption">{{ name }}</div>
+              <q-icon name="open_in_full" color="primary" />
+            </div>
+            <s-tooltip>{{ tdc('Open the file') }}</s-tooltip>
+          </s-card>
+          <s-card v-else flat bordered class="q-pa-md text-center text-grey-7" data-test="file-preview-no-file">
+            <q-icon name="attach_file" size="48px" color="grey-5" />
+            <div class="q-mt-sm">{{ tdc('No file was attached to this result.') }}</div>
+          </s-card>
+        </div>
+      </div>
+    </s-modal-card>
+  </q-dialog>
+
+  <!-- the file itself, full screen; only the body scrolls -->
+  <q-dialog v-model="viewerOpen" persistent full-width full-height>
+    <s-modal-card :title="name || tdc('Preview')" :icon="icon" fullscreen flush data-test="file-viewer" @close="viewerOpen = false">
       <template #bar-actions>
         <s-btn v-if="url" dense flat round icon="open_in_new" :href="url" target="_blank" rel="noopener">
           <s-tooltip>{{ tdc('Open in a new tab') }}</s-tooltip>
@@ -20,7 +70,9 @@
         <div v-else class="column flex-center q-pa-xl text-center">
           <q-icon name="insert_drive_file" size="64px" color="grey-6" />
           <div class="q-mt-md">{{ tdc('This file cannot be previewed here.') }}</div>
-          <s-btn v-if="url" class="q-mt-md" color="primary" icon="download" :label="tdc('Download')" :href="url" :download="name || true" />
+          <s-btn v-if="url" class="q-mt-md" color="primary" icon="download" :label="tdc('Download')" :href="url" :download="name || true">
+            <s-tooltip>{{ tdc('Download') }}</s-tooltip>
+          </s-btn>
         </div>
       </div>
     </s-modal-card>
@@ -29,11 +81,14 @@
 
 <script setup>
 // The file of a result (resultadoexamemedico) - or any stored file object
-// {url, mime_type, extensao, nome/name} - previewed by its type. The URL is
+// {url, mime_type, extensao, nome/name} - with its exam values; the file is
+// rendered by its type in a second modal. The URL is
 // the stored media file the API already returned (view_resultadoexamemedico
 // to list it); nothing else is fetched.
-import { computed } from 'vue'
-import { tdc } from 'quasar_resaas'
+import { computed, ref, watch } from 'vue'
+import { tdc, url as apiUrl, HTTPAuth } from 'quasar_resaas'
+import ResultValuesCard from './ResultValuesCard.vue'
+import { fileUrl, fileName, fileKind, KIND_ICONS } from './fileKind'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -42,43 +97,39 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 
-const IMAGE = /^(png|jpe?g|gif|webp|bmp|svg|avif)$/
-const VIDEO = /^(mp4|webm|ogv|mov)$/
-const AUDIO = /^(mp3|wav|ogg|oga|m4a|aac)$/
-const TEXT = /^(txt|csv|json|xml|log|md)$/
+const url = computed(() => fileUrl(props.file))
+const name = computed(() => fileName(props.file))
+const kind = computed(() => fileKind(props.file))
 
-const url = computed(() => {
-  const value = props.file?.file
-  const raw = typeof value === 'string' ? value : value?.url
-  // https page: never load an http file (mixed content is blocked)
-  return raw && window.location.protocol === 'https:' ? raw.replace(/^http:\/\//, 'https://') : raw || null
-})
+const icon = computed(() => KIND_ICONS[kind.value] || 'insert_drive_file')
 
-// the name the user gave (nome) before the stored one (a generated uuid)
-const name = computed(() => props.file?.nome || props.file?.filename || props.file?.file?.name || '')
+// the exam, value, report, observation and parameter values entered with the
+// file (resultadoexamemedicos/{id}/exam_values/, view_resultadoexamemedico)
+const values = ref(null)
+const loadingValues = ref(false)
 
-const extension = computed(() => {
-  const ext = props.file?.extensao || (name.value.includes('.') ? name.value.split('.').pop() : '')
-  return String(ext || '').replace(/^\./, '').toLowerCase()
-})
+async function loadValues () {
+  values.value = null
+  if (!props.modelValue || !props.file?.id) return
+  loadingValues.value = true
+  try {
+    const { data } = await HTTPAuth.get(apiUrl({ type: 'u', url: `saude/resultadoexamemedicos/${props.file.id}/exam_values/` }))
+    values.value = data
+  } catch {
+    // the error was already shown by the HTTP funnel: only the file stays
+    values.value = null
+  } finally {
+    loadingValues.value = false
+  }
+}
 
-const mime = computed(() => String(props.file?.mime_type || props.file?.file?.mime_type || '').toLowerCase())
+watch(() => [props.modelValue, props.file?.id], loadValues, { immediate: true })
 
-const kind = computed(() => {
-  if (!url.value) return 'none'
-  if (mime.value.startsWith('image/') || IMAGE.test(extension.value)) return 'image'
-  if (mime.value === 'application/pdf' || extension.value === 'pdf') return 'pdf'
-  if (mime.value.startsWith('video/') || VIDEO.test(extension.value)) return 'video'
-  if (mime.value.startsWith('audio/') || AUDIO.test(extension.value)) return 'audio'
-  if (mime.value.startsWith('text/') || TEXT.test(extension.value)) return 'text'
-  return 'other'
-})
+// the second modal, with the file rendered
+const viewerOpen = ref(false)
+watch(() => props.file?.id, () => { viewerOpen.value = false })
 
-const icon = computed(() => ({
-  image: 'image', pdf: 'picture_as_pdf', video: 'movie', audio: 'audiotrack', text: 'description',
-}[kind.value] || 'insert_drive_file'))
-
-const close = () => emit('update:modelValue', false)
+const close = () => { viewerOpen.value = false; emit('update:modelValue', false) }
 </script>
 
 <style scoped>
@@ -91,6 +142,29 @@ const close = () => emit('update:modelValue', false)
   background: #f4f6f8;
 }
 .body--dark .file-preview__body { background: #1b1b1b; }
+.file-preview__thumb {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  background: #f4f6f8;
+}
+.file-preview__thumb-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+  pointer-events: none;
+}
+.file-preview__thumb-overlay {
+  position: absolute;
+  inset: 0;
+}
+.body--dark .file-preview__thumb { background: #1b1b1b; }
+.file-preview__thumb-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
 .file-preview__image {
   max-width: 100%;
   max-height: 100%;

@@ -7,6 +7,7 @@ import ResultadopedidoexamemedicoRightMenu from './../pages/saude/resultadopedid
 import AtestadomedicoRightMenu from './../pages/saude/atestadomedico/RightMenu.vue'
 import GuiatransferenciaRightMenu from './../pages/saude/guiatransferencia/RightMenu.vue'
 import RelatoriomedicoRightMenu from './../pages/saude/relatoriomedico/RightMenu.vue'
+import ClinicalsummaryRightMenu from './../pages/saude/clinicalsummary/RightMenu.vue'
 
 // import InternamentoRightMenu from './../pages/saude/internamento/RightMenu.vue'
 
@@ -33,6 +34,11 @@ export function setupRightMenus(menu) {
   menu.registerRightMenu('view_relatoriomedico', RelatoriomedicoRightMenu)
   menu.registerRightMenu('add_relatoriomedico', RelatoriomedicoRightMenu)
   menu.registerRightMenu('list_relatoriomedico', RelatoriomedicoRightMenu)
+
+  menu.registerRightMenu('view_clinicalsummary', ClinicalsummaryRightMenu)
+  menu.registerRightMenu('add_clinicalsummary', ClinicalsummaryRightMenu)
+  menu.registerRightMenu('change_clinicalsummary', ClinicalsummaryRightMenu)
+  menu.registerRightMenu('list_clinicalsummary', ClinicalsummaryRightMenu)
 
   menu.registerRightMenu('view_pedidoexamemedico', PedidoexamemedicoRightMenu)
   menu.registerRightMenu('add_pedidoexamemedico', PedidoexamemedicoRightMenu)

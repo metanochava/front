@@ -305,7 +305,8 @@ const quickLinks = [
   { label: 'Medical prescriptions', icon: 'medication', route: 'list_receitamedica' },
   { label: 'Medical certificates', icon: 'assignment_ind', route: 'list_atestadomedico' },
   { label: 'Transfer forms', icon: 'sync_alt', route: 'list_guiatransferencia' },
-  { label: 'Medical reports', icon: 'summarize', route: 'list_relatoriomedico' }
+  { label: 'Medical reports', icon: 'summarize', route: 'list_relatoriomedico' },
+  { label: 'Clinical summaries', icon: 'summarize', route: 'list_clinicalsummary' }
 ]
 
 </script>

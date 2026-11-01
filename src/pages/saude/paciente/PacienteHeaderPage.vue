@@ -228,7 +228,8 @@ const actions = computed(() => {
     { icon: 'swap_horiz', label: tdc('Transfer Referral'), to: { name: 'add_guiatransferencia', params } },
     { icon: 'science', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
     { icon: 'bar_chart', label: tdc('Results'), to: { name: 'list_resultadopedidoexamemedico', params } },
-    { icon: 'description', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } }
+    { icon: 'description', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } },
+    { icon: 'summarize', label: tdc('Clinical summary'), to: { name: 'add_clinicalsummary', params } }
   ].filter(action => canOpenRoute(action.to))
 })
 

@@ -21,6 +21,31 @@
         </s-btn>
       </div>
 
+      <!-- a separator between the actions and the layouts -->
+      <q-separator v-if="filesView && layout" vertical inset class="q-mx-sm" />
+
+      <!-- how the files are shown: icons, gallery, list or columns (files view) -->
+      <div v-if="filesView && layout" class="col-auto row no-wrap q-gutter-xs" data-test="explorer-layout">
+        <s-btn
+          v-for="option in LAYOUTS"
+          :key="option.value"
+          round dense flat
+          :icon="option.icon"
+          :color="layout === option.value ? 'primary' : 'grey-7'"
+          :class="{ 'explorer-toolbar__layout--active': layout === option.value }"
+          :data-test="`explorer-layout-${option.value}`"
+          @click="$emit('update:layout', option.value)"
+        >
+          <s-tooltip>{{ tdc(option.label) }}</s-tooltip>
+        </s-btn>
+      </div>
+
+      <!-- Data view: its own controls (e.g. the Results / Evolution tabs) where
+           the explorer's buttons were -->
+      <div v-if="!filesView && $slots.data" class="col-auto">
+        <slot name="data" />
+      </div>
+
       <!-- extra info on the same row (e.g. files / folders counts) -->
       <div v-if="$slots.default && filesView" class="col-auto">
         <slot />
@@ -88,8 +113,20 @@ const props = defineProps({
   view: {
     type: String,
     default: null
+  },
+  // 'icons' | 'gallery' | 'list' | 'columns' (v-model:layout); null hides the choice
+  layout: {
+    type: String,
+    default: null
   }
 })
+
+const LAYOUTS = [
+  { value: 'icons', icon: 'apps', label: 'Icons' },
+  { value: 'gallery', icon: 'photo_library', label: 'Gallery' },
+  { value: 'list', icon: 'view_list', label: 'List' },
+  { value: 'columns', icon: 'view_column', label: 'Columns' }
+]
 
 defineEmits([
   'new-folder',
@@ -98,7 +135,8 @@ defineEmits([
   'delete',
   'refresh',
   'search',
-  'update:view'
+  'update:view',
+  'update:layout'
 ])
 
 const search = ref('')
@@ -120,6 +158,10 @@ const filesView = computed(() => props.view !== 'data')
 
 .explorer-toolbar__view-right {
   border-radius: 0 4px 4px 0;
+}
+
+.explorer-toolbar__layout--active {
+  background: rgba(37, 99, 235, 0.12);
 }
 
 .explorer-toolbar__search {
