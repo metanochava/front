@@ -115,7 +115,7 @@ function referenceText (ref) {
 }
 
 function formatDate (value) {
-  return value ? new Date(value).toLocaleString() : '-'
+  return ds(value) || '-'
 }
 
 function endpoint (suffix, params = {}) {

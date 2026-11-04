@@ -67,7 +67,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { date } from 'quasar'
 import { tdc } from 'quasar_resaas'
 
 import ExplorerItem from './ExplorerItem.vue'
@@ -121,7 +120,7 @@ function typeLabel (item) {
     return ext ? ext.toUpperCase() : tdc('File')
 }
 
-const formatDate = (value) => (value ? date.formatDate(value, 'DD/MM/YYYY HH:mm') : '')
+const formatDate = (value) => ds(value)
 
 </script>
 

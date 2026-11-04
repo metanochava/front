@@ -152,7 +152,7 @@
                 <div class="summary-item">
                   <strong>{{ tdc('Result date') }}</strong>
                   <br>
-                  {{ Resultadoexamemedico.form.data_resultado || '-' }}
+                  {{ ds(Resultadoexamemedico.form.data_resultado) || '-' }}
                 </div>
 
                 <q-separator class="q-my-md" />

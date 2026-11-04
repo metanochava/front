@@ -15,13 +15,13 @@
         <q-item-section>
           <q-item-label class="text-weight-medium">
             {{ order.reference }} · {{ order.pharmacy?.name }}
-            <q-badge :color="statusColor[order.status]" class="q-ml-xs">{{ tdc(statusLabel[order.status]) }}</q-badge>
+            <q-badge :color="statusColor(order.status)" class="q-ml-xs">{{ tdc(statusLabel[order.status]) }}</q-badge>
           </q-item-label>
           <q-item-label caption>
             <span v-for="(item, index) in order.items" :key="index">{{ index ? ', ' : '' }}{{ item.quantity }} × {{ item.medicine }}</span>
           </q-item-label>
           <q-item-label v-if="order.status === 'reserved'" caption>
-            {{ tdc('Reserved until') }} {{ new Date(order.expires_at).toLocaleString() }}
+            {{ tdc('Reserved until') }} {{ ds(order.expires_at) }}
           </q-item-label>
           <q-item-label v-if="order.prescription_required && order.status === 'reserved'" caption class="text-warning">
             {{ tdc('Bring the prescription when you collect.') }}
@@ -45,6 +45,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { onMounted } from 'vue'
 import { sDialog, tdc } from 'quasar_resaas'
 import { cancelMyOrder, formatMoney, useMyOrders } from './useMarketplace'
@@ -54,7 +55,7 @@ const reload = () => load()
 defineExpose({ reload })
 
 const statusLabel = { reserved: 'Reserved', collected: 'Collected', cancelled: 'Cancelled', expired: 'Expired' }
-const statusColor = { reserved: 'primary', collected: 'positive', cancelled: 'grey', expired: 'grey' }
+const statusColor = (status) => statusTone(status)
 
 function cancel (order) {
   sDialog({

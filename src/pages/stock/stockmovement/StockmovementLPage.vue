@@ -118,7 +118,7 @@ const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { s
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
 const columns = [
-  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left', format: (v) => ds(v) },
   { name: 'product', label: tdc('Product'), field: row => row.product?.label, align: 'left' },
   { name: 'warehouse', label: tdc('Warehouse'), field: row => row.warehouse?.label, align: 'left' },
   { name: 'tipo', label: tdc('Type'), field: 'tipo', align: 'left' },

@@ -248,7 +248,7 @@ const timeseriesBars = computed(() => {
   const rows = timeseries.data || []
   const max = Math.max(1, ...rows.map(r => Number(r.receita || 0)))
   return rows.map(r => ({
-    label: (r.periodo || '').toString().slice(0, 10),
+    label: ds((r.periodo || '').toString().slice(0, 10)) || (r.periodo || '').toString().slice(0, 10),
     value: Number(r.receita || 0),
     pct: Math.round((Number(r.receita || 0) / max) * 100),
   }))

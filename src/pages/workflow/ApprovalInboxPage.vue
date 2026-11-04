@@ -22,7 +22,7 @@
           <q-item-label>{{ row.object_label || row.object_id }}</q-item-label>
           <q-item-label caption>{{ row.definition?.label }} · {{ row.current_step?.label }}</q-item-label>
         </q-item-section>
-        <q-item-section side>{{ new Date(row.created_at).toLocaleDateString() }}</q-item-section>
+        <q-item-section side>{{ ds(row.created_at) }}</q-item-section>
       </q-item>
     </q-list>
   </q-page>

@@ -52,7 +52,7 @@
         <q-item v-for="prescription in record.prescriptions" :key="prescription.id" data-test="patient-prescription">
           <q-item-section>
             <q-item-label class="text-weight-medium">
-              {{ prescription.date || '—' }} · {{ prescription.prescriber || tdc('Prescriber not recorded') }}
+              {{ ds(prescription.date) || prescription.date || '—' }} · {{ prescription.prescriber || tdc('Prescriber not recorded') }}
               <q-badge v-if="prescription.is_external" color="orange" class="q-ml-xs">
                 {{ tdc('Other organisation') }}: {{ prescription.source_entity }}
               </q-badge>

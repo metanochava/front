@@ -85,8 +85,8 @@ const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params:
 const columns = [
   { name: 'number', label: tdc('Number'), field: 'number', align: 'left' },
   { name: 'supplier', label: tdc('Supplier'), field: row => row.supplier_label || row.supplier?.label, align: 'left' },
-  { name: 'order_date', label: tdc('Order date'), field: 'order_date', align: 'left' },
-  { name: 'expected_date', label: tdc('Expected date'), field: 'expected_date', align: 'left' },
+  { name: 'order_date', label: tdc('Order date'), field: 'order_date', align: 'left', format: (v) => ds(v) },
+  { name: 'expected_date', label: tdc('Expected date'), field: 'expected_date', align: 'left', format: (v) => ds(v) },
   { name: 'status', label: tdc('Status'), field: 'status', align: 'left' },
   { name: 'total', label: tdc('Total'), field: 'total', align: 'right' },
 ]

@@ -38,13 +38,13 @@
       <div class="col-6 col-sm-3">
         <s-card flat bordered><q-card-section>
           <div class="text-caption text-grey-7">{{ tdc('Order date') }}</div>
-          <div class="text-subtitle1">{{ order.order_date || '—' }}</div>
+          <div class="text-subtitle1">{{ ds(order.order_date) || '—' }}</div>
         </q-card-section></s-card>
       </div>
       <div class="col-6 col-sm-3">
         <s-card flat bordered><q-card-section>
           <div class="text-caption text-grey-7">{{ tdc('Expected date') }}</div>
-          <div class="text-subtitle1">{{ order.expected_date || '—' }}</div>
+          <div class="text-subtitle1">{{ ds(order.expected_date) || '—' }}</div>
         </q-card-section></s-card>
       </div>
       <div class="col-6 col-sm-3">
@@ -240,7 +240,7 @@ const lineColumns = [
 ]
 
 function formatDate(value) {
-  return value ? new Date(value).toLocaleString() : '—'
+  return ds(value) || '—'
 }
 
 async function refresh() {

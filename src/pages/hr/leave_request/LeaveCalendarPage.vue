@@ -59,7 +59,7 @@
               <span class="text-grey-7"> · {{ request.leave_type_data?.name }}</span>
             </q-item-label>
             <q-item-label caption>
-              {{ request.start_date }} → {{ request.end_date }}
+              {{ ds(request.start_date) }} → {{ ds(request.end_date) }}
               ({{ request.days }} {{ tdc('day(s)') }})
             </q-item-label>
           </q-item-section>
@@ -75,6 +75,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { reactive, computed, onMounted, watch } from 'vue'
 import { useLeaveRequestStore } from '../stores/LeaveRequestStore.js'
 import { useLeaveTypeStore } from '../stores/LeaveTypeStore.js'
@@ -104,14 +105,7 @@ const leaveTypeOptions = computed(() =>
 )
 
 function statusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'approved': return 'positive'
-    case 'pending': return 'warning'
-    case 'rejected': return 'negative'
-    case 'cancelled': return 'grey-7'
-    default: return 'grey-5'
-  }
+  return statusTone(status)
 }
 
 // Server-side filtering only covers exact-match fields (DynamicFilterBackend

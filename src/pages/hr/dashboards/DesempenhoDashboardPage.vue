@@ -42,7 +42,7 @@
             {{ tdc('No data') }}
           </div>
           <div v-else class="row q-gutter-sm">
-            <q-badge v-for="item in data.goals_by_status" :key="item.status" color="primary" class="q-pa-sm">
+            <q-badge v-for="item in data.goals_by_status" :key="item.status" :color="statusTone(item.status)" class="q-pa-sm">
               {{ item.status }}: {{ item.total }}
             </q-badge>
           </div>
@@ -53,6 +53,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, onMounted } from 'vue'
 import { tdc } from 'quasar_resaas'
 import { HTTPAuth, url } from 'quasar_resaas'

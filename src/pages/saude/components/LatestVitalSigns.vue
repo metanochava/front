@@ -198,7 +198,7 @@ const alerts = computed(() => vitalAlerts(values.value, calculations.value))
 
 const takenAt = computed(() => (record.value?.created_at ? new Date(record.value.created_at) : null))
 const isOld = computed(() => !!takenAt.value && Date.now() - takenAt.value.getTime() > 24 * 60 * 60 * 1000)
-const whenText = computed(() => (takenAt.value ? takenAt.value.toLocaleString() : ''))
+const whenText = computed(() => ds(record.value?.created_at))
 const recordedBy = computed(() => displayValue(record.value?.employee) || null)
 
 defineExpose({ reload: load })

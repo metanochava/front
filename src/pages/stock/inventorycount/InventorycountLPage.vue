@@ -62,7 +62,7 @@ const router = useRouter()
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
 const columns = [
-  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left', format: (v) => ds(v) },
   { name: 'warehouse', label: tdc('Warehouse'), field: row => row.warehouse?.label, align: 'left' },
   { name: 'estado', label: tdc('Status'), field: 'estado', align: 'left' },
   { name: 'observacao', label: tdc('Observation'), field: 'observacao', align: 'left' },

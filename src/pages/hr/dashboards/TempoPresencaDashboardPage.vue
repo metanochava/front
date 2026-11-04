@@ -44,7 +44,7 @@
           <q-list v-else separator>
             <q-item v-for="item in data.upcoming_holidays" :key="item.id">
               <q-item-section>{{ item.name }}</q-item-section>
-              <q-item-section side><q-item-label caption>{{ item.date }}</q-item-label></q-item-section>
+              <q-item-section side><q-item-label caption>{{ ds(item.date) || item.date }}</q-item-label></q-item-section>
             </q-item>
           </q-list>
         </q-card-section>

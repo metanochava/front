@@ -174,7 +174,7 @@ const trendOptions = computed(() => labChartOptions(trend.value))
 function me (section, params = {}) {
   return url({ type: 'u', url: `saude/me/${section}/`, params })
 }
-function formatDate (iso) { return iso ? new Date(iso).toLocaleDateString() : '-' }
+function formatDate (iso) { return ds(iso) || '-' }
 function referenceText (ref) {
   if (!ref || (ref.low == null && ref.high == null)) return ''
   return `${tdc('Reference')}: ${[ref.low, ref.high].filter((v) => v != null).join(' - ')}`

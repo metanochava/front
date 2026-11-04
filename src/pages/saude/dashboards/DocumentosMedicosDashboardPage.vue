@@ -55,7 +55,7 @@
                 {{ item.consulta__paciente__person__full_name || '—' }}
               </q-item-section>
               <q-item-section side>
-                <q-item-label caption>{{ item.data_criacao }}</q-item-label>
+                <q-item-label caption>{{ ds(item.data_criacao) || item.data_criacao }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>

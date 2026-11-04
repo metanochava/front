@@ -111,6 +111,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, computed, onMounted } from 'vue'
 import { usePayrollPeriodStore } from '../stores/PayrollPeriodStore.js'
 import { usePayrollStore } from '../stores/PayrollStore.js'
@@ -136,14 +137,7 @@ function statusValue(row) {
 }
 
 function statusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'confirmed':
-    case 'paid': return 'positive'
-    case 'cancelled': return 'grey-7'
-    case 'reviewed': return 'warning'
-    default: return 'primary'
-  }
+  return statusTone(status)
 }
 
 function payslipPdfUrl(row) {

@@ -55,7 +55,6 @@
 
 <script setup>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
-import { date } from 'quasar'
 import { tdc, url, HTTPAuth } from 'quasar_resaas'
 import FileThumb from './FileThumb.vue'
 import { fullFileName, shortFileName, fileExtension } from './fileKind'
@@ -135,7 +134,7 @@ function reset () {
   for (let level = 0; level < props.path.length; level++) loadContents(level === 0 ? null : props.path[level - 1].id)
 }
 
-const formatDate = (value) => (value ? date.formatDate(value, 'DD/MM/YYYY HH:mm') : '')
+const formatDate = (value) => ds(value)
 
 defineExpose({ reset })
 </script>

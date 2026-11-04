@@ -58,7 +58,7 @@
                 <div v-if="!ctx.agenda" class="text-body2 text-weight-medium" data-test="vital-signs-no-appointment">
                   {{ tdc('No appointment today') }}
                 </div>
-                <div v-else class="text-body2 text-weight-medium">{{ ctx.agenda.date }} {{ ctx.agenda.time || '' }}</div>
+                <div v-else class="text-body2 text-weight-medium">{{ ds(ctx.agenda.date) || ctx.agenda.date }} {{ ctx.agenda.time || '' }}</div>
                 <div v-if="ctx.agenda" class="text-caption ellipsis">
                   {{ tdc('Doctor') }}: {{ ctx.doctor?.full_name || '-' }}
                   <span v-if="ctx.agenda.checked_in_at"> · {{ tdc('Check-in') }} {{ timeOf(ctx.agenda.checked_in_at) }}</span>
@@ -353,7 +353,7 @@ function initials(name) {
   return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?'
 }
 function timeOf(iso) { return iso ? new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '' }
-function dateTimeOf(iso) { return iso ? new Date(iso).toLocaleString() : '-' }
+function dateTimeOf(iso) { return ds(iso) || '-' }
 
 function previousOf(key) {
   if (editingId.value) return null

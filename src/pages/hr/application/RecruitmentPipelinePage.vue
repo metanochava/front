@@ -127,7 +127,7 @@
           <q-item-section side>
             <q-chip
               dense
-              :color="application.status?.value === 'hired' ? 'positive' : 'grey-6'"
+              :color="statusTone(application.status)"
               text-color="white"
             >
               {{ application.status?.label || application.status }}
@@ -216,6 +216,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, computed, onMounted } from 'vue'
 import { useJobOpeningStore } from '../stores/JobOpeningStore.js'
 import { useEmployeeStore } from '../stores/EmployeeStore.js'

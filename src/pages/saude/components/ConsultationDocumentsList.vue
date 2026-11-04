@@ -85,7 +85,7 @@ const pdfTitle = ref('')
 const visibleSections = computed(() => sections.value.filter(s => s.rows.length))
 
 function formatDate (value) {
-  return value ? new Date(value).toLocaleString() : '—'
+  return ds(value) || '—'
 }
 
 function authorOf (row) {

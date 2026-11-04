@@ -43,7 +43,6 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { date } from 'quasar'
 import { tdc, url, HTTPAuth } from 'quasar_resaas'
 
 import AddResultadoModal from '../resultadopedidoexamemedico/AddResultadoModal.vue'
@@ -63,7 +62,7 @@ const showResults = ref(false)
 
 const title = computed(() => [tdc('Enter results'), pacienteLabel.value].filter(Boolean).join(' · '))
 
-const formatDate = (value) => (value ? date.formatDate(value, 'DD/MM/YYYY HH:mm') : '')
+const formatDate = (value) => ds(value)
 
 // the patient's exam requests, newest first (pacientes/{id}/exam_requests/,
 // list_pedidoexamemedico)

@@ -60,7 +60,6 @@
 </template>
 
 <script setup>
-import { date } from 'quasar'
 import { tdc } from 'quasar_resaas'
 import { sanitizeClinicalHtml } from './clinicalHtml'
 
@@ -70,7 +69,7 @@ defineProps({
   header: { type: Boolean, default: true }
 })
 
-const formatDate = (value) => (value ? date.formatDate(value, 'DD/MM/YYYY HH:mm') : '')
+const formatDate = (value) => ds(value)
 
 function reference (ref) {
   if (!ref) return ''

@@ -44,6 +44,7 @@
 
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDisciplinaryCaseStore } from '../stores/DisciplinaryCaseStore.js'
@@ -74,13 +75,7 @@ const isCaseOpen = computed(() => {
 })
 
 function statusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'resolved': return 'positive'
-    case 'dismissed': return 'grey-7'
-    case 'under_review': return 'warning'
-    default: return 'negative'
-  }
+  return statusTone(status)
 }
 
 async function doAction(action) {

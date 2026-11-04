@@ -46,7 +46,7 @@ const router = useRouter()
 const search = ref('')
 
 const columns = [
-  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left', format: (v) => ds(v) },
   { name: 'customer', label: tdc('Customer'), field: row => row.cliente_label || row.customer?.label || tdc('Walk-in Customer'), align: 'left' },
   { name: 'estado', label: tdc('Status'), field: 'estado', align: 'left' },
   { name: 'total', label: tdc('Total'), field: 'total', align: 'right' },

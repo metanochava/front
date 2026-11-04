@@ -110,7 +110,7 @@ function referenceText (ref) {
 }
 
 function formatDate (value) {
-  return value ? new Date(value).toLocaleDateString() : '-'
+  return ds(value) || '-'
 }
 
 async function load () {

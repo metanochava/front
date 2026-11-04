@@ -67,7 +67,7 @@
           </thead>
           <tbody>
             <tr v-for="p in evolution.points" :key="p.result">
-              <td>{{ new Date(p.date).toLocaleDateString() }}</td>
+              <td>{{ ds(p.date) }}</td>
               <td class="text-right">{{ p.value }} {{ p.unit || '' }}</td>
               <td class="gt-xs">{{ referenceText(p.reference) }}</td>
               <td>{{ p.flag ? tdc(flagLabel(p.flag)) : '-' }}</td>
@@ -112,7 +112,7 @@ const parameterOptions = computed(() =>
 )
 
 const canChart = computed(() => evolution.value?.parameter?.graphable && evolution.value.points.length > 1)
-const chart = computed(() => labChartData(evolution.value, (d) => new Date(d).toLocaleDateString()))
+const chart = computed(() => labChartData(evolution.value, (d) => ds(d)))
 const chartOptions = computed(() => labChartOptions(evolution.value))
 
 function referenceText (ref) {

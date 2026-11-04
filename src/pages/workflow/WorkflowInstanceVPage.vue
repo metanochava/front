@@ -46,7 +46,7 @@
             :color="(d.decision?.value ?? d.decision) === 'approve' ? 'positive' : 'negative'"
             :icon="(d.decision?.value ?? d.decision) === 'approve' ? 'check' : 'close'"
             :title="`${d.step?.label} · ${d.decision?.label || d.decision}`"
-            :subtitle="`${d.decided_by?.label || ''} · ${new Date(d.created_at).toLocaleString()}`"
+            :subtitle="`${d.decided_by?.label || ''} · ${ds(d.created_at)}`"
           >
             <div v-if="d.comment">{{ d.comment }}</div>
           </q-timeline-entry>
@@ -71,6 +71,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { tdc, useUserStore } from 'quasar_resaas'
@@ -83,7 +84,7 @@ const Instance = useWorkflowInstanceStore()
 const id = computed(() => route.params.id)
 const instance = computed(() => (Instance.row?.id === id.value ? Instance.row : null))
 const status = computed(() => instance.value?.status?.value ?? instance.value?.status)
-const statusColor = computed(() => ({ pending: 'warning', approved: 'positive', rejected: 'negative', cancelled: 'grey' }[status.value] || 'grey'))
+const statusColor = computed(() => statusTone(status.value))
 
 const busy = ref(false)
 const showReject = ref(false)

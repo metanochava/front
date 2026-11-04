@@ -169,7 +169,6 @@
 // Validating and releasing have their own permissions and are offered only in
 // the state the backend accepts them; the backend enforces both (403 / 409).
 import { computed, reactive, ref, watch } from 'vue'
-import { date } from 'quasar'
 import { tdc, url, HTTPAuth, useUserStore } from 'quasar_resaas'
 import { usePedidoexamemedicoStore } from './../pedidoexamemedico/pedidoexamemedicoStore.js'
 import ExamResultDialog from '../components/ExamResultDialog.vue'
@@ -194,7 +193,7 @@ const User = useUserStore()
 const title = computed(() => {
   const request = Pedidoexamemedico.row || {}
   const patient = request.label
-  const created = request.created_at ? date.formatDate(request.created_at, 'DD/MM/YYYY HH:mm') : ''
+  const created = ds(request.created_at)
   const head = patient ? `${tdc('Results of')} ${patient}` : tdc('Results')
   return created ? `${head} — ${tdc('request of')} ${created}` : head
 })

@@ -338,7 +338,7 @@
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-item-label caption>{{ e.date }}</q-item-label>
+                <q-item-label caption>{{ ds(e.date) || e.date }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -365,10 +365,11 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { tdc, HTTPAuth, url, displayValue, rawValue, usePageTitle, sDialog, AlertSuccess } from 'quasar_resaas'
+import { tdc, HTTPAuth, url, displayValue, usePageTitle, sDialog, AlertSuccess } from 'quasar_resaas'
 
 import { usePacienteStore } from './pacienteStore'
 import PacienteHeader from './PacienteHeaderPage.vue'
@@ -396,11 +397,7 @@ usePageTitle(() => {
 })
 
 function formatDate(value) {
-  if (!value) return ''
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? ''
-    : date.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' })
+  return ds(value)
 }
 
 // Only administrative facts about the PATIENT record itself - identity
@@ -426,11 +423,7 @@ const patientNotes = computed(() => {
   ].filter(note => note.value)
 })
 
-const statusColor = computed(() => ({
-  Active: 'positive',
-  Inactive: 'grey',
-  Deceased: 'dark'
-}[rawValue(Paciente.row?.status)] || 'grey'))
+const statusColor = computed(() => statusTone(Paciente.row?.status))
 
 const showAgendaDialog = ref(false)
 const editAgendaId = ref(null)

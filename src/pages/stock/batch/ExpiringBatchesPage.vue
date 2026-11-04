@@ -38,7 +38,7 @@ const loading = ref(false)
 const columns = [
   { name: 'product_name', label: tdc('Product'), field: 'product_name', align: 'left' },
   { name: 'lot_number', label: tdc('Lot'), field: 'lot_number', align: 'left' },
-  { name: 'expiry_date', label: tdc('Expiry date'), field: 'expiry_date', align: 'left' },
+  { name: 'expiry_date', label: tdc('Expiry date'), field: 'expiry_date', align: 'left', format: (v) => ds(v) },
   { name: 'warehouse_name', label: tdc('Warehouse'), field: 'warehouse_name', align: 'left' },
   { name: 'quantity', label: tdc('Quantity'), field: 'quantity', align: 'right' },
 ]

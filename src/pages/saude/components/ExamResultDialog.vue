@@ -200,7 +200,7 @@ function referenceText (ref) {
   const range = [ref.low, ref.high].filter((v) => v !== null && v !== undefined).join(' - ')
   return `${tdc('Reference')}: ${range}${ref.label ? ` (${ref.label})` : ''}`
 }
-function formatDate (iso) { return iso ? new Date(iso).toLocaleString() : '-' }
+function formatDate (iso) { return ds(iso) || '-' }
 
 function endpoint (suffix) {
   return url({ type: 'u', url: `saude/itempedidoexamemedicos/${props.itemId}/${suffix}/` })

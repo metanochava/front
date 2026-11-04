@@ -28,7 +28,7 @@
             <q-item-section>
               <q-item-label>{{ row.employee_data?.label || row.employee }}</q-item-label>
               <q-item-label caption>
-                {{ tdc('To') }} {{ row.to_branch_data?.label }} · {{ row.effective_date }}
+                {{ tdc('To') }} {{ row.to_branch_data?.label }} · {{ ds(row.effective_date) }}
               </q-item-label>
             </q-item-section>
           </q-item>

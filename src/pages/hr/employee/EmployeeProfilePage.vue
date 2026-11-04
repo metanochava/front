@@ -173,7 +173,7 @@
                 </q-item-section>
 
                 <q-item-section side>
-                  <q-badge color="grey-7">
+                  <q-badge :color="statusTone(contract.status)">
                     {{ displayValue(contract.status) || '-' }}
                   </q-badge>
                 </q-item-section>
@@ -216,7 +216,7 @@
             <q-list v-else separator>
               <q-item v-for="record in attendances" :key="record.id">
                 <q-item-section>
-                  <q-item-label>{{ record.date }}</q-item-label>
+                  <q-item-label>{{ ds(record.date) || record.date }}</q-item-label>
                   <q-item-label caption>
                     {{ formatTime(record.check_in) }} → {{ formatTime(record.check_out) }}
                   </q-item-label>
@@ -1078,6 +1078,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEmployeeStore } from '../stores/EmployeeStore.js'
@@ -1162,17 +1163,7 @@ const statusLabel = computed(() => {
   return displayValue(employee.value?.employment_status) || (employee.value?.termination_date ? tdc('Terminated') : tdc('Active'))
 })
 
-const statusColor = computed(() => {
-  switch (statusValue.value) {
-    case 'active': return 'positive'
-    case 'probation': return 'warning'
-    case 'suspended': return 'orange'
-    case 'terminated':
-    case 'resigned':
-    case 'retired': return 'grey-7'
-    default: return 'primary'
-  }
-})
+const statusColor = computed(() => statusTone(statusValue.value))
 
 const isEmployeeActive = computed(() =>
   ['active', 'probation', 'suspended'].includes(statusValue.value)
@@ -1194,13 +1185,7 @@ function formatTime(value) {
 }
 
 function attendanceStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'present': return 'positive'
-    case 'late': return 'warning'
-    case 'absent': return 'negative'
-    default: return 'grey-7'
-  }
+  return statusTone(status)
 }
 
 async function doCheckIn() {
@@ -1212,15 +1197,7 @@ async function doCheckOut() {
 }
 
 function leaveStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'approved': return 'positive'
-    case 'pending': return 'warning'
-    case 'rejected': return 'negative'
-    case 'cancelled':
-    case 'draft': return 'grey-7'
-    default: return 'grey-5'
-  }
+  return statusTone(status)
 }
 
 async function openNewLeaveRequest() {
@@ -1279,13 +1256,7 @@ const isOnboardingActive = computed(() => {
 })
 
 function onboardingStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'in_progress': return 'warning'
-    case 'cancelled': return 'grey-7'
-    default: return 'grey-5'
-  }
+  return statusTone(status)
 }
 
 async function openStartOnboarding() {
@@ -1392,22 +1363,11 @@ const disciplinaryActionTypeOptions = [
 const canAddDisciplinaryCase = computed(() => true)
 
 function resignationStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'accepted': return 'grey-7'
-    case 'withdrawn': return 'positive'
-    default: return 'warning'
-  }
+  return statusTone(status)
 }
 
 function disciplinaryStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'resolved': return 'positive'
-    case 'dismissed': return 'grey-7'
-    case 'under_review': return 'warning'
-    default: return 'negative'
-  }
+  return statusTone(status)
 }
 
 const isOffboardingActive = computed(() => {
@@ -1619,18 +1579,11 @@ async function submitDisciplinaryAction() {
 
 // ---------------- PERFORMANCE ----------------
 function goalStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'in_progress': return 'warning'
-    case 'missed': return 'negative'
-    default: return 'grey-7'
-  }
+  return statusTone(status)
 }
 
 function reviewStatusColor(status) {
-  const value = status?.value || status
-  return value === 'submitted' ? 'positive' : 'grey-7'
+  return statusTone(status)
 }
 
 const goalStatusOptions = [
@@ -1680,14 +1633,7 @@ async function doSubmitReview(reviewId) {
 
 // ---------------- TRAINING ----------------
 function trainingStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'failed':
-    case 'dropped': return 'negative'
-    case 'attending': return 'warning'
-    default: return 'grey-7'
-  }
+  return statusTone(status)
 }
 
 const certificationDialog = ref(false)
@@ -1733,14 +1679,7 @@ async function doAddCertification() {
 
 // ---------------- PAYROLL ----------------
 function payrollStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'confirmed':
-    case 'paid': return 'positive'
-    case 'cancelled': return 'grey-7'
-    case 'reviewed': return 'warning'
-    default: return 'primary'
-  }
+  return statusTone(status)
 }
 
 function payslipPdfUrl(payroll) {

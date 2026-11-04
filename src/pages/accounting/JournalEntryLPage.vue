@@ -66,7 +66,7 @@ const search = ref('')
 const journalSelectUrl = url({ type: 'u', url: 'accounting/journals', params: { select: 'true' } })
 
 const columns = [
-  { name: 'date', label: tdc('Date'), field: 'date', align: 'left' },
+  { name: 'date', label: tdc('Date'), field: 'date', align: 'left', format: (v) => ds(v) },
   { name: 'number', label: tdc('Number'), field: row => row.number || '—', align: 'left' },
   { name: 'journal', label: tdc('Journal'), field: row => row.journal?.label, align: 'left' },
   { name: 'description', label: tdc('Description'), field: 'description', align: 'left' },

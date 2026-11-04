@@ -48,6 +48,7 @@
           :key="action.icon"
           flat round dense
           :icon="action.icon"
+          :color="action.color"
           :to="action.to"
           :disable="!pacienteId"
         >
@@ -62,6 +63,7 @@
         v-if="User.can('add_dadovital')"
         flat round dense
         icon="monitor_heart"
+        color="negative"
         :disable="!pacienteId"
         data-test="patient-header-vital-signs"
         @click="showVitalsDialog = true"
@@ -69,7 +71,7 @@
         <s-tooltip>{{ tdc('Record vital signs') }}</s-tooltip>
       </s-btn>
 
-      <s-btn v-if="User.can('add_agenda')" flat round dense icon="event" :disable="!pacienteId" @click="showAgendaDialog = true">
+      <s-btn v-if="User.can('add_agenda')" flat round dense icon="event" color="primary" :disable="!pacienteId" @click="showAgendaDialog = true">
         <s-tooltip>{{ tdc('Appointment Schedule') }}</s-tooltip>
       </s-btn>
 
@@ -78,6 +80,7 @@
         v-if="User.can('record_result_itempedidoexamemedico')"
         flat round dense
         icon="science"
+        color="deep-orange"
         :disable="!pacienteId"
         data-test="patient-header-enter-results"
         @click="resultEntry?.trigger(pacienteId, name)"
@@ -89,12 +92,12 @@
         <q-menu auto-close>
           <q-list style="min-width: 200px">
             <q-item v-if="User.can('change_paciente')" clickable :to="{ name: 'change_paciente', params: { id: pacienteId } }">
-              <q-item-section avatar><q-icon name="edit" /></q-item-section>
+              <q-item-section avatar><q-icon name="edit" color="primary" /></q-item-section>
               <q-item-section>{{ tdc('Edit Data') }}</q-item-section>
             </q-item>
 
             <q-item v-if="User.can('pdf_paciente')" clickable @click="Paciente.getPdf(pacienteId)">
-              <q-item-section avatar><q-icon name="picture_as_pdf" /></q-item-section>
+              <q-item-section avatar><q-icon name="picture_as_pdf" color="red-7" /></q-item-section>
               <q-item-section>{{ tdc('Patient card (PDF)') }}</q-item-section>
             </q-item>
 
@@ -107,13 +110,13 @@
               class="lt-md"
               :to="action.to"
             >
-              <q-item-section avatar><q-icon :name="action.icon" /></q-item-section>
+              <q-item-section avatar><q-icon :name="action.icon" :color="action.color" /></q-item-section>
               <q-item-section>{{ action.label }}</q-item-section>
             </q-item>
 
             <q-separator />
             <q-item clickable @click="router.back()">
-              <q-item-section avatar><q-icon name="arrow_back" /></q-item-section>
+              <q-item-section avatar><q-icon name="arrow_back" color="grey-7" /></q-item-section>
               <q-item-section>{{ tdc('Back') }}</q-item-section>
             </q-item>
           </q-list>
@@ -150,6 +153,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { computed, onMounted, watch, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePacienteStore } from './pacienteStore'
@@ -157,7 +161,7 @@ import AgendaConsultaDialog from './../components/AgendaConsultaDialog.vue'
 import ResultEntryDialog from './../components/ResultEntryDialog.vue'
 import VitalSignsDialog from './../components/VitalSignsDialog.vue'
 
-import { tdc, displayValue, rawValue, useUserStore } from 'quasar_resaas'
+import { tdc, displayValue, useUserStore } from 'quasar_resaas'
 
 const route = useRoute()
 const router = useRouter()
@@ -201,11 +205,7 @@ const statusLabel = computed(() => {
   const label = displayValue(row.value?.status)
   return label ? tdc(label) : ''
 })
-const statusColor = computed(() => ({
-  Active: 'positive',
-  Inactive: 'grey',
-  Deceased: 'dark'
-}[rawValue(row.value?.status)] || 'grey'))
+const statusColor = computed(() => statusTone(row.value?.status))
 
 // Shortcuts to the clinical documents of THIS patient (the id used to be
 // read from the store root, where it does not exist - the row holds it).
@@ -222,14 +222,17 @@ const actions = computed(() => {
   const params = { id: pacienteId.value }
 
   return [
-    { icon: 'health_and_safety', label: tdc('Consultation'), to: { name: 'add_consulta', params } },
-    { icon: 'medication', label: tdc('Prescription'), to: { name: 'add_receitamedica', params } },
-    { icon: 'assignment', label: tdc('Certificate'), to: { name: 'add_atestadomedico', params } },
-    { icon: 'swap_horiz', label: tdc('Transfer Referral'), to: { name: 'add_guiatransferencia', params } },
-    { icon: 'science', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
-    { icon: 'bar_chart', label: tdc('Results'), to: { name: 'list_resultadopedidoexamemedico', params } },
-    { icon: 'description', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } },
-    { icon: 'summarize', label: tdc('Clinical summary'), to: { name: 'add_clinicalsummary', params } }
+    // Each shortcut has its own colour, after what it stands for: care (green),
+    // medication (teal), documents (indigo / blue-grey / deep purple),
+    // a transfer out (orange), the laboratory (purple) and its results (cyan).
+    { icon: 'health_and_safety', color: 'positive', label: tdc('Consultation'), to: { name: 'add_consulta', params } },
+    { icon: 'medication', color: 'teal', label: tdc('Prescription'), to: { name: 'add_receitamedica', params } },
+    { icon: 'assignment', color: 'indigo', label: tdc('Certificate'), to: { name: 'add_atestadomedico', params } },
+    { icon: 'swap_horiz', color: 'orange-8', label: tdc('Transfer Referral'), to: { name: 'add_guiatransferencia', params } },
+    { icon: 'science', color: 'purple', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
+    { icon: 'bar_chart', color: 'cyan-8', label: tdc('Results'), to: { name: 'list_resultadopedidoexamemedico', params } },
+    { icon: 'description', color: 'blue-grey', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } },
+    { icon: 'summarize', color: 'deep-purple', label: tdc('Clinical summary'), to: { name: 'add_clinicalsummary', params } }
   ].filter(action => canOpenRoute(action.to))
 })
 

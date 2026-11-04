@@ -18,8 +18,8 @@
 
     <template v-else>
       <LatestVitalSigns :paciente-id="patientId" />
-      <!-- UX only: GET .../lab_summary/ checks lab_evolution_paciente -->
-      <LatestLabResults v-if="User.can('lab_evolution_paciente')" :paciente-id="patientId" />
+      <!-- not on add_consulta (owner's call); UX only: GET .../lab_summary/ checks lab_evolution_paciente -->
+      <LatestLabResults v-if="isEdit && User.can('lab_evolution_paciente')" :paciente-id="patientId" />
 
       <s-card flat bordered class="consultation-card" data-test="consultation-form">
         <q-card-section class="row items-center q-gutter-sm">
@@ -172,7 +172,7 @@ const professionalName = computed(() =>
 const professionalPosition = computed(() => (isEdit.value ? null : intake.value?.professional?.position))
 const dateText = computed(() => {
   const value = isEdit.value ? Consulta.row?.data : intake.value?.date
-  return value ? new Date(value).toLocaleDateString() : new Date().toLocaleDateString()
+  return ds(value || new Date())
 })
 
 async function loadIntake() {

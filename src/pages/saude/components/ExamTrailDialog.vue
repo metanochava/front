@@ -63,7 +63,7 @@ const events = ref([])
 const loading = ref(false)
 
 function formatDate (value) {
-  return value ? new Date(value).toLocaleString() : '-'
+  return ds(value) || '-'
 }
 
 async function load () {

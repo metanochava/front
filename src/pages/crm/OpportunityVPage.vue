@@ -36,7 +36,7 @@
             <q-item-section avatar><q-icon :name="activityIcon(activity)" /></q-item-section>
             <q-item-section>
               <q-item-label :class="{ 'text-strike': activity.done }">{{ activity.subject }}</q-item-label>
-              <q-item-label caption>{{ activity.due_at ? new Date(activity.due_at).toLocaleString() : '' }} {{ activity.notes || '' }}</q-item-label>
+              <q-item-label caption>{{ ds(activity.due_at) }} {{ activity.notes || '' }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <s-btn
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { computed, reactive, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { tdc, useUserStore } from 'quasar_resaas'
@@ -96,7 +97,7 @@ const Activity = useActivityStore()
 const id = computed(() => route.params.id)
 const opportunity = computed(() => (Opportunity.row?.id === id.value ? Opportunity.row : null))
 const status = computed(() => opportunity.value?.status?.value ?? opportunity.value?.status)
-const statusColor = computed(() => ({ open: 'primary', won: 'positive', lost: 'negative' }[status.value] || 'grey'))
+const statusColor = computed(() => statusTone(status.value))
 
 const stageOptions = computed(() =>
   Stage.rows.filter(s => s.active !== false).map(s => ({ label: s.name, value: s.id, lost: s.is_lost }))

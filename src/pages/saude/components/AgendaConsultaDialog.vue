@@ -158,7 +158,7 @@
                   />
 
                   <div class="text-caption text-grey-6 q-mb-xs">
-                    {{ tdc('Available Times') }} — {{ form.data }}
+                    {{ tdc('Available Times') }} — {{ ds(form.data) || form.data }}
                   </div>
 
                   <div v-if="loadingSlots" class="flex flex-center q-pa-md">
@@ -205,7 +205,7 @@
                   <div><b>{{ tdc('When') }}:</b> {{ tdc('Now') }} — {{ tdc('Checked in, waiting for vital signs') }}</div>
                 </template>
                 <template v-else>
-                  <div><b>{{ tdc('Date') }}:</b> {{ form.data }}</div>
+                  <div><b>{{ tdc('Date') }}:</b> {{ ds(form.data) || form.data }}</div>
                   <div><b>{{ tdc('Time') }}:</b> {{ form.hora_inicio }} — {{ form.hora_fim }}</div>
                 </template>
               </div>

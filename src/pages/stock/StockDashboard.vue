@@ -132,7 +132,7 @@
                 class="text-caption text-grey-7 q-mb-xs cursor-pointer"
                 @click="router.push({ name: 'view_inventorycount', params: { id: countVariance.data.inventory_count.id } })"
               >
-                {{ countVariance.data.inventory_count.warehouse }} — {{ countVariance.data.inventory_count.data }}
+                {{ countVariance.data.inventory_count.warehouse }} — {{ ds(countVariance.data.inventory_count.data) }}
               </div>
               <div v-if="!countVariance.data.linhas.length" class="text-caption text-grey-6">{{ tdc('No discrepancies') }}</div>
               <q-list v-else dense separator>

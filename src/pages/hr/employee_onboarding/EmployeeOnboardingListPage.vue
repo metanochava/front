@@ -30,7 +30,7 @@
             <q-item-section>
               <q-item-label>{{ row.employee_data?.label || row.employee }}</q-item-label>
               <q-item-label caption>
-                {{ tdc('Started') }} {{ row.started_at ? row.started_at.slice(0, 10) : '-' }}
+                {{ tdc('Started') }} {{ ds(row.started_at) || '-' }}
               </q-item-label>
             </q-item-section>
 
@@ -57,6 +57,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { onMounted } from 'vue'
 import { useEmployeeOnboardingStore } from '../stores/EmployeeOnboardingStore.js'
 import { tdc } from 'quasar_resaas'
@@ -64,13 +65,7 @@ import { tdc } from 'quasar_resaas'
 const Onboarding = useEmployeeOnboardingStore()
 
 function statusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'in_progress': return 'warning'
-    case 'cancelled': return 'grey-7'
-    default: return 'grey-5'
-  }
+  return statusTone(status)
 }
 
 onMounted(async () => {

@@ -134,6 +134,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTrainingSessionStore } from '../stores/TrainingSessionStore.js'
@@ -158,31 +159,15 @@ const employeeOptions = computed(() =>
 )
 
 function formatDate(value) {
-  if (!value) return '-'
-  const parsed = new Date(value)
-  if (Number.isNaN(parsed.getTime())) return value
-  return parsed.toLocaleString()
+  return ds(value) || '-'
 }
 
 function statusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'ongoing': return 'warning'
-    case 'cancelled': return 'grey-7'
-    default: return 'primary'
-  }
+  return statusTone(status)
 }
 
 function enrollmentStatusColor(status) {
-  const value = status?.value || status
-  switch (value) {
-    case 'completed': return 'positive'
-    case 'failed':
-    case 'dropped': return 'negative'
-    case 'attending': return 'warning'
-    default: return 'grey-7'
-  }
+  return statusTone(status)
 }
 
 async function openSession(session) {

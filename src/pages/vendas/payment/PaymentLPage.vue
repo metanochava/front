@@ -29,7 +29,7 @@ const columns = [
   { name: 'valor', label: tdc('Amount'), field: 'valor', align: 'right' },
   { name: 'forma_pagamento', label: tdc('Payment Method'), field: row => row.forma_pagamento?.label || row.forma_pagamento, align: 'left' },
   { name: 'referencia', label: tdc('Reference'), field: 'referencia', align: 'left' },
-  { name: 'data', label: tdc('Date'), field: 'data', align: 'left' },
+  { name: 'data', label: tdc('Date'), field: 'data', align: 'left', format: (v) => ds(v) },
 ]
 
 const pagination = ref({

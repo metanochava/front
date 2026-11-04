@@ -25,7 +25,7 @@
         <q-item-section>
           <q-item-label class="text-weight-medium">
             {{ order.reference }} · {{ order.contact_name }} · {{ order.contact_phone }}
-            <q-badge :color="statusColor[order.effective_status]" class="q-ml-xs">
+            <q-badge :color="statusColor(order.effective_status)" class="q-ml-xs">
               {{ tdc(statusLabel[order.effective_status]) }}
             </q-badge>
             <q-badge v-if="order.prescription_required" color="warning" text-color="dark" class="q-ml-xs">
@@ -35,7 +35,7 @@
           <q-item-label caption>
             <span v-for="(item, index) in order.items" :key="item.id">{{ index ? ', ' : '' }}{{ Number(item.quantity) }} × {{ item.medicine_name }}</span>
           </q-item-label>
-          <q-item-label caption>{{ tdc('Reserved until') }} {{ new Date(order.expires_at).toLocaleString() }}</q-item-label>
+          <q-item-label caption>{{ tdc('Reserved until') }} {{ ds(order.expires_at) }}</q-item-label>
         </q-item-section>
         <q-item-section side top>
           <q-item-label class="text-weight-medium">{{ Number(order.total).toFixed(2) }} {{ order.currency }}</q-item-label>
@@ -76,6 +76,7 @@
 </template>
 
 <script setup>
+import { statusColor as statusTone } from 'quasar_resaas'
 import { computed, reactive, ref } from 'vue'
 import { AlertSuccess, sDialog, tdc } from 'quasar_resaas'
 import PaymentFields from './PaymentFields.vue'
@@ -90,7 +91,7 @@ const loaded = ref(false)
 const filters = reactive({ search: '', status: 'reserved' })
 
 const statusLabel = { reserved: 'Reserved', collected: 'Collected', cancelled: 'Cancelled', expired: 'Expired' }
-const statusColor = { reserved: 'primary', collected: 'positive', cancelled: 'grey', expired: 'grey' }
+const statusColor = (status) => statusTone(status)
 const statusOptions = computed(() => Object.entries(statusLabel).map(([value, label]) => ({ value, label: tdc(label) })))
 
 async function load (pageNumber = 1) {

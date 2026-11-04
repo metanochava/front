@@ -260,8 +260,7 @@ const itensReceita = ref([])
 const dispensas = ref([])
 
 function formatDateTime(value) {
-  if (!value) return '—'
-  return String(value).replace('T', ' ').slice(0, 16)
+  return ds(value) || '—'
 }
 
 async function fetchItensReceita() {
