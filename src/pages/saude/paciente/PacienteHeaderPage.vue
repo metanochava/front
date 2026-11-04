@@ -222,14 +222,15 @@ const actions = computed(() => {
   const params = { id: pacienteId.value }
 
   return [
-    // Each shortcut has its own colour, after what it stands for: care (green),
-    // medication (teal), documents (indigo / blue-grey / deep purple),
-    // a transfer out (orange), the laboratory (purple) and its results (cyan).
+    // Each shortcut has the colour the rest of the program gives the same
+    // subject (the health dashboard, DashBoarde.vue): consultations positive,
+    // exam requests warning, prescriptions info, certificates accent,
+    // transfers secondary; results, reports and summaries keep their own.
     { icon: 'health_and_safety', color: 'positive', label: tdc('Consultation'), to: { name: 'add_consulta', params } },
-    { icon: 'medication', color: 'teal', label: tdc('Prescription'), to: { name: 'add_receitamedica', params } },
-    { icon: 'assignment', color: 'indigo', label: tdc('Certificate'), to: { name: 'add_atestadomedico', params } },
-    { icon: 'swap_horiz', color: 'orange-8', label: tdc('Transfer Referral'), to: { name: 'add_guiatransferencia', params } },
-    { icon: 'science', color: 'purple', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
+    { icon: 'medication', color: 'info', label: tdc('Prescription'), to: { name: 'add_receitamedica', params } },
+    { icon: 'assignment', color: 'accent', label: tdc('Certificate'), to: { name: 'add_atestadomedico', params } },
+    { icon: 'swap_horiz', color: 'secondary', label: tdc('Transfer Referral'), to: { name: 'add_guiatransferencia', params } },
+    { icon: 'science', color: 'warning', label: tdc('Exam Requests'), to: { name: 'add_pedidoexamemedico', params } },
     { icon: 'bar_chart', color: 'cyan-8', label: tdc('Results'), to: { name: 'list_resultadopedidoexamemedico', params } },
     { icon: 'description', color: 'blue-grey', label: tdc('Report'), to: { name: 'add_relatoriomedico', params } },
     { icon: 'summarize', color: 'deep-purple', label: tdc('Clinical summary'), to: { name: 'add_clinicalsummary', params } }

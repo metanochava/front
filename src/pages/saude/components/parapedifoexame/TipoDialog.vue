@@ -3,7 +3,7 @@
     <s-modal-card :title="tdc('New exam type')" width="460px">
       <s-input v-model="form.nome" :label="tdc('Name')" class="q-mb-sm" />
       <s-editor v-model="form.descricao" :label="tdc('Description')" min-height="100px" class="q-mb-sm" />
-      <s-input v-model="form.ordem" :label="tdc('Order')" type="number" class="q-mb-sm" />
+      <s-input v-model="form.ordem" :label="tdc('Display order')" :hint="tdc('Lower numbers appear first')" type="number" class="q-mb-sm" />
       <s-switch v-model="form.ativo" :label="tdc('Active')" />
 
       <template #footer>

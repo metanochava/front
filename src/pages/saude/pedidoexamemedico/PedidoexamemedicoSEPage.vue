@@ -59,6 +59,50 @@
           </div>
 
           <q-list v-else bordered class="rounded-borders">
+            <!-- the Entity's favourite exams (saude/favouriteexams/), first and
+                 open; a search filters it like the catalogue below -->
+            <q-expansion-item
+              v-if="can.listFavourites"
+              v-model="expanded.favourites"
+              expand-separator
+              data-test="exam-favourites"
+            >
+              <template #header>
+                <q-item-section avatar>
+                  <q-icon name="star" color="amber-8" size="20px" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-weight-bold">{{ tdc('Favourites') }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-badge color="amber-8" :label="favouriteEntries.length" />
+                </q-item-section>
+              </template>
+
+              <div class="q-pa-sm">
+                <div v-if="!favouriteEntries.length" class="text-caption text-grey-7">
+                  {{ tdc('No favourite exams yet: use the star of an exam to add it.') }}
+                </div>
+                <div v-else class="row q-col-gutter-xs">
+                  <div
+                    v-for="entry in favouriteEntries"
+                    :key="entry.exame.id"
+                    class="col-12 col-sm-6"
+                  >
+                    <ExameRow
+                      :exame="entry.exame"
+                      :search="search"
+                      :added="isAdded(entry.exame)"
+                      favourite
+                      :can-favourite="can.removeFavourite"
+                      @add="selectAndAdd(entry.tipo, entry.classe, entry.exame)"
+                      @toggle-favourite="toggleFavourite(entry.exame)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </q-expansion-item>
+
             <!-- while searching every type / class found opens (no accordion group)
                  and the matching text is highlighted, as in the left menu -->
             <q-expansion-item
@@ -135,8 +179,6 @@
                           </q-item-section>
                         </template>
 
-                        <!-- one compact line per exam: name + code, and a button that adds
-                             it (a check once it is in the request) -->
                         <div class="q-pa-xs">
                           <div class="row q-col-gutter-xs">
                             <div
@@ -144,24 +186,15 @@
                               :key="exame.id"
                               class="col-12 col-sm-6"
                             >
-                              <div
-                                class="exame-row row items-center no-wrap cursor-pointer"
-                                :class="{ 'exame-row--added': isAdded(exame) }"
-                                data-test="exame-row"
-                                @click="selectAndAdd(tipo, classe, exame)"
-                              >
-                                <div class="col ellipsis text-body2">
-                                  <s-highlight :text="exame.nome" :search="search" />
-                                  <span v-if="exame.codigo" class="text-caption q-ml-xs" style="opacity: .7"><s-highlight :text="exame.codigo" :search="search" /></span>
-                                  <s-tooltip>{{ exame.codigo ? `${exame.codigo} - ${exame.nome}` : exame.nome }}</s-tooltip>
-                                </div>
-                                <q-icon
-                                  :name="isAdded(exame) ? 'check_circle' : 'add_circle_outline'"
-                                  :color="isAdded(exame) ? 'positive' : 'primary'"
-                                  size="18px"
-                                  class="q-ml-xs"
-                                />
-                              </div>
+                              <ExameRow
+                                :exame="exame"
+                                :search="search"
+                                :added="isAdded(exame)"
+                                :favourite="isFavourite(exame)"
+                                :can-favourite="isFavourite(exame) ? can.removeFavourite : can.addFavourite"
+                                @add="selectAndAdd(tipo, classe, exame)"
+                                @toggle-favourite="toggleFavourite(exame)"
+                              />
                             </div>
                           </div>
                         </div>
@@ -353,6 +386,7 @@ import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import TipoExameModal from './TipoExameModal.vue'
 import ExameModal from './ExameModal.vue'
 import ClassExameModal from './ClassExameModal.vue'
+import ExameRow from './ExameRow.vue'
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore.js'
 
 import { usePacienteStore } from './../paciente/pacienteStore'
@@ -368,6 +402,10 @@ const can = computed(() => ({
   addClass: User.can('add_classeexamemedico'),
   addExam: User.can('add_examemedico'),
   saveRequest: User.can('add_pedidoexamemedico') && User.can('add_itempedidoexamemedico'),
+  // the Entity's favourite exams: reading it, putting an exam on it, taking one off
+  listFavourites: User.can('list_favouriteexam'),
+  addFavourite: User.can('add_favouriteexam'),
+  removeFavourite: User.can('delete_favouriteexam'),
 }))
 
 const Pedidoexamemedico = usePedidoexamemedicoStore()
@@ -415,11 +453,12 @@ function setAllPriorities(value) {
 
 // which type / class panels are open; a search opens every one it found and
 // clearing it closes them again (the left menu's behaviour)
-const expanded = ref({})
+const expanded = ref({ favourites: true })
 const searching = computed(() => !!normalize(search.value))
 
 watch(search, () => {
-  const open = {}
+  // the favourites keep their own open / closed state
+  const open = { favourites: expanded.value.favourites }
   if (searching.value) {
     for (const tipo of filteredCatalogo.value) {
       open[`t-${tipo.id}`] = true
@@ -470,8 +509,64 @@ const filteredCatalogo = computed(() => {
 })
 
 onMounted(async () => {
-  await loadCatalogo()
+  await Promise.all([loadCatalogo(), loadFavourites()])
 })
+
+// exam id -> its favourite row id (the row is what DELETE takes)
+const favourites = ref({})
+const favouriteBusy = ref(false)
+
+// the favourites in catalogue order, each with its type and class (adding
+// one to the request needs them), filtered by the search like the catalogue
+const favouriteEntries = computed(() => {
+  const entries = []
+  for (const tipo of filteredCatalogo.value) {
+    for (const classe of tipo.classes || []) {
+      for (const exame of classe.exames || []) {
+        if (isFavourite(exame)) entries.push({ tipo, classe, exame })
+      }
+    }
+  }
+  return entries
+})
+
+function isFavourite(exame) {
+  return Object.prototype.hasOwnProperty.call(favourites.value, String(exame.id))
+}
+
+async function loadFavourites() {
+  if (!can.value.listFavourites) return
+
+  const { data } = await HTTPAuth.get(url({ type: 'u', url: 'saude/favouriteexams/' }))
+  const map = {}
+  for (const row of Array.isArray(data) ? data : []) {
+    // READ shape {id, value, label} or the plain id
+    const exameId = row.exame && typeof row.exame === 'object' ? (row.exame.id ?? row.exame.value) : row.exame
+    map[String(exameId)] = row.id
+  }
+  favourites.value = map
+}
+
+async function toggleFavourite(exame) {
+  if (favouriteBusy.value) return
+  favouriteBusy.value = true
+
+  try {
+    const favouriteId = favourites.value[String(exame.id)]
+    if (favouriteId) {
+      await HTTPAuth.delete(url({ type: 'u', url: `saude/favouriteexams/${favouriteId}/` }))
+    } else {
+      await HTTPAuth.post(url({ type: 'u', url: 'saude/favouriteexams/' }), { exame: exame.id })
+    }
+  } finally {
+    // the list is shared: re-read it, whoever else changed it meanwhile
+    try {
+      await loadFavourites()
+    } finally {
+      favouriteBusy.value = false
+    }
+  }
+}
 
 async function savePedido () {
   if (!Paciente.row?.id) return

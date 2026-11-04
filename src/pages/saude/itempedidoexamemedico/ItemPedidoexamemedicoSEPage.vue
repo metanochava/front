@@ -241,7 +241,7 @@
 
         <s-input
           v-model="tipoForm.ordem"
-          :label="tdc('Order')"
+          :label="tdc('Display order')" :hint="tdc('Lower numbers appear first')"
           type="number"
           class="q-mb-sm"
         />
@@ -297,7 +297,7 @@
 
         <s-input
           v-model="classeForm.ordem"
-          :label="tdc('Order')"
+          :label="tdc('Display order')" :hint="tdc('Lower numbers appear first')"
           type="number"
           class="q-mb-sm"
         />

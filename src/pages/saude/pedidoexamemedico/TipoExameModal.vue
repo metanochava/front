@@ -41,7 +41,7 @@
                   <s-input
                     v-model="Tipoexamemedico.form.ordem"
                     type="number"
-                    :label="tdc('Order')"
+                    :label="tdc('Display order')" :hint="tdc('Lower numbers appear first')"
                     outlined
                   />
 
