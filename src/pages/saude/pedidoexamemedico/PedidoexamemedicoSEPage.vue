@@ -87,7 +87,7 @@
                   <div
                     v-for="entry in favouriteEntries"
                     :key="entry.exame.id"
-                    class="col-12 col-sm-6"
+                    class="col-12 col-sm-4"
                   >
                     <ExameRow
                       :exame="entry.exame"
