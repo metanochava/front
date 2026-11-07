@@ -54,6 +54,8 @@ export default defineConfig((ctx) => {
         FRONT_END_PASSWORD: process.env.FRONT_END_PASSWORD,
         GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
         ALERT_TIMEOUT: process.env.ALERT_TIMEOUT,
+        // central single sign-on domain (quasar_resaas services/sso.js); empty = off
+        SSO_URL: ctx.dev ? process.env.SSO_URL_DEV : process.env.SSO_URL_PRO,
       },
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
