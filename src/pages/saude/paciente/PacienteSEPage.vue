@@ -235,9 +235,27 @@ async function saveEdit() {
   router.push({ name: 'view_paciente', params: { id: patientId.value } })
 }
 
+// The patient needs an identity document (type + number): the medical
+// certificate and the other health documents print it. The backend refuses
+// the save without one (patient_registration_service); this only says so
+// before sending. A reused Person may already have one of its own, which
+// the backend counts - so it is not asked here.
+function hasIdentityDocument() {
+  return intake.documents.value.some(d => d?.tipo && String(d.numero || '').trim())
+}
+
 async function save() {
   const valid = await formRef.value?.validate()
   if (!valid) return
+
+  const reusedPerson = !isEditMode.value && !!intake.selectedPerson.value
+  if (!reusedPerson && !hasIdentityDocument()) {
+    $q.notify({
+      type: 'negative',
+      message: tdc('The patient needs an identity document with its type and number.'),
+    })
+    return
+  }
 
   try {
     if (isEditMode.value) await saveEdit()

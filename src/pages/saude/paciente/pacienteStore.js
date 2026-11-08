@@ -1,5 +1,5 @@
 
-import {  HTTPAuth, url, createBaseStore } from 'quasar_resaas'
+import {  HTTPAuth, url, createBaseStore, appendDocumentFiles } from 'quasar_resaas'
 
 export const usePacienteStore = createBaseStore(
   'paciente',
@@ -42,14 +42,8 @@ export const usePacienteStore = createBaseStore(
         try {
           const fd = new FormData()
 
-          const payloadDocuments = (documents || []).map((doc, index) => {
-            const hasFile = doc.arquivo instanceof File
-            if (hasFile) fd.append(`document_file_${index}`, doc.arquivo)
-
-            // eslint-disable-next-line no-unused-vars
-            const { arquivo, ...rest } = doc
-            return { ...rest, _file_key: hasFile ? `document_file_${index}` : null }
-          })
+          // every file of every document (a document may have several)
+          const payloadDocuments = appendDocumentFiles(fd, documents)
 
           fd.append('payload', JSON.stringify({
             person_id: personId || null,

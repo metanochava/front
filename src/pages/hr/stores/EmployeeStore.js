@@ -1,4 +1,4 @@
-import { createBaseStore, HTTPAuth, url } from 'quasar_resaas'
+import { createBaseStore, HTTPAuth, url, appendDocumentFiles } from 'quasar_resaas'
 
 export const useEmployeeStore = createBaseStore(
   'employee',
@@ -148,15 +148,8 @@ export const useEmployeeStore = createBaseStore(
         try {
           const fd = new FormData()
 
-          const payloadDocuments = (documents || []).map((doc, index) => {
-            const hasFile = doc.arquivo instanceof File
-            if (hasFile) fd.append(`document_file_${index}`, doc.arquivo)
-
-            // the file travels as its own multipart part, not inside the JSON
-            const rest = { ...doc }
-            delete rest.arquivo
-            return { ...rest, _file_key: hasFile ? `document_file_${index}` : null }
-          })
+          // every file of every document (a document may have several)
+          const payloadDocuments = appendDocumentFiles(fd, documents)
 
           fd.append('payload', JSON.stringify({
             person_id: personId || null,
