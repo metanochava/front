@@ -2,10 +2,10 @@
   <s-pdf-render
     v-model="ReceitamedicaStore.showPdf"
     :src="ReceitamedicaStore.pdf"
-    :title="tdc('Medical report')"
+    :title="tdc('Medical prescription')"
   />
   <HistoryList
-    :title="tdc('Medical report')"
+    :title="tdc('Medical prescription')"
     :store="ReceitamedicaStore"
     :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
     route-key="receitamedica"

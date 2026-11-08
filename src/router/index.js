@@ -6,7 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
-import { installAuthGuard, installPageTitle } from 'quasar_resaas'
+import { installAuthGuard, installChunkReload, installPageTitle } from 'quasar_resaas'
 
 /*
  * If not building with SSR mode, you can
@@ -54,6 +54,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   installAuthGuard(Router)
+  // a tab still on the previous build reloads instead of freezing (quasar_resaas router/chunkReload.js)
+  installChunkReload(Router)
   // the tab shows the page title alone, without " | <productName>"
   installPageTitle(Router, { suffix: false })
 

@@ -302,6 +302,7 @@ import { useReceitamedicaStore } from './receitamedicaStore'
 const ReceitamedicaStore = useReceitamedicaStore()
 
 function afterSave(item) {
+  ReceitamedicaStore.changed(item)
   ReceitamedicaStore.getPdf(item.id)
   ReceitamedicaStore.showPdf = true
   ReceitamedicaStore.loadData()

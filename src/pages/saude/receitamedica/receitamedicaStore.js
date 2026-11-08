@@ -14,7 +14,13 @@ export const useReceitamedicaStore = createBaseStore(
     },
 
     actions: {
-
+      // the prescription is saved through its own requests
+      // (ReceitamedicaSEPage.saveReceita): tells the right menu (HistoryList)
+      // that a record was added
+      changed(row) {
+        if (row) this.row = row
+        return row
+      },
     },
 
     hooks: {

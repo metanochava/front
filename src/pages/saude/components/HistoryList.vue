@@ -389,6 +389,46 @@ function onTouchMove(event) {
   if (touchY !== null && y - touchY > 30 && (scrollTarget()?.scrollTop || 0) <= 0 && !search.value) loadPrevious()
 }
 
+// ---------------- NEW / CHANGED RECORDS ----------------
+// A record created, edited or deleted through this list's store (the page's
+// form: store.save() -> create()/update(), removeById(), or a store's own
+// changed(row) after saving through a custom request) shows at once: the
+// menu goes back to the newest page, where a new record is first
+// (ordering -created_at), instead of waiting for F5.
+const CHANGING_ACTIONS = new Set(['create', 'update', 'patchById', 'remove', 'removeById', 'changed'])
+let refreshTimer = null
+
+async function refreshFromTop() {
+  items.value = []
+  firstPage.value = 1
+  nextPage = 1
+  anchorId = null
+  hasNext.value = true
+  loadError.value = false
+  setUserPreference(User.data?.id, positionName.value, JSON.stringify({ page: 1, id: null }))
+  const target = scrollTarget()
+  if (target) target.scrollTop = 0
+  try {
+    const page = await fetch(1)
+    items.value = page.rows
+    hasNext.value = page.hasNext
+    nextPage = 2
+    loaded.value = true
+    scroller.value?.resume()
+  } catch {
+    loadError.value = true
+  }
+}
+
+const stopWatchingStore = props.store?.$onAction?.(({ name, after }) => {
+  if (!CHANGING_ACTIONS.has(name)) return
+  after(() => {
+    // save() runs create() and then possibly more: one refresh
+    clearTimeout(refreshTimer)
+    refreshTimer = setTimeout(refreshFromTop, 150)
+  })
+})
+
 let scrollEl = null
 onMounted(() => {
   scrollEl = scrollTarget()
@@ -398,6 +438,8 @@ onMounted(() => {
   scrollEl?.addEventListener('touchmove', onTouchMove, { passive: true })
 })
 onBeforeUnmount(() => {
+  clearTimeout(refreshTimer)
+  stopWatchingStore?.()
   scrollEl?.removeEventListener('scroll', onScroll)
   scrollEl?.removeEventListener('wheel', onWheel)
   scrollEl?.removeEventListener('touchstart', onTouchStart)
