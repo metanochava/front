@@ -70,17 +70,17 @@
           </div>
 
           <s-input
-            v-model="item.quantidade"
-            :label="tdc('Quantity')"
-            class="q-mt-sm"
-            data-test="prescription-quantity"
-          />
-
-          <s-input
             v-model="item.dosagem"
             :label="tdc('Dosage')"
             class="q-mt-sm"
             data-test="prescription-dosage"
+          />
+
+          <s-input
+            v-model="item.quantidade"
+            :label="tdc('Quantity')"
+            class="q-mt-sm"
+            data-test="prescription-quantity"
           />
 
           <s-editor
@@ -125,11 +125,11 @@
                 </q-item-label>
 
                 <q-item-label caption>
-                  {{ tdc('Quantity') }}: {{ row.quantidade || '-' }}
+                  {{ tdc('Dosage') }}: {{ row.dosagem || '-' }}
                 </q-item-label>
 
                 <q-item-label caption>
-                  {{ tdc('Dosage') }}: {{ row.dosagem || '-' }}
+                  {{ tdc('Quantity') }}: {{ row.quantidade || '-' }}
                 </q-item-label>
 
                 <q-item-label

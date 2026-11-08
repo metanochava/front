@@ -18,8 +18,7 @@
 
     <template v-else>
       <LatestVitalSigns :paciente-id="patientId" />
-      <!-- not on add_consulta (owner's call); UX only: GET .../lab_summary/ checks lab_evolution_paciente -->
-      <LatestLabResults v-if="isEdit && User.can('lab_evolution_paciente')" :paciente-id="patientId" />
+      <!-- no Laboratory card on add_consulta nor change_consulta (owner's call) -->
 
       <s-card flat bordered class="consultation-card" data-test="consultation-form">
         <q-card-section class="row items-center q-gutter-sm">
@@ -99,7 +98,6 @@ import { useConsultaStore } from './consultaStore'
 import { usePacienteStore } from '../paciente/pacienteStore'
 import PacienteHeader from './../paciente/PacienteHeaderPage.vue'
 import LatestVitalSigns from '../components/LatestVitalSigns.vue'
-import LatestLabResults from '../components/LatestLabResults.vue'
 
 const route = useRoute()
 const router = useRouter()
