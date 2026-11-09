@@ -8,6 +8,11 @@ export const useEmployeeStore = createBaseStore(
   },
   {
     state: () => ({
+      // the employee's specialties (Employment tab), and the Entity's
+      // specialties to add from
+      specialties: [],
+      specialtyOptions: [],
+      loadingSpecialties: false,
       contracts: [],
       loadingContracts: false,
       attendances: [],
@@ -71,6 +76,38 @@ export const useEmployeeStore = createBaseStore(
     },
 
     actions: {
+      // Employment tab: the employee's specialties (hr.EmployeeSpecialty).
+      // The consultation's specialty is chosen among them when booking.
+      async loadSpecialties(employeeId) {
+        if (!employeeId) return
+
+        this.loadingSpecialties = true
+
+        try {
+          const [rows, options] = await Promise.all([
+            HTTPAuth.get(url({ type: 'u', url: 'hr/employeespecialtys/', params: { employee: employeeId, page_size: 100 } })),
+            HTTPAuth.get(url({ type: 'u', url: 'hr/specialtys/', params: { select: 'true', page_size: 200 } })),
+          ])
+          this.specialties = rows.data?.results ?? rows.data ?? []
+          this.specialtyOptions = options.data?.results ?? options.data ?? []
+        } finally {
+          this.loadingSpecialties = false
+        }
+      },
+
+      async addSpecialty(employeeId, specialtyId) {
+        await HTTPAuth.post(
+          url({ type: 'u', url: 'hr/employeespecialtys/' }),
+          { employee: employeeId, specialty: specialtyId }
+        )
+        await this.loadSpecialties(employeeId)
+      },
+
+      async removeSpecialty(employeeId, employeeSpecialtyId) {
+        await HTTPAuth.delete(url({ type: 'u', url: `hr/employeespecialtys/${employeeSpecialtyId}/` }))
+        await this.loadSpecialties(employeeId)
+      },
+
       // Loaded on demand by EmployeeProfilePage's Contract tab - not part
       // of the Employee payload itself, so opening the profile never pulls
       // contract history the viewer may never look at.

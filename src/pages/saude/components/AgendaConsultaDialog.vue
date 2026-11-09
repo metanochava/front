@@ -382,9 +382,9 @@ function goNext() {
 // especialidadeSelectUrl (?select=true) only returns {id, value, label} - the
 // specialty's own `code` is fetched separately, once, when the choice changes.
 const especialidadeCode = ref('')
-// The Agenda model has no `especialidade` field (it's a step-1 filter only,
-// never sent to the backend) - so in edit mode the only signal of a
-// "GERAL" booking is that it has no medico at all.
+// The booking keeps its specialty (Agenda.especialidade), but bookings made
+// before it existed have none - so in edit mode the signal of a "GERAL"
+// booking stays that it has no medico at all.
 const isGeral = computed(() => (
   isEditMode.value ? !form.medico : especialidadeCode.value.toUpperCase() === 'GERAL'
 ))
@@ -563,6 +563,7 @@ async function loadForEdit(id) {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: `saude/agendas/${id}/` }))
 
     form.paciente = data.paciente?.value || data.paciente?.id
+    form.especialidade = data.especialidade?.value || data.especialidade?.id || null
     form.medico = data.medico?.value || data.medico?.id || null
     form.consultorio = data.consultorio?.value || data.consultorio?.id || null
     form.data = data.data.replace(/-/g, '/')
@@ -630,6 +631,9 @@ async function save() {
   try {
     const payload = {
       paciente: form.paciente,
+      // the ONE specialty of the consultation: its PDFs' signature line and
+      // the certificate take it (Agenda.especialidade)
+      especialidade: form.especialidade,
       medico: form.medico,
       consultorio: form.consultorio,
       data: form.data.replace(/\//g, '-'),

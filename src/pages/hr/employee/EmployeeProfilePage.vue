@@ -85,46 +85,120 @@
 
           <!-- EMPLOYMENT -->
           <q-tab-panel name="employment">
-            <div class="row q-col-gutter-md">
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Employee number') }}</div>
-                <div class="text-body1">{{ employee.code || '-' }}</div>
+            <!-- two parts: the employment data on the left, the employee's
+                 specialties on the right -->
+            <div class="row q-col-gutter-lg">
+              <div class="col-12 col-md-7">
+                <div class="text-subtitle2 text-weight-bold q-mb-sm">{{ tdc('Employment') }}</div>
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Employee number') }}</div>
+                    <div class="text-body1">{{ employee.code || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Status') }}</div>
+                    <div class="text-body1">{{ statusLabel }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Employment type') }}</div>
+                    <div class="text-body1">{{ employmentTypeLabel || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Hire date') }}</div>
+                    <div class="text-body1">{{ employee.hire_date || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Department') }}</div>
+                    <div class="text-body1">{{ departmentLabel || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Position') }}</div>
+                    <div class="text-body1">{{ positionLabel || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Job grade') }}</div>
+                    <div class="text-body1">{{ employee.job_grade_data?.name || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Manager') }}</div>
+                    <div class="text-body1">{{ employee.manager_data?.label || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Work email') }}</div>
+                    <div class="text-body1">{{ employee.work_email || '-' }}</div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="text-caption text-grey-7">{{ tdc('Work phone') }}</div>
+                    <div class="text-body1">{{ employee.work_phone || '-' }}</div>
+                  </div>
+                </div>
               </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Status') }}</div>
-                <div class="text-body1">{{ statusLabel }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Employment type') }}</div>
-                <div class="text-body1">{{ employmentTypeLabel || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Hire date') }}</div>
-                <div class="text-body1">{{ employee.hire_date || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Department') }}</div>
-                <div class="text-body1">{{ departmentLabel || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Position') }}</div>
-                <div class="text-body1">{{ positionLabel || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Job grade') }}</div>
-                <div class="text-body1">{{ employee.job_grade_data?.name || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Manager') }}</div>
-                <div class="text-body1">{{ employee.manager_data?.label || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Work email') }}</div>
-                <div class="text-body1">{{ employee.work_email || '-' }}</div>
-              </div>
-              <div class="col-12 col-sm-6">
-                <div class="text-caption text-grey-7">{{ tdc('Work phone') }}</div>
-                <div class="text-body1">{{ employee.work_phone || '-' }}</div>
+
+              <!-- the employee's specialties - the same card as the patient's
+                   Clinical summary lists (saude ClinicalListCard): the field to
+                   add on top, the specialties below. The consultation's ONE
+                   specialty is chosen among them when booking. -->
+              <div class="col-12 col-md-5">
+                <s-card flat bordered data-test="employee-specialties">
+                  <q-card-section class="row items-center no-wrap q-py-xs">
+                    <q-icon name="medical_services" color="primary" class="q-mr-xs" />
+                    <div class="text-subtitle2 text-weight-medium no-wrap q-mr-md">{{ tdc('Specialties') }}</div>
+                    <q-space />
+
+                    <s-select
+                      v-if="canAddSpecialty"
+                      v-model="newSpecialty"
+                      :options="availableSpecialties"
+                      option-value="id"
+                      option-label="label"
+                      emit-value
+                      map-options
+                      dense
+                      hide-bottom-space
+                      class="col-6"
+                      :placeholder="tdc('Add specialty')"
+                      data-test="employee-specialty-select"
+                      @update:model-value="addSpecialty"
+                    >
+                      <template #append>
+                        <s-btn
+                          flat round dense size="sm" color="primary" icon="add"
+                          :loading="savingSpecialty"
+                          :disable="!newSpecialty"
+                          data-test="employee-specialty-add"
+                          @mousedown.stop.prevent
+                          @click.stop.prevent="addSpecialty"
+                        >
+                          <s-tooltip>{{ tdc('Add the specialty to this employee') }}</s-tooltip>
+                        </s-btn>
+                      </template>
+                    </s-select>
+                  </q-card-section>
+                  <q-separator />
+
+                  <q-card-section>
+                    <div v-if="Employee.loadingSpecialties" class="flex flex-center q-pa-sm">
+                      <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="32px" />
+                    </div>
+                    <div v-else-if="!Employee.specialties.length" class="text-caption text-grey-6">
+                      {{ tdc('No specialty recorded') }}
+                    </div>
+                    <div v-else class="row q-gutter-xs">
+                      <q-chip
+                        v-for="row in Employee.specialties"
+                        :key="row.id"
+                        dense
+                        outline
+                        color="primary"
+                        :removable="canRemoveSpecialty"
+                        data-test="employee-specialty"
+                        @remove="removeSpecialty(row)"
+                      >
+                        {{ row.specialty_data?.title || '-' }}
+                      </q-chip>
+                    </div>
+                  </q-card-section>
+                </s-card>
               </div>
             </div>
           </q-tab-panel>
@@ -1081,6 +1155,7 @@
 import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { useEmployeeStore } from '../stores/EmployeeStore.js'
 import { useUserStore } from 'quasar_resaas'
 import { useUserGroups } from 'quasar_resaas'
@@ -1097,6 +1172,7 @@ import { PersonProfilePanel } from 'quasar_resaas'
 
 const route = useRoute()
 const Employee = useEmployeeStore()
+const $q = useQuasar()
 const Session = useUserStore()
 const LeaveType = useLeaveTypeStore()
 const OnboardingTemplate = useOnboardingTemplateStore()
@@ -1131,6 +1207,42 @@ const canListProfiles = computed(() => Session.can('list_branchusergroup'))
 // the password state of the account (view_user); revealing/regenerating a
 // temporary password have their own permissions inside the panel
 const canViewSecurity = computed(() => Session.can('view_user'))
+
+// ---------------- SPECIALTIES (Employment tab) ----------------
+const canAddSpecialty = computed(() => Session.can('add_employeespecialty'))
+const canRemoveSpecialty = computed(() => Session.can('delete_employeespecialty'))
+const newSpecialty = ref(null)
+const savingSpecialty = ref(false)
+// the Entity's specialties the employee does not have yet
+const availableSpecialties = computed(() => {
+  // read shape: the specialty comes as specialty_data (specialty is write-only)
+  const taken = new Set(Employee.specialties.map(row => String(row.specialty_data?.id ?? '')))
+  return Employee.specialtyOptions
+    .map(option => ({ id: option.id ?? option.value, label: option.label }))
+    .filter(option => !taken.has(String(option.id)))
+})
+
+// choosing a specialty in the field adds it (the "+" does the same)
+async function addSpecialty() {
+  if (!newSpecialty.value || !employee.value?.id || savingSpecialty.value) return
+  savingSpecialty.value = true
+  try {
+    await Employee.addSpecialty(employee.value.id, newSpecialty.value)
+    newSpecialty.value = null
+  } catch (error) {
+    $q.notify({ type: 'negative', message: errorMessage(error) || tdc('Could not add the specialty.') })
+  } finally {
+    savingSpecialty.value = false
+  }
+}
+
+async function removeSpecialty(row) {
+  try {
+    await Employee.removeSpecialty(employee.value.id, row.id)
+  } catch (error) {
+    $q.notify({ type: 'negative', message: errorMessage(error) || tdc('Could not remove the specialty.') })
+  }
+}
 
 const userGroups = useUserGroups(() => userId.value, { enabled: () => canListProfiles.value })
 
@@ -1695,7 +1807,16 @@ async function load(id) {
 // Attendance history is only fetched the first time that tab is opened -
 // not part of the initial profile payload (pedido secção 70: load on
 // demand, not one giant API call).
+// the profile may open on the Employment tab: its specialties load with the employee
+watch(() => employee.value?.id, (id) => {
+  if (id && tab.value === 'employment') Employee.loadSpecialties(id)
+})
+
 watch(tab, (value) => {
+  if (value === 'employment' && employee.value?.id) {
+    Employee.loadSpecialties(employee.value.id)
+  }
+
   if (value === 'attendance' && employee.value?.id) {
     Employee.loadAttendances(employee.value.id)
   }

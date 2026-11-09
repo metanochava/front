@@ -6,8 +6,10 @@
          background - no white card -->
     <div class="row top fixed-top header-fixe">
       <s-card flat square class="col-12 bg-transparent">
+        <!-- same height as the left menu's first bar (the q-item with the
+             home / profile / menu side buttons, LeftMenu.vue): a normal,
+             not dense, q-item - 48px -->
         <q-item
-          dense
           class="items-center justify-center text-white text-weight-medium"
           :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'"
           style="font-size: 16px;"
@@ -47,7 +49,7 @@
       ref="scroller"
       :offset="200"
       :disable="!hasNext || !!loadError"
-      style="margin-top: 80px;"
+      style="margin-top: 94px;"
       @load="onLoad"
     >
       <div v-if="loadingPrevious" class="row justify-center q-my-sm" data-test="history-loading-previous">

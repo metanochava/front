@@ -598,6 +598,9 @@ async function savePedido () {
 
   try {
     Pedidoexamemedico.form.paciente = Paciente.row.id
+    // the schema form starts at TimeModel's 'Inactive': the right-menu
+    // history lists only Active requests (same as the other documents)
+    Pedidoexamemedico.form.state = 'Active'
 
     const pedidoexame = await Pedidoexamemedico.save()
 
