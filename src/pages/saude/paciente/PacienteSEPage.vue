@@ -35,7 +35,7 @@
              address, documents, emergency contacts)
         ========================================== -->
         <div class="col-12">
-          <s-person-intake :intake="intake" :relation-config="personRelationConfig" />
+          <s-person-intake :intake="intake" :relation-config="personRelationConfig" identity-document-required />
         </div>
 
         <!-- =========================================
@@ -241,7 +241,8 @@ async function saveEdit() {
 // before sending. A reused Person may already have one of its own, which
 // the backend counts - so it is not asked here.
 function hasIdentityDocument() {
-  return intake.documents.value.some(d => d?.tipo && String(d.numero || '').trim())
+  // of the person's identity document type, when chosen (usePersonIntake)
+  return intake.hasIdentityDocument()
 }
 
 async function save() {
@@ -311,6 +312,8 @@ function cancel() {
 async function loadForEdit() {
   const paciente = await Paciente.getById(patientId.value, { force: true })
   await intake.loadExisting(paciente.person_data || {})
+  // a patient needs an identity document: one row to fill when it has none
+  intake.ensureDocumentRow()
 }
 
 onMounted(async () => {
@@ -338,6 +341,8 @@ onMounted(async () => {
   Person.resetForm?.()
   if (draft) Paciente.form = { ...Paciente.form, ...draft }
   if (personDraft) intake.restoreDraft(personDraft)
+  // the identity document: one row to fill from the start
+  intake.ensureDocumentRow()
   draftReady.value = true
 })
 

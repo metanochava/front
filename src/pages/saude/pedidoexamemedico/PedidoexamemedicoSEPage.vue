@@ -242,46 +242,53 @@
             />
           </div>
 
+          <!-- the added exams under their medical exam type, in the catalogue's
+               order (the PDF groups them the same way) -->
           <q-list v-if="items.length" bordered separator class="rounded-borders">
-            <q-item
-              v-for="(item, index) in items"
-              :key="item.exame"
-              class="column q-py-sm"
-              :data-test="`added-exam-${index}`"
-            >
-              <div class="row items-start no-wrap full-width">
-                <div class="col">
-                  <div class="text-weight-bold">{{ item.exame_label }}</div>
-                  <div class="text-caption text-grey-7">{{ item.tipo_label }} · {{ item.classe_label }}</div>
-                </div>
-                <s-btn flat round dense color="negative" icon="delete" @click="removeExame(index)">
-                  <s-tooltip>{{ tdc('Remove') }}</s-tooltip>
-                </s-btn>
-              </div>
-
-              <div class="row items-center no-wrap q-mt-xs">
-                <span class="text-caption text-grey-7 q-mr-sm">{{ tdc('Priority') }}</span>
-                <q-btn-toggle
-                  v-model="item.prioridade"
-                  dense no-caps rounded unelevated size="sm"
-                  :options="priorityToggle"
-                  :data-test="`added-exam-priority-${index}`"
-                />
-              </div>
-
-              <q-expansion-item
-                dense dense-toggle
-                class="q-mt-xs"
-                header-class="q-px-none text-caption text-primary"
-                icon="edit_note"
-                :label="item.instrucoes || item.observacao ? tdc('Instructions and notes') + ' ✓' : tdc('Instructions and notes')"
+            <template v-for="group in itemGroups" :key="group.key">
+              <q-item-label header class="text-weight-bold text-primary q-py-sm" :data-test="`exam-group-${group.key}`">
+                {{ group.title }}
+              </q-item-label>
+              <q-item
+                v-for="item in group.items"
+                :key="item.exame"
+                class="column q-py-sm"
+                :data-test="`added-exam-${items.indexOf(item)}`"
               >
-                <div class="q-pt-xs q-gutter-y-sm">
-                  <s-input v-model="item.instrucoes" type="textarea" autogrow dense :label="tdc('Instructions')" />
-                  <s-input v-model="item.observacao" type="textarea" autogrow dense :label="tdc('Notes')" />
+                <div class="row items-start no-wrap full-width">
+                  <div class="col">
+                    <div class="text-weight-bold">{{ item.exame_label }}</div>
+                    <div class="text-caption text-grey-7">{{ item.classe_label }}</div>
+                  </div>
+                  <s-btn flat round dense color="negative" icon="delete" @click="removeExame(items.indexOf(item))">
+                    <s-tooltip>{{ tdc('Remove') }}</s-tooltip>
+                  </s-btn>
                 </div>
-              </q-expansion-item>
-            </q-item>
+
+                <div class="row items-center no-wrap q-mt-xs">
+                  <span class="text-caption text-grey-7 q-mr-sm">{{ tdc('Priority') }}</span>
+                  <q-btn-toggle
+                    v-model="item.prioridade"
+                    dense no-caps rounded unelevated size="sm"
+                    :options="priorityToggle"
+                    :data-test="`added-exam-priority-${items.indexOf(item)}`"
+                  />
+                </div>
+
+                <q-expansion-item
+                  dense dense-toggle
+                  class="q-mt-xs"
+                  header-class="q-px-none text-caption text-primary"
+                  icon="edit_note"
+                  :label="item.instrucoes || item.observacao ? tdc('Instructions and notes') + ' ✓' : tdc('Instructions and notes')"
+                >
+                  <div class="q-pt-xs q-gutter-y-sm">
+                    <s-input v-model="item.instrucoes" type="textarea" autogrow dense :label="tdc('Instructions')" />
+                    <s-input v-model="item.observacao" type="textarea" autogrow dense :label="tdc('Notes')" />
+                  </div>
+                </q-expansion-item>
+              </q-item>
+            </template>
           </q-list>
 
           <div v-else class="text-center text-grey q-pa-xl">
@@ -466,6 +473,21 @@ watch(search, () => {
     }
   }
   expanded.value = open
+})
+
+// the added exams grouped by medical exam type, in the catalogue's order
+// (types not in the loaded catalogue go last, in the order they were added)
+const itemGroups = computed(() => {
+  const order = new Map(catalogo.value.map((tipo, index) => [String(tipo.id), index]))
+  const groups = new Map()
+  for (const item of items.value) {
+    const key = String(item.tipo_exame_medico ?? '')
+    if (!groups.has(key)) groups.set(key, { key, title: item.tipo_label || tdc('Exams'), items: [] })
+    groups.get(key).items.push(item)
+  }
+  return [...groups.values()].sort(
+    (a, b) => (order.get(a.key) ?? Infinity) - (order.get(b.key) ?? Infinity)
+  )
 })
 
 const filteredCatalogo = computed(() => {

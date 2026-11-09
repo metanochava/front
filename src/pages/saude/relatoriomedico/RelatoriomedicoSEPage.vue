@@ -59,6 +59,18 @@
           <!-- FORMULÁRIO -->
           <div class="col-md-8">
 
+            <!-- what the report is for: printed under the patient on the PDF -->
+            <s-input
+              v-model="Relatoriomedico.form.purpose"
+              dense
+              outlined
+              class="q-mb-md"
+              :label="tdc('Purpose')"
+              :placeholder="tdc('e.g. Referral, insurer, at the patient\'s request')"
+              maxlength="200"
+              data-test="medical-report-purpose"
+            />
+
             <s-editor
               v-model="Relatoriomedico.form.resumo"
               :label="tdc('Clinical report')"

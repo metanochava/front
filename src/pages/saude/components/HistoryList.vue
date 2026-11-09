@@ -1,35 +1,44 @@
 <template>
   <div class=" ">
      <!-- 🏷️ TÍTULO -->
-    <div class="row top fixed-top  header-fixe ">
-
-      <s-card flat square class="col-12 text-center text-h6 text-weight-medium q-mb-sm q-pa-sm bg-transparen">
-        <label
-          style="
-            display: block;
-            max-width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          "
-        >
-          {{ title || 'Histórico'}}
-        </label>
-
-        <q-input
-          v-model="search"
-          type="search"
-          :label="tdc('Search by name or date')"
-          outlined
+    <!-- like the left menu's top (quasar_resaas LeftMenu.vue): the title on
+         the primary bar, then the plain search input on the drawer's own
+         background - no white card -->
+    <div class="row top fixed-top header-fixe">
+      <s-card flat square class="col-12 bg-transparent">
+        <q-item
           dense
-          clearable
-          class=" col-12 q-mb-sm"
-        />
+          class="items-center justify-center text-white text-weight-medium"
+          :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'"
+          style="font-size: 16px;"
+        >
+          <label
+            style="
+              display: block;
+              max-width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            "
+          >
+            {{ title || 'Histórico'}}
+          </label>
+        </q-item>
+
+        <!-- the same plain search input as the left menu (quasar_resaas
+             SearchMenu.vue, 16px like the drawer bar it inherits there) -->
+        <div class="q-pa-sm">
+          <input
+            v-model="search"
+            type="search"
+            :placeholder="tdc('Search by name or date')"
+            :aria-label="tdc('Search by name or date')"
+            style="height: 30px; line-height: 30px; width: 100%; padding: 0 8px; font-size: 16px; font-weight: 400;"
+            data-test="history-search"
+          />
+        </div>
       </s-card>
-
-      <!-- 🔍 SEARCH -->
-
-    </div >
+    </div>
 
     <!-- 📋 LISTA: newest first, 20 per page. Scrolling down appends the next
          (older) pages; near the top, the previous (newer) pages are prepended -
@@ -38,7 +47,7 @@
       ref="scroller"
       :offset="200"
       :disable="!hasNext || !!loadError"
-      style="margin-top: 98px;"
+      style="margin-top: 80px;"
       @load="onLoad"
     >
       <div v-if="loadingPrevious" class="row justify-center q-my-sm" data-test="history-loading-previous">
