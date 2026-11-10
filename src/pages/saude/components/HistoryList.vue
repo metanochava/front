@@ -106,12 +106,13 @@
 
 <script setup>
 import { tdc, sDialog, useUserStore, AlertSuccess, AlertError, getUserPreference, setUserPreference } from 'quasar_resaas'
-import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { scroll, debounce } from 'quasar'
 import { useRouter } from 'vue-router'
 import HistoryItem from './HistoryItem.vue'
 import { canEditDocument } from './documentEditPolicy'
 import ReprintDialog from './ReprintDialog.vue'
+import { usePacienteStore } from '../paciente/pacienteStore'
 
 // props
 const props = defineProps({
@@ -144,6 +145,14 @@ const props = defineProps({
   params: {
     type: Object,
     default: () => ({})
+  },
+  // only the open patient's documents (Paciente.row, the patient of the page
+  // and its header): ?patient=<id>, a filter every clinical document list
+  // takes (saude PatientFilterMixin). Off for lists that are not a patient's
+  // (the exam catalogue); an explicit params.patient wins.
+  byPatient: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -252,9 +261,16 @@ const loadingPrevious = ref(false)
 const scroller = ref(null)
 const listRef = ref(null)
 
+const Paciente = usePacienteStore()
+// the filters of every page: the caller's, plus the open patient
+const listParams = computed(() => {
+  const patient = props.params?.patient ?? (props.byPatient ? Paciente.row?.id : null)
+  return patient ? { ...props.params, patient } : { ...props.params }
+})
+
 const positionName = computed(() => {
   const list = props.routeKey || props.store?.$id || 'history'
-  const scope = Object.keys(props.params || {}).length ? `:${JSON.stringify(props.params)}` : ''
+  const scope = Object.keys(listParams.value).length ? `:${JSON.stringify(listParams.value)}` : ''
   return `history:${list}:${User.Entity?.id || '-'}:${User.Branch?.id || '-'}${scope}`
 })
 
@@ -274,7 +290,7 @@ let anchorId = restored?.id || null
 
 async function fetch(page) {
   const result = await props.store.fetchPage({
-    ...props.params,
+    ...listParams.value,
     page,
     page_size: PAGE_SIZE,
     ordering: '-created_at',
@@ -430,6 +446,11 @@ async function refreshFromTop() {
     loadError.value = true
   }
 }
+
+// another patient opened while the menu is shown: its documents, from the top
+watch(() => listParams.value.patient, (now, before) => {
+  if (now !== before) refreshFromTop()
+})
 
 const stopWatchingStore = props.store?.$onAction?.(({ name, after }) => {
   if (!CHANGING_ACTIONS.has(name)) return

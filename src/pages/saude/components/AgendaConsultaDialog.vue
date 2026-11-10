@@ -38,6 +38,25 @@
               />
             </div>
 
+            <!-- the branch the consultation is booked for: the current one, or
+                 another of the clinic with book_other_branch_agenda
+                 (AgendaAPIView.booking_options); its doctors and hours follow -->
+            <q-select
+              v-model="form.branch"
+              :options="branchOptions"
+              option-value="id"
+              option-label="name"
+              emit-value
+              map-options
+              outlined
+              dense
+              class="q-mb-md"
+              :label="tdc('Branch')"
+              :disable="branchOptions.length < 2"
+              data-test="booking-branch"
+              @update:model-value="onBranchChanged"
+            />
+
             <div class="text-caption text-grey-6 q-mb-sm">
               {{ tdc('Choose the consultation type to filter available doctors.') }}
             </div>
@@ -164,9 +183,11 @@
                   <div v-if="loadingSlots" class="flex flex-center q-pa-md">
                     <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
                   </div>
-                  <div v-else-if="!horarioConfigurado" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
+                  <div v-else-if="slotSource !== 'doctor'" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
                     <q-icon name="warning" class="q-mr-xs" />
-                    {{ tdc('Doctor has no schedule configured for this day — using default hours (08:00-17:00).') }}
+                    {{ slotSource === 'branch'
+                      ? tdc('Doctor has no schedule configured for this day — using the branch\'s opening hours.')
+                      : tdc('Doctor has no schedule configured for this day — using default hours (08:00-17:00).') }}
                     <br>
                   </div>
 
@@ -340,6 +361,7 @@ function dateOptions(dateStr) {
 function emptyForm() {
   return {
     paciente: props.pacienteId || null,
+    branch: User.Branch?.id || null,
     especialidade: null,
     medico: null,
     consultorio: null,
@@ -404,18 +426,36 @@ async function loadEspecialidadeCode() {
 const medicos = ref([])
 const loadingMedicos = ref(false)
 
+// the branches one may book in and the chosen branch's doctors (with their
+// specialties), shaped as the doctor list below reads them
+const branchOptions = ref([])
+
 async function loadMedicos() {
   loadingMedicos.value = true
   try {
     const { data } = await HTTPAuth.get(url({
       type: 'u',
-      url: 'saude/medicos',
-      params: { ativo: 'true', page_size: 0 },
+      url: 'saude/agendas/booking_options/',
+      params: { branch: form.branch || undefined },
     }))
-    medicos.value = data.results ?? data
+    branchOptions.value = data.branches || []
+    if (!form.branch) form.branch = data.branch
+    medicos.value = (data.doctors || []).map(d => ({
+      employee: { id: d.employee_id },
+      label: d.label,
+      especialidade: d.specialties || [],
+    }))
   } finally {
     loadingMedicos.value = false
   }
+}
+
+function onBranchChanged() {
+  form.medico = null
+  form.hora_inicio = null
+  form.hora_fim = null
+  slots.value = []
+  loadMedicos()
 }
 
 const medicoOptions = computed(() => {
@@ -462,6 +502,8 @@ function selectMedico(m) {
 const slots = ref([])
 const loadingSlots = ref(false)
 const horarioConfigurado = ref(true)
+// where the free times came from: 'doctor' | 'branch' | 'default'
+const slotSource = ref('doctor')
 const duracaoMin = ref(30)
 
 function toMinutes(hhmm) {
@@ -474,11 +516,6 @@ function toHHMM(mins) {
   return `${h}:${m}`
 }
 // dia_semana no backend segue date.weekday() do Python: Segunda=0 ... Domingo=6
-function weekdayIndexPy(dateStrSlash) {
-  const iso = dateStrSlash.replace(/\//g, '-')
-  const jsDay = new Date(iso + 'T00:00:00').getDay() // 0=Dom..6=Sáb
-  return (jsDay + 6) % 7 // 0=Seg..6=Dom
-}
 
 async function buildSlots() {
   if (!form.medico || !form.data) {
@@ -490,25 +527,18 @@ async function buildSlots() {
   form.hora_fim = null
   try {
     const iso = form.data.replace(/\//g, '-')
-    const dow = weekdayIndexPy(form.data)
 
-    const [horariosRes, agendasRes] = await Promise.all([
-      HTTPAuth.get(url({ type: 'u', url: 'saude/horariomedicos', params: { employee: form.medico, dia_semana: dow, page_size: 50 } })),
-      HTTPAuth.get(url({ type: 'u', url: 'saude/agendas', params: { medico: form.medico, data: iso, page_size: 100 } })),
-    ])
-
-    let horarios = horariosRes.data.results ?? horariosRes.data
-    horarioConfigurado.value = horarios.length > 0
-    if (!horarios.length) {
-      horarios = [{ hora_inicio: '08:00:00', hora_fim: '17:00:00' }]
-    }
-
-    const agendas = (agendasRes.data.results ?? agendasRes.data)
-      .filter(a => a.estado?.value !== 'cancelada' && a.id !== props.editId)
-      .map(a => ({
-        inicio: toMinutes(a.hora_inicio.slice(0, 5)),
-        fim: a.hora_fim ? toMinutes(a.hora_fim.slice(0, 5)) : toMinutes(a.hora_inicio.slice(0, 5)) + 30,
-      }))
+    // the doctor's schedule, else the branch's opening hours, else
+    // 08:00-17:00 - and the doctor's busy times in any branch
+    const { data } = await HTTPAuth.get(url({
+      type: 'u',
+      url: 'saude/agendas/booking_slots/',
+      params: { branch: form.branch || undefined, medico: form.medico, data: iso, exclude: props.editId || undefined },
+    }))
+    slotSource.value = data.source
+    horarioConfigurado.value = data.source === 'doctor'
+    const horarios = (data.intervals || []).map(([inicio, fim]) => ({ hora_inicio: inicio, hora_fim: fim }))
+    const agendas = (data.busy || []).map(([inicio, fim]) => ({ inicio: toMinutes(inicio), fim: toMinutes(fim) }))
 
     const nowMin = iso === todayISO() ? (new Date().getHours() * 60 + new Date().getMinutes()) : -1
 
@@ -564,6 +594,7 @@ async function loadForEdit(id) {
 
     form.paciente = data.paciente?.value || data.paciente?.id
     form.especialidade = data.especialidade?.value || data.especialidade?.id || null
+    form.branch = data.branch?.value || data.branch?.id || data.branch || form.branch
     form.medico = data.medico?.value || data.medico?.id || null
     form.consultorio = data.consultorio?.value || data.consultorio?.id || null
     form.data = data.data.replace(/-/g, '/')
@@ -659,6 +690,12 @@ async function save() {
     if (isEditMode.value) {
       const { data } = await HTTPAuth.patch(url({ type: 'u', url: `saude/agendas/${props.editId}/` }), payload)
       result = data
+    } else if (form.branch && String(form.branch) !== String(User.Branch?.id)) {
+      // another branch of the clinic (book_other_branch_agenda)
+      const { data } = await HTTPAuth.post(url({ type: 'u', url: 'saude/agendas/book_other_branch/' }), {
+        ...payload, branch: form.branch,
+      })
+      result = data
     } else {
       Agenda.form = payload
       result = await Agenda.create()
@@ -678,6 +715,8 @@ watch(() => props.modelValue, (open) => {
   if (!open) return
 
   resetForm()
+  // the branches and the current branch's doctors
+  loadMedicos()
   if (isEditMode.value) loadForEdit(props.editId)
 })
 </script>

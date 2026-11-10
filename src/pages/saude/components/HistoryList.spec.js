@@ -18,13 +18,18 @@ vi.mock('quasar_resaas', () => ({
 vi.mock('vue-router', () => ({ useRouter: () => ({ push: () => {} }) }))
 vi.mock('./HistoryItem.vue', () => ({ default: { props: ['item'], template: '<div class="history-row">{{ item.id }}</div>' } }))
 vi.mock('./ReprintDialog.vue', () => ({ default: { template: '<div />' } }))
+// the open patient (Paciente.row): the menu lists only its documents
+const paciente = { row: null }
+vi.mock('../paciente/pacienteStore', () => ({ usePacienteStore: () => paciente }))
 
 import HistoryList from './HistoryList.vue'
 
 let server
+let lastPatient
 const useDocs = defineStore('docs-spec', {
   actions: {
-    async fetchPage({ page }) {
+    async fetchPage({ page, patient }) {
+      lastPatient = patient
       return { rows: page === 1 ? [...server] : [], hasNext: false }
     },
     async create() {
@@ -51,6 +56,8 @@ function ids(wrapper) {
 beforeEach(() => {
   setActivePinia(createPinia())
   server = [{ id: 'old', created_at: '2026-11-01' }]
+  paciente.row = null
+  lastPatient = undefined
 })
 
 describe('HistoryList (right menu)', () => {
@@ -86,5 +93,20 @@ describe('HistoryList (right menu)', () => {
     expect(ids(wrapper)[0]).toBe('rx')
     vi.useRealTimers()
     wrapper.unmount()
+  })
+
+  it('asks only for the open patient\'s documents, unless told not to', async () => {
+    const store = useDocs()
+    paciente.row = { id: 'p1' }
+    const wrapper = mount(HistoryList, { props: { store, title: 'Docs' }, global, attachTo: document.body })
+    await flushPromises()
+    expect(lastPatient).toBe('p1')
+    wrapper.unmount()
+
+    lastPatient = undefined
+    const catalogue = mount(HistoryList, { props: { store, title: 'Exams', byPatient: false }, global, attachTo: document.body })
+    await flushPromises()
+    expect(lastPatient).toBeUndefined()
+    catalogue.unmount()
   })
 })

@@ -11,6 +11,7 @@
     :store="ExamemedicoStore"
     :actions="['Pdf', 'Edit', 'Reprint', 'delete']"
     route-key="examemedico"
+    :by-patient="false"
     @action="onClick"
   />
 </template>

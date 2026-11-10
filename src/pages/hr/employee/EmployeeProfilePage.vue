@@ -80,7 +80,30 @@
         <q-tab-panels v-model="tab" animated>
           <!-- PERSONAL -->
           <q-tab-panel name="personal" class="q-pa-md">
-            <PersonProfilePanel :person="person" />
+            <PersonProfilePanel :person="person">
+              <!-- Security (state of the password, temporary password, 2FA) in
+                   the User account card, on the right of its title -->
+              <template v-if="canViewSecurity && userId" #account-actions>
+                <s-btn
+                  flat dense no-caps color="primary" icon="shield" :label="tdc('Security')"
+                  data-test="employee-security-open"
+                  @click="securityDialog = true"
+                >
+                  <s-tooltip>{{ tdc('Password and sign-in security of this user') }}</s-tooltip>
+                </s-btn>
+              </template>
+            </PersonProfilePanel>
+
+            <q-dialog v-model="securityDialog">
+              <s-modal-card :title="tdc('Security')" icon="shield" width="min(520px, 92vw)">
+                <div data-test="employee-security-dialog">
+                  <s-user-security-panel
+                    :user-id="userId"
+                    :username="person?.user_data?.username || ''"
+                  />
+                </div>
+              </s-modal-card>
+            </q-dialog>
           </q-tab-panel>
 
           <!-- EMPLOYMENT -->
@@ -159,20 +182,19 @@
                       :placeholder="tdc('Add specialty')"
                       data-test="employee-specialty-select"
                       @update:model-value="addSpecialty"
+                    />
+
+                    <!-- a specialty the Entity does not have yet: created in a
+                         modal and given to the employee once saved (s-select
+                         does not take an append slot, so the button is beside it) -->
+                    <s-btn
+                      v-if="canAddSpecialty && canCreateSpecialty"
+                      round unelevated color="primary" icon="add" class="q-ml-sm"
+                      data-test="employee-specialty-new"
+                      @click="newSpecialtyDialog = true"
                     >
-                      <template #append>
-                        <s-btn
-                          flat round dense size="sm" color="primary" icon="add"
-                          :loading="savingSpecialty"
-                          :disable="!newSpecialty"
-                          data-test="employee-specialty-add"
-                          @mousedown.stop.prevent
-                          @click.stop.prevent="addSpecialty"
-                        >
-                          <s-tooltip>{{ tdc('Add the specialty to this employee') }}</s-tooltip>
-                        </s-btn>
-                      </template>
-                    </s-select>
+                      <s-tooltip>{{ tdc('Create a new specialty') }}</s-tooltip>
+                    </s-btn>
                   </q-card-section>
                   <q-separator />
 
@@ -199,13 +221,19 @@
                     </div>
                   </q-card-section>
                 </s-card>
+
+                <!-- inside the Employment panel (q-tab-panels only holds panels) -->
+                <q-dialog v-model="newSpecialtyDialog" persistent>
+                  <SpecialtyCreateModal @saved="onSpecialtyCreated" @cancel="newSpecialtyDialog = false" />
+                </q-dialog>
               </div>
             </div>
           </q-tab-panel>
 
           <!-- PROFILES + SECURITY: the access of the employee's user account -
                its Groups in the current entity, and the state of its password
-               (the same panel the User details use) -->
+               (the same panel the User details use; also opened from the
+               Personal tab's User account card) -->
           <q-tab-panel v-if="canListProfiles || canViewSecurity" name="profiles" class="q-pa-md">
             <div class="row q-col-gutter-md">
               <div v-if="canListProfiles" class="col-12" :class="{ 'col-md-7': canViewSecurity && userId }">
@@ -1156,6 +1184,7 @@ import { statusColor as statusTone } from 'quasar_resaas'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
+import SpecialtyCreateModal from './SpecialtyCreateModal.vue'
 import { useEmployeeStore } from '../stores/EmployeeStore.js'
 import { useUserStore } from 'quasar_resaas'
 import { useUserGroups } from 'quasar_resaas'
@@ -1207,10 +1236,24 @@ const canListProfiles = computed(() => Session.can('list_branchusergroup'))
 // the password state of the account (view_user); revealing/regenerating a
 // temporary password have their own permissions inside the panel
 const canViewSecurity = computed(() => Session.can('view_user'))
+const securityDialog = ref(false)
 
 // ---------------- SPECIALTIES (Employment tab) ----------------
 const canAddSpecialty = computed(() => Session.can('add_employeespecialty'))
 const canRemoveSpecialty = computed(() => Session.can('delete_employeespecialty'))
+const canCreateSpecialty = computed(() => Session.can('add_specialty'))
+const newSpecialtyDialog = ref(false)
+
+// a specialty just created in the modal is given to the employee at once
+async function onSpecialtyCreated(row) {
+  newSpecialtyDialog.value = false
+  if (!row?.id || !employee.value?.id) return
+  try {
+    await Employee.addSpecialty(employee.value.id, row.id)
+  } catch (error) {
+    $q.notify({ type: 'negative', message: errorMessage(error) || tdc('Could not add the specialty.') })
+  }
+}
 const newSpecialty = ref(null)
 const savingSpecialty = ref(false)
 // the Entity's specialties the employee does not have yet
