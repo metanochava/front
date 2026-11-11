@@ -55,6 +55,24 @@
                   />
                 </div>
 
+                <!-- UNIDADE: where the consultation is (only when the clinic has
+                     more than one); its doctors and times follow -->
+                <div v-if="branches.length > 1" class="col-12">
+                  <q-select
+                    v-model="form.branch"
+                    outlined
+                    clearable
+                    :label="tdc('Branch')"
+                    :options="branches"
+                    option-label="name"
+                    option-value="id"
+                    emit-value
+                    map-options
+                    data-test="booking-branch"
+                    @update:model-value="onBranchChange"
+                  />
+                </div>
+
                 <!-- ESPECIALIDADE (first) and MEDICO: each filters the other, so
                      the visitor can start by either one -->
                 <div class="col-md-6 col-12">
@@ -91,6 +109,16 @@
                     data-test="booking-doctor"
                     @update:model-value="onDoctorChange"
                   >
+                    <!-- the chosen doctor's profile (the "Our doctors" dialog) -->
+                    <template v-if="form.doctor" #after>
+                      <s-btn
+                        flat round dense color="primary" icon="info"
+                        data-test="booking-doctor-info"
+                        @click.stop="profileOpen = true"
+                      >
+                        <s-tooltip>{{ tdc('About this doctor') }}</s-tooltip>
+                      </s-btn>
+                    </template>
                     <template #option="scope">
                       <q-item v-bind="scope.itemProps">
                         <q-item-section avatar>
@@ -242,6 +270,12 @@
 
     </div>
 
+    <DoctorProfileDialog
+      v-if="selectedDoctor"
+      v-model="profileOpen"
+      :public-doctor="selectedDoctor"
+      :branches="branches"
+    />
   </section>
 </template>
 
@@ -251,8 +285,11 @@ import { defineComponent, reactive, computed, ref, onMounted, watch } from "vue"
 import { date as qdate } from "quasar"
 import { tdc, useUserStore, HTTPClient, url, AlertSuccess, errorCode, parseFieldErrors } from "quasar_resaas"
 import { usePublicBooking } from "../usePublicBooking"
+import DoctorProfileDialog from "../../../pages/saude/components/DoctorProfileDialog.vue"
 
 export default defineComponent({
+
+  components: { DoctorProfileDialog },
 
   setup () {
 
@@ -265,6 +302,7 @@ export default defineComponent({
     const form = reactive({
       name: "",
       phone: "",
+      branch: null,
       doctor: null,
       specialty: null,
       date: "",
@@ -276,11 +314,32 @@ export default defineComponent({
     const formRef = ref(null)
 
     // doctors shared with the "Our doctors" section (usePublicBooking)
-    const { state: booking, loadDoctors } = usePublicBooking()
-    const doctors = computed(() => booking.doctors)
+    const { state: booking, loadDoctors, loadBranches } = usePublicBooking()
+    const branches = computed(() => booking.branches)
+    // the doctors of the chosen branch (all of them while none is chosen)
+    const doctors = computed(() => form.branch
+      ? booking.doctors.filter(d => (d.branches || []).includes(form.branch))
+      : booking.doctors)
     const doctorsError = computed(() => booking.error)
 
-    onMounted(loadDoctors)
+    const profileOpen = ref(false)
+    const selectedDoctor = computed(() => booking.doctors.find(d => d.id === form.doctor) || null)
+
+    onMounted(async () => {
+      await Promise.all([loadDoctors(), loadBranches()])
+      // one branch only: it is that one
+      if (!form.branch && branches.value.length === 1) form.branch = branches.value[0].id
+    })
+
+    // another branch: a doctor who does not work there is cleared
+    function onBranchChange () {
+      if (form.doctor && !doctors.value.some(d => d.id === form.doctor)) {
+        form.doctor = null
+        form.specialty = null
+      }
+      form.time = ""
+      loadSchedule()
+    }
 
     const slots = ref([])
     const slotsLoading = ref(false)
@@ -327,7 +386,7 @@ export default defineComponent({
       slotsLoading.value = true
       try {
         const response = await HTTPClient.get(
-          url({ type: "u", url: "saude/publicbooking/availability/", params: { doctor: form.doctor, date: form.date } })
+          url({ type: "u", url: "saude/publicbooking/availability/", params: { doctor: form.doctor, date: form.date, branch: form.branch || undefined } })
         )
         const list = validSlots(response.data)
         if (list === null) slotsError.value = true
@@ -365,6 +424,7 @@ export default defineComponent({
     // specialty card (Specialties section, no doctor yet)
     watch(() => booking.preselect, (choice) => {
       if (!choice) return
+      if (choice.branch) form.branch = choice.branch
       form.doctor = choice.doctor
       form.specialty = choice.specialty
       booking.preselect = null
@@ -399,14 +459,15 @@ export default defineComponent({
         // to confirm (the request becomes an appointment when staff confirm it)
         const response = await HTTPClient.post(
           url({ type: "u", url: "saude/publicbooking/requests/" }),
-          { ...form, specialty: form.specialty || "", website: form.website || "" }
+          { ...form, branch: form.branch || "", specialty: form.specialty || "", website: form.website || "" }
         )
 
         // an HTML page is not a confirmation: only the API's own answer is
         if (!response?.data?.received) throw new Error("not an API response")
 
         AlertSuccess(tdc("Your request was received. We will call you to confirm the appointment."))
-        Object.assign(form, { name: "", phone: "", doctor: null, specialty: null, date: "", time: "", reason: "", website: "" })
+        Object.assign(form, { name: "", phone: "", doctor: null, specialty: null, date: "", time: "", reason: "", website: "",
+          branch: branches.value.length === 1 ? branches.value[0].id : null })
         slots.value = []
         formRef.value?.resetValidation()
       } catch (error) {
@@ -428,6 +489,10 @@ export default defineComponent({
       tdc,
       ps,
       form,
+      branches,
+      onBranchChange,
+      profileOpen,
+      selectedDoctor,
       doctors,
       doctorsError,
       formRef,

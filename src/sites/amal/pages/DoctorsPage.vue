@@ -111,67 +111,15 @@
     </div>
 
 
-    <!-- MODAL PERFIL: only what the clinic records about the doctor -->
-    <q-dialog
+    <!-- MODAL PERFIL: only what the clinic records about the doctor (shared
+         with the booking form) -->
+    <DoctorProfileDialog
       v-model="profileModal"
-      transition-show="scale"
-      transition-hide="scale"
-    >
-
-      <s-modal-card :title="selectedDoctor.name" icon="badge" width="520px" class="doctor-modal profile-modal">
-
-        <div class="text-center q-pa-md">
-
-          <div class="profile-photo-wrap">
-            <q-avatar size="130px" class="profile-avatar" color="primary" text-color="white">
-              <img v-if="selectedDoctor.photo" :src="selectedDoctor.photo" :alt="selectedDoctor.name">
-              <span v-else class="doctor-initials">{{ initials(selectedDoctor.name) }}</span>
-            </q-avatar>
-          </div>
-
-          <div class="text-h5 text-weight-bold q-mt-md">
-            {{ selectedDoctor.name }}
-          </div>
-
-          <div class="q-mt-sm">
-            <q-chip
-              v-for="specialty in selectedDoctor.specialties || []"
-              :key="specialty.id"
-              color="primary"
-              text-color="white"
-              class="q-ma-xs"
-            >
-              {{ tdc(specialty.title) }}
-            </q-chip>
-          </div>
-
-          <div class="text-grey-7 q-mt-md">
-            {{ tdc('Book a consultation online and the clinic will call you to confirm.') }}
-          </div>
-
-        </div>
-
-        <template #footer>
-          <s-btn
-            flat
-            no-caps
-            color="grey-7"
-            :label="tdc('Close')"
-            v-close-popup
-          />
-          <s-btn
-            color="primary"
-            icon="event"
-            no-caps
-            unelevated
-            :label="tdc('Book appointment')"
-            @click="bookFromProfile"
-          />
-        </template>
-
-      </s-modal-card>
-
-    </q-dialog>
+      :public-doctor="selectedDoctor"
+      :branches="booking.branches"
+      bookable
+      @book="bookFromProfile"
+    />
 
   </section>
 </template>
@@ -180,8 +128,11 @@
 import { defineComponent, computed, ref, onMounted } from "vue"
 import { tdc, useUserStore } from "quasar_resaas"
 import { usePublicBooking } from "../usePublicBooking"
+import DoctorProfileDialog from "../../../pages/saude/components/DoctorProfileDialog.vue"
 
 export default defineComponent({
+
+  components: { DoctorProfileDialog },
 
   setup () {
 
@@ -190,10 +141,10 @@ export default defineComponent({
 
     // the clinic's real doctors - the same list the booking form uses; a
     // booking always goes through that one form (MarcacaoPage)
-    const { state: booking, loadDoctors, bookWith } = usePublicBooking()
+    const { state: booking, loadDoctors, loadBranches, bookWith } = usePublicBooking()
     const doctors = computed(() => booking.doctors)
 
-    onMounted(loadDoctors)
+    onMounted(() => { loadDoctors(); loadBranches() })
 
     const profileModal = ref(false)
     const selectedDoctor = ref({ specialties: [] })

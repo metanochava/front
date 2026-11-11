@@ -1,5 +1,9 @@
 <template>
-  <q-dialog persistent v-model="open" @show="load">
+  <!-- the doctor of a record (right menu: the doctor's photo). Also the
+       public site's doctor profile, with `public-doctor`: the same dialog with
+       only what may be public (saude/publicbooking/doctors/) - never the
+       signature, the stamp or the HR data -->
+  <q-dialog :persistent="!isPublic" v-model="open" @show="load">
     <s-modal-card
       :title="fullName || fallbackName || tdc('Doctor')"
       icon="medical_services"
@@ -9,10 +13,12 @@
         <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
       </div>
 
-      <div v-else-if="error || !staff" class="text-center q-pa-xl">
+      <div v-else-if="!isPublic && (error || !staff)" class="text-center q-pa-xl">
         <q-icon name="error_outline" size="40px" color="negative" />
         <div class="q-mt-sm q-mb-md">{{ tdc('Could not load the doctor information.') }}</div>
-        <s-btn flat color="primary" icon="refresh" :label="tdc('Try again')" @click="load" />
+        <s-btn flat color="primary" icon="refresh" :label="tdc('Try again')" @click="load">
+          <s-tooltip>{{ tdc('Try again') }}</s-tooltip>
+        </s-btn>
       </div>
 
       <template v-else>
@@ -24,7 +30,7 @@
                 <q-icon name="badge" size="20px" class="q-mr-xs" />
                 {{ tdc('Professional data') }}
                 <q-space />
-                <q-badge :color="isActive ? 'positive' : 'grey'" :label="isActive ? tdc('Active') : tdc('Inactive')" />
+                <q-badge v-if="!isPublic" :color="isActive ? 'positive' : 'grey'" :label="isActive ? tdc('Active') : tdc('Inactive')" />
               </q-card-section>
               <q-separator />
 
@@ -47,7 +53,7 @@
                   </div>
                 </div>
 
-                <div v-if="medico?.observacao" class="q-mt-md">
+                <div v-if="!isPublic && medico?.observacao" class="q-mt-md">
                   <div class="fact-label"><q-icon name="notes" size="16px" /> {{ tdc('Notes') }}</div>
                   <div class="pre-line">{{ medico.observacao }}</div>
                 </div>
@@ -55,8 +61,20 @@
             </s-card>
           </div>
 
+          <!-- ============ PHOTO (public) ============ -->
+          <div v-if="isPublic" class="col-12 col-md-4">
+            <s-card flat bordered class="full-height">
+              <q-card-section class="flex flex-center q-pa-lg" data-test="doctor-photo">
+                <q-avatar size="150px" color="primary" text-color="white">
+                  <img v-if="publicDoctor.photo" :src="publicDoctor.photo" :alt="publicDoctor.name">
+                  <span v-else class="doctor-initials">{{ initials(publicDoctor.name) }}</span>
+                </q-avatar>
+              </q-card-section>
+            </s-card>
+          </div>
+
           <!-- ============ SIGNATURE + STAMP ============ -->
-          <div class="col-12 col-md-4">
+          <div v-else class="col-12 col-md-4">
             <s-card flat bordered class="full-height">
               <q-card-section class="section-title">
                 <q-icon name="draw" size="20px" class="q-mr-xs" /> {{ tdc('Signature and stamp') }}
@@ -77,15 +95,28 @@
       </template>
 
       <template #footer>
-        <s-btn flat :label="tdc('Close')" v-close-popup />
+        <s-btn flat :label="tdc('Close')" v-close-popup>
+          <s-tooltip>{{ tdc('Close') }}</s-tooltip>
+        </s-btn>
         <s-btn
-          v-if="medico?.id"
+          v-if="isPublic && bookable"
+          color="primary" icon="event" no-caps
+          :label="tdc('Book appointment')"
+          data-test="doctor-profile-book"
+          @click="emit('book', publicDoctor)"
+        >
+          <s-tooltip>{{ tdc('Book a consultation with this doctor') }}</s-tooltip>
+        </s-btn>
+        <s-btn
+          v-if="!isPublic && medico?.id"
           color="primary"
           icon="open_in_new"
           :label="tdc('Open doctor record')"
           :to="{ name: 'view_medico', params: { id: medico.id } }"
           v-close-popup
-        />
+        >
+          <s-tooltip>{{ tdc('Open doctor record') }}</s-tooltip>
+        </s-btn>
       </template>
     </s-modal-card>
   </q-dialog>
@@ -101,10 +132,18 @@ const props = defineProps({
   modelValue: { type: Boolean, default: false },
   // the record's `employee` (an id, or the {id, ...} relation object)
   employee: { type: [Object, String, Number], default: null },
-  fallbackName: { type: String, default: '' }
+  fallbackName: { type: String, default: '' },
+  // the public site: a doctor of saude/publicbooking/doctors/ (nothing loaded)
+  publicDoctor: { type: Object, default: null },
+  // the clinic's branches ({ id, name }), to name where the doctor works
+  branches: { type: Array, default: () => [] },
+  // public site: show "Book appointment"
+  bookable: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'book'])
+
+const isPublic = computed(() => !!props.publicDoctor)
 
 const open = computed({
   get: () => props.modelValue,
@@ -123,6 +162,7 @@ const employeeId = computed(() => (props.employee && typeof props.employee === '
 
 // fetchPage only reads: it leaves Employee.row/rows and Medico.row/rows to the page that owns them.
 async function load() {
+  if (isPublic.value) return
   if (!employeeId.value) {
     error.value = true
     return
@@ -149,11 +189,26 @@ async function load() {
 
 const label = (value) => (value && typeof value === 'object' ? value.label : value)
 
-const fullName = computed(() => staff.value?.person_data?.full_name || '')
+const fullName = computed(() => isPublic.value ? props.publicDoctor.name : (staff.value?.person_data?.full_name || ''))
 const isActive = computed(() => medico.value ? medico.value.ativo !== false : true)
-const specialties = computed(() => medico.value?.especialidade || [])
+const specialties = computed(() => isPublic.value
+  ? (props.publicDoctor.specialties || []).map(s => ({ id: s.id, label: tdc(s.title) }))
+  : (medico.value?.especialidade || []))
 
-const facts = computed(() => [
+function initials(name) {
+  return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0].toUpperCase()).join('') || '?'
+}
+
+const publicBranches = computed(() => {
+  const ids = new Set(props.publicDoctor?.branches || [])
+  return props.branches.filter(branch => ids.has(branch.id)).map(branch => branch.name).join(' · ')
+})
+
+const facts = computed(() => isPublic.value ? [
+  { icon: 'confirmation_number', label: tdc('Order number'), value: props.publicDoctor.order_number },
+  { icon: 'category', label: tdc('Category'), value: props.publicDoctor.category },
+  { icon: 'place', label: tdc('Branches'), value: publicBranches.value }
+] : [
   { icon: 'confirmation_number', label: tdc('Order number'), value: medico.value?.numero_ordem },
   { icon: 'category', label: tdc('Category'), value: medico.value?.categoria },
   { icon: 'work_outline', label: tdc('Position'), value: staff.value?.position_data?.title },
@@ -201,5 +256,10 @@ const credentials = computed(() => [
 
 .pre-line {
   white-space: pre-line;
+}
+
+.doctor-initials {
+  font-size: 44px;
+  font-weight: 800;
 }
 </style>

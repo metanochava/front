@@ -6,7 +6,8 @@ import { HTTPClient, url } from 'quasar_resaas'
 // is found from this site's Origin), and a doctor chosen in "Our doctors" is
 // handed to the booking form.
 const state = reactive({
-  doctors: [],        // [{ id, name, specialties: [{ id, title }], photo }]
+  doctors: [],        // [{ id, name, category, specialties: [{ id, title }], photo, branches: [id] }]
+  branches: [],       // the clinic's branches [{ id, name }]
   loaded: false,
   loading: false,
   error: false,
@@ -15,6 +16,21 @@ const state = reactive({
 })
 
 let pending = null
+let pendingBranches = null
+
+// the clinic's branches (GET saude/publicbooking/branches/), once
+function loadBranches () {
+  if (state.branches.length) return Promise.resolve(state.branches)
+  if (pendingBranches) return pendingBranches
+  pendingBranches = HTTPClient.get(url({ type: 'u', url: 'saude/publicbooking/branches/' }))
+    .then(response => {
+      state.branches = Array.isArray(response.data) ? response.data : []
+      return state.branches
+    })
+    .catch(() => [])
+    .finally(() => { pendingBranches = null })
+  return pendingBranches
+}
 
 function loadDoctors () {
   if (state.loaded) return Promise.resolve(state.doctors)
@@ -44,9 +60,11 @@ function loadDoctors () {
 // doctor has only one, the specialty) and bring the booking form into view.
 function bookWith (doctor) {
   const specialties = doctor?.specialties || []
+  const branches = doctor?.branches || []
   state.preselect = {
     doctor: doctor.id,
     specialty: specialties.length === 1 ? specialties[0].id : null,
+    branch: branches.length === 1 ? branches[0] : null,
   }
   document.getElementById('marcacao')?.scrollIntoView({ behavior: 'smooth' })
 }
@@ -59,5 +77,5 @@ function bookSpecialty (specialty) {
 }
 
 export function usePublicBooking () {
-  return { state, loadDoctors, bookWith, bookSpecialty }
+  return { state, loadDoctors, loadBranches, bookWith, bookSpecialty }
 }

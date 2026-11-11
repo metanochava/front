@@ -2,7 +2,7 @@
 
 <DoctorProfileDialog
   v-model="dialog"
-  :employee="item?.employee"
+  :employee="item?.employee || item?.medico?.employee"
   :fallback-name="item?.medico?.name"
 />
 
