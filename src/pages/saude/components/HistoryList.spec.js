@@ -16,7 +16,7 @@ vi.mock('quasar_resaas', () => ({
   rawValue: v => (v && typeof v === 'object' ? v.id : v),
 }))
 vi.mock('vue-router', () => ({ useRouter: () => ({ push: () => {} }) }))
-vi.mock('./HistoryItem.vue', () => ({ default: { props: ['item'], template: '<div class="history-row">{{ item.id }}</div>' } }))
+vi.mock('./HistoryItem.vue', () => ({ default: { name: 'HistoryItem', props: ['item', 'actions'], emits: ['action'], template: '<div class="history-row">{{ item.id }}</div>' } }))
 vi.mock('./ReprintDialog.vue', () => ({ default: { template: '<div />' } }))
 // the open patient (Paciente.row): the menu lists only its documents
 const paciente = { row: null }
@@ -93,6 +93,21 @@ describe('HistoryList (right menu)', () => {
 
     expect(ids(wrapper)).toEqual(['other', 'old'])
     expect(wrapper.find('[data-test="history-title"] .tip').exists()).toBe(true)
+    vi.useRealTimers()
+    wrapper.unmount()
+  })
+
+  it('every document prints and reprints: Pdf and Reprint are listed even when the menu omits them, and Pdf reaches the menu as pdf', async () => {
+    vi.useFakeTimers()
+    const store = useDocs()
+    const wrapper = mount(HistoryList, { props: { store, title: 'Docs', actions: ['delete'] }, global, attachTo: document.body })
+    await vi.runAllTimersAsync()
+    await flushPromises()
+
+    const row = wrapper.findComponent({ name: 'HistoryItem' })
+    expect(row.props('actions').slice(0, 2)).toEqual(['Pdf', 'Reprint'])
+    row.vm.$emit('action', { id: 'old' }, 'Pdf')
+    expect(wrapper.emitted('action')[0]).toEqual([{ id: 'old' }, 'pdf'])
     vi.useRealTimers()
     wrapper.unmount()
   })

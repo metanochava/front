@@ -94,12 +94,11 @@
       </template>
     </q-infinite-scroll>
 
+    <!-- the same document with another date next to the signature (nothing saved) -->
     <ReprintDialog
       v-model="reprintOpen"
       :store="store"
       :item="reprintItem"
-      :fields="dateFields"
-      @done="onReprinted"
     />
 
   </div>
@@ -148,8 +147,8 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  // editable date fields of the model, [{ name, label, type: 'date' | 'time' }].
-  // A model without any has no Reprint: there is no date to change.
+  // Deprecated (ignored): Reprint no longer edits the document's dates - it
+  // prints the same document with the date chosen next to the signature.
   dateFields: {
     type: Array,
     default: () => []
@@ -195,21 +194,27 @@ const User = useUserStore()
 
 const canDo = (verb) => !props.routeKey || User.can(`${verb}_${props.routeKey}`)
 
-// Conditions: Edit/Delete need the permission (UX only - the backend enforces it),
-// Reprint needs a date to change AND the permission to change it. Edit and
-// Reprint (a change of the document) are also only for its author within 24 h
-// of its creation (documentEditPolicy.js / backend document_edit_policy.py).
-const visibleActions = computed(() => props.actions.filter(action => {
+// Conditions: Edit/Delete need the permission (UX only - the backend enforces it).
+// Edit is also only for the document's author within 24 h of its creation
+// (documentEditPolicy.js / backend document_edit_policy.py). Reprint changes
+// nothing (the same PDF, another date next to the signature): like Pdf, always.
+// every document prints and reprints (the same PDF, another date next to
+// the signature): Pdf first and Reprint after it, even when a menu omits them
+const listedActions = computed(() => {
+  const actions = props.actions.filter(action => action !== 'Pdf' && action !== 'Reprint')
+  return ['Pdf', 'Reprint', ...actions]
+})
+
+const visibleActions = computed(() => listedActions.value.filter(action => {
   if (action === 'Edit') return !!props.routeKey && canDo('change')
   if (action === 'delete') return !!props.routeKey && canDo('delete')
-  if (action === 'Reprint') return props.dateFields.length > 0 && canDo('change')
   return true
 }))
 
 const reprintOpen = ref(false)
 const reprintItem = ref(null)
 
-const EDITING = ['Edit', 'Reprint']
+const EDITING = ['Edit']
 
 function actionsFor (item) {
   const editable = canEditDocument(item, User.data?.id)
@@ -224,6 +229,9 @@ function onAction(item, action) {
   } else if (action === 'Reprint') {
     reprintItem.value = item
     reprintOpen.value = true
+  } else if (action === 'Pdf') {
+    // the menus open the PDF on 'pdf' (the row click sends none)
+    emit('action', item, 'pdf')
   } else {
     emit('action', item, action)
   }
@@ -245,12 +253,6 @@ function confirmDelete(item) {
       AlertError(e)
     }
   })
-}
-
-// after the dates were saved: refresh the row in the list, then print it
-function onReprinted(updated) {
-  items.value = items.value.map(i => (i?.id === updated.id ? { ...i, ...updated } : i))
-  emit('action', updated, 'pdf')
 }
 
 

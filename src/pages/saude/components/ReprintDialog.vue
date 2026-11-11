@@ -1,33 +1,35 @@
 <template>
+  <!-- Reprint: the same document, only the date printed next to the
+       signature is the one chosen here (GET <document>/<id>/pdf/?date=...,
+       saude/services/reprint.py). Nothing is saved: the record keeps its dates. -->
   <q-dialog v-model="open" persistent>
     <s-modal-card :title="tdc('Reprint')" icon="print" width="440px" form @close="open = false" @submit="submit">
       <div class="column q-gutter-y-md">
-        <template v-for="field in fields" :key="field.name">
-          <s-time v-if="field.type === 'time'" v-model="form[field.name]" :label="tdc(field.label)" />
-          <s-date v-else v-model="form[field.name]" :label="tdc(field.label)" />
-        </template>
-
+        <s-date v-model="date" :label="tdc('Date next to the signature')" data-test="reprint-date" />
+        <div class="text-caption text-grey-7">{{ tdc('The document is printed again with this date; nothing is changed.') }}</div>
         <div v-if="error" class="text-negative">{{ error }}</div>
       </div>
-
       <template #footer>
-        <s-btn flat :label="tdc('Cancel')" :disable="saving" @click="open = false" />
-        <s-btn type="submit" color="primary" icon="print" :label="tdc('Reprint')" :loading="saving" />
+        <s-btn flat :label="tdc('Cancel')" :disable="printing" @click="open = false">
+          <s-tooltip>{{ tdc('Close without printing') }}</s-tooltip>
+        </s-btn>
+        <s-btn type="submit" color="primary" icon="print" :label="tdc('Reprint')" :loading="printing" :disable="!date" data-test="reprint-submit">
+          <s-tooltip>{{ tdc('Print the document with this date') }}</s-tooltip>
+        </s-btn>
       </template>
     </s-modal-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { tdc, errorMessage } from 'quasar_resaas'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
+  // the list's store: its getPdf(id, params) opens the PDF viewer of the menu
   store: { type: Object, required: true },
-  item: { type: Object, default: null },
-  // [{ name, label, type: 'date' | 'time' }] - only the model's editable date fields
-  fields: { type: Array, default: () => [] }
+  item: { type: Object, default: null }
 })
 
 const emit = defineEmits(['update:modelValue', 'done'])
@@ -37,38 +39,35 @@ const open = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const form = reactive({})
-const saving = ref(false)
+const date = ref('')
+const printing = ref(false)
 const error = ref('')
+
+// today, in the local calendar (ISO)
+function today () {
+  const now = new Date()
+  const pad = n => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
 
 watch(() => props.modelValue, (isOpen) => {
   if (!isOpen) return
   error.value = ''
-  for (const field of props.fields) {
-    form[field.name] = props.item?.[field.name] ?? ''
-  }
+  date.value = today()
 })
 
-// Saves only what changed, then tells the list to print the (updated) record.
-async function submit() {
-  const changes = {}
-  for (const field of props.fields) {
-    if ((form[field.name] || null) !== (props.item?.[field.name] || null)) {
-      changes[field.name] = form[field.name] || null
-    }
-  }
-
-  saving.value = true
+async function submit () {
+  if (!date.value || !props.item?.id) return
+  printing.value = true
   error.value = ''
-
   try {
-    const updated = Object.keys(changes).length ? await props.store.patchById(props.item.id, changes) : props.item
+    await props.store.getPdf(props.item.id, { date: date.value })
     open.value = false
-    emit('done', { ...props.item, ...updated })
+    emit('done', props.item)
   } catch (e) {
-    error.value = errorMessage(e) || tdc('Could not save the changes.')
+    error.value = errorMessage(e) || tdc('Could not print the document.')
   } finally {
-    saving.value = false
+    printing.value = false
   }
 }
 </script>

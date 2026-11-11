@@ -20,7 +20,7 @@
               <q-item-label>{{ formatDate(row.created_at) }}</q-item-label>
               <q-item-label caption>{{ authorOf(row) }}</q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section side class="row no-wrap items-center">
               <s-btn
                 flat round dense color="primary" icon="picture_as_pdf"
                 :loading="opening === row.id"
@@ -28,6 +28,13 @@
                 @click="openPdf(section, row)"
               >
                 <s-tooltip>{{ tdc('PDF') }}</s-tooltip>
+              </s-btn>
+              <s-btn
+                flat round dense color="primary" icon="print"
+                :data-test="`document-reprint-${section.key}`"
+                @click="openReprint(section, row)"
+              >
+                <s-tooltip>{{ tdc('Reprint') }}</s-tooltip>
               </s-btn>
             </q-item-section>
           </q-item>
@@ -38,6 +45,9 @@
     <div v-if="errorMsg" class="text-negative text-caption q-mt-sm">{{ errorMsg }}</div>
 
     <s-pdf-render v-model="showPdf" :src="pdfSrc" :title="pdfTitle" />
+
+    <!-- the same document with another date next to the signature -->
+    <ReprintDialog v-model="reprint.open" :store="reprint.store" :item="reprint.item" />
   </div>
 </template>
 
@@ -48,8 +58,9 @@
 // filters); a section is asked for only with its list permission - the
 // backend checks that permission again (UX only here). Used by
 // ConsultationDocumentsDialog and the consultation page (ConsultaVPage).
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { tdc, url, HTTPAuth, errorMessage, rawValue, useUserStore } from 'quasar_resaas'
+import ReprintDialog from './ReprintDialog.vue'
 
 import { useReceitamedicaStore } from '../receitamedica/receitamedicaStore'
 import { useAtestadomedicoStore } from '../atestadomedico/atestadomedicoStore'
@@ -118,11 +129,12 @@ async function load () {
   }
 }
 
-async function openPdf (section, row) {
+// params: { date } of a reprint (the date next to the signature)
+async function openPdf (section, row, params = null) {
   opening.value = row.id
   try {
     const store = section.store()
-    await store.getPdf(rawValue(row.id))
+    await store.getPdf(rawValue(row.id), params)
     store.showPdf = false
     pdfSrc.value = store.pdf
     pdfTitle.value = tdc(section.label)
@@ -132,6 +144,15 @@ async function openPdf (section, row) {
   } finally {
     opening.value = null
   }
+}
+
+// the reprint dialog prints through openPdf (this list's own PDF viewer)
+const reprint = reactive({ open: false, item: null, store: { getPdf: async () => {} } })
+
+function openReprint (section, row) {
+  reprint.item = { ...row, id: rawValue(row.id) }
+  reprint.store = { getPdf: (id, params) => openPdf(section, row, params) }
+  reprint.open = true
 }
 
 watch(() => props.consultaId, (id) => { if (id) load() }, { immediate: true })
