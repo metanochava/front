@@ -144,10 +144,14 @@ const activeProduct = computed(() => route.params.product || null)
       </div>
     </q-header>
 
-    <q-page-container>
-      <q-page>
-        <router-view />
-      </q-page>
+    <!-- the routes (and the site's footer) scroll inside their own area
+         (s-route-scroll, quasar_resaas), between the header and the bottom -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <q-page>
+          <router-view />
+        </q-page>
+      </s-route-scroll>
     </q-page-container>
   </q-layout>
 </template>

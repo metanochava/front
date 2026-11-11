@@ -238,19 +238,22 @@
     </q-drawer>
 
     <!-- PAGE -->
-    <q-page-container>
+    <!-- the routes (and the site's footer) scroll inside their own area
+         (s-route-scroll, quasar_resaas), between the header and the bottom -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <transition
+          v-if="ps.animation?.enable_animations"
+          :name="ps.animation?.page_transition || 'fade'"
+          mode="out-in"
+        >
+          <router-view/>
+        </transition>
 
-      <transition
-        v-if="ps.animation?.enable_animations"
-        :name="ps.animation?.page_transition || 'fade'"
-        mode="out-in"
-      >
-        <router-view/>
-      </transition>
+        <router-view v-else/>
 
-      <router-view v-else/>
-
-      <RodapePage />
+        <RodapePage />
+      </s-route-scroll>
     </q-page-container>
   </q-layout>
 </template>

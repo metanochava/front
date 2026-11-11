@@ -157,36 +157,26 @@
 
 
     <!-- PAGE -->
-    <q-page-container>
+    <!-- the routes (and the site's footer) scroll inside their own area
+         (s-route-scroll, quasar_resaas), between the header and the bottom -->
+    <!-- the home page is rendered by the router-view (/home); a second
+         <HomePage /> outside q-page-container was never shown. Back to top:
+         s-route-scroll's own button (q-page-scroller follows the page). -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <transition
+          v-if="ps.animation?.enable_animations"
+          :name="ps.animation?.page_transition || 'fade'"
+          mode="out-in"
+        >
+          <router-view/>
+        </transition>
 
-      <transition
-        v-if="ps.animation?.enable_animations"
-        :name="ps.animation?.page_transition || 'fade'"
-        mode="out-in"
-      >
-        <router-view/>
-      </transition>
+        <router-view v-else/>
 
-      <router-view v-else/>
-
-
-
+        <RodapePage />
+      </s-route-scroll>
     </q-page-container>
-
-    <!-- the home page is rendered by the router-view above (/home); a second
-         <HomePage /> here sat outside q-page-container, so Quasar never showed
-         it and only logged "QPage needs to be child of QPageContainer" -->
-
-    <RodapePage />
-
-    <!-- SCROLL -->
-    <q-page-scroller
-      position="bottom-right"
-      :scroll-offset="50"
-      :offset="[18,18]"
-    >
-      <s-btn icon="keyboard_arrow_up" round color="primary"/>
-    </q-page-scroller>
 
   </q-layout>
 

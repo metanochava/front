@@ -88,7 +88,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import { tdc } from 'quasar_resaas'
+import { tdc, routeScrollY, scrollRouteTo } from 'quasar_resaas'
 import { useCart } from './useMarketplace'
 import NearbyPharmacies from './NearbyPharmacies.vue'
 import MedicineSearch from './MedicineSearch.vue'
@@ -134,7 +134,7 @@ const mapHeight = ref(0)
 function fitMapHeight () {
   const map = root.value?.querySelector('[data-test=pharmacies-map]:not(.pharmacies-map--fill)')
   if (!mobile.value || tab.value !== 'pharmacies' || !map || !map.offsetParent) return
-  const top = map.getBoundingClientRect().top + window.scrollY
+  const top = map.getBoundingClientRect().top + routeScrollY()
   const footer = document.querySelector('.q-layout .q-footer')?.offsetHeight || 0
   const height = Math.max(MAP_MIN_HEIGHT, Math.floor(window.innerHeight - top - footer - TABS_HEIGHT))
   if (Math.abs(height - mapHeight.value) > 1) {
@@ -167,8 +167,10 @@ watch(tab, async (name) => {
 })
 // the chosen section starts under the tabs (not halfway down the previous one)
 watch(tab, () => {
-  const top = (root.value?.getBoundingClientRect().top || 0) + window.scrollY - headerOffset.value
-  if (window.scrollY > top) window.scrollTo({ top })
+  // the routes scroll inside the layout's area (s-route-scroll), not the window
+  const y = routeScrollY()
+  const top = (root.value?.getBoundingClientRect().top || 0) + y - headerOffset.value
+  if (y > top) scrollRouteTo({ top })
 })
 </script>
 

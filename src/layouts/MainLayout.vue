@@ -18,8 +18,11 @@
       </q-list>
     </s-drawer>
 
-    <q-page-container>
-      <router-view />
+    <!-- the routes scroll inside their own area (s-route-scroll, quasar_resaas) -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <router-view />
+      </s-route-scroll>
     </q-page-container>
   </q-layout>
 </template>

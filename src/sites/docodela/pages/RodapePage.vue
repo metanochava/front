@@ -76,7 +76,7 @@
 <script>
 import { defineComponent, nextTick } from "vue"
 import { useRouter } from "vue-router"
-import { tdc } from "quasar_resaas"
+import { tdc, scrollRouteTo } from "quasar_resaas"
 
 const PHONE = '+258 86 055 5999'
 const EMAIL = 'info@docodela.co.mz'
@@ -130,7 +130,7 @@ export default defineComponent({
     async function open (link) {
       await router.push({ name: link.route, params: link.params || {} })
       if (!link.anchor) {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        scrollRouteTo({ top: 0, behavior: 'smooth' })
         return
       }
       await nextTick()

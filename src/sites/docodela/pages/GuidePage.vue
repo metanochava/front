@@ -38,7 +38,7 @@
 <script>
 import { defineComponent, computed, watch, nextTick } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { tdc } from "quasar_resaas"
+import { tdc, scrollRouteTo } from "quasar_resaas"
 import { guides, guideBySlug } from "../guides"
 import ArticleBody from "../components/ArticleBody.vue"
 
@@ -55,7 +55,7 @@ export default defineComponent({
     const guide = computed(() => guideBySlug(route.params.slug) || guides[0])
     const others = computed(() => guides.filter(item => item.slug !== guide.value.slug))
 
-    watch(() => route.params.slug, () => window.scrollTo({ top: 0 }))
+    watch(() => route.params.slug, () => scrollRouteTo({ top: 0 }))
 
     async function backToGuides () {
       await router.push({ name: 'home' })

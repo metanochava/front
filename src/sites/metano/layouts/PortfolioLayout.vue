@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar'
-import { tdc } from 'quasar_resaas'
+import { tdc, routeScrollY, routeScrollMax, onRouteScroll } from 'quasar_resaas'
 
 import '../css/portfolio.css'
 import { profile, sections } from '../metano.config'
@@ -67,10 +67,13 @@ function watchSections() {
   })
 }
 
+// the routes scroll inside the layout's area (s-route-scroll), not the window
+let stopScroll = null
 const onScroll = () => {
-  scrolled.value = window.scrollY > 12
-  const max = document.documentElement.scrollHeight - window.innerHeight
-  progress.value = max > 0 ? Math.min(1, window.scrollY / max) : 0
+  const y = routeScrollY()
+  scrolled.value = y > 12
+  const max = routeScrollMax()
+  progress.value = max > 0 ? Math.min(1, y / max) : 0
 }
 
 // the card spotlight (.pf-card / .pf-spot in portfolio.css): one listener for the page
@@ -105,13 +108,13 @@ onMounted(() => {
   document.title = `${profile.name} — ${tdc(profile.roles[0])}`
   loadFonts()
   onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
+  stopScroll = onRouteScroll(onScroll)
   window.addEventListener('pointermove', onPointerMove, { passive: true })
   setTimeout(watchSections, 300)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', onScroll)
+  stopScroll?.()
   window.removeEventListener('pointermove', onPointerMove)
   observer?.disconnect()
 })
@@ -159,18 +162,22 @@ onBeforeUnmount(() => {
       </div>
     </q-header>
 
-    <q-page-container>
-      <q-page id="top">
-        <router-view />
-      </q-page>
-    </q-page-container>
+    <!-- the routes (and the site's footer) scroll inside their own area
+         (s-route-scroll, quasar_resaas), between the header and the bottom -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <q-page id="top">
+          <router-view />
+        </q-page>
 
-    <footer class="foot">
-      <div class="pf-wrap foot__inner">
-        <span>© {{ new Date().getFullYear() }} {{ profile.name }}</span>
-        <span class="foot__built">{{ tdc('Designed and built with Vue 3 and Quasar.') }}</span>
-      </div>
-    </footer>
+        <footer class="foot">
+          <div class="pf-wrap foot__inner">
+            <span>© {{ new Date().getFullYear() }} {{ profile.name }}</span>
+            <span class="foot__built">{{ tdc('Designed and built with Vue 3 and Quasar.') }}</span>
+          </div>
+        </footer>
+      </s-route-scroll>
+    </q-page-container>
   </q-layout>
 </template>
 

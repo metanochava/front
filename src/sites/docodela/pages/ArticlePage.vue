@@ -42,7 +42,7 @@
 <script>
 import { defineComponent, computed, watch } from "vue"
 import { useRoute } from "vue-router"
-import { tdc } from "quasar_resaas"
+import { tdc, scrollRouteTo } from "quasar_resaas"
 import { articles, articleBySlug } from "../blog"
 import ArticleBody from "../components/ArticleBody.vue"
 
@@ -58,7 +58,7 @@ export default defineComponent({
     const article = computed(() => articleBySlug(route.params.slug) || articles[0])
     const others = computed(() => articles.filter(item => item.slug !== article.value.slug))
 
-    watch(() => route.params.slug, () => window.scrollTo({ top: 0 }))
+    watch(() => route.params.slug, () => scrollRouteTo({ top: 0 }))
 
     return {
       tdc,

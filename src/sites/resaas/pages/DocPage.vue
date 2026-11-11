@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { tdc } from 'quasar_resaas'
+import { tdc, scrollRouteTo } from 'quasar_resaas'
 
 import { renderDoc, headingId } from '../render'
 import { destroyCodeBlocks, mountCodeBlocks } from '../codeBlocks'
@@ -47,7 +47,7 @@ async function afterRender () {
   const title = rendered.value ? titleOf(raw.value, slug.value) : tdc('Page not found')
   document.title = `${title} — RESAAS`
   const anchor = route.query.a || (route.query.h ? headingId(route.query.h) : '')
-  if (!scrollToId(anchor, false)) window.scrollTo({ top: 0 })
+  if (!scrollToId(anchor, false)) scrollRouteTo({ top: 0 })
   observeHeadings()
 }
 

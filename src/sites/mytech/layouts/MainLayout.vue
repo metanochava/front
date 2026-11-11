@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
-import { tdc, useUserStore, useEntityStore } from 'quasar_resaas'
+import { tdc, useUserStore, useEntityStore, routeScrollY, onRouteScroll, scrollRouteTo } from 'quasar_resaas'
 
 import '../css/mytech.css'
 import { profile, contact, divisions } from '../mytech.config'
@@ -50,7 +50,9 @@ function loadFonts() {
   document.head.appendChild(link)
 }
 
-const onScroll = () => { scrolled.value = window.scrollY > 12 }
+// the routes scroll inside the layout's area (s-route-scroll), not the window
+const onScroll = () => { scrolled.value = routeScrollY() > 12 }
+let stopScroll = null
 
 // the card spotlight (.mt-card / .mt-spot in mytech.css): one listener for the page
 function onPointerMove(event) {
@@ -82,7 +84,7 @@ onMounted(() => {
 
   loadFonts()
   onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
+  stopScroll = onRouteScroll(onScroll)
   window.addEventListener('pointermove', onPointerMove, { passive: true })
   Entity.getSettings().then(() => {
     if (User.Entity?.id) {
@@ -94,11 +96,11 @@ onMounted(() => {
 })
 
 function toTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  scrollRouteTo({ top: 0, behavior: 'smooth' })
 }
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', onScroll)
+  stopScroll?.()
   window.removeEventListener('pointermove', onPointerMove)
 })
 </script>
@@ -149,79 +151,83 @@ onBeforeUnmount(() => {
       </div>
     </q-header>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+    <!-- the routes (and the site's footer) scroll inside their own area
+         (s-route-scroll, quasar_resaas), between the header and the bottom -->
+    <q-page-container class="resaas-page-container">
+      <s-route-scroll>
+        <router-view />
 
-    <footer class="foot" data-test="mt-footer">
-      <!-- the four colours of the logo -->
-      <div class="foot__stripe" aria-hidden="true"><span /><span /><span /><span /></div>
+        <footer class="foot" data-test="mt-footer">
+          <!-- the four colours of the logo -->
+          <div class="foot__stripe" aria-hidden="true"><span /><span /><span /><span /></div>
 
-      <div class="mt-wrap foot__cta">
-        <div>
-          <div class="foot__eyebrow">{{ tdc('One team, four disciplines') }}</div>
-          <h2 class="foot__cta-title">{{ tdc('Technology built for real business.') }}</h2>
-        </div>
-        <div class="foot__cta-actions">
-          <router-link class="foot__btn foot__btn--light" :to="{ name: 'contact' }">
-            <q-icon name="chat" size="18px" />{{ tdc('Talk to MyTech') }}
-          </router-link>
-          <a
-            v-if="contact.whatsapp"
-            class="foot__btn foot__btn--ghost"
-            :href="`https://wa.me/${contact.whatsapp}`"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <q-icon name="fab fa-whatsapp" size="18px" />WhatsApp
-          </a>
-        </div>
-      </div>
-
-      <div class="mt-wrap foot__grid">
-        <div class="foot__brand">
-          <ul class="foot__divisions">
-            <li v-for="d in divisions" :key="d.id">
-              <q-icon :name="d.icon" size="18px" color="white" />{{ tdc(d.title) }}
-            </li>
-          </ul>
-          <div class="foot__social">
-            <a v-if="contact.email" :href="`mailto:${contact.email}`" aria-label="Email"><q-icon name="mail" size="20px" /></a>
-            <a v-if="contact.phone" :href="`tel:${contact.phone.replace(/\s+/g, '')}`" :aria-label="tdc('Phone')"><q-icon name="call" size="20px" /></a>
-            <a v-if="contact.whatsapp" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><q-icon name="fab fa-whatsapp" size="20px" /></a>
-            <a v-if="contact.linkedin" :href="contact.linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><q-icon name="fab fa-linkedin-in" size="20px" /></a>
+          <div class="mt-wrap foot__cta">
+            <div>
+              <div class="foot__eyebrow">{{ tdc('One team, four disciplines') }}</div>
+              <h2 class="foot__cta-title">{{ tdc('Technology built for real business.') }}</h2>
+            </div>
+            <div class="foot__cta-actions">
+              <router-link class="foot__btn foot__btn--light" :to="{ name: 'contact' }">
+                <q-icon name="chat" size="18px" />{{ tdc('Talk to MyTech') }}
+              </router-link>
+              <a
+                v-if="contact.whatsapp"
+                class="foot__btn foot__btn--ghost"
+                :href="`https://wa.me/${contact.whatsapp}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <q-icon name="fab fa-whatsapp" size="18px" />WhatsApp
+              </a>
+            </div>
           </div>
-        </div>
 
-        <div class="foot__col">
-          <div class="foot__heading">{{ tdc('Solutions') }}</div>
-          <router-link v-for="d in divisions.slice(0,3)" :key="d.id" :to="{ name: 'solution', params: { slug: d.slug } }">{{ tdc(d.title) }}</router-link>
-        </div>
+          <div class="mt-wrap foot__grid">
+            <div class="foot__brand">
+              <ul class="foot__divisions">
+                <li v-for="d in divisions" :key="d.id">
+                  <q-icon :name="d.icon" size="18px" color="white" />{{ tdc(d.title) }}
+                </li>
+              </ul>
+              <div class="foot__social">
+                <a v-if="contact.email" :href="`mailto:${contact.email}`" aria-label="Email"><q-icon name="mail" size="20px" /></a>
+                <a v-if="contact.phone" :href="`tel:${contact.phone.replace(/\s+/g, '')}`" :aria-label="tdc('Phone')"><q-icon name="call" size="20px" /></a>
+                <a v-if="contact.whatsapp" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><q-icon name="fab fa-whatsapp" size="20px" /></a>
+                <a v-if="contact.linkedin" :href="contact.linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><q-icon name="fab fa-linkedin-in" size="20px" /></a>
+              </div>
+            </div>
 
-        <div class="foot__col">
-          <div class="foot__heading">{{ tdc('Company') }}</div>
-          <router-link :to="{ name: 'training' }">{{ tdc('Training') }}</router-link>
-          <router-link :to="{ name: 'equipment' }">{{ tdc('Equipment') }}</router-link>
-          <router-link :to="{ name: 'company' }">{{ tdc('About MyTech') }}</router-link>
-          <router-link :to="{ name: 'contact' }">{{ tdc('Contact') }}</router-link>
-        </div>
+            <div class="foot__col">
+              <div class="foot__heading">{{ tdc('Solutions') }}</div>
+              <router-link v-for="d in divisions.slice(0,3)" :key="d.id" :to="{ name: 'solution', params: { slug: d.slug } }">{{ tdc(d.title) }}</router-link>
+            </div>
 
-        <div class="foot__col" v-if="contact.email || contact.phone || contact.whatsapp">
-          <div class="foot__heading">{{ tdc('Contact') }}</div>
-          <a v-if="contact.email" class="foot__contact" :href="`mailto:${contact.email}`"><q-icon name="mail" size="18px" />{{ contact.email }}</a>
-          <a v-if="contact.phone" class="foot__contact" :href="`tel:${contact.phone.replace(/\s+/g, '')}`"><q-icon name="call" size="18px" />{{ contact.phone }}</a>
-          <a v-if="contact.whatsapp" class="foot__contact" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer"><q-icon name="fab fa-whatsapp" size="18px" />WhatsApp</a>
-          <span v-if="contact.address" class="foot__contact"><q-icon name="place" size="18px" />{{ contact.address }}</span>
-        </div>
-      </div>
+            <div class="foot__col">
+              <div class="foot__heading">{{ tdc('Company') }}</div>
+              <router-link :to="{ name: 'training' }">{{ tdc('Training') }}</router-link>
+              <router-link :to="{ name: 'equipment' }">{{ tdc('Equipment') }}</router-link>
+              <router-link :to="{ name: 'company' }">{{ tdc('About MyTech') }}</router-link>
+              <router-link :to="{ name: 'contact' }">{{ tdc('Contact') }}</router-link>
+            </div>
 
-      <div class="mt-wrap foot__bottom">
-        <span>© {{ new Date().getFullYear() }} {{ profile.name }} · {{ tdc('All rights reserved') }}</span>
-        <button type="button" class="foot__top" :aria-label="tdc('Back to top')" @click="toTop">
-          <q-icon name="arrow_upward" size="20px" />
-        </button>
-      </div>
-    </footer>
+            <div class="foot__col" v-if="contact.email || contact.phone || contact.whatsapp">
+              <div class="foot__heading">{{ tdc('Contact') }}</div>
+              <a v-if="contact.email" class="foot__contact" :href="`mailto:${contact.email}`"><q-icon name="mail" size="18px" />{{ contact.email }}</a>
+              <a v-if="contact.phone" class="foot__contact" :href="`tel:${contact.phone.replace(/\s+/g, '')}`"><q-icon name="call" size="18px" />{{ contact.phone }}</a>
+              <a v-if="contact.whatsapp" class="foot__contact" :href="`https://wa.me/${contact.whatsapp}`" target="_blank" rel="noopener noreferrer"><q-icon name="fab fa-whatsapp" size="18px" />WhatsApp</a>
+              <span v-if="contact.address" class="foot__contact"><q-icon name="place" size="18px" />{{ contact.address }}</span>
+            </div>
+          </div>
+
+          <div class="mt-wrap foot__bottom">
+            <span>© {{ new Date().getFullYear() }} {{ profile.name }} · {{ tdc('All rights reserved') }}</span>
+            <button type="button" class="foot__top" :aria-label="tdc('Back to top')" @click="toTop">
+              <q-icon name="arrow_upward" size="20px" />
+            </button>
+          </div>
+        </footer>
+      </s-route-scroll>
+    </q-page-container>
   </q-layout>
 </template>
 
