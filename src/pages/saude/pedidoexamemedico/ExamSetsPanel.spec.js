@@ -6,7 +6,7 @@ import { Quasar } from 'quasar'
 // (with their type and class) to the page; saving posts the request's exams
 const { perms, http } = vi.hoisted(() => ({
   perms: new Set(),
-  http: { get: vi.fn(), post: vi.fn(async () => ({ data: {} })), delete: vi.fn() },
+  http: { get: vi.fn(), post: vi.fn(async () => ({ data: {} })), patch: vi.fn(async () => ({ data: {} })), delete: vi.fn() },
 }))
 vi.mock('quasar_resaas', () => ({
   tdc: s => s,
@@ -28,6 +28,7 @@ const stubs = {
   's-modal-card': { template: '<div><slot /><slot name="footer" /></div>' },
   's-btn': { props: ['label'], emits: ['click'], template: '<button @click="$emit(\'click\', $event)">{{ label }}<slot /></button>' },
   's-tooltip': { template: '<span class="tip"><slot /></span>' },
+  's-highlight': { props: ['text'], template: '<span>{{ text }}</span>' },
   's-input': { props: ['modelValue'], emits: ['update:modelValue'], template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />' },
 }
 
@@ -84,5 +85,39 @@ describe('ExamSetsPanel', () => {
 
     expect(http.post.mock.calls[0][1]).toEqual({ name: 'Routine', exams: ['x1', 'x2'], scope: 'mine' })
     expect(w.find('[data-test="exam-set-scope"]').exists()).toBe(false)   // no clinic option without the permission
+  })
+
+  it('the search filters by the set name or the name of one of its exams', async () => {
+    perms.add('list_examset')
+    const w = mountPanel({ search: 'glucose' })
+    await flushPromises()
+    // both sets have Glucose
+    expect(w.findAll('[data-test="exam-set"]')).toHaveLength(2)
+
+    await w.setProps({ search: 'pre-op' })
+    expect(w.findAll('[data-test="exam-set"]').map(r => r.text()).join(' ')).toContain('Pre-operative')
+    expect(w.findAll('[data-test="exam-set"]')).toHaveLength(1)
+
+    await w.setProps({ search: 'nothing like it' })
+    expect(w.find('[data-test="exam-sets-none-found"]').exists()).toBe(true)
+  })
+
+  it('edits a personal set: name, removing an exam and adding the request\'s ones', async () => {
+    perms.add('list_examset').add('change_examset')
+    const w = mountPanel({ currentExams: ['x1'] })
+    await flushPromises()
+
+    // only the personal set is editable without manage_entity_examset
+    expect(w.findAll('[data-test="exam-set-edit"]')).toHaveLength(1)
+    await w.find('[data-test="exam-set-edit"]').trigger('click')
+    await flushPromises()
+
+    await w.find('[data-test="exam-set-name"]').setValue('Mine renamed')
+    await w.find('[data-test="exam-set-add-current"]').trigger('click')
+    await w.find('[data-test="exam-set-save"]').trigger('click')
+    await flushPromises()
+
+    expect(http.patch.mock.calls[0][0]).toBe('saude/examsets/s2/')
+    expect(http.patch.mock.calls[0][1]).toEqual({ name: 'Mine renamed', exams: ['x2', 'x1'] })
   })
 })

@@ -33,17 +33,30 @@
       <div class="col-md-8 col-sm-12 col-xs-12">
         <div class="q-pa-md col-12">
 
-          <!-- catalogue maintenance: each "+" only with its own add_ permission
-               (UX only - the backend checks it again) -->
-          <s-btn
-            v-if="can.addType"
-            class="full-width q-mb-sm"
-            color="primary"
-            icon="add"
-            :label="tdc('Add exam type')"
-            data-test="exam-add-type"
-            @click="dialogs.tipo = true"
-          />
+          <!-- three tabs: the whole catalogue, the Entity's favourite exams
+               and the exam sets (the clinic's and the user's own) -->
+          <q-tabs
+            v-model="leftTab"
+            dense
+            align="center"
+            no-caps
+            active-color="primary"
+            indicator-color="primary"
+            class="q-mb-sm"
+            data-test="exam-tabs"
+          >
+            <q-tab name="general" icon="science" :label="tdc('General')" data-test="exam-tab-general">
+              <s-tooltip>{{ tdc('The whole exam catalogue') }}</s-tooltip>
+            </q-tab>
+            <q-tab v-if="can.listFavourites" name="favourites" icon="star" :label="tdc('Favourites')" data-test="exam-tab-favourites">
+              <q-badge color="amber-8" floating :label="favouriteEntries.length" />
+              <s-tooltip>{{ tdc('The clinic\'s favourite exams') }}</s-tooltip>
+            </q-tab>
+            <q-tab v-if="can.listSets" name="sets" icon="playlist_add" :label="tdc('Exam sets')" data-test="exam-tab-sets">
+              <q-badge color="primary" floating :label="setsCount" />
+              <s-tooltip>{{ tdc('Sets of exams added in one click') }}</s-tooltip>
+            </q-tab>
+          </q-tabs>
 
           <s-input
             v-model="search"
@@ -58,61 +71,26 @@
             <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
           </div>
 
-          <q-list v-else bordered class="rounded-borders">
-            <!-- named sets of exams (the clinic's and the user's own): one
-                 click adds all of them to the request -->
-            <ExamSetsPanel
-              v-if="can.listSets"
-              ref="examSets"
-              :catalogo="catalogo"
-              :current-exams="items.map(item => item.exame)"
-              @apply="applySet"
-            />
+          <!-- the three tabs stay mounted (v-show): the sets' count and the
+               "Save as exam set" dialog work before the tab is opened -->
+          <div v-else>
+            <!-- GENERAL: the catalogue -->
+            <div v-show="leftTab === 'general'" data-test="exam-panel-general">
+              <!-- catalogue maintenance: each "+" only with its own add_ permission
+                   (UX only - the backend checks it again) -->
+              <s-btn
+                v-if="can.addType"
+                class="full-width q-mb-sm"
+                color="primary"
+                icon="add"
+                :label="tdc('Add exam type')"
+                data-test="exam-add-type"
+                @click="dialogs.tipo = true"
+              >
+                <s-tooltip>{{ tdc('Add exam type') }}</s-tooltip>
+              </s-btn>
 
-            <!-- the Entity's favourite exams (saude/favouriteexams/), first and
-                 open; a search filters it like the catalogue below -->
-            <q-expansion-item
-              v-if="can.listFavourites"
-              v-model="expanded.favourites"
-              expand-separator
-              data-test="exam-favourites"
-            >
-              <template #header>
-                <q-item-section avatar>
-                  <q-icon name="star" color="amber-8" size="20px" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-weight-bold">{{ tdc('Favourites') }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge color="amber-8" :label="favouriteEntries.length" />
-                </q-item-section>
-              </template>
-
-              <div class="q-pa-sm">
-                <div v-if="!favouriteEntries.length" class="text-caption text-grey-7">
-                  {{ tdc('No favourite exams yet: use the star of an exam to add it.') }}
-                </div>
-                <div v-else class="row q-col-gutter-xs">
-                  <div
-                    v-for="entry in favouriteEntries"
-                    :key="entry.exame.id"
-                    class="col-12 col-sm-4"
-                  >
-                    <ExameRow
-                      :exame="entry.exame"
-                      :search="search"
-                      :added="isAdded(entry.exame)"
-                      favourite
-                      :can-favourite="can.removeFavourite"
-                      @add="selectAndAdd(entry.tipo, entry.classe, entry.exame)"
-                      @toggle-favourite="toggleFavourite(entry.exame)"
-                    />
-                  </div>
-                </div>
-              </div>
-            </q-expansion-item>
-
+              <q-list bordered class="rounded-borders">
             <!-- while searching every type / class found opens (no accordion group)
                  and the matching text is highlighted, as in the left menu -->
             <q-expansion-item
@@ -214,7 +192,48 @@
                 </q-card-section>
               </q-card>
             </q-expansion-item>
-          </q-list>
+              </q-list>
+            </div>
+
+            <!-- FAVOURITES: the Entity's quick list (saude/favouriteexams/);
+                 the search filters it like the catalogue -->
+            <div v-if="can.listFavourites" v-show="leftTab === 'favourites'" data-test="exam-favourites">
+              <div class="q-pa-sm">
+                <div v-if="!favouriteEntries.length" class="text-caption text-grey-7">
+                  {{ tdc('No favourite exams yet: use the star of an exam to add it.') }}
+                </div>
+                <div v-else class="row q-col-gutter-xs">
+                  <div
+                    v-for="entry in favouriteEntries"
+                    :key="entry.exame.id"
+                    class="col-12 col-sm-4"
+                  >
+                    <ExameRow
+                      :exame="entry.exame"
+                      :search="search"
+                      :added="isAdded(entry.exame)"
+                      favourite
+                      :can-favourite="can.removeFavourite"
+                      @add="selectAndAdd(entry.tipo, entry.classe, entry.exame)"
+                      @toggle-favourite="toggleFavourite(entry.exame)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- EXAM SETS: one click adds all their exams to the request -->
+            <div v-if="can.listSets" v-show="leftTab === 'sets'" data-test="exam-panel-sets">
+              <ExamSetsPanel
+                ref="examSets"
+                :catalogo="catalogo"
+                :current-exams="items.map(item => item.exame)"
+                :search="search"
+                @apply="applySet"
+                @loaded="count => (setsCount = count)"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -242,7 +261,7 @@
             icon="playlist_add"
             :label="tdc('Save as exam set')"
             data-test="exam-set-open-save"
-            @click="examSets?.openSave()"
+            @click="openSaveSet"
           >
             <s-tooltip>{{ items.length ? tdc('Save these exams as a set to add them again in one click') : tdc('Add exams to the request first, then save them as a set') }}</s-tooltip>
           </s-btn>
@@ -444,6 +463,14 @@ const can = computed(() => ({
 }))
 
 const examSets = ref(null)
+const leftTab = ref('general')
+const setsCount = ref(0)
+
+// "Save as exam set": the sets tab (where the set will show), then its dialog
+function openSaveSet() {
+  leftTab.value = 'sets'
+  examSets.value?.openSave()
+}
 
 // a set clicked: every exam of it goes to the request (those already there are skipped)
 function applySet(entries) {

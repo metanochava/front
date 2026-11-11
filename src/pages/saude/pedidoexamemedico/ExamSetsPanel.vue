@@ -1,24 +1,10 @@
 <template>
   <!-- named sets of exams (saude/examsets/): one click adds all of a set's
        exams to the request (nothing is saved until the request is). The
-       clinic's sets are everyone's; personal ones only their owner's. -->
-  <q-expansion-item
-    v-model="open"
-    expand-separator
-    data-test="exam-sets"
-  >
-    <template #header>
-      <q-item-section avatar>
-        <q-icon name="playlist_add" color="primary" size="20px" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label class="text-weight-bold">{{ tdc('Exam sets') }}</q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <q-badge color="primary" :label="sets.length" />
-      </q-item-section>
-    </template>
-
+       clinic's sets are everyone's; personal ones only their owner's. The
+       content of the "Exam sets" tab of the exam request page; the page's
+       search filters it by the set's name or the names of its exams. -->
+  <div data-test="exam-sets">
     <div class="q-pa-sm">
       <div v-if="loading" class="flex flex-center q-pa-sm">
         <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="28px" />
@@ -26,8 +12,11 @@
       <div v-else-if="!sets.length" class="text-caption text-grey-7">
         {{ tdc('No exam sets yet: add exams to the request and save them as a set.') }}
       </div>
+      <div v-else-if="!filteredSets.length" class="text-caption text-grey-7" data-test="exam-sets-none-found">
+        {{ tdc('No exam set matches the search.') }}
+      </div>
       <div v-else class="row q-col-gutter-xs">
-        <div v-for="set in sets" :key="set.id" class="col-12 col-sm-6 col-md-4">
+        <div v-for="set in filteredSets" :key="set.id" class="col-12 col-sm-6 col-md-4">
           <q-item
             clickable
             dense
@@ -40,31 +29,38 @@
               <q-icon :name="set.scope === 'entity' ? 'domain' : 'person'" :color="set.scope === 'entity' ? 'primary' : 'teal'" size="20px" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-weight-medium ellipsis">{{ set.name }}</q-item-label>
+              <q-item-label class="text-weight-medium ellipsis">
+                <s-highlight :text="set.name" :search="search" />
+              </q-item-label>
               <q-item-label caption>
                 {{ set.exams.length }} {{ tdc(set.exams.length === 1 ? 'exam' : 'exams') }} ·
                 {{ tdc(set.scope === 'entity' ? 'Clinic' : 'Mine') }}
               </q-item-label>
+              <q-item-label v-if="matchedExams(set).length" caption class="ellipsis" data-test="exam-set-matches">
+                <s-highlight :text="matchedExams(set).join(', ')" :search="search" />
+              </q-item-label>
             </q-item-section>
-            <q-item-section v-if="canRemove(set)" side>
-              <s-btn round flat dense size="sm" icon="delete_outline" color="negative" data-test="exam-set-remove" @click.stop="remove(set)">
-                <s-tooltip>{{ tdc('Remove this exam set') }}</s-tooltip>
-              </s-btn>
+            <q-item-section v-if="canEdit(set) || canRemove(set)" side>
+              <div class="row no-wrap">
+                <s-btn v-if="canEdit(set)" round flat dense size="sm" icon="edit" color="primary" data-test="exam-set-edit" @click.stop="openEdit(set)">
+                  <s-tooltip>{{ tdc('Edit this exam set') }}</s-tooltip>
+                </s-btn>
+                <s-btn v-if="canRemove(set)" round flat dense size="sm" icon="delete_outline" color="negative" data-test="exam-set-remove" @click.stop="remove(set)">
+                  <s-tooltip>{{ tdc('Remove this exam set') }}</s-tooltip>
+                </s-btn>
+              </div>
             </q-item-section>
             <s-tooltip>{{ tdc('Add every exam of this set to the request') }}</s-tooltip>
           </q-item>
         </div>
       </div>
     </div>
-  </q-expansion-item>
+  </div>
 
-  <!-- save the exams added to the request as a set -->
-  <q-dialog v-model="saveDialog" persistent>
-    <s-modal-card :title="tdc('Save as exam set')" icon="playlist_add" width="480px">
+  <!-- create (the exams added to the request) or edit a set -->
+  <q-dialog v-model="dialog" persistent>
+    <s-modal-card :title="editing ? tdc('Edit exam set') : tdc('Save as exam set')" :icon="editing ? 'edit' : 'playlist_add'" width="560px">
       <div class="column q-gutter-y-md">
-        <div class="text-caption text-grey-7">
-          {{ currentExams.length }} {{ tdc(currentExams.length === 1 ? 'exam' : 'exams') }}
-        </div>
         <s-input
           v-model="draft.name"
           :label="tdc('Set name')"
@@ -75,20 +71,55 @@
           data-test="exam-set-name"
         />
         <q-option-group
-          v-if="canManageEntity"
+          v-if="!editing && canManageEntity"
           v-model="draft.scope"
           :options="scopeOptions"
           inline
           data-test="exam-set-scope"
         />
+
+        <div>
+          <div class="row items-center q-mb-xs">
+            <div class="text-subtitle2">{{ draft.exams.length }} {{ tdc(draft.exams.length === 1 ? 'exam' : 'exams') }}</div>
+            <q-space />
+            <s-btn
+              v-if="editing"
+              flat dense no-caps size="sm" color="primary" icon="playlist_add"
+              :label="tdc('Add the exams of the request')"
+              :disable="!missingFromDraft.length"
+              data-test="exam-set-add-current"
+              @click="addCurrent"
+            >
+              <s-tooltip>{{ tdc('Add to this set the exams already in the request') }}</s-tooltip>
+            </s-btn>
+          </div>
+          <div class="row q-gutter-xs" data-test="exam-set-draft-exams">
+            <q-chip
+              v-for="id in draft.exams"
+              :key="id"
+              dense
+              :removable="editing"
+              color="primary"
+              text-color="white"
+              @remove="removeFromDraft(id)"
+            >
+              {{ examLabel(id) }}
+            </q-chip>
+          </div>
+        </div>
         <div v-if="errors.exams" class="text-negative text-caption">{{ errors.exams }}</div>
       </div>
       <template #footer>
         <s-btn flat :label="tdc('Cancel')" v-close-popup>
           <s-tooltip>{{ tdc('Close without saving') }}</s-tooltip>
         </s-btn>
-        <s-btn color="primary" icon="save" :label="tdc('Save')" :loading="saving" :disable="!draft.name.trim()" data-test="exam-set-save" @click="save">
-          <s-tooltip>{{ tdc('Save these exams as a set') }}</s-tooltip>
+        <s-btn
+          color="primary" icon="save" :label="tdc('Save')" :loading="saving"
+          :disable="!draft.name.trim() || !draft.exams.length"
+          data-test="exam-set-save"
+          @click="save"
+        >
+          <s-tooltip>{{ editing ? tdc('Save the changes to this set') : tdc('Save these exams as a set') }}</s-tooltip>
         </s-btn>
       </template>
     </s-modal-card>
@@ -103,24 +134,27 @@ const props = defineProps({
   // the exam catalogue [{ id, nome, classes: [{ id, nome, exames: [...] }] }]
   catalogo: { type: Array, default: () => [] },
   // ids of the exams already in the request
-  currentExams: { type: Array, default: () => [] }
+  currentExams: { type: Array, default: () => [] },
+  // the page's search: a set's name or the name/code of one of its exams
+  search: { type: String, default: '' }
 })
 
 // [{ tipo, classe, exame }] of the clicked set, in catalogue order
-const emit = defineEmits(['apply'])
+const emit = defineEmits(['apply', 'loaded'])
 
 const User = useUserStore()
 const canList = computed(() => User.can('list_examset'))
 const canAdd = computed(() => User.can('add_examset'))
+const canChange = computed(() => User.can('change_examset'))
 const canDelete = computed(() => User.can('delete_examset'))
 const canManageEntity = computed(() => User.can('manage_entity_examset'))
 
-const open = ref(true)
 const sets = ref([])
 const loading = ref(false)
-const saveDialog = ref(false)
+const dialog = ref(false)
 const saving = ref(false)
-const draft = reactive({ name: '', scope: 'mine' })
+const editing = ref(null)       // the set being edited, null when creating
+const draft = reactive({ name: '', scope: 'mine', exams: [] })
 const errors = reactive({ name: '', exams: '' })
 
 const scopeOptions = computed(() => [
@@ -136,6 +170,7 @@ async function load () {
   try {
     const { data } = await HTTPAuth.get(endpoint())
     sets.value = Array.isArray(data) ? data : []
+    emit('loaded', sets.value.length)
   } catch {
     // the alert funnel (HTTPAuth interceptor) shows why
   } finally {
@@ -154,6 +189,27 @@ const index = computed(() => {
   return map
 })
 
+function examLabel (id) {
+  const exame = index.value.get(String(id))?.exame
+  if (!exame) return tdc('Exam no longer in the catalogue')
+  return exame.codigo ? `${exame.codigo} - ${exame.nome}` : exame.nome
+}
+
+// ---------------- SEARCH ----------------
+const normalize = value => String(value || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim()
+const term = computed(() => normalize(props.search))
+
+function matchedExams (set) {
+  if (!term.value) return []
+  return set.exams.map(examLabel).filter(label => normalize(label).includes(term.value))
+}
+
+const filteredSets = computed(() => {
+  if (!term.value) return sets.value
+  return sets.value.filter(set => normalize(set.name).includes(term.value) || matchedExams(set).length)
+})
+
+// ---------------- USE ----------------
 function entriesOf (set) {
   // an exam no longer in the catalogue is skipped
   return set.exams.map(id => index.value.get(String(id))).filter(Boolean)
@@ -166,6 +222,12 @@ function allAdded (set) {
 
 function apply (set) {
   emit('apply', entriesOf(set))
+}
+
+// a clinic set is kept by who manages them; a personal one by its owner (the
+// list only has the user's own)
+function canEdit (set) {
+  return set.scope === 'entity' ? canManageEntity.value : canChange.value
 }
 
 function canRemove (set) {
@@ -189,22 +251,50 @@ function remove (set) {
   })
 }
 
-function openSave () {
-  draft.name = ''
-  draft.scope = 'mine'
+// ---------------- CREATE / EDIT ----------------
+function resetErrors () {
   errors.name = ''
   errors.exams = ''
-  saveDialog.value = true
+}
+
+function openSave () {
+  editing.value = null
+  draft.name = ''
+  draft.scope = 'mine'
+  draft.exams = props.currentExams.map(String)
+  resetErrors()
+  dialog.value = true
+}
+
+function openEdit (set) {
+  editing.value = set
+  draft.name = set.name
+  draft.scope = set.scope
+  draft.exams = set.exams.map(String)
+  resetErrors()
+  dialog.value = true
+}
+
+const missingFromDraft = computed(() => props.currentExams.map(String).filter(id => !draft.exams.includes(id)))
+
+function addCurrent () {
+  draft.exams = [...draft.exams, ...missingFromDraft.value]
+}
+
+function removeFromDraft (id) {
+  draft.exams = draft.exams.filter(item => item !== id)
 }
 
 async function save () {
   saving.value = true
-  errors.name = ''
-  errors.exams = ''
+  resetErrors()
   try {
-    await HTTPAuth.post(endpoint(), { name: draft.name.trim(), exams: props.currentExams, scope: draft.scope })
-    saveDialog.value = false
-    open.value = true
+    if (editing.value) {
+      await HTTPAuth.patch(endpoint(editing.value.id), { name: draft.name.trim(), exams: draft.exams })
+    } else {
+      await HTTPAuth.post(endpoint(), { name: draft.name.trim(), exams: draft.exams, scope: draft.scope })
+    }
+    dialog.value = false
     await load()
   } catch (error) {
     const details = error?.response?.data?.error?.details || {}
