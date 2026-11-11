@@ -154,6 +154,12 @@
                   <!-- No doctor to check availability against: any time picked here is
                        just when the patient is expected at the unit. -->
                   <s-time v-model="form.hora_inicio" :label="tdc('Time')" @update:model-value="onGeralHoraChanged" />
+                  <!-- the branch's opening hours that day (booking_slots without a doctor) -->
+                  <div v-if="form.data && geralHours" class="text-caption q-mt-xs" :class="geralHours.length ? 'text-grey-7' : 'text-negative'" data-test="geral-branch-hours">
+                    <q-icon name="schedule" class="q-mr-xs" />
+                    <template v-if="geralHours.length">{{ tdc('Branch opening hours') }}: {{ formatIntervals(geralHours) }}</template>
+                    <template v-else>{{ tdc('The branch is closed on this day.') }}</template>
+                  </div>
                   <q-select
                     v-model="duracaoMin"
                     :options="duracaoOptions"
@@ -182,6 +188,12 @@
 
                   <div v-if="loadingSlots" class="flex flex-center q-pa-md">
                     <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
+                  </div>
+                  <div v-else-if="slotSource === 'doctor_and_branch'" class="text-caption text-grey-7 q-pa-sm rounded-borders" data-test="slot-schedules">
+                    <q-icon name="info" class="q-mr-xs" />
+                    {{ tdc('Times inside the doctor\'s schedule and the branch\'s opening hours.') }}
+                    <div>{{ tdc('Doctor') }}: {{ formatIntervals(slotSchedules.doctor) }}</div>
+                    <div>{{ tdc('Branch') }}: {{ formatIntervals(slotSchedules.branch) || tdc('Closed') }}</div>
                   </div>
                   <div v-else-if="slotSource !== 'doctor'" class="text-caption text-warning q-pa-sm bg-orange-1 rounded-borders">
                     <q-icon name="warning" class="q-mr-xs" />
@@ -456,6 +468,7 @@ function onBranchChanged() {
   form.hora_fim = null
   slots.value = []
   loadMedicos()
+  loadGeralHours()
 }
 
 const medicoOptions = computed(() => {
@@ -502,8 +515,32 @@ function selectMedico(m) {
 const slots = ref([])
 const loadingSlots = ref(false)
 const horarioConfigurado = ref(true)
-// where the free times came from: 'doctor' | 'branch' | 'default'
+// where the free times came from: 'doctor_and_branch' (both schedules, only
+// the times in the two) | 'doctor' | 'branch' | 'default'
 const slotSource = ref('doctor')
+// each schedule of the day, as the backend sent them ([[HH:MM, HH:MM]] or null)
+const slotSchedules = ref({ doctor: null, branch: null })
+// GERAL (no doctor): the branch's opening hours that day, null = not configured
+const geralHours = ref(null)
+
+function formatIntervals (intervals) {
+  return (intervals || []).map(([start, end]) => `${start}–${end}`).join(', ')
+}
+
+async function loadGeralHours () {
+  geralHours.value = null
+  if (!isGeral.value || !form.data) return
+  try {
+    const { data } = await HTTPAuth.get(url({
+      type: 'u',
+      url: 'saude/agendas/booking_slots/',
+      params: { branch: form.branch || undefined, data: form.data.replace(/\//g, '-') },
+    }))
+    geralHours.value = data.branch
+  } catch {
+    geralHours.value = null
+  }
+}
 const duracaoMin = ref(30)
 
 function toMinutes(hhmm) {
@@ -536,7 +573,8 @@ async function buildSlots() {
       params: { branch: form.branch || undefined, medico: form.medico, data: iso, exclude: props.editId || undefined },
     }))
     slotSource.value = data.source
-    horarioConfigurado.value = data.source === 'doctor'
+    slotSchedules.value = { doctor: data.doctor || null, branch: data.branch || null }
+    horarioConfigurado.value = data.source === 'doctor' || data.source === 'doctor_and_branch'
     const horarios = (data.intervals || []).map(([inicio, fim]) => ({ hora_inicio: inicio, hora_fim: fim }))
     const agendas = (data.busy || []).map(([inicio, fim]) => ({ inicio: toMinutes(inicio), fim: toMinutes(fim) }))
 
@@ -564,6 +602,7 @@ async function buildSlots() {
 }
 
 function onDataChanged() {
+  loadGeralHours()
   buildSlots()
 }
 
