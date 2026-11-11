@@ -234,8 +234,9 @@
           </div>
 
           <s-btn
-            v-if="can.addSet && items.length"
+            v-if="can.addSet"
             flat dense no-caps
+            :disable="!items.length"
             class="full-width q-mb-sm"
             color="primary"
             icon="playlist_add"
@@ -243,7 +244,7 @@
             data-test="exam-set-open-save"
             @click="examSets?.openSave()"
           >
-            <s-tooltip>{{ tdc('Save these exams as a set to add them again in one click') }}</s-tooltip>
+            <s-tooltip>{{ items.length ? tdc('Save these exams as a set to add them again in one click') : tdc('Add exams to the request first, then save them as a set') }}</s-tooltip>
           </s-btn>
 
            <s-editor
