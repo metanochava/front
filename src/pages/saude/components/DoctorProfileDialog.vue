@@ -1,11 +1,15 @@
 <template>
-  <!-- the doctor of a record (right menu: the doctor's photo). Also the
-       public site's doctor profile, with `public-doctor`: the same dialog with
-       only what may be public (saude/publicbooking/doctors/) - never the
-       signature, the stamp or the HR data -->
+  <!-- the doctor of a record (right menu: the doctor's photo) and the public
+       site's doctor profile (`public-doctor`): ONE dialog. Its body is what may
+       be public (saude/doctorprofile/<employee>/ in the app - any member of the
+       clinic, no HR permission; saude/publicbooking/ on the site): photo,
+       category, Medical Council number, specialties, bio, languages, branches
+       and the patients' ratings. In the app, what needs a permission is added
+       only for whoever has it (HR data: view_employee; signature and stamp:
+       list_medico) - a missing permission never breaks the dialog. -->
   <q-dialog :persistent="!isPublic" v-model="open" @show="load">
     <s-modal-card
-      :title="fullName || fallbackName || tdc('Doctor')"
+      :title="profile?.name || fallbackName || tdc('Doctor')"
       icon="medical_services"
       width="900px"
     >
@@ -13,7 +17,7 @@
         <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
       </div>
 
-      <div v-else-if="!isPublic && (error || !staff)" class="text-center q-pa-xl">
+      <div v-else-if="error || !profile" class="text-center q-pa-xl">
         <q-icon name="error_outline" size="40px" color="negative" />
         <div class="q-mt-sm q-mb-md">{{ tdc('Could not load the doctor information.') }}</div>
         <s-btn flat color="primary" icon="refresh" :label="tdc('Try again')" @click="load">
@@ -21,9 +25,9 @@
         </s-btn>
       </div>
 
-      <template v-else>
-        <!-- ============ PROFESSIONAL DATA ============ -->
+      <div v-else class="column q-gutter-y-md">
         <div class="row q-col-gutter-md">
+          <!-- ============ PROFESSIONAL DATA ============ -->
           <div class="col-12 col-md-8">
             <s-card flat bordered class="full-height">
               <q-card-section class="section-title row items-center no-wrap">
@@ -35,6 +39,8 @@
               <q-separator />
 
               <q-card-section>
+                <div v-if="profile.bio" class="q-mb-md pre-line" data-test="doctor-bio">{{ profile.bio }}</div>
+
                 <div class="row q-col-gutter-md">
                   <div v-for="fact in facts" :key="fact.label" class="col-12 col-sm-6">
                     <div class="fact-label">
@@ -61,21 +67,23 @@
             </s-card>
           </div>
 
-          <!-- ============ PHOTO (public) ============ -->
-          <div v-if="isPublic" class="col-12 col-md-4">
-            <s-card flat bordered class="full-height">
-              <q-card-section class="flex flex-center q-pa-lg" data-test="doctor-photo">
+          <div class="col-12 col-md-4 column q-gutter-y-md">
+            <!-- ============ PHOTO ============ -->
+            <s-card flat bordered>
+              <q-card-section class="column items-center q-pa-lg" data-test="doctor-photo">
                 <q-avatar size="150px" color="primary" text-color="white">
-                  <img v-if="publicDoctor.photo" :src="publicDoctor.photo" :alt="publicDoctor.name">
-                  <span v-else class="doctor-initials">{{ initials(publicDoctor.name) }}</span>
+                  <img v-if="profile.photo" :src="profile.photo" :alt="profile.name">
+                  <span v-else class="doctor-initials">{{ initials(profile.name) }}</span>
                 </q-avatar>
+                <div v-if="rating?.count" class="row items-center q-mt-sm q-gutter-x-xs" data-test="doctor-stars">
+                  <q-rating :model-value="rating.average || 0" readonly size="18px" color="amber" icon="star_border" icon-selected="star" icon-half="star_half" />
+                  <span class="text-caption">{{ Number(rating.average).toFixed(1) }} ({{ rating.count }})</span>
+                </div>
               </q-card-section>
             </s-card>
-          </div>
 
-          <!-- ============ SIGNATURE + STAMP ============ -->
-          <div v-else class="col-12 col-md-4">
-            <s-card flat bordered class="full-height">
+            <!-- ============ SIGNATURE + STAMP (list_medico only) ============ -->
+            <s-card v-if="!isPublic && medico" flat bordered>
               <q-card-section class="section-title">
                 <q-icon name="draw" size="20px" class="q-mr-xs" /> {{ tdc('Signature and stamp') }}
               </q-card-section>
@@ -92,7 +100,15 @@
             </s-card>
           </div>
         </div>
-      </template>
+
+        <!-- ============ RATINGS ============ -->
+        <DoctorRatingCard
+          v-model:scope="scope"
+          :rating="rating"
+          :loading="ratingLoading"
+          @moderate="moderate"
+        />
+      </div>
 
       <template #footer>
         <s-btn flat :label="tdc('Close')" v-close-popup>
@@ -108,11 +124,11 @@
           <s-tooltip>{{ tdc('Book a consultation with this doctor') }}</s-tooltip>
         </s-btn>
         <s-btn
-          v-if="!isPublic && medico?.id"
+          v-if="!isPublic && medicoId && canOpenRecord"
           color="primary"
           icon="open_in_new"
           :label="tdc('Open doctor record')"
-          :to="{ name: 'view_medico', params: { id: medico.id } }"
+          :to="{ name: 'view_medico', params: { id: medicoId } }"
           v-close-popup
         >
           <s-tooltip>{{ tdc('Open doctor record') }}</s-tooltip>
@@ -123,19 +139,20 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { tdc, ds } from 'quasar_resaas'
+import { computed, ref, watch } from 'vue'
+import { tdc, ds, HTTPAuth, HTTPClient, url, useUserStore } from 'quasar_resaas'
 import { useEmployeeStore } from '../../hr/stores/EmployeeStore.js'
 import { useMedicoStore } from '../medico/medicoStore'
+import DoctorRatingCard from './DoctorRatingCard.vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
   // the record's `employee` (an id, or the {id, ...} relation object)
   employee: { type: [Object, String, Number], default: null },
   fallbackName: { type: String, default: '' },
-  // the public site: a doctor of saude/publicbooking/doctors/ (nothing loaded)
+  // the public site: a doctor of saude/publicbooking/doctors/
   publicDoctor: { type: Object, default: null },
-  // the clinic's branches ({ id, name }), to name where the doctor works
+  // the clinic's branches ({ id, name }), to name where the doctor works (site)
   branches: { type: Array, default: () => [] },
   // public site: show "Book appointment"
   bookable: { type: Boolean, default: false }
@@ -150,36 +167,76 @@ const open = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
+const User = useUserStore()
 const Employee = useEmployeeStore()
 const Medico = useMedicoStore()
 
-const staff = ref(null)
-const medico = ref(null)
+// the app's public profile (saude/doctorprofile/) - on the site, publicDoctor
+const internalProfile = ref(null)
+const staff = ref(null)       // HR data, only with view_employee
+const medico = ref(null)      // signature/stamp/notes, only with list_medico
+const rating = ref(null)
+const scope = ref('entity')
 const loading = ref(false)
+const ratingLoading = ref(false)
 const error = ref(false)
 
 const employeeId = computed(() => (props.employee && typeof props.employee === 'object' ? props.employee.id : props.employee))
+const profile = computed(() => (isPublic.value ? props.publicDoctor : internalProfile.value))
+const can = (perm) => (typeof User?.can === 'function' ? User.can(perm) : false)
+const canOpenRecord = computed(() => can('view_medico'))
+const medicoId = computed(() => medico.value?.id || internalProfile.value?.medico_id)
+
+function profileUrl () {
+  return url({ type: 'u', url: `saude/doctorprofile/${employeeId.value}/`, params: { scope: scope.value } })
+}
+
+async function loadRating () {
+  ratingLoading.value = true
+  try {
+    if (isPublic.value) {
+      const { data } = await HTTPClient.get(url({ type: 'u', url: 'saude/publicbooking/rating/', params: { doctor: props.publicDoctor.id, scope: scope.value } }))
+      rating.value = data
+    } else {
+      const { data } = await HTTPAuth.get(profileUrl())
+      internalProfile.value = data
+      rating.value = data.rating
+    }
+  } catch {
+    // the rating stays as it was; the rest of the dialog is unaffected
+  } finally {
+    ratingLoading.value = false
+  }
+}
 
 // fetchPage only reads: it leaves Employee.row/rows and Medico.row/rows to the page that owns them.
-async function load() {
-  if (isPublic.value) return
+async function loadExtras () {
+  const [emp, doc] = await Promise.allSettled([
+    can('view_employee') ? Employee.fetchPage({ id: employeeId.value, page_size: 1 }) : null,
+    can('list_medico') ? Medico.fetchPage({ employee: employeeId.value, page_size: 1 }) : null
+  ])
+  staff.value = emp.status === 'fulfilled' ? (emp.value?.rows?.[0] || null) : null
+  medico.value = doc.status === 'fulfilled' ? (doc.value?.rows?.[0] || null) : null
+}
+
+async function load () {
+  error.value = false
+  if (isPublic.value) {
+    rating.value = props.publicDoctor.rating || null
+    await loadRating()
+    return
+  }
   if (!employeeId.value) {
     error.value = true
     return
   }
 
   loading.value = true
-  error.value = false
-
   try {
-    const [emp, doc] = await Promise.all([
-      Employee.fetchPage({ id: employeeId.value, page_size: 1 }),
-      Medico.fetchPage({ employee: employeeId.value, page_size: 1 })
-    ])
-
-    staff.value = emp.rows[0] || null
-    medico.value = doc.rows[0] || null
-    error.value = !staff.value
+    const { data } = await HTTPAuth.get(profileUrl())
+    internalProfile.value = data
+    rating.value = data.rating
+    await loadExtras()
   } catch {
     error.value = true
   } finally {
@@ -187,37 +244,51 @@ async function load() {
   }
 }
 
+watch(scope, () => { if (open.value) loadRating() })
+
+async function moderate (comment, status) {
+  try {
+    await HTTPAuth.post(url({ type: 'u', url: `hr/employeeratings/${comment.id}/moderate/` }), { status })
+    await loadRating()
+  } catch {
+    // the alert funnel (HTTPAuth interceptor) shows why
+  }
+}
+
 const label = (value) => (value && typeof value === 'object' ? value.label : value)
 
-const fullName = computed(() => isPublic.value ? props.publicDoctor.name : (staff.value?.person_data?.full_name || ''))
-const isActive = computed(() => medico.value ? medico.value.ativo !== false : true)
-const specialties = computed(() => isPublic.value
-  ? (props.publicDoctor.specialties || []).map(s => ({ id: s.id, label: tdc(s.title) }))
-  : (medico.value?.especialidade || []))
+const isActive = computed(() => (internalProfile.value ? internalProfile.value.active !== false : true))
+const specialties = computed(() => (profile.value?.specialties || []).map(s => ({ id: s.id, label: tdc(s.title) })))
 
-function initials(name) {
+function initials (name) {
   return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0].toUpperCase()).join('') || '?'
 }
 
-const publicBranches = computed(() => {
+const branchNames = computed(() => {
+  if (!isPublic.value) return (internalProfile.value?.branch_names || []).join(' · ')
   const ids = new Set(props.publicDoctor?.branches || [])
   return props.branches.filter(branch => ids.has(branch.id)).map(branch => branch.name).join(' · ')
 })
 
-const facts = computed(() => isPublic.value ? [
-  { icon: 'confirmation_number', label: tdc('Order number'), value: props.publicDoctor.order_number },
-  { icon: 'category', label: tdc('Category'), value: props.publicDoctor.category },
-  { icon: 'place', label: tdc('Branches'), value: publicBranches.value }
-] : [
-  { icon: 'confirmation_number', label: tdc('Order number'), value: medico.value?.numero_ordem },
-  { icon: 'category', label: tdc('Category'), value: medico.value?.categoria },
-  { icon: 'work_outline', label: tdc('Position'), value: staff.value?.position_data?.title },
-  { icon: 'fingerprint', label: tdc('Employee code'), value: staff.value?.code },
-  { icon: 'verified_user', label: tdc('Employment status'), value: label(staff.value?.employment_status) },
-  { icon: 'event', label: tdc('Hire date'), value: staff.value?.hire_date ? ds(staff.value.hire_date) : '' },
-  { icon: 'mail_outline', label: tdc('Work email'), value: staff.value?.work_email },
-  { icon: 'call', label: tdc('Work phone'), value: staff.value?.work_phone }
-])
+const facts = computed(() => {
+  const list = [
+    { icon: 'confirmation_number', label: tdc('Order number'), value: profile.value?.order_number },
+    { icon: 'category', label: tdc('Category'), value: profile.value?.category },
+    { icon: 'place', label: tdc('Branches'), value: branchNames.value },
+    { icon: 'translate', label: tdc('Languages'), value: profile.value?.languages }
+  ]
+  if (!isPublic.value && staff.value) {
+    list.push(
+      { icon: 'work_outline', label: tdc('Position'), value: staff.value.position_data?.title },
+      { icon: 'fingerprint', label: tdc('Employee code'), value: staff.value.code },
+      { icon: 'verified_user', label: tdc('Employment status'), value: label(staff.value.employment_status) },
+      { icon: 'event', label: tdc('Hire date'), value: staff.value.hire_date ? ds(staff.value.hire_date) : '' },
+      { icon: 'mail_outline', label: tdc('Work email'), value: staff.value.work_email },
+      { icon: 'call', label: tdc('Work phone'), value: staff.value.work_phone }
+    )
+  }
+  return list
+})
 
 const credentials = computed(() => [
   { label: tdc('Signature'), url: medico.value?.assinatura?.url },

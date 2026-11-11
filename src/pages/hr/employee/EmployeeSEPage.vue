@@ -137,6 +137,36 @@
                   dense outlined
                 />
               </div>
+
+              <!-- PUBLIC PROFILE: shown on the clinic's site and in the
+                   doctor dialog to colleagues without HR permissions -->
+              <div class="col-12 text-subtitle2 q-mt-sm">
+                <q-icon name="public" class="q-mr-xs" />{{ tdc('Public profile') }}
+              </div>
+              <div class="col-12 col-md-8">
+                <s-input
+                  v-model="Employee.form.public_bio"
+                  type="textarea"
+                  autogrow
+                  :label="tdc('Public presentation')"
+                  :hint="tdc('Shown on the public site: never personal or HR data.')"
+                  dense outlined
+                />
+              </div>
+              <div class="col-12 col-md-4">
+                <s-input
+                  v-model="Employee.form.public_languages"
+                  :label="tdc('Languages spoken')"
+                  :hint="tdc('For example: Portuguese, English')"
+                  dense outlined
+                />
+              </div>
+              <div class="col-12">
+                <s-toggle
+                  v-model="Employee.form.share_ratings_globally"
+                  :label="tdc('Count this employee ratings in the platform-wide average')"
+                />
+              </div>
             </div>
           </q-card-section>
         </s-card>

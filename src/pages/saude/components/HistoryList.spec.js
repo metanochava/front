@@ -46,6 +46,7 @@ const global = {
   stubs: {
     's-card': { template: '<div><slot /></div>' },
     's-btn': true,
+    's-tooltip': { template: '<span class="tip"><slot /></span>' },
   },
 }
 
@@ -74,6 +75,24 @@ describe('HistoryList (right menu)', () => {
     await flushPromises()
 
     expect(ids(wrapper)).toEqual(['n1', 'old'])
+    vi.useRealTimers()
+    wrapper.unmount()
+  })
+
+  it('reloads the list when the title is clicked (a record saved elsewhere)', async () => {
+    vi.useFakeTimers()
+    const store = useDocs()
+    const wrapper = mount(HistoryList, { props: { store, title: 'Docs' }, global, attachTo: document.body })
+    await vi.runAllTimersAsync()
+    await flushPromises()
+    expect(ids(wrapper)).toEqual(['old'])
+
+    server.unshift({ id: 'other', created_at: '2026-11-11' })   // saved by someone else
+    await wrapper.find('[data-test="history-title"]').trigger('click')
+    await flushPromises()
+
+    expect(ids(wrapper)).toEqual(['other', 'old'])
+    expect(wrapper.find('[data-test="history-title"] .tip').exists()).toBe(true)
     vi.useRealTimers()
     wrapper.unmount()
   })

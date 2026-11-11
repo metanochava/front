@@ -32,7 +32,21 @@
                     <q-item-label>{{ formatDate(a.date) }} • {{ a.time }}</q-item-label>
                     <q-item-label caption>{{ a.doctor || '-' }}</q-item-label>
                   </q-item-section>
-                  <q-item-section side><q-badge :label="tdc(a.status)" /></q-item-section>
+                  <q-item-section side>
+                    <div class="row items-center no-wrap q-gutter-x-sm">
+                      <q-rating v-if="a.rating" :model-value="a.rating" readonly size="16px" color="amber" icon="star_border" icon-selected="star" data-test="appointment-rating" />
+                      <s-btn
+                        v-else-if="a.rateable && canRate"
+                        flat dense no-caps color="primary" icon="star_rate"
+                        :label="tdc('Rate')"
+                        data-test="appointment-rate"
+                        @click="openRate(a)"
+                      >
+                        <s-tooltip>{{ tdc('Rate the doctor of this appointment') }}</s-tooltip>
+                      </s-btn>
+                      <q-badge :label="tdc(a.status)" />
+                    </div>
+                  </q-item-section>
                 </q-item>
               </q-list>
               <div v-else class="text-grey-7">{{ tdc('No appointments.') }}</div>
@@ -132,6 +146,25 @@
         </q-tab-panels>
       </s-card>
     </div>
+    <!-- rate the doctor of a completed appointment (POST saude/me/rate/) -->
+    <q-dialog v-model="rateDialog">
+      <s-modal-card :title="tdc('Rate the doctor')" icon="star_rate" width="480px">
+        <div class="column q-gutter-y-md">
+          <div>{{ rateTarget?.doctor }} · {{ formatDate(rateTarget?.date) }}</div>
+          <q-rating v-model="rateStars" size="36px" color="amber" icon="star_border" icon-selected="star" :max="5" data-test="rate-stars" />
+          <s-input v-model="rateComment" type="textarea" autogrow outlined :label="tdc('Comment (optional)')" maxlength="2000" data-test="rate-comment" />
+          <div class="text-caption text-grey-7">{{ tdc('Your comment is shown publicly, without your name, after the clinic approves it.') }}</div>
+        </div>
+        <template #footer>
+          <s-btn flat :label="tdc('Cancel')" v-close-popup>
+            <s-tooltip>{{ tdc('Cancel') }}</s-tooltip>
+          </s-btn>
+          <s-btn color="primary" icon="send" :label="tdc('Send rating')" :disable="!rateStars" :loading="rateSaving" data-test="rate-send" @click="sendRate">
+            <s-tooltip>{{ tdc('Send rating') }}</s-tooltip>
+          </s-btn>
+        </template>
+      </s-modal-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -158,6 +191,34 @@ const TABS = [
   { name: 'vitals', icon: 'monitor_heart', label: 'My Vital Signs', permission: 'view_own_vitals' }
 ]
 const allowedTabs = computed(() => TABS.filter((t) => User.can(t.permission)))
+const canRate = computed(() => User.can('rate_own_appointments'))
+
+const rateDialog = ref(false)
+const rateTarget = ref(null)
+const rateStars = ref(0)
+const rateComment = ref('')
+const rateSaving = ref(false)
+
+function openRate (appointment) {
+  rateTarget.value = appointment
+  rateStars.value = 0
+  rateComment.value = ''
+  rateDialog.value = true
+}
+
+async function sendRate () {
+  rateSaving.value = true
+  try {
+    await HTTPAuth.post(me('rate'), { appointment: rateTarget.value.id, stars: rateStars.value, comment: rateComment.value })
+    rateTarget.value.rateable = false
+    rateTarget.value.rating = rateStars.value
+    rateDialog.value = false
+  } catch {
+    // the alert funnel (HTTPAuth interceptor) shows why
+  } finally {
+    rateSaving.value = false
+  }
+}
 
 const loading = ref(true)
 const available = ref(false)

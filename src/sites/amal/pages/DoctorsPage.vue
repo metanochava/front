@@ -63,6 +63,11 @@
                 {{ doctor.name }}
               </div>
 
+              <div v-if="doctor.rating?.count" class="row justify-center items-center q-gutter-x-xs" data-test="doctor-card-rating">
+                <q-rating :model-value="doctor.rating.average || 0" readonly size="18px" color="amber" icon="star_border" icon-selected="star" icon-half="star_half" />
+                <span class="text-caption">{{ Number(doctor.rating.average).toFixed(1) }} ({{ doctor.rating.count }})</span>
+              </div>
+
               <div class="q-mt-xs q-mb-md">
                 <q-chip
                   v-for="specialty in doctor.specialties"

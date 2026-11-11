@@ -9,10 +9,15 @@
         <!-- same height as the left menu's first bar (the q-item with the
              home / profile / menu side buttons, LeftMenu.vue): a normal,
              not dense, q-item - 48px -->
+        <!-- clicking the title reloads the list from the newest record -->
         <q-item
+          clickable
+          v-ripple
           class="items-center justify-center text-white text-weight-medium"
           :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'"
           style="font-size: 16px;"
+          data-test="history-title"
+          @click="reload"
         >
           <label
             style="
@@ -21,10 +26,13 @@
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
+              cursor: pointer;
             "
           >
-            {{ title || 'Histórico'}}
+            {{ title || tdc('History') }}
           </label>
+          <q-icon name="refresh" size="18px" class="q-ml-xs" :class="{ 'history-reloading': reloading }" />
+          <s-tooltip>{{ tdc('Reload the list') }}</s-tooltip>
         </q-item>
 
         <!-- the same plain search input as the left menu (quasar_resaas
@@ -101,6 +109,12 @@
   .top {
     height: 80px;
     z-index: 10;
+  }
+  .history-reloading {
+    animation: history-spin 0.8s linear infinite;
+  }
+  @keyframes history-spin {
+    to { transform: rotate(360deg); }
   }
 </style>
 
@@ -444,6 +458,19 @@ async function refreshFromTop() {
     scroller.value?.resume()
   } catch {
     loadError.value = true
+  }
+}
+
+// the title: reload the list by hand (a record saved elsewhere, by someone else)
+const reloading = ref(false)
+async function reload() {
+  if (reloading.value) return
+  reloading.value = true
+  search.value = ''
+  try {
+    await refreshFromTop()
+  } finally {
+    reloading.value = false
   }
 }
 
