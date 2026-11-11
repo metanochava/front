@@ -19,6 +19,7 @@
           data-test="history-title"
           @click="reload"
         >
+          <q-icon name="refresh" size="18px" class="q-mr-xs" :class="{ 'history-reloading': reloading }" />
           <label
             style="
               display: block;
@@ -31,7 +32,6 @@
           >
             {{ title || tdc('History') }}
           </label>
-          <q-icon name="refresh" size="18px" class="q-ml-xs" :class="{ 'history-reloading': reloading }" />
           <s-tooltip>{{ tdc('Reload the list') }}</s-tooltip>
         </q-item>
 

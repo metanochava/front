@@ -59,6 +59,16 @@
           </div>
 
           <q-list v-else bordered class="rounded-borders">
+            <!-- named sets of exams (the clinic's and the user's own): one
+                 click adds all of them to the request -->
+            <ExamSetsPanel
+              v-if="can.listSets"
+              ref="examSets"
+              :catalogo="catalogo"
+              :current-exams="items.map(item => item.exame)"
+              @apply="applySet"
+            />
+
             <!-- the Entity's favourite exams (saude/favouriteexams/), first and
                  open; a search filters it like the catalogue below -->
             <q-expansion-item
@@ -222,6 +232,19 @@
               {{ items.length }}
             </q-badge>
           </div>
+
+          <s-btn
+            v-if="can.addSet && items.length"
+            flat dense no-caps
+            class="full-width q-mb-sm"
+            color="primary"
+            icon="playlist_add"
+            :label="tdc('Save as exam set')"
+            data-test="exam-set-open-save"
+            @click="examSets?.openSave()"
+          >
+            <s-tooltip>{{ tdc('Save these exams as a set to add them again in one click') }}</s-tooltip>
+          </s-btn>
 
            <s-editor
             v-model="Pedidoexamemedico.form.informacao_clinica"
@@ -394,6 +417,7 @@ import TipoExameModal from './TipoExameModal.vue'
 import ExameModal from './ExameModal.vue'
 import ClassExameModal from './ClassExameModal.vue'
 import ExameRow from './ExameRow.vue'
+import ExamSetsPanel from './ExamSetsPanel.vue'
 import { usePedidoexamemedicoStore } from './pedidoexamemedicoStore.js'
 
 import { usePacienteStore } from './../paciente/pacienteStore'
@@ -413,7 +437,17 @@ const can = computed(() => ({
   listFavourites: User.can('list_favouriteexam'),
   addFavourite: User.can('add_favouriteexam'),
   removeFavourite: User.can('delete_favouriteexam'),
+  // exam sets: using them, saving the request's exams as one
+  listSets: User.can('list_examset'),
+  addSet: User.can('add_examset'),
 }))
+
+const examSets = ref(null)
+
+// a set clicked: every exam of it goes to the request (those already there are skipped)
+function applySet(entries) {
+  for (const entry of entries) selectAndAdd(entry.tipo, entry.classe, entry.exame)
+}
 
 const Pedidoexamemedico = usePedidoexamemedicoStore()
 
