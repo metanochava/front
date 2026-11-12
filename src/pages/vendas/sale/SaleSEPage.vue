@@ -204,7 +204,11 @@
                 :label="tdc('Customer') + ' (' + tdc('optional') + ')'"
                 :hint="tdc('Empty = Walk-in Customer')"
               />
+              <!-- stock is optional: the warehouse only with inventory (a
+                   doctor's office or a hotel sells catalogued services and
+                   goods without it) -->
               <s-select
+                v-if="canUseStock"
                 v-model="warehouseId"
                 :api="warehouseSelectUrl"
                 option-label="label" option-value="value"
@@ -352,7 +356,7 @@
 
 <script setup>
 import { ref, reactive, computed, nextTick, onMounted } from 'vue'
-import { tdc, url, HTTPAuth, errorMessage } from 'quasar_resaas'
+import { tdc, url, HTTPAuth, errorMessage, useUserStore } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
 import { useSaleitemStore } from './saleitemStore'
 import CameraScannerDialog from 'src/components/CameraScannerDialog.vue'
@@ -370,8 +374,14 @@ const warehouseId = ref(null)
 const cart = ref([])
 const pendingSaleId = ref(null)
 
+// stock only for who may see warehouses (inventory active and permitted -
+// UX only, the backend decides); without it the sale moves no stock
+const User = useUserStore()
+const canUseStock = computed(() => User.can('list_warehouse'))
+
 // auto-seleciona o armazém se só existir um
 ;(async () => {
+  if (!canUseStock.value) return
   try {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true', page_size: 2 } }))
     const rows = data.results ?? data

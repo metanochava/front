@@ -23,6 +23,7 @@ import { pacienteRoutes } from './paciente/pacienteRoutes'
 import { myHealthRoutes } from './myhealth/myHealthRoutes'
 import { horariomedicoRoutes } from './horariomedico/horariomedicoRoutes'
 import { medicoRoutes } from './medico/medicoRoutes'
+import { billingRoutes } from './billing/billingRoutes'
 
 export let saudeRoutes = [
   {
@@ -113,4 +114,5 @@ export let saudeRoutes = [
   ...alergiacorrenteRoutes,
   ...horariomedicoRoutes,
   ...medicoRoutes,
+  ...billingRoutes,
 ]
