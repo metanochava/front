@@ -201,7 +201,7 @@ const Sale = useSaleStore()
 const Saleitem = useSaleitemStore()
 const Payment = usePaymentStore()
 
-const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { select: 'true' } })
+const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
 
 const estado = computed(() => Sale.row?.estado?.value || Sale.row?.estado)
 const estadoColor = computed(() => (

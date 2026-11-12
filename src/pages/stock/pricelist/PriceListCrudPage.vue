@@ -2,7 +2,7 @@
   <q-page class="q-pa-sm">
     <s-auto-crud
       :key="model"
-      app="inventory" :model="model"
+      app="catalog" :model="model"
       :ignoreFields="['created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
       :ignoreFieldsFilter="['id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at']"
     />

@@ -81,7 +81,7 @@ const route = useRoute()
 const Inventorycount = useInventorycountStore()
 const Inventorycountline = useInventorycountlineStore()
 
-const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { select: 'true' } })
+const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
 
 const estado = computed(() => Inventorycount.row?.estado?.value || Inventorycount.row?.estado)
 

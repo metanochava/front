@@ -2,7 +2,7 @@ import { createBaseStore } from 'quasar_resaas'
 
 export const useProductStore = createBaseStore(
   'product',
-  { app: 'inventory', model: 'Product' },
+  { app: 'catalog', model: 'Product' },
   {
     state: () => ({}),
     getters: {

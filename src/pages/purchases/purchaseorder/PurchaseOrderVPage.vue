@@ -227,7 +227,7 @@ const receivable = computed(() => ['approved', 'partially_received'].includes(st
 const cancellable = computed(() => ['draft', 'submitted', 'approved'].includes(status.value))
 const openLines = computed(() => Line.rows.filter(line => Number(line.outstanding_quantity) > 0))
 
-const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { select: 'true' } })
+const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
 const lineColumns = [

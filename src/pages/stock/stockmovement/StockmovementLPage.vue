@@ -114,7 +114,7 @@ const Stockmovement = useStockmovementStore()
 const filterProduct = ref(null)
 const filterWarehouse = ref(null)
 
-const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { select: 'true' } })
+const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
 const columns = [

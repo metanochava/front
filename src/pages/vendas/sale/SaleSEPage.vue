@@ -362,7 +362,7 @@ const Saleitem = useSaleitemStore()
 
 const customerSelectUrl = url({ type: 'u', url: 'sales/customers', params: { select: 'true' } })
 const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
-const productSelectUrl = url({ type: 'u', url: 'inventory/products', params: { select: 'true' } })
+const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
 
 // ---------------- CONTEXTO DA VENDA ----------------
 const customerId = ref(null)
@@ -422,7 +422,7 @@ async function lookupByCodigo(codigo) {
   scanError.value = ''
 
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'inventory/products', params: { codigo, page_size: 1 } }))
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'catalog/products', params: { codigo, page_size: 1 } }))
     const rows = data.results ?? data
 
     if (rows.length) {
@@ -462,7 +462,7 @@ async function onCameraDecoded(decodedText) {
 async function onManualPick(productId) {
   if (!productId) return
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: `inventory/products/${productId}/` }))
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: `catalog/products/${productId}/` }))
     addProductToCart(data)
   } finally {
     focusScanner()
@@ -481,7 +481,7 @@ async function loadQuickProducts() {
   try {
     const { data } = await HTTPAuth.get(url({
       type: 'u',
-      url: 'inventory/products',
+      url: 'catalog/products',
       params: { search: quickSearch.value, page_size: 12, ativo: true },
     }))
     quickProducts.value = data.results ?? data
