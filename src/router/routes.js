@@ -1,5 +1,6 @@
 import { restRoutes, authRoutes, docsRoutes } from 'quasar_resaas'
 import {  MainLayout, CrudPage } from 'quasar_resaas'
+import { ensinoRoutes } from './../pages/ensino/routes'
 
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
@@ -94,7 +95,9 @@ if(siteRoutes.length !== 0 ){
         ...purchasesRoutes,
         ...accountingRoutes,
         ...crmRoutes,
-        ...workflowRoutes],
+        ...workflowRoutes,
+        ...ensinoRoutes
+      ],
     },
 
     {
