@@ -367,7 +367,7 @@
 <script setup>
 import { statusColor as statusTone } from 'quasar_resaas'
 import { reactive, ref, computed, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { tdc, HTTPAuth, url, displayValue, usePageTitle, sDialog, AlertSuccess } from 'quasar_resaas'
 
@@ -519,11 +519,29 @@ const isToday = (a) => a.data === new Date().toLocaleDateString('en-CA')
 const canCheckIn = (a) => User.can('check_in_agenda') && isToday(a) && ['marcada', 'confirmada'].includes(estadoOf(a))
 const canCheckOut = (a) => User.can('check_out_agenda') && ['em_espera', 'em_atendimento'].includes(estadoOf(a))
 
+const flowRouter = useRouter()
+
+// a check-out that charged the consultation (a draft sale, clinical billing
+// rules): say so, with the way to the sale for who may see it
+function announceCharge(charge) {
+  if (!charge?.sale_id) return
+  $q.notify({
+    type: 'info',
+    message: tdc('Consultation charged: a sale was opened for the patient.'),
+    timeout: 8000,
+    actions: User.can('view_sale')
+      ? [{ label: tdc('Open the sale'), color: 'white',
+           handler: () => flowRouter.push({ name: 'view_sale', params: { id: charge.sale_id } }) }]
+      : []
+  })
+}
+
 async function runFlow(a, action, message) {
   flowBusy.value = a.id
   try {
-    await HTTPAuth.post(url({ type: 'u', url: `saude/agendas/${a.id}/${action}/` }), {})
+    const { data } = await HTTPAuth.post(url({ type: 'u', url: `saude/agendas/${a.id}/${action}/` }), {})
     AlertSuccess(tdc(message))
+    announceCharge(data?.charge)
     await fetchAgendas()
   } catch {
     // the reason (409 wrong state / not today, 403) goes through the alert funnel
