@@ -43,7 +43,7 @@ const cards = [
   { to: '/docs/guide/start-here', icon: 'rocket_launch', color: 'var(--rs-accent)', title: 'Start here', text: 'Guide' },
   { to: '/docs/django-resaas/README', icon: 'dns', color: 'var(--rs-back)', title: 'django_resaas', text: 'Backend' },
   { to: '/docs/quasar-resaas/README', icon: 'web', color: 'var(--rs-front)', title: 'quasar_resaas', text: 'Frontend' },
-  { to: '/home', icon: 'home', color: 'var(--rs-muted)', title: 'Home', text: 'RESAAS documentation' },
+  { to: '/', icon: 'home', color: 'var(--rs-muted)', title: 'Home', text: 'RESAAS documentation' },
 ]
 </script>
 

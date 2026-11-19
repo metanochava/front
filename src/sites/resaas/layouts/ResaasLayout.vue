@@ -73,7 +73,7 @@ const activeProduct = computed(() => route.params.product || null)
   <q-layout view="hHh lpR fff" class="rs">
     <q-header class="rs-header">
       <div class="rs-header__inner">
-        <router-link to="/home" class="rs-brand" aria-label="RESAAS">
+        <router-link to="/" class="rs-brand" aria-label="RESAAS">
           <span class="rs-brand__mark">R</span>
           <span class="rs-brand__name">RESAAS</span>
           <span class="rs-brand__tag">docs</span>

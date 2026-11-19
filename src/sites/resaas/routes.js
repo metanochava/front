@@ -7,13 +7,15 @@ export const resaasSiteRoutes = [
     path: '/',
     component: () => import('./layouts/ResaasLayout.vue'),
     children: [
-      { path: '', redirect: '/home' },
       {
-        path: '/home',
+        // the landing page is the site's root: no /home in the address
+        path: '',
         name: 'home',
         component: () => import('./pages/HomePage.vue'),
         meta: { title: tdc('RESAAS documentation') }
       },
+      // old links
+      { path: '/home', redirect: '/' },
       { path: '/docs', redirect: '/docs/guide/start-here' },
       {
         path: '/docs/:product(guide|django-resaas|quasar-resaas)/:slug(.*)*',
