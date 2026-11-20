@@ -27,7 +27,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { usePricelistStore } from './pricelistStore'
 
 const Pricelist = usePricelistStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Pricelist, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Pricelist, {
   model: 'PriceList',
   defaults: () => ({ active: true })
 })

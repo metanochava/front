@@ -21,7 +21,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useProductcategoryStore } from './productcategoryStore'
 
 const Productcategory = useProductcategoryStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Productcategory, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Productcategory, {
   model: 'ProductCategory',
   defaults: () => ({ ativo: true })
 })

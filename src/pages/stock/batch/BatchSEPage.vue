@@ -26,7 +26,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useBatchStore } from './batchStore'
 
 const Batch = useBatchStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Batch, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Batch, {
   model: 'Batch',
   defaults: () => ({})
 })

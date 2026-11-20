@@ -33,7 +33,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useSupplierStore } from './supplierStore'
 
 const Supplier = useSupplierStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Supplier, {
+const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, load, back, save } = useRecordForm(Supplier, {
   model: 'Supplier',
   defaults: () => ({ supplier_type: 'company', active: true })
 })

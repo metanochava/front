@@ -22,7 +22,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useTaxStore } from './taxStore'
 
 const Tax = useTaxStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Tax, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Tax, {
   model: 'Tax',
   defaults: () => ({ active: true })
 })

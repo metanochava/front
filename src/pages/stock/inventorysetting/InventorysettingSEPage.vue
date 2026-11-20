@@ -22,7 +22,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useInventorysettingStore } from './inventorysettingStore'
 
 const Inventorysetting = useInventorysettingStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Inventorysetting, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Inventorysetting, {
   model: 'InventorySetting',
   defaults: () => ({ allocation_strategy: 'fefo', allow_negative_stock: false })
 })

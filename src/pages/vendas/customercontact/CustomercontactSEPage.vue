@@ -22,7 +22,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useCustomercontactStore } from './customercontactStore'
 
 const Customercontact = useCustomercontactStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Customercontact, {
+const { ready, saving, generalError, isEdit, canSave, fieldOf, load, back, save } = useRecordForm(Customercontact, {
   model: 'CustomerContact',
   defaults: () => ({})
 })

@@ -22,7 +22,7 @@ import { useRecordForm } from 'src/components/record/useRecordForm'
 import { useWarehouseStore } from './warehouseStore'
 
 const Warehouse = useWarehouseStore()
-const { ready, saving, generalError, isEdit, canSave, valueOf, fieldOf, locked, load, back, save } = useRecordForm(Warehouse, {
+const { ready, saving, generalError, isEdit, canSave, load, back, save } = useRecordForm(Warehouse, {
   model: 'Warehouse',
   defaults: () => ({ ativo: true })
 })
