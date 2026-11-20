@@ -191,6 +191,9 @@ import RodapePage from '../pages/RodapePage.vue'
 import SiteLanguageMenu from '../../shared/SiteLanguageMenu.vue'
 import { useSiteLanguage } from '../../shared/useSiteLanguage'
 import { siteLoginUrl } from '../../shared/siteLoginUrl'
+import { usePublicSite } from '../usePublicSite'
+
+const { goToSection } = usePublicSite()
 import { useSiteFavicon } from '../../shared/useSiteFavicon'
 import siteLogo from '../public/logo.png'
 
@@ -242,6 +245,7 @@ export default defineComponent({
         {label:'Doctors',icon:'groups',link:'#medicos'},
         {label:'Services',icon:'layout',link:'#servicos'},
         {label:'Booking',icon:'event',link:'#marcacao'},
+        {label:'Prices',icon:'payments',link:'#precos'},
         {label:'Exams',icon:'biotech',link:'#exames'},
         {label:'Blog',icon:'article',link:'#blog'},
         {label:'Contacts',icon:'call',link:'#contactos'},
@@ -292,11 +296,16 @@ export default defineComponent({
         // the front of the site Entity's type (saude., seguradora., ...)
         window.location.href = siteLoginUrl(this.User?.Entity)
       }else{
-        const el = document.querySelector(item.link)
+        const el = item.link && document.querySelector(item.link)
         if(el){
           el.scrollIntoView({
             behavior:'smooth'
           })
+        }else if(item.link){
+          // on another page of the site (an exam, a consultation): back home, then to the section
+          goToSection(this.$router, item.link)
+        }else if(item.route === 'home' && this.$route.name !== 'home'){
+          this.$router.push({ name: 'home' })
         }
 
         this.drawer = false

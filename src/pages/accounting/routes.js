@@ -1,4 +1,6 @@
 import { tdc } from 'quasar_resaas'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { accountingViews } from './views'
 
 const crud = (name, model, icon, title) => ({
   path: `/${name}`,
@@ -31,4 +33,6 @@ export let accountingRoutes = [
     component: () => import('./TrialBalancePage.vue'),
     meta: { title: tdc('Trial balance'), requiresAuth: true, icon: 'balance', requiredRole: 'trial_balance_account' },
   },
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('accounting', accountingViews),
 ]

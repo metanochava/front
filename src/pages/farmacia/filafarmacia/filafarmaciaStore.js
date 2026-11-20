@@ -13,7 +13,7 @@ export const useFilafarmaciaStore = createBaseStore(
     actions: {
       async revisar(id, { aprovado, motivo_rejeicao, employee_id }) {
         const { data } = await HTTPAuth.post(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/revisar` }),
+          url({ type: 'u', url: `${this.safeUrl}/${id}/revisar/` }),
           { aprovado, motivo_rejeicao, employee_id }
         )
         this.row = data.data
@@ -22,7 +22,7 @@ export const useFilafarmaciaStore = createBaseStore(
 
       async dispensar(id, { employee_id, warehouse_id, itens }) {
         const { data } = await HTTPAuth.post(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/dispensar` }),
+          url({ type: 'u', url: `${this.safeUrl}/${id}/dispensar/` }),
           { employee_id, warehouse_id, itens }
         )
         this.row = data.data.fila
@@ -31,7 +31,7 @@ export const useFilafarmaciaStore = createBaseStore(
 
       async concluir(id) {
         const { data } = await HTTPAuth.post(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/concluir` })
+          url({ type: 'u', url: `${this.safeUrl}/${id}/concluir/` })
         )
         this.row = data.data
         return data.data

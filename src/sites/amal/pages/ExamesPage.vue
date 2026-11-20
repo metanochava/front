@@ -19,112 +19,63 @@
 
 
 
-    <!-- LISTA DE EXAMES -->
-
-    <div class="row justify-center">
-
-      <div class="col-md-10 row q-col-gutter-lg">
-
-        <div
-          v-for="exam in exams"
-          :key="exam.id"
-          class="col-md-4 col-sm-6 col-12"
-        >
-
-          <s-card class="amal-card amal-card--hover">
-
-            <q-card-section class="text-center q-pa-lg">
-
-              <span class="amal-icon"><q-icon :name="exam.icon" size="28px" /></span>
-
-              <div class="text-h6 text-weight-bold q-mt-md">
-                {{ tdc(exam.name) }}
-              </div>
-
-              <div class="amal-muted q-mt-xs exam-desc">
-                {{ tdc(exam.short_desc) }}
-              </div>
-
-              <div class="q-mt-md">
-
-                <s-btn
-                  color="primary"
-                  icon="visibility"
-                  no-caps
-                  outline
-                  class="amal-btn"
-                  :label="tdc('View details')"
-                  @click="openExam(exam)"
-                />
-
-              </div>
-
-            </q-card-section>
-
-          </s-card>
-
+    <!-- the clinic's active exams (GET saude/publicsite/exams/): search,
+         filter by type, a card opens the exam's page -->
+    <div class="row justify-center q-mb-lg q-px-md">
+      <div class="col-12 col-md-10 row q-col-gutter-md items-center">
+        <div class="col-12 col-sm-6">
+          <s-input v-model="search" dense outlined clearable debounce="200" :label="tdc('Search exams')"
+                   data-test="exams-search">
+            <template #prepend><q-icon name="search" /></template>
+          </s-input>
         </div>
-
+        <div class="col-12 col-sm-6 row q-gutter-xs justify-end">
+          <q-chip v-for="t in types" :key="t" clickable :outline="type !== t" color="primary"
+                  :text-color="type === t ? 'white' : 'primary'" @click="type = type === t ? null : t">
+            {{ t }}
+          </q-chip>
+        </div>
       </div>
-
     </div>
 
+    <div v-if="site.loading.exams && !site.exams.length" class="row justify-center q-pa-lg">
+      <q-spinner color="primary" size="40px" />
+    </div>
+    <div v-else-if="!filtered.length" class="text-center amal-muted q-pa-lg" data-test="exams-empty">
+      {{ site.exams.length ? tdc('No exam matches your search.') : tdc('Our exams will be shown here soon. Please call us.') }}
+    </div>
 
-
-    <!-- MODAL DETALHES DO EXAME -->
-
-    <q-dialog
-      v-model="examModal"
-      transition-show="scale"
-      transition-hide="scale"
-    >
-
-      <s-modal-card :title="tdc(selectedExam.name)" :icon="selectedExam.icon" width="480px">
-        <div class="text-grey q-mb-md">
-          {{ tdc(selectedExam.short_desc) }}
+    <div v-else class="row justify-center q-px-md">
+      <div class="col-12 col-md-10 row q-col-gutter-lg">
+        <div v-for="exam in shown" :key="exam.id" class="col-md-4 col-sm-6 col-12">
+          <s-card class="amal-card amal-card--hover exam-card cursor-pointer" data-test="exam-card"
+                  @click="openExam(exam)">
+            <q-card-section class="text-center q-pa-lg">
+              <span class="amal-icon"><q-icon name="biotech" size="28px" /></span>
+              <div class="text-h6 text-weight-bold q-mt-md">{{ exam.name }}</div>
+              <div class="amal-muted q-mt-xs exam-desc">{{ [exam.type, exam.class].filter(Boolean).join(' · ') }}</div>
+              <div class="text-subtitle1 text-weight-bold q-mt-sm text-primary">
+                {{ formatPrice(exam.price) || tdc('Price on request') }}
+              </div>
+              <div class="q-mt-md">
+                <s-btn color="primary" icon="visibility" no-caps outline class="amal-btn" :label="tdc('View details')"
+                       @click.stop="openExam(exam)">
+                  <s-tooltip>{{ tdc('See the preparation, sample and price of this exam') }}</s-tooltip>
+                </s-btn>
+              </div>
+            </q-card-section>
+          </s-card>
         </div>
+        <div v-if="filtered.length > shown.length" class="col-12 text-center">
+          <s-btn flat no-caps color="primary" icon="expand_more" :label="tdc('Show all exams') + ` (${filtered.length})`"
+                 data-test="exams-more" @click="all = true">
+            <s-tooltip>{{ tdc('Show every exam of the clinic') }}</s-tooltip>
+          </s-btn>
+        </div>
+      </div>
+    </div>
 
-          <div class="q-mb-sm">
-            <b>{{ tdc('Price:') }}</b> {{ selectedExam.price }}
-          </div>
-
-          <div class="q-mb-sm">
-            <b>{{ tdc('Duration:') }}</b> {{ tdc(selectedExam.duration) }}
-          </div>
-
-          <div class="q-mb-sm">
-            <b>{{ tdc('Preparation:') }}</b>
-            {{ tdc(selectedExam.preparation) }}
-          </div>
-
-          <div class="q-mb-sm">
-            <b>{{ tdc('Procedure:') }}</b>
-            {{ tdc(selectedExam.procedure) }}
-          </div>
-
-          <div class="q-mb-sm">
-            <b>{{ tdc('Results:') }}</b>
-            {{ tdc(selectedExam.results) }}
-          </div>
-
-
-        <template #footer>
-          <s-btn
-            color="primary"
-            icon="event"
-            :label="tdc('Schedule exam')"
-          />
-
-          <q-btn
-            flat
-            :label="tdc('Close')"
-            v-close-popup
-          />
-        </template>
-      </s-modal-card>
-
-    </q-dialog>
-
+    <OfferDetailDialog v-model="detailOpen" kind="exam" :id="detailId" />
   </section>
 
 </template>
@@ -132,121 +83,47 @@
 
 
 <script>
+import { computed, defineComponent, onMounted, ref } from "vue"
+import { tdc, useUserStore } from "quasar_resaas"
+import { usePublicSite } from "../usePublicSite"
+import OfferDetailDialog from "./OfferDetailDialog.vue"
 
-import { defineComponent, ref, computed } from "vue"
-import { tdc,useUserStore } from "quasar_resaas"
+const FIRST = 9
 
 export default defineComponent({
+  components: { OfferDetailDialog },
 
   setup () {
-
-    const User =useUserStore()
-
+    const User = useUserStore()
     const ps = computed(() => User.ps || {})
+    const detailOpen = ref(false)
+    const detailId = ref(null)
+    const { state: site, loadExams, formatPrice } = usePublicSite()
 
-    const examModal = ref(false)
+    const search = ref("")
+    const type = ref(null)
+    const all = ref(false)
 
-    const selectedExam = ref({})
+    const types = computed(() => [...new Set(site.exams.map(e => e.type).filter(Boolean))])
+    const normalize = (text) => String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    const filtered = computed(() => {
+      const q = normalize(search.value)
+      return site.exams.filter(e => (!type.value || e.type === type.value) &&
+        (!q || [e.name, e.code, e.class, e.type].some(v => normalize(v).includes(q))))
+    })
+    const shown = computed(() => (all.value || search.value || type.value) ? filtered.value : filtered.value.slice(0, FIRST))
 
-
-    const exams = [
-
-      {
-        id:1,
-        name:'Blood test',
-        icon:"biotech",
-        short_desc:'Laboratory test for general assessment',
-        price:"1200 MZN",
-        duration:'15 minutes',
-        preparation:'8-hour fast',
-        procedure:'Blood drawn by a qualified professional',
-        results:'Results available within 24h'
-      },
-
-      {
-        id:2,
-        name:'X-ray',
-        icon:"medical_services",
-        short_desc:'Diagnostic imaging',
-        price:"2500 MZN",
-        duration:'20 minutes',
-        preparation:'No special preparation',
-        procedure:'Radiological image of the requested area',
-        results:'Available the same day'
-      },
-
-      {
-        id:3,
-        name:'Ultrasound',
-        icon:"monitor_heart",
-        short_desc:'Internal imaging assessment',
-        price:"3000 MZN",
-        duration:'30 minutes',
-        preparation:'Depending on the exam, fasting may be required',
-        procedure:'Assessment with ultrasound equipment',
-        results:'Immediate results'
-      },
-
-      {
-        id:4,
-        name:'Electrocardiogram',
-        icon:"favorite",
-        short_desc:'Assessment of the heart\'s electrical activity',
-        price:"1800 MZN",
-        duration:'15 minutes',
-        preparation:'Avoid exercise before the exam',
-        procedure:'Sensors are placed on the chest',
-        results:'Immediate results'
-      },
-
-      {
-        id:5,
-        name:'COVID-19 test',
-        icon:"coronavirus",
-        short_desc:'Diagnosis of the SARS-CoV-2 virus',
-        price:"1500 MZN",
-        duration:'10 minutes',
-        preparation:'No preparation needed',
-        procedure:'Nasal swab',
-        results:'Results within 24h'
-      },
-
-      {
-        id:6,
-        name:'Urine test',
-        icon:"science",
-        short_desc:'Laboratory assessment of urine',
-        price:"800 MZN",
-        duration:'10 minutes',
-        preparation:'Sample collection',
-        procedure:'Laboratory analysis',
-        results:'Results within 12h'
-      }
-
-    ]
-
-
+    // the exam's details in a modal
     function openExam (exam) {
-
-      selectedExam.value = exam
-      examModal.value = true
-
+      detailId.value = exam.id
+      detailOpen.value = true
     }
 
+    onMounted(loadExams)
 
-    return {
-      ps,
-      tdc,
-      exams,
-      examModal,
-      selectedExam,
-      openExam
-    }
-
+    return { ps, tdc, site, search, type, all, types, filtered, shown, formatPrice, openExam, detailOpen, detailId }
   }
-
 })
-
 </script>
 
 

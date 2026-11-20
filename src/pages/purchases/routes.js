@@ -1,4 +1,6 @@
 import { tdc } from 'quasar_resaas'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { purchasesViews } from './views'
 
 export let purchasesRoutes = [
   {
@@ -11,6 +13,19 @@ export let purchasesRoutes = [
       icon: 'local_shipping',
       requiredRole: 'list_supplier',
     },
+  },
+  // one manual page for add_ and change_ (components/record/useRecordForm)
+  {
+    path: '/add_supplier',
+    name: 'add_supplier',
+    component: () => import('./supplier/SupplierSEPage.vue'),
+    meta: { title: tdc('New supplier'), requiresAuth: true, icon: 'add', requiredRole: 'add_supplier' },
+  },
+  {
+    path: '/change_supplier/:id',
+    name: 'change_supplier',
+    component: () => import('./supplier/SupplierSEPage.vue'),
+    meta: { title: tdc('Edit supplier'), requiresAuth: true, icon: 'edit', requiredRole: 'change_supplier' },
   },
   {
     path: '/list_purchaseorder',
@@ -45,4 +60,6 @@ export let purchasesRoutes = [
       requiredRole: 'list_goodsreceipt',
     },
   },
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('purchases', purchasesViews),
 ]

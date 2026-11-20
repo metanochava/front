@@ -43,6 +43,8 @@ import { disciplinary_caseRoutes } from './disciplinary_case/disciplinary_caseRo
 import { resignationRoutes } from './resignation/resignationRoute'
 import { terminationRoutes } from './termination/terminationRoute'
 import { employee_offboardingRoutes } from './employee_offboarding/employee_offboardingRoute'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { hrViews } from './views'
 
 export const hrRoutes = [
   {
@@ -196,4 +198,6 @@ export const hrRoutes = [
   ...resignationRoutes,
   ...terminationRoutes,
   ...employee_offboardingRoutes,
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('hr', hrViews),
 ]

@@ -430,7 +430,9 @@ export default defineComponent({
       booking.preselect = null
       if (form.doctor) onDoctorChange()
       else { form.time = ""; loadSchedule() }
-    })
+    // immediate: a choice made on another page (a consultation's "Book
+    // appointment") is applied when this form mounts
+    }, { immediate: true })
 
     function onDateChange () {
       form.time = ""

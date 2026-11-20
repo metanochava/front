@@ -6,6 +6,8 @@ import { customercontactRoutes } from './customercontact/customercontactRoutes'
 import { saleRoutes } from './sale/saleRoutes'
 import { paymentRoutes } from './payment/paymentRoutes'
 import { taxRoutes } from './tax/taxRoutes'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { salesViews } from './views'
 
 export let vendasRoutes = [
   {
@@ -24,4 +26,6 @@ export let vendasRoutes = [
   ...saleRoutes,
   ...paymentRoutes,
   ...taxRoutes,
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('sales', salesViews),
 ]

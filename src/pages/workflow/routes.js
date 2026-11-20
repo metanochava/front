@@ -1,4 +1,6 @@
 import { tdc } from 'quasar_resaas'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { workflowViews } from './views'
 
 const crud = (name, model, icon, title) => ({
   path: `/${name}`,
@@ -24,4 +26,6 @@ export let workflowRoutes = [
   crud('list_workflowinstance', 'WorkflowInstance', 'fact_check', 'Approval requests'),
   crud('list_workflowdefinition', 'WorkflowDefinition', 'account_tree', 'Workflows'),
   crud('list_workflowstep', 'WorkflowStep', 'format_list_numbered', 'Workflow steps'),
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('workflow', workflowViews),
 ]

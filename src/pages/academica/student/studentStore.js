@@ -1,10 +1,10 @@
 import { createBaseStore, HTTPAuth, url, appendDocumentFiles } from 'quasar_resaas'
 
 // a student is registered with its Person (and guardians) in one call:
-// POST ensino/students/register/ (ensino student_service.register_student)
+// POST academica/students/register/ (academica student_service.register_student)
 export const useStudentStore = createBaseStore(
   'student',
-  { app: 'ensino', model: 'Student' },
+  { app: 'academica', model: 'Student' },
   {
     state: () => ({ registering: false }),
     actions: {
@@ -23,7 +23,7 @@ export const useStudentStore = createBaseStore(
             guardians: guardians || []
           }))
           if (!personId && photo instanceof File) fd.append('person_photo', photo)
-          const { data } = await HTTPAuth.post(url({ type: 'u', url: 'ensino/students/register/' }), fd,
+          const { data } = await HTTPAuth.post(url({ type: 'u', url: 'academica/students/register/' }), fd,
             { headers: { 'Content-Type': 'multipart/form-data' } })
           return data
         } finally {

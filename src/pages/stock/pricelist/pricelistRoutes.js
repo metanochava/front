@@ -15,4 +15,17 @@ export let pricelistRoutes = [
     props: { model: 'PriceListItem' },
     meta: { title: tdc('Prices'), requiresAuth: true, icon: 'price_change', requiredRole: 'list_pricelistitem' },
   },
+  // one manual page for add_ and change_ (components/record/useRecordForm)
+  {
+    path: '/add_pricelist',
+    name: 'add_pricelist',
+    component: () => import('./PricelistSEPage.vue'),
+    meta: { title: tdc('New price list'), requiresAuth: true, icon: 'add', requiredRole: 'add_pricelist' },
+  },
+  {
+    path: '/change_pricelist/:id',
+    name: 'change_pricelist',
+    component: () => import('./PricelistSEPage.vue'),
+    meta: { title: tdc('Edit price list'), requiresAuth: true, icon: 'edit', requiredRole: 'change_pricelist' },
+  },
 ]

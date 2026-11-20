@@ -9,6 +9,14 @@
       </q-badge>
       <q-space />
 
+      <!-- the receipt of a paid sale, again (core/printing: sales.receipt) -->
+      <s-print-btn
+        v-if="estado === 'paga'"
+        document="sales.receipt" :object-id="Sale.row.id"
+        flat :label="tdc('Print receipt')" class="q-mr-sm"
+        data-test="sale-print-receipt"
+      />
+
       <s-btn
         v-if="estado === 'rascunho' && Sale.row.warehouse_id && User.can('reservar_sale')"
         flat icon="lock" :label="tdc('Reserve stock')"

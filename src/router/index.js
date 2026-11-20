@@ -34,8 +34,22 @@ function movePathIntoHash() {
   window.history.replaceState(null, '', `${base}${target}`)
 }
 
+// History mode reads the path: a link made for hash mode (an e-mail, a
+// printed QR code, another site: https://site/#/mesa/x) would open the home
+// page. Move the hash route into the path, so both kinds of link keep working.
+function moveHashIntoPath() {
+  if (process.env.SERVER || process.env.VUE_ROUTER_MODE !== 'history') return
+
+  const { hash } = window.location
+  if (!hash || !hash.startsWith('#/')) return
+
+  const base = (process.env.VUE_ROUTER_BASE || '/').replace(/\/?$/, '')
+  window.history.replaceState(null, '', `${base}${hash.slice(1)}`)
+}
+
 export default defineRouter(function (/* { store, ssrContext } */) {
   movePathIntoHash()
+  moveHashIntoPath()
 
   const createHistory = process.env.SERVER
     ? createMemoryHistory

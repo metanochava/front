@@ -11,6 +11,8 @@ import { inventorysettingRoutes } from './inventorysetting/inventorysettingRoute
 import { batchRoutes } from './batch/batchRoutes'
 import { reservationRoutes } from './reservation/reservationRoutes'
 import { pricelistRoutes } from './pricelist/pricelistRoutes'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { catalogViews, inventoryViews } from './views'
 
 export let stockRoutes = [
   {
@@ -35,4 +37,7 @@ export let stockRoutes = [
   ...reservationRoutes,
   ...pricelistRoutes,
   ...inventorysettingRoutes,
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('catalog', catalogViews),
+  ...viewRoutes('inventory', inventoryViews),
 ]

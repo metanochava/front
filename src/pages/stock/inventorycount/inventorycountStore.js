@@ -13,7 +13,7 @@ export const useInventorycountStore = createBaseStore(
     actions: {
       async finalizar(id) {
         const { data } = await HTTPAuth.post(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/finalizar` })
+          url({ type: 'u', url: `${this.safeUrl}/${id}/finalizar/` })
         )
         this.row = data.data.inventory_count
         return data.data

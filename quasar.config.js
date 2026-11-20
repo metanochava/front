@@ -50,6 +50,9 @@ export default defineConfig((ctx) => {
       env: {
         API: ctx.dev ? process.env.API_DEV : process.env.API_PRO,
         API_PREFIX: process.env.API_PREFIX,
+        // sites whose web server proxies /api/ to the backend: the page uses its
+        // own origin (quasar_resaas services/apiOrigin.js, first-party cookie)
+        API_SAME_ORIGIN_HOSTS: process.env.API_SAME_ORIGIN_HOSTS || '',
         FRONT_END_KEY: process.env.FRONT_END_KEY,
         FRONT_END_PASSWORD: process.env.FRONT_END_PASSWORD,
         GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
@@ -62,7 +65,7 @@ export default defineConfig((ctx) => {
         node: 'node20',
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history' (hash links still work: router/index.js)
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -85,6 +88,26 @@ export default defineConfig((ctx) => {
       // viteVuePluginOptions: {},
 
       vitePlugins: [
+        // dev in SPA mode (make dev-spa): a browser that ran the PWA dev server
+        // keeps its service worker, which keeps serving the old app. This
+        // /sw.js replaces it with one that clears its caches and unregisters.
+        ...(ctx.dev && !ctx.mode.pwa ? [{
+          name: 'resaas-dev-retire-service-worker',
+          configureServer (server) {
+            server.middlewares.use('/sw.js', (req, res) => {
+              res.setHeader('Content-Type', 'application/javascript')
+              res.setHeader('Cache-Control', 'no-store')
+              res.end(`self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) await caches.delete(key)
+    await self.registration.unregister()
+    for (const client of await self.clients.matchAll({ type: 'window' })) client.navigate(client.url)
+  })())
+})`)
+            })
+          },
+        }] : []),
         [
           '@intlify/unplugin-vue-i18n/vite',
           {
@@ -181,7 +204,7 @@ export default defineConfig((ctx) => {
     devServer: {
       host: '0.0.0.0',
       port: 9000,
-      allowedHosts: ['.dev.mytech.co.mz', 'metano.mytech.co.mz', 'metano.metano.cc', 'metano.metanochavana.link'],
+      allowedHosts: ['.dev.mytech.co.mz', 'saude.teste.mytech.co.mz', 'metano.mytech.co.mz', 'metano.metano.cc', 'metano.metanochavana.link'],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

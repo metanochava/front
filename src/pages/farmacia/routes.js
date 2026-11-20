@@ -4,6 +4,8 @@ import { filafarmaciaRoutes } from './filafarmacia/filafarmaciaRoutes'
 import { dispensaRoutes } from './dispensa/dispensaRoutes'
 import { marketplaceRoutes } from './marketplace/marketplaceRoutes'
 import { counterRoutes } from './counter/counterRoutes'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { farmaciaViews } from './views'
 
 export let farmaciaRoutes = [
   {
@@ -21,4 +23,6 @@ export let farmaciaRoutes = [
   ...dispensaRoutes,
   ...marketplaceRoutes,
   ...counterRoutes,
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('farmacia', farmaciaViews),
 ]

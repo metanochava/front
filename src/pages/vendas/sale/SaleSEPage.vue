@@ -1,776 +1,707 @@
 <template>
-  <q-page class="q-pa-sm pos-page">
+  <q-page class="pos-page column no-wrap q-pa-sm" :style-fn="pageHeight">
 
-    <!-- ===================== RECEIPT / SUCCESS ===================== -->
-    <div v-if="receipt" class="flex flex-center" style="min-height: 70vh">
-      <s-card flat bordered style="width: 100%; max-width: 420px">
-        <q-card-section class="text-center">
-          <q-icon name="check_circle" color="positive" size="64px" />
-          <div class="text-h6 q-mt-sm">{{ tdc('Sale Completed') }}</div>
-          <div class="text-caption text-grey-6">{{ tdc('Sale') }} #{{ receipt.saleId.slice(0, 8) }}</div>
-        </q-card-section>
+    <!-- tables (hospitality) + quick sale + open tabs -->
+    <PosTabsBar
+      :model-value="activeTabId" :tabs="tabs"
+      :show-tables="canSeeTables" :tables-open="tablesOpen" :calling="callingCount"
+      @update:model-value="selectTab" @new="newTabOpen = true" @tables="tablesOpen = !tablesOpen"
+    />
 
-        <q-separator />
+    <div class="col row no-wrap pos-body">
+      <!-- the tables, or the products -->
+      <div class="col pos-body__products">
+        <TablesBoard v-if="tablesOpen" :tables="board" :loading="boardLoading" :busy="busy"
+                     @open="openTable" @handle="handleRequest" @orders="showOrders" />
+        <TableOrdersDialog v-model="ordersOpen" :table="ordersTable" :busy="orderBusy" :error="orderError"
+                           @accept="acceptOrder" @reject="rejectOrder" />
+        <PosProductGrid v-show="!tablesOpen" ref="gridRef" :disabled="busy" @add="onAdd" />
+      </div>
 
-        <q-card-section>
-          <div class="row justify-between q-py-xs">
-            <span>{{ tdc('Items') }}</span>
-            <span>{{ receipt.numItens }}</span>
-          </div>
-          <div class="row justify-between q-py-xs text-h6">
-            <span>{{ tdc('Total') }}</span>
-            <span>{{ formatMoney(receipt.total) }}</span>
-          </div>
-
-          <q-separator class="q-my-sm" />
-
-          <div class="text-caption text-grey-7 q-mb-xs">
-            {{ receipt.pagamentos.length > 1 ? tdc('Split Payment') : tdc('Payment') }}
-          </div>
-          <div v-for="(p, i) in receipt.pagamentos" :key="i" class="row justify-between q-py-xs">
-            <span>{{ formaPagamentoLabel(p.forma_pagamento) }}</span>
-            <span>{{ formatMoney(p.valor) }}</span>
-          </div>
-
-          <template v-if="receipt.totalTroco > 0">
-            <q-separator class="q-my-sm" />
-            <div class="row justify-between q-py-xs">
-              <span>{{ tdc('Amount Received') }}</span>
-              <span>{{ formatMoney(receipt.totalRecebido) }}</span>
-            </div>
-            <div class="row justify-between q-py-xs text-positive text-weight-bold">
-              <span>{{ tdc('Change') }}</span>
-              <span>{{ formatMoney(receipt.totalTroco) }}</span>
-            </div>
-          </template>
-        </q-card-section>
-
-        <q-card-actions class="q-pa-md">
-          <q-btn
-            color="primary" unelevated class="full-width" size="lg"
-            icon="qr_code_scanner" :label="tdc('New Sale')"
-            @click="resetPOS"
-          />
-        </q-card-actions>
+      <!-- the cart, beside the products on a tablet in landscape / a PC -->
+      <s-card v-if="wide" flat bordered class="pos-body__cart q-ml-sm">
+        <PosCart v-bind="cartProps" v-on="cartEvents">
+          <template #settings><PosSettings /></template>
+        </PosCart>
       </s-card>
     </div>
 
-    <!-- ===================== PDV ===================== -->
-    <template v-else>
+    <!-- phone / tablet in portrait: the cart is a bar at the bottom -->
+    <button
+      v-if="!wide"
+      type="button"
+      class="pos-cartbar"
+      data-test="pos-cartbar"
+      @click="cartSheet = true"
+    >
+      <q-icon :name="activeTab ? 'table_bar' : 'shopping_basket'" size="22px" />
+      <span class="pos-cartbar__count">{{ itemCount }}</span>
+      <span class="col text-left ellipsis q-ml-sm">{{ cartProps.title }}</span>
+      <span class="text-weight-bold">{{ money(cartProps.totals.total) }}</span>
+      <q-icon name="expand_less" size="22px" class="q-ml-xs" />
+      <s-tooltip>{{ tdc('Show the cart') }}</s-tooltip>
+    </button>
 
-      <div class="row q-col-gutter-md">
-
-        <!-- ============== ESQUERDA: SCANNER + CARRINHO ============== -->
-        <div class="col-12 col-md-8">
-
-          <!-- SCANNER -->
-          <s-card flat bordered class="q-mb-md">
-            <q-card-section>
-              <q-input
-                ref="barcodeRef"
-                v-model="barcodeInput"
-                :label="tdc('Scan barcode / QR (or type and Enter)')"
-                outlined dense autofocus
-                :color="scanFeedback === 'error' ? 'negative' : scanFeedback === 'ok' ? 'positive' : 'primary'"
-                @keyup.enter="onScan"
-              >
-                <template #prepend><q-icon name="qr_code_scanner" /></template>
-                <template #append>
-                  <q-spinner v-if="scanning" :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-                  <q-icon v-else-if="scanFeedback === 'ok'" name="check" color="positive" />
-                  <q-icon v-else-if="scanFeedback === 'error'" name="close" color="negative" />
-                  <q-separator vertical inset class="q-mx-xs" />
-                  <q-btn
-                    flat round dense icon="photo_camera" color="primary"
-                    :title="tdc('Scan with camera')"
-                    @click="showCameraScanner = true"
-                  />
-                </template>
-              </q-input>
-              <div v-if="scanError" class="text-negative text-caption q-mt-xs">{{ scanError }}</div>
-
-              <!-- fallback: pesquisa manual por nome -->
-              <s-select
-                class="q-mt-sm"
-                :model-value="null"
-                :api="productSelectUrl"
-                option-label="label" option-value="value"
-                emit-value map-options
-                :label="tdc('Or search for product by name')"
-                @update:model-value="onManualPick"
-              />
-            </q-card-section>
-          </s-card>
-
-          <!-- PRODUTOS RÁPIDOS (bebidas/itens sem código de barras) -->
-          <s-card flat bordered class="q-mb-md">
-            <q-card-section>
-              <div class="row items-center q-mb-sm">
-                <div class="text-subtitle2">{{ tdc('Quick Products') }}</div>
-                <q-space />
-                <q-input
-                  v-model="quickSearch" dense outlined
-                  :placeholder="tdc('Filter')" style="width: 160px"
-                  debounce="300"
-                  @update:model-value="loadQuickProducts"
-                >
-                  <template #prepend><q-icon name="search" size="18px" /></template>
-                </q-input>
-              </div>
-
-              <div v-if="quickLoading" class="flex flex-center q-pa-md">
-                <q-spinner :color="$q.dark.isActive ? 'white' : 'primary'" size="48px" />
-              </div>
-              <div v-else-if="!quickProducts.length" class="text-caption text-grey-6">
-                {{ tdc('No products') }}
-              </div>
-              <div v-else class="row q-col-gutter-sm">
-                <div v-for="p in quickProducts" :key="p.id" class="col-6 col-sm-4">
-                  <q-btn
-                    outline no-caps color="primary" class="full-width quick-product-btn"
-                    @click="addProductToCart(p); focusScanner()"
-                  >
-                    <div class="column items-center">
-                      <div class="text-caption ellipsis-2-lines">{{ p.nome }}</div>
-                      <div class="text-caption text-grey-6">{{ formatMoney(p.preco_base) }}</div>
-                    </div>
-                  </q-btn>
-                </div>
-              </div>
-            </q-card-section>
-          </s-card>
-
-          <!-- CARRINHO -->
-          <s-card flat bordered>
-            <q-card-section>
-              <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ tdc('Cart') }} ({{ cart.length }})</div>
-
-              <div v-if="!cart.length" class="text-caption text-grey-6 q-pa-md text-center">
-                {{ tdc('Empty cart - scan a barcode to start') }}
-              </div>
-
-              <div v-else class="cart-lines">
-                <div
-                  v-for="(line, i) in cart" :key="line.product_id"
-                  class="row items-center no-wrap q-gutter-xs cart-line"
-                >
-                  <div class="col cart-line-name">
-                    <div class="ellipsis">{{ line.product_nome }}</div>
-                    <div class="text-caption text-grey-6 ellipsis">
-                      {{ line.codigo || '—' }} · {{ formatMoney(line.preco_unitario) }}
-                    </div>
-                  </div>
-
-                  <q-btn flat dense round icon="remove" size="sm" @click="changeQty(line, -1)" />
-                  <q-input
-                    v-model.number="line.quantidade"
-                    type="number" dense outlined square
-                    class="cart-qty-input"
-                    min="0.001" step="0.001"
-                    @update:model-value="recompute"
-                  />
-                  <q-btn flat dense round icon="add" size="sm" @click="changeQty(line, 1)" />
-
-                  <q-input
-                    v-model.number="line.desconto_valor"
-                    type="number" dense outlined square
-                    class="cart-desc-input"
-                    :placeholder="tdc('Disc.')"
-                    step="0.01"
-                    @update:model-value="recompute"
-                  />
-
-                  <div class="text-weight-bold cart-subtotal">
-                    {{ formatMoney(lineSubtotal(line)) }}
-                  </div>
-
-                  <q-btn flat dense round icon="delete" color="negative" size="sm" @click="removeLine(i)" />
-                </div>
-              </div>
-            </q-card-section>
-          </s-card>
+    <q-dialog v-model="cartSheet" position="bottom" :maximized="$q.screen.lt.sm">
+      <s-modal-card :title="cartProps.title" :icon="activeTab ? 'table_bar' : 'bolt'" width="560px">
+        <div class="pos-sheet">
+          <PosCart v-bind="cartProps" :title="''" v-on="cartEvents">
+            <template #settings><PosSettings /></template>
+          </PosCart>
         </div>
-
-        <!-- ============== DIREITA: CLIENTE / ARMAZÉM / TOTAIS ============== -->
-        <div class="col-12 col-md-4">
-
-          <s-card flat bordered class="q-mb-md">
-            <q-card-section class="q-gutter-sm">
-              <s-select
-                v-model="customerId"
-                :api="customerSelectUrl"
-                option-label="label" option-value="value"
-                emit-value map-options clearable
-                :label="tdc('Customer') + ' (' + tdc('optional') + ')'"
-                :hint="tdc('Empty = Walk-in Customer')"
-              />
-              <!-- stock is optional: the warehouse only with inventory (a
-                   doctor's office or a hotel sells catalogued services and
-                   goods without it) -->
-              <s-select
-                v-if="canUseStock"
-                v-model="warehouseId"
-                :api="warehouseSelectUrl"
-                option-label="label" option-value="value"
-                emit-value map-options clearable
-                :label="tdc('Warehouse')"
-                :hint="!warehouseId ? tdc('Without a warehouse, the sale does not move stock') : ''"
-              />
-              <s-select
-                v-if="taxOptions.length"
-                v-model="taxId"
-                :options="taxOptions"
-                emit-value map-options clearable
-                :label="tdc('Tax')"
-                data-test="pos-tax"
-              />
-            </q-card-section>
-          </s-card>
-
-          <s-card flat bordered class="q-mb-md">
-            <q-card-section>
-              <div class="row justify-between text-caption q-py-xs">
-                <span>{{ tdc('Subtotal') }}</span>
-                <span>{{ formatMoney(totals.subtotal) }}</span>
-              </div>
-              <div class="row justify-between text-caption q-py-xs">
-                <span>{{ tdc('Discount') }}</span>
-                <span>{{ formatMoney(totals.desconto) }}</span>
-              </div>
-              <div v-if="totals.tax" class="row justify-between text-caption q-py-xs">
-                <span>{{ tdc('Tax') }}</span>
-                <span>{{ formatMoney(totals.tax) }}</span>
-              </div>
-              <q-separator class="q-my-xs" />
-              <div class="row justify-between text-h5 text-weight-bold q-py-xs">
-                <span>{{ tdc('Total') }}</span>
-                <span>{{ formatMoney(totals.total) }}</span>
-              </div>
-            </q-card-section>
-          </s-card>
-
-          <div v-if="checkoutError" class="q-mb-md">
-            <q-banner class="bg-negative text-white" dense>{{ checkoutError }}</q-banner>
-          </div>
-
-          <q-btn
-            color="positive" unelevated size="lg" class="full-width q-mb-sm"
-            icon="point_of_sale" :label="tdc('Finish Sale')"
-            :disable="!cart.length"
-            :loading="checkingOut"
-            @click="goToCheckout"
-          />
-          <q-btn
-            v-if="cart.length || pendingSaleId"
-            flat color="negative" class="full-width"
-            icon="cancel" :label="tdc('Cancel Sale')"
-            @click="cancelPOS"
-          />
-        </div>
-
-      </div>
-    </template>
-
-    <!-- ===================== DIALOG PAGAMENTO (suporta divisão) ===================== -->
-    <q-dialog v-model="showPaymentDialog" persistent>
-      <s-modal-card :title="tdc('Payment')" width="380px" :closable="false">
-        <div class="row justify-between text-caption q-py-xs">
-          <span>{{ tdc('Total') }}</span>
-          <span>{{ formatMoney(totals.total) }}</span>
-        </div>
-        <div class="row justify-between text-caption q-py-xs">
-          <span>{{ tdc('Already Paid') }}</span>
-          <span>{{ formatMoney(totalJaPago) }}</span>
-        </div>
-        <q-separator class="q-my-xs" />
-        <div class="row justify-between text-h6 text-weight-bold">
-          <span>{{ tdc('Amount Due') }}</span>
-          <span>{{ formatMoney(saldoEmFalta) }}</span>
-        </div>
-
-        <q-list v-if="paymentsDone.length" dense class="q-mt-sm">
-          <q-item v-for="(p, i) in paymentsDone" :key="i" class="q-px-none">
-            <q-item-section>{{ formaPagamentoLabel(p.forma_pagamento) }}</q-item-section>
-            <q-item-section side>{{ formatMoney(p.valor) }}</q-item-section>
-          </q-item>
-        </q-list>
-
-        <div class="q-gutter-md">
-          <q-select
-            v-model="payment.forma_pagamento"
-            :options="formaPagamentoOptions"
-            emit-value map-options
-            :label="tdc('Payment Method')"
-          />
-
-          <q-input
-            v-model.number="payment.valorAPagar"
-            type="number" step="0.01"
-            :label="tdc('Amount to Register')"
-          />
-
-          <q-input
-            v-if="payment.forma_pagamento === 'numerario'"
-            v-model.number="payment.recebido"
-            type="number" step="0.01"
-            :label="tdc('Amount Received from Customer')"
-          />
-
-          <div v-if="payment.forma_pagamento === 'numerario'" class="row justify-between text-h6">
-            <span>{{ tdc('Change') }}</span>
-            <span :class="troco < 0 ? 'text-negative' : 'text-positive'">{{ formatMoney(troco) }}</span>
-          </div>
-
-          <q-input
-            v-else
-            v-model="payment.referencia"
-            :label="tdc('Reference') + ' (' + tdc('optional') + ')'"
-          />
-
-          <div v-if="paymentError" class="text-negative text-caption">{{ paymentError }}</div>
-
-        </div>
-
-        <template #footer>
-          <q-btn flat :label="tdc('Cancel Sale')" :disable="payingLoading" @click="showPaymentDialog = false; cancelPOS()" />
-          <q-btn
-            color="positive"
-            :label="isLastPayment ? tdc('Finish') : tdc('Register and Continue')"
-            :loading="payingLoading"
-            :disable="payment.forma_pagamento === 'numerario' && troco < 0"
-            @click="confirmPayment"
-          />
-
-        </template>
       </s-modal-card>
     </q-dialog>
 
-    <!-- ===================== DIALOG CÂMARA ===================== -->
-    <camera-scanner-dialog
-      v-model="showCameraScanner"
-      @decoded="onCameraDecoded"
-    />
+    <PosNewTabDialog v-model="newTabOpen" :saving="savingTab" :error="newTabError" @submit="createTab" />
+    <PosSplitDialog v-model="splitOpen" :lines="activeTab?.lines || []" :saving="splitting" :error="splitError" @submit="doSplit" />
+    <PosPaymentDialog v-model="paymentOpen" :sale-id="payingSaleId" :total="payingTotal" :methods="paymentMethods"
+                      @paid="onPaid" @void="voidPaying" />
 
+    <!-- receipt -->
+    <q-dialog v-model="receiptOpen" persistent>
+      <s-modal-card :title="tdc('Sale Completed')" icon="check_circle" width="400px" :closable="false">
+        <div v-if="receipt" class="text-center">
+          <q-icon name="check_circle" color="positive" size="56px" />
+          <div class="text-caption text-grey-7">{{ tdc('Sale') }} #{{ receipt.saleId.slice(0, 8) }}</div>
+          <div class="text-h4 text-weight-bold q-my-sm" data-test="receipt-total">{{ money(receipt.total) }}</div>
+          <div v-for="(p, i) in receipt.pagamentos" :key="i" class="row justify-between q-py-xs">
+            <span>{{ methodLabel(p.forma_pagamento) }}</span><span>{{ money(p.valor) }}</span>
+          </div>
+          <div v-if="receipt.totalTroco > 0" class="row justify-between q-py-xs text-positive text-weight-bold">
+            <span>{{ tdc('Change') }}</span><span>{{ money(receipt.totalTroco) }}</span>
+          </div>
+        </div>
+        <template #footer>
+          <!-- the printed receipt: the Branch's default printer / paper, or choose -->
+          <s-print-btn
+            v-if="receipt"
+            document="sales.receipt" :object-id="receipt.saleId"
+            flat :label="tdc('Print receipt')"
+            data-test="receipt-print"
+          />
+          <s-btn unelevated color="primary" icon="add_shopping_cart" :label="tdc('New Sale')" data-test="receipt-new" @click="afterReceipt">
+            <s-tooltip>{{ tdc('Start a new sale') }}</s-tooltip>
+          </s-btn>
+        </template>
+      </s-modal-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
-import { ref, reactive, computed, nextTick, onMounted } from 'vue'
-import { tdc, url, HTTPAuth, errorMessage, useUserStore } from 'quasar_resaas'
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, reactive, ref, resolveComponent, watch } from 'vue'
+import { useQuasar, QExpansionItem } from 'quasar'
+import { tdc, url, HTTPAuth, errorMessage, useUserStore, sDialog } from 'quasar_resaas'
 import { useSaleStore } from './saleStore'
-import { useSaleitemStore } from './saleitemStore'
-import CameraScannerDialog from 'src/components/CameraScannerDialog.vue'
+import PosTabsBar from './pos/PosTabsBar.vue'
+import PosProductGrid from './pos/PosProductGrid.vue'
+import PosCart from './pos/PosCart.vue'
+import PosPaymentDialog from './pos/PosPaymentDialog.vue'
+import PosNewTabDialog from './pos/PosNewTabDialog.vue'
+import PosSplitDialog from './pos/PosSplitDialog.vue'
+// the tables are the hospitality module's: shown only with board_diningtable
+import TablesBoard from 'src/pages/hospitality/pos/TablesBoard.vue'
+import TableOrdersDialog from 'src/pages/hospitality/pos/TableOrdersDialog.vue'
+import { useTableStore } from 'src/pages/hospitality/tableStore'
 
+// The point of sale (add_sale), made for a bar on a phone or tablet:
+// - QUICK SALE: a local cart sent once (Sale.checkout, prices from the
+//   catalog for the customer, a checkout key against double sales);
+// - OPEN TABS: named draft sales the branch's devices add to (Sale.order),
+//   split ("each pays theirs") and close (Sale.closeTab), refreshed every
+//   few seconds so every device sees the same tabs.
+// Then the payment (split between methods) and the receipt.
+const $q = useQuasar()
 const Sale = useSaleStore()
-const Saleitem = useSaleitemStore()
+const User = useUserStore()
 
-const customerSelectUrl = url({ type: 'u', url: 'sales/customers', params: { select: 'true' } })
-const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
-const productSelectUrl = url({ type: 'u', url: 'catalog/products', params: { select: 'true' } })
+const canUseStock = computed(() => User.can('list_warehouse'))
+const canDiscount = computed(() => User.can('discount_sale'))
+const wide = computed(() => $q.screen.gt.sm)          // >= md: cart beside the products
 
-// ---------------- CONTEXTO DA VENDA ----------------
+function pageHeight (offset, height) {
+  return { height: `${height - offset}px` }
+}
+
+function money (v) {
+  return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(v) || 0)
+}
+
+function extractError (e) {
+  return errorMessage(e) || tdc('An error occurred. Please try again.')
+}
+
+const gridRef = ref(null)
+const cartSheet = ref(false)
+const busy = ref(false)
+const finishing = ref(false)
+const cartError = ref('')
+
+// ---------------- SETTINGS: customer / warehouse / tax ----------------
 const customerId = ref(null)
 const warehouseId = ref(null)
-const cart = ref([])
-const pendingSaleId = ref(null)
+const taxId = ref(null)
+const taxOptions = ref([])
+const taxRate = computed(() => Number(taxOptions.value.find(o => o.value === taxId.value)?.rate || 0))
+const customerSelectUrl = url({ type: 'u', url: 'sales/customers', params: { select: 'true' } })
+const warehouseSelectUrl = url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true' } })
 
-// stock only for who may see warehouses (inventory active and permitted -
-// UX only, the backend decides); without it the sale moves no stock
-const User = useUserStore()
-const canUseStock = computed(() => User.can('list_warehouse'))
+async function loadTaxes () {
+  try {
+    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'sales/taxes', params: { active: 'true', page_size: 100 } }))
+    taxOptions.value = (data.results || data || []).filter(t => t.active !== false)
+      .map(t => ({ label: t.display_name || t.name, value: t.id, rate: t.rate }))
+  } catch {
+    taxOptions.value = []
+  }
+}
 
-// auto-seleciona o armazém se só existir um
-;(async () => {
+async function loadSingleWarehouse () {
   if (!canUseStock.value) return
   try {
     const { data } = await HTTPAuth.get(url({ type: 'u', url: 'inventory/warehouses', params: { select: 'true', page_size: 2 } }))
     const rows = data.results ?? data
     if (rows.length === 1) warehouseId.value = rows[0].value
   } catch {
-    // sem armazéns ainda — cashier escolhe manualmente depois de os criar
-  }
-})()
-
-// ---------------- SCANNER ----------------
-const barcodeRef = ref(null)
-const barcodeInput = ref('')
-const scanning = ref(false)
-const scanFeedback = ref(null) // 'ok' | 'error' | null
-const scanError = ref('')
-let feedbackTimer = null
-
-function focusScanner() {
-  nextTick(() => barcodeRef.value?.focus())
-}
-
-function flashFeedback(kind) {
-  scanFeedback.value = kind
-  clearTimeout(feedbackTimer)
-  feedbackTimer = setTimeout(() => { scanFeedback.value = null }, 1200)
-}
-
-function addProductToCart(product) {
-  const existing = cart.value.find(l => l.product_id === product.id || l.product_id === product.value)
-  if (existing) {
-    existing.quantidade = Number(existing.quantidade) + 1
-  } else {
-    cart.value.push({
-      product_id: product.id || product.value,
-      product_nome: product.nome || product.label,
-      codigo: product.codigo || null,
-      quantidade: 1,
-      preco_unitario: Number(product.preco_base) || 0,
-      desconto_valor: 0,
-      synced: false,
-      itemId: null,
-    })
+    // no warehouse yet
   }
 }
 
-async function lookupByCodigo(codigo) {
-  scanning.value = true
-  scanError.value = ''
-
-  try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'catalog/products', params: { codigo, page_size: 1 } }))
-    const rows = data.results ?? data
-
-    if (rows.length) {
-      addProductToCart(rows[0])
-      flashFeedback('ok')
-      return true
+// the quick sale's customer / warehouse / tax; on a tab only what closing
+// uses (warehouse, tax) - the tab's customer was chosen when it was opened
+const PosSettings = defineComponent({
+  name: 'PosSettings',
+  setup () {
+    return () => {
+      const SSelect = resolveComponent('s-select')
+      const fields = []
+      if (!activeTab.value) {
+        fields.push(h(SSelect, {
+          modelValue: customerId.value, 'onUpdate:modelValue': v => { customerId.value = v },
+          api: customerSelectUrl, optionLabel: 'label', optionValue: 'value', emitValue: true, mapOptions: true,
+          clearable: true, dense: true, disable: !!pendingSaleId.value,
+          label: tdc('Customer') + ' (' + tdc('optional') + ')',
+        }))
+      }
+      if (canUseStock.value) {
+        fields.push(h(SSelect, {
+          modelValue: warehouseId.value, 'onUpdate:modelValue': v => { warehouseId.value = v },
+          api: warehouseSelectUrl, optionLabel: 'label', optionValue: 'value', emitValue: true, mapOptions: true,
+          clearable: true, dense: true, label: tdc('Warehouse'),
+          hint: !warehouseId.value ? tdc('Without a warehouse, the sale does not move stock') : '',
+        }))
+      }
+      if (taxOptions.value.length) {
+        fields.push(h(SSelect, {
+          modelValue: taxId.value, 'onUpdate:modelValue': v => { taxId.value = v },
+          options: taxOptions.value, emitValue: true, mapOptions: true, clearable: true, dense: true,
+          label: tdc('Tax'), 'data-test': 'pos-tax',
+        }))
+      }
+      if (!fields.length) return null
+      return h(QExpansionItem, {
+        dense: true, icon: 'tune', label: tdc('Options'),
+        caption: [!activeTab.value && customerId.value ? tdc('Customer') : null, taxId.value ? tdc('Tax') : null].filter(Boolean).join(' · '),
+        class: 'q-mb-sm pos-settings',
+      }, () => h('div', { class: 'q-gutter-sm q-pa-xs' }, fields))
     }
+  },
+})
 
-    flashFeedback('error')
-    scanError.value = tdc('No product found for this code') + ` "${codigo}"`
-    return false
+
+// ---------------- OPEN TABS ----------------
+const tabs = ref([])
+const activeTabId = ref(null)            // null = quick sale
+const activeTab = ref(null)              // the tab with its lines
+const newTabOpen = ref(false)
+const savingTab = ref(false)
+const newTabError = ref('')
+const splitOpen = ref(false)
+const splitting = ref(false)
+const splitError = ref('')
+let pollTimer = null
+
+// ---------------- TABLES (hospitality) ----------------
+const Table = useTableStore()
+const canSeeTables = computed(() => User.can('board_diningtable'))
+const tablesOpen = ref(false)
+const board = ref([])
+const boardLoading = ref(false)
+const callingCount = computed(() => board.value.reduce((s, t) => s + (t.requests?.length || 0) + (t.orders?.length || 0), 0))
+
+async function refreshBoard () {
+  if (!canSeeTables.value) return
+  boardLoading.value = true
+  try {
+    board.value = await Table.board()
   } catch {
-    flashFeedback('error')
-    scanError.value = tdc('Error searching for product.')
-    return false
+    // keeps the last board
   } finally {
-    scanning.value = false
+    boardLoading.value = false
   }
 }
 
-async function onScan() {
-  const codigo = barcodeInput.value.trim()
-  if (!codigo) return
+// a new call from a table's QR code shows wherever the staff are on the screen
+watch(callingCount, (now, before) => {
+  if (now > (before || 0)) {
+    $q.notify?.({ type: 'warning', icon: 'notifications_active', message: tdc('A table is calling or ordering'), position: 'top' })
+  }
+})
 
-  const found = await lookupByCodigo(codigo)
-  if (found) barcodeInput.value = ''
-  focusScanner()
+function selectTab (id) {
+  tablesOpen.value = false
+  activeTabId.value = id
 }
 
-// ---------------- CÂMARA ----------------
-const showCameraScanner = ref(false)
-
-async function onCameraDecoded(decodedText) {
-  await lookupByCodigo(decodedText.trim())
-}
-
-async function onManualPick(productId) {
-  if (!productId) return
+// a table's tab: the one it has, else a new one (the same from any device)
+async function openTable (table) {
+  cartError.value = ''
+  busy.value = true
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: `catalog/products/${productId}/` }))
-    addProductToCart(data)
+    const tabId = await Table.startTab(table.id)
+    await refreshTabs()
+    selectTab(tabId)
+  } catch (e) {
+    cartError.value = extractError(e)
   } finally {
-    focusScanner()
+    busy.value = false
   }
+  refreshBoard()
 }
 
-// ---------------- PRODUTOS RÁPIDOS ----------------
-// Muitos itens de bar (copos, cerveja de pressão, cocktails) não têm
-// código de barras — toque único é mais rápido do que ler ou pesquisar.
-const quickProducts = ref([])
-const quickSearch = ref('')
-const quickLoading = ref(false)
+// the QR code's orders of a table: accept (on its tab) or reject
+const ordersOpen = ref(false)
+const ordersTableId = ref(null)
+const ordersTable = computed(() => board.value.find(t => t.id === ordersTableId.value) || null)
+const orderBusy = ref(null)
+const orderError = ref('')
 
-async function loadQuickProducts() {
-  quickLoading.value = true
+function showOrders (table) {
+  orderError.value = ''
+  ordersTableId.value = table.id
+  ordersOpen.value = true
+}
+
+async function decideOrder (order, accept) {
+  orderError.value = ''
+  orderBusy.value = (accept ? 'a' : 'r') + order.id
   try {
-    const { data } = await HTTPAuth.get(url({
-      type: 'u',
-      url: 'catalog/products',
-      params: { search: quickSearch.value, page_size: 12, ativo: true },
-    }))
-    quickProducts.value = data.results ?? data
+    if (accept) await Table.acceptOrder(order.id)
+    else await Table.rejectOrder(order.id)
+    await refreshBoard()
+    if (!ordersTable.value?.orders?.length) ordersOpen.value = false
+    if (accept) await refreshTabs()
+  } catch (e) {
+    orderError.value = extractError(e)
   } finally {
-    quickLoading.value = false
+    orderBusy.value = null
   }
 }
 
-// ---------------- CARRINHO ----------------
-function changeQty(line, delta) {
-  const next = Number(line.quantidade) + delta
-  line.quantidade = next > 0 ? next : line.quantidade
-}
+const acceptOrder = (order) => decideOrder(order, true)
+const rejectOrder = (order) => decideOrder(order, false)
 
-function lineSubtotal(line) {
-  return Number(line.quantidade || 0) * Number(line.preco_unitario || 0) - Number(line.desconto_valor || 0)
-}
-
-async function removeLine(index) {
-  const line = cart.value[index]
-
-  if (line.synced && line.itemId) {
-    Saleitem.form = { id: line.itemId }
-    await Saleitem.remove()
-  }
-
-  cart.value.splice(index, 1)
-}
-
-function recompute() {
-  // no-op trigger — totals é computed, só aqui para clareza no template
-}
-
-// ---------------- TAX ----------------
-// One tax for the whole cart (optional). Same rule as the backend
-// (sales.services.recalculate_totals): per line, on the net amount, rounded
-// to cents - the server total is still the one charged (see goToCheckout).
-const taxId = ref(null)
-const taxOptions = ref([])
-const taxRate = computed(() => Number(taxOptions.value.find(o => o.value === taxId.value)?.rate || 0))
-
-async function loadTaxes() {
+async function handleRequest (request) {
   try {
-    const { data } = await HTTPAuth.get(url({ type: 'u', url: 'sales/taxes', params: { active: 'true', page_size: 100 } }))
-    taxOptions.value = (data.results || data || []).filter(t => t.active !== false).map(t => ({ label: t.display_name || t.name, value: t.id, rate: t.rate }))
+    await Table.handleRequest(request.id)
+  } catch (e) {
+    cartError.value = extractError(e)
+  }
+  refreshBoard()
+}
+
+async function refreshTabs () {
+  refreshBoard()
+  try {
+    tabs.value = await Sale.openTabs()
   } catch {
-    taxOptions.value = []
+    // keeps the last list; the next refresh tries again
+  }
+  if (activeTabId.value && !tabs.value.some(t => t.id === activeTabId.value) && !payingSaleId.value) {
+    // closed / voided on another device
+    activeTabId.value = null
+  } else if (activeTabId.value && !busy.value) {
+    await loadActiveTab()
   }
 }
 
-const totals = computed(() => {
-  const subtotal = cart.value.reduce((sum, l) => sum + Number(l.quantidade || 0) * Number(l.preco_unitario || 0), 0)
-  const desconto = cart.value.reduce((sum, l) => sum + Number(l.desconto_valor || 0), 0)
-  const tax = cart.value.reduce((sum, l) => sum + Math.round(lineSubtotal(l) * taxRate.value) / 100, 0)
+async function loadActiveTab () {
+  if (!activeTabId.value) { activeTab.value = null; return }
+  try {
+    activeTab.value = await Sale.getTab(activeTabId.value)
+  } catch (e) {
+    cartError.value = extractError(e)
+  }
+}
+
+watch(activeTabId, () => {
+  cartError.value = ''
+  activeTab.value = null
+  loadActiveTab()
+})
+
+async function createTab (payload) {
+  newTabError.value = ''
+  savingTab.value = true
+  try {
+    const tab = await Sale.openTab({ ...payload, warehouse_id: warehouseId.value })
+    newTabOpen.value = false
+    await refreshTabs()
+    activeTabId.value = tab.id
+    activeTab.value = tab
+  } catch (e) {
+    newTabError.value = extractError(e)
+  } finally {
+    savingTab.value = false
+  }
+}
+
+// every order answers the tab; a tab closed elsewhere (409) leaves the screen
+async function onTab (call) {
+  cartError.value = ''
+  busy.value = true
+  try {
+    activeTab.value = await call()
+    const row = tabs.value.find(t => t.id === activeTab.value.id)
+    if (row) Object.assign(row, { total: activeTab.value.total, line_count: activeTab.value.lines.length })
+  } catch (e) {
+    cartError.value = extractError(e)
+    if (e?.response?.status === 409) await refreshTabs()
+  } finally {
+    busy.value = false
+  }
+}
+
+async function doSplit (payload) {
+  splitError.value = ''
+  splitting.value = true
+  try {
+    const newTab = await Sale.splitTab(activeTabId.value, payload)
+    splitOpen.value = false
+    await refreshTabs()
+    activeTabId.value = newTab.id
+  } catch (e) {
+    splitError.value = extractError(e)
+  } finally {
+    splitting.value = false
+  }
+}
+
+// ---------------- QUICK SALE (local cart, one checkout) ----------------
+const cart = ref([])
+const pendingSaleId = ref(null)
+const quoteTimers = new Map()
+
+function newCheckoutKey () {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16)
+  })
+}
+// one key per cart: a retry of the same cart returns its sale; a changed cart
+// is a new cart
+let checkoutKey = newCheckoutKey()
+function cartChanged () {
+  if (!pendingSaleId.value) checkoutKey = newCheckoutKey()
+}
+
+async function requote (line) {
+  line.quoting = true
+  try {
+    const price = await Sale.quote({ product: line.product_id, quantidade: line.quantidade || 1, customer: customerId.value })
+    line.preco_unitario = Number(price?.price) || 0
+    line.priceError = false
+  } catch {
+    line.priceError = true
+  } finally {
+    line.quoting = false
+  }
+}
+
+function setQuickQty (line, quantity) {
+  line.quantidade = quantity
+  cartChanged()
+  clearTimeout(quoteTimers.get(line.product_id))
+  quoteTimers.set(line.product_id, setTimeout(() => requote(line), 400))
+}
+
+function addQuick (product) {
+  const id = product.id || product.value
+  const existing = cart.value.find(l => l.product_id === id)
+  if (existing) return setQuickQty(existing, Number(existing.quantidade) + 1)
+  const line = reactive({
+    key: id, product_id: id, product_nome: product.nome || product.label, quantidade: 1,
+    preco_unitario: Number(product.preco_base) || 0, desconto_valor: 0, quoting: false, priceError: false,
+  })
+  cart.value.push(line)
+  cartChanged()
+  requote(line)
+}
+
+watch(customerId, () => {
+  cartChanged()
+  cart.value.forEach(requote)
+})
+watch([warehouseId, taxId], cartChanged)
+
+// ---------------- THE CART SHOWN ----------------
+const quickTotals = computed(() => {
+  const subtotal = cart.value.reduce((s, l) => s + Number(l.quantidade || 0) * Number(l.preco_unitario || 0), 0)
+  const desconto = cart.value.reduce((s, l) => s + Number(l.desconto_valor || 0), 0)
+  const tax = cart.value.reduce((s, l) => {
+    const net = Number(l.quantidade || 0) * Number(l.preco_unitario || 0) - Number(l.desconto_valor || 0)
+    return s + Math.round(net * taxRate.value) / 100
+  }, 0)
   return { subtotal, desconto, tax, total: subtotal - desconto + tax }
 })
 
-function formatMoney(v) {
-  return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0)
-}
+const tabLines = computed(() => (activeTab.value?.lines || []).map(l => ({ ...l, key: l.id })))
 
-// ---------------- CHECKOUT ----------------
-const checkingOut = ref(false)
-const checkoutError = ref('')
-const showPaymentDialog = ref(false)
-
-async function ensureSaleAndItems() {
-  if (!pendingSaleId.value) {
-    Sale.form = {
-      customer: customerId.value || null,
-      warehouse_id: warehouseId.value,
-      observacao: null,
+const cartProps = computed(() => {
+  if (activeTabId.value) {
+    const tab = activeTab.value
+    const t = tab || {}
+    return {
+      mode: 'tab',
+      title: tab?.tab_label || tabs.value.find(x => x.id === activeTabId.value)?.tab_label || '',
+      subtitle: tab?.customer_label || '',
+      lines: tabLines.value,
+      totals: { subtotal: Number(t.subtotal || 0), desconto: Number(t.desconto_total || 0), tax: Number(t.tax_total || 0), total: Number(t.total || 0) },
+      canDiscount: canDiscount.value,
+      canFinish: !!tab && tab.lines.length > 0 && !busy.value,
+      busy: busy.value || !tab,
+      finishing: finishing.value,
+      error: cartError.value,
     }
-    const created = await Sale.create()
-    pendingSaleId.value = created.id
   }
+  return {
+    mode: 'quick',
+    title: tdc('Quick sale'),
+    subtitle: '',
+    lines: cart.value,
+    totals: quickTotals.value,
+    canDiscount: canDiscount.value,
+    canFinish: cart.value.length > 0 && !pendingSaleId.value &&
+      cart.value.every(l => !l.quoting && !l.priceError && Number(l.quantidade) > 0),
+    busy: !!pendingSaleId.value,
+    finishing: finishing.value,
+    error: cartError.value,
+  }
+})
 
-  for (const line of cart.value) {
-    if (line.synced) continue
+const itemCount = computed(() => cartProps.value.lines.reduce((s, l) => s + Number(l.quantidade || 0), 0))
 
-    Saleitem.form = {
-      sale: pendingSaleId.value,
-      product_id: line.product_id,
-      quantidade: line.quantidade,
-      preco_unitario: line.preco_unitario,
-      desconto_valor: line.desconto_valor || 0,
-      tax: taxId.value || null,
+function onAdd (product) {
+  if (activeTabId.value) {
+    onTab(() => Sale.order(activeTabId.value, { product_id: product.id || product.value, delta: 1 }))
+  } else if (!pendingSaleId.value) {
+    addQuick(product)
+  }
+}
+
+const cartEvents = {
+  inc (line) {
+    if (activeTabId.value) return onTab(() => Sale.order(activeTabId.value, { product_id: line.product_id, delta: 1 }))
+    setQuickQty(line, Number(line.quantidade) + 1)
+  },
+  dec (line) {
+    if (activeTabId.value) return onTab(() => Sale.order(activeTabId.value, { product_id: line.product_id, delta: -1 }))
+    if (Number(line.quantidade) > 1) setQuickQty(line, Number(line.quantidade) - 1)
+    else cartEvents.remove(line)
+  },
+  remove (line) {
+    if (activeTabId.value) {
+      return onTab(() => Sale.order(activeTabId.value, { product_id: line.product_id, delta: -Number(line.quantidade) }))
     }
-    const item = await Saleitem.create()
-    line.synced = true
-    line.itemId = item.id
-  }
+    cart.value = cart.value.filter(l => l !== line)
+    cartChanged()
+  },
+  discount (line, value) {
+    if (activeTabId.value) return onTab(() => Sale.discountLine(activeTabId.value, { item: line.id, desconto_valor: Number(value) || 0 }))
+    line.desconto_valor = Number(value) || 0
+    cartChanged()
+  },
+  finish () { return finish() },
+  split () { splitError.value = ''; splitOpen.value = true },
+  void () { return voidCurrent() },
 }
 
-function extractError(e) {
-  return errorMessage(e) || tdc('An error occurred. Please try again.')
-}
-
-async function goToCheckout() {
-  checkoutError.value = ''
-  checkingOut.value = true
-  try {
-    await ensureSaleAndItems()
-    const confirmed = await Sale.confirmar(pendingSaleId.value)
-
-    paymentsDone.value = []
-    // the backend total is authoritative (taxes, rounding)
-    resetPaymentForm(Number(confirmed?.total ?? totals.value.total))
-    paymentError.value = ''
-    showPaymentDialog.value = true
-  } catch (e) {
-    checkoutError.value = extractError(e)
-  } finally {
-    checkingOut.value = false
-  }
-}
-
-// ---------------- PAGAMENTO (suporta divisão entre métodos) ----------------
-const payment = reactive({ forma_pagamento: 'numerario', valorAPagar: 0, recebido: 0, referencia: '' })
-const payingLoading = ref(false)
-const paymentError = ref('')
+// ---------------- FINISH: confirm, then pay ----------------
+const paymentOpen = ref(false)
+const payingSaleId = ref(null)
+const payingTotal = ref(0)
+const paymentMethods = ref([])
+const receiptOpen = ref(false)
 const receipt = ref(null)
-const paymentsDone = ref([])
 
-function resetPaymentForm(remaining) {
-  payment.forma_pagamento = 'numerario'
-  payment.valorAPagar = remaining
-  payment.recebido = remaining
-  payment.referencia = ''
-}
-
-// Métodos usados em Moçambique — só "numerario" (dinheiro físico)
-// envolve troco; mobile money/cartão/transferência cobram o valor exato.
-const formaPagamentoOptions = [
-  { label: tdc('Cash'), value: 'numerario' },
-  { label: tdc('M-Pesa'), value: 'mpesa' },
-  { label: tdc('e-Mola'), value: 'emola' },
-  { label: tdc('mKesh'), value: 'mkesh' },
-  { label: tdc('Card (Multicaixa/POS)'), value: 'cartao' },
-  { label: tdc('Bank Transfer'), value: 'transferencia' },
-  { label: tdc('Cheque'), value: 'cheque' },
-  { label: tdc('Other'), value: 'outro' },
-]
-
-function formaPagamentoLabel(value) {
-  return formaPagamentoOptions.find(o => o.value === value)?.label || value
-}
-
-const totalJaPago = computed(() => paymentsDone.value.reduce((sum, p) => sum + Number(p.valor || 0), 0))
-const saldoEmFalta = computed(() => Math.max(totals.value.total - totalJaPago.value, 0))
-const isLastPayment = computed(() => Number(payment.valorAPagar || 0) >= saldoEmFalta.value - 0.001)
-const troco = computed(() => Number(payment.recebido || 0) - Number(payment.valorAPagar || 0))
-
-async function confirmPayment() {
-  paymentError.value = ''
-  payingLoading.value = true
-
-  const valor = Math.min(Number(payment.valorAPagar || 0), saldoEmFalta.value)
-
+async function loadPaymentMethods () {
   try {
-    const result = await Sale.pagar(pendingSaleId.value, {
-      valor,
-      forma_pagamento: payment.forma_pagamento,
-      referencia: payment.referencia || null,
-    })
-
-    paymentsDone.value.push({
-      forma_pagamento: payment.forma_pagamento,
-      valor,
-      recebido: payment.forma_pagamento === 'numerario' ? payment.recebido : valor,
-      troco: payment.forma_pagamento === 'numerario' ? troco.value : 0,
-    })
-
-    const estadoFinal = result.sale?.estado?.value || result.sale?.estado
-
-    if (estadoFinal === 'paga') {
-      receipt.value = {
-        saleId: pendingSaleId.value,
-        numItens: cart.value.length,
-        total: totals.value.total,
-        pagamentos: paymentsDone.value,
-        totalRecebido: paymentsDone.value.reduce((s, p) => s + Number(p.recebido || 0), 0),
-        totalTroco: paymentsDone.value.reduce((s, p) => s + Number(p.troco || 0), 0),
-      }
-      showPaymentDialog.value = false
-    } else {
-      resetPaymentForm(saldoEmFalta.value)
-    }
-  } catch (e) {
-    paymentError.value = extractError(e)
-  } finally {
-    payingLoading.value = false
+    paymentMethods.value = (await Sale.paymentMethods()).map(m => ({ value: m.value, label: tdc(m.label) }))
+  } catch {
+    paymentMethods.value = []
   }
 }
 
-// ---------------- RESET / CANCELAR ----------------
-function resetPOS() {
+function methodLabel (value) {
+  return paymentMethods.value.find(m => m.value === value)?.label || value
+}
+
+async function finish () {
+  cartError.value = ''
+  finishing.value = true
+  try {
+    let sale
+    if (activeTabId.value) {
+      sale = await Sale.closeTab(activeTabId.value, { tax: taxId.value, warehouse_id: warehouseId.value })
+    } else {
+      sale = await Sale.checkout({
+        checkout_key: checkoutKey,
+        customer: customerId.value || null,
+        warehouse_id: warehouseId.value || null,
+        tax: taxId.value || null,
+        lines: cart.value.map(l => ({
+          product_id: l.product_id,
+          quantidade: l.quantidade,
+          desconto_valor: canDiscount.value ? (l.desconto_valor || 0) : 0,
+        })),
+      })
+      pendingSaleId.value = sale.id
+    }
+    payingSaleId.value = sale.id
+    // the backend total is authoritative (price list, taxes, rounding)
+    payingTotal.value = Number(sale.saldo_devedor ?? sale.total)
+    cartSheet.value = false
+    paymentOpen.value = true
+  } catch (e) {
+    cartError.value = extractError(e)
+  } finally {
+    finishing.value = false
+  }
+}
+
+function onPaid (result) {
+  paymentOpen.value = false
+  receipt.value = result
+  receiptOpen.value = true
+}
+
+function resetQuick () {
   cart.value = []
   pendingSaleId.value = null
   customerId.value = null
-  checkoutError.value = ''
-  receipt.value = null
-  barcodeInput.value = ''
-  focusScanner()
+  taxId.value = null
+  checkoutKey = newCheckoutKey()
 }
 
-async function cancelPOS() {
-  if (pendingSaleId.value) {
-    try {
-      await Sale.anular(pendingSaleId.value)
-    } catch {
-      // já pode ter sido anulada/paga entretanto — ignora e limpa na mesma
-    }
+async function afterReceipt () {
+  receiptOpen.value = false
+  receipt.value = null
+  payingSaleId.value = null
+  if (activeTabId.value) {
+    activeTabId.value = null
+    await refreshTabs()
+  } else {
+    resetQuick()
   }
-  resetPOS()
+  cartError.value = ''
+  gridRef.value?.focus?.()
+}
+
+// cancelling the payment voids the confirmed sale (stock goes back)
+async function voidPaying () {
+  const id = payingSaleId.value
+  paymentOpen.value = false
+  if (id) {
+    try { await Sale.anular(id) } catch { /* already voided / paid */ }
+  }
+  payingSaleId.value = null
+  if (activeTabId.value) {
+    activeTabId.value = null
+    await refreshTabs()
+  } else {
+    resetQuick()
+  }
+}
+
+function voidCurrent () {
+  if (!activeTabId.value) {
+    if (pendingSaleId.value) return voidPaying()
+    resetQuick()
+    return
+  }
+  const tab = activeTab.value
+  sDialog({
+    title: tdc('Void tab'),
+    message: tdc('Void the tab "{name}"? What was ordered is not charged.').replace('{name}', tab?.tab_label || ''),
+    cancel: true,
+    persistent: true,
+  }).onOk(async () => {
+    busy.value = true
+    try {
+      await Sale.anular(activeTabId.value)
+      activeTabId.value = null
+      await refreshTabs()
+    } catch (e) {
+      cartError.value = extractError(e)
+    } finally {
+      busy.value = false
+    }
+  })
+}
+
+// ---------------- LIFECYCLE ----------------
+function onVisible () {
+  if (document.visibilityState === 'visible') refreshTabs()
 }
 
 onMounted(() => {
-  loadQuickProducts()
   loadTaxes()
+  loadPaymentMethods()
+  loadSingleWarehouse()
+  refreshTabs()
+  pollTimer = setInterval(refreshTabs, 15000)
+  document.addEventListener('visibilitychange', onVisible)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(pollTimer)
+  document.removeEventListener('visibilitychange', onVisible)
 })
 </script>
 
 <style scoped>
-.pos-page :deep(.q-field__control) {
+.pos-page { overflow: hidden; }
+.pos-body { min-height: 0; }
+.pos-body__products { min-width: 0; min-height: 0; }
+.pos-body__cart { width: 380px; flex: 0 0 380px; padding: 12px; border-radius: 16px; min-height: 0; }
+.pos-sheet { height: min(70vh, 640px); }
+
+.pos-cartbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 16px;
+  background: var(--q-primary);
+  color: #fff;
+  font: inherit;
   font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  -webkit-tap-highlight-color: transparent;
 }
-
-.quick-product-btn {
-  min-height: 56px;
-}
-
-.ellipsis-2-lines {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-align: center;
-}
-
-/* CARRINHO: tudo numa única linha por item — nunca quebra, faz
-   scroll horizontal em ecrãs muito estreitos em vez de empilhar */
-.cart-lines {
-  overflow-x: auto;
-}
-
-.cart-line {
-  padding: 6px 2px;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-  min-width: 460px;
-}
-
-.cart-line:last-child {
-  border-bottom: none;
-}
-
-.cart-line-name {
-  min-width: 120px;
-}
-
-.cart-qty-input {
-  width: 56px;
-  flex: 0 0 auto;
-}
-
-.cart-desc-input {
-  width: 60px;
-  flex: 0 0 auto;
-}
-
-.cart-subtotal {
-  width: 72px;
-  text-align: right;
-  flex: 0 0 auto;
-  font-size: 0.9rem;
-}
-
-.cart-qty-input :deep(input),
-.cart-desc-input :deep(input) {
-  text-align: center;
+.pos-cartbar__count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 24px;
 }
 </style>

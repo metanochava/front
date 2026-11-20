@@ -20,7 +20,7 @@ export const usePedidoexamemedicoStore = createBaseStore(
       async getItemPedido(id){
         await this.getById(id)
         const { data } = await HTTPAuth.get(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/items` })
+          url({ type: 'u', url: `${this.safeUrl}/${id}/items/` })
         )
         this.requestItems = data.data
         this.loading = false
@@ -29,7 +29,7 @@ export const usePedidoexamemedicoStore = createBaseStore(
       // only the request's exams (items action), without reloading the request
       async loadItems(id){
         const { data } = await HTTPAuth.get(
-          url({ type: 'u', url: `${this.safeUrl}/${id}/items` })
+          url({ type: 'u', url: `${this.safeUrl}/${id}/items/` })
         )
         this.requestItems = data.data || []
       }

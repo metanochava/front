@@ -34,5 +34,7 @@ export function siteLoginUrl (entity, api = process.env.API) {
 
   const query = entity?.id ? `?entity=${encodeURIComponent(entity.id)}` : ''
 
-  return `${target.origin}/#/auth/login${query}`
+  // the app's routes: /auth/login in history mode, /#/auth/login in hash mode
+  const route = process.env.VUE_ROUTER_MODE === 'history' ? '' : '/#'
+  return `${target.origin}${route}/auth/login${query}`
 }

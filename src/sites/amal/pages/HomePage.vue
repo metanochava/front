@@ -8,6 +8,7 @@
     <SobreNosPage />
     <DepoimentoPage />
     <EspecialidadesPage />
+    <PrecosPage />
     <DoctorsPage />
     <MarcacaoPage />
     <ExamesPage />
@@ -33,6 +34,7 @@ import MarcacaoPage from "./MarcacaoPage.vue"
 import ExamesPage from "./ExamesPage.vue"
 import BlogPage from "./BlogPage.vue"
 import ContactsPage from "./ContactsPage.vue"
+import PrecosPage from "./PrecosPage.vue"
 
 import { tdc,useUserStore } from 'quasar_resaas'
 import DepoimentoPage from './DepoimentoPage.vue'
@@ -49,6 +51,7 @@ export default defineComponent({
     SobreNosPage,
     ExamesPage,
     ContactsPage,
+    PrecosPage,
     DoctorsPage,
     BlogPage,
     SliderPage,

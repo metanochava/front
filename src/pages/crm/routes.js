@@ -1,4 +1,6 @@
 import { tdc } from 'quasar_resaas'
+import { viewRoutes } from 'src/components/record/viewRoutes'
+import { crmViews } from './views'
 
 const crud = (name, model, icon, title) => ({
   path: `/${name}`,
@@ -30,4 +32,6 @@ export let crmRoutes = [
     component: () => import('./OpportunityVPage.vue'),
     meta: { title: tdc('Opportunity'), requiresAuth: true, icon: 'trending_up', requiredRole: 'view_opportunity' },
   },
+  // record pages of the models without a view page of their own (views.js)
+  ...viewRoutes('crm', crmViews),
 ]
