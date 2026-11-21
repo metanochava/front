@@ -6,10 +6,8 @@
       :title="editingId ? tdc('Edit last record') : tdc('Record vital signs')"
       icon="monitor_heart"
       fullscreen
-      form
       data-test="vital-signs-dialog"
       @close="open = false"
-      @submit="save"
     >
       <!-- record now / the patient's earlier records as charts (view_dadovital) -->
       <template v-if="ctx && canSeeCharts" #subheader>
@@ -29,7 +27,9 @@
         <div class="q-mt-sm text-center">{{ loadError }}</div>
       </div>
 
-      <div v-else-if="ctx && tab === 'record'" class="vitals">
+      <!-- Enter never saves: Enter and Tab move between the inputs only
+           (Shift goes back), and wrap from the last to the first -->
+      <div v-else-if="ctx && tab === 'record'" ref="recordArea" class="vitals" @keydown="onFieldKey">
         <!-- ============ who / what: filled in by the server, read only ============ -->
         <div class="row q-col-gutter-sm q-mb-md">
           <div class="col-12 col-md-5">
@@ -243,16 +243,36 @@
       <VitalSignsCharts v-else-if="ctx && tab === 'charts'" :paciente-id="String(ctx.patient.id)" mode="grouped" />
       <VitalSignsCharts v-else-if="ctx && tab === 'all'" :paciente-id="String(ctx.patient.id)" mode="all" />
 
+      <!-- "Save and print": the print dialog (preview, printer, paper) of the
+           record just saved; the page hears "saved" when it closes -->
+      <s-print-dialog v-model="printOpen" document="saude.vital_signs" :object-id="printId" />
+
       <template #footer>
-        <s-btn flat :label="tdc('Cancel')" @click="open = false" />
+        <s-btn flat :label="tdc('Cancel')" @click="open = false">
+          <s-tooltip>{{ tdc('Close without saving') }}</s-tooltip>
+        </s-btn>
         <s-btn
           v-if="tab === 'record'"
-          color="primary" icon="save" type="submit" unelevated
+          color="primary" icon="save" unelevated
           :label="editingId ? tdc('Save changes') : tdc('Save vital signs')"
-          :loading="saving"
+          :loading="saving && !printing"
           :disable="!canSave"
           data-test="vital-signs-save"
-        />
+          @click="save()"
+        >
+          <s-tooltip>{{ tdc('Save the vital signs') }}</s-tooltip>
+        </s-btn>
+        <s-btn
+          v-if="tab === 'record' && canPrint"
+          color="primary" icon="print" unelevated
+          :label="tdc('Save and print')"
+          :loading="saving && printing"
+          :disable="!canSave"
+          data-test="vital-signs-save-print"
+          @click="save({ print: true })"
+        >
+          <s-tooltip>{{ tdc('Save the vital signs and print them (half an A6 sheet)') }}</s-tooltip>
+        </s-btn>
       </template>
     </s-modal-card>
   </q-dialog>
@@ -268,6 +288,7 @@
 // Status colours and calculations are decision support, not a diagnosis.
 import { computed, reactive, ref, watch } from 'vue'
 import { HTTPAuth, url, tdc, displayValue, AlertSuccess, useUserStore } from 'quasar_resaas'
+import { nextField } from './fieldCycle'
 import VitalSignsCharts from './VitalSignsCharts.vue'
 import {
   TIPOS, CONSCIOUSNESS, SECTIONS, MEASURED, LEVEL_COLORS,
@@ -295,6 +316,8 @@ const open = computed({
 const User = useUserStore()
 const tab = ref('record')
 const canSeeCharts = computed(() => User.can('view_dadovital'))
+// printing the record (saude/documents.py "saude.vital_signs") needs view_dadovital
+const canPrint = computed(() => User.can('view_dadovital'))
 watch(() => props.modelValue, (isOpen) => { if (isOpen) tab.value = 'record' })
 
 // ------------------------------------------------------------ definitions
@@ -459,21 +482,55 @@ function editPayload() {
   return body
 }
 
-async function save() {
+// ------------------------------------------------------------ keyboard
+// Enter and Tab: the next input (Shift: the previous), wrapping around; the
+// buttons, toggles and slider are skipped. Shift+Enter in the notes is a new line.
+const recordArea = ref(null)
+function onFieldKey(event) {
+  if (event.key !== 'Enter' && event.key !== 'Tab') return
+  if (event.key === 'Enter' && event.shiftKey && event.target?.tagName === 'TEXTAREA') return
+  const target = nextField(recordArea.value, event.target, event.shiftKey && event.key === 'Tab' ? -1 : 1)
+  if (!target) return
+  event.preventDefault()
+  target.focus()
+  target.select?.()
+}
+
+// ------------------------------------------------------------ save (and print)
+const printing = ref(false)
+const printOpen = ref(false)
+const printId = ref(null)
+let savedWhilePrinting = null
+// the print dialog closed: now the page may react to the save (it may close this dialog)
+watch(printOpen, (isOpen) => {
+  if (isOpen || !savedWhilePrinting) return
+  emit('saved', savedWhilePrinting)
+  savedWhilePrinting = null
+})
+async function save({ print = false } = {}) {
   if (!canSave.value) return
   saving.value = true
+  printing.value = print
   try {
     const { data } = editingId.value
       ? await HTTPAuth.patch(url({ type: 'u', url: `saude/dadovitals/${editingId.value}/` }), payload())
       : await HTTPAuth.post(url({ type: 'u', url: 'saude/dadovitals/' }), payload())
     AlertSuccess(editingId.value ? tdc('Vital signs updated.') : tdc('Vital signs recorded.'))
-    emit('saved', data)
+    const recordId = data?.id || editingId.value
+    if (print && recordId) {
+      savedWhilePrinting = data
+      printId.value = recordId
+      printOpen.value = true
+    } else {
+      emit('saved', data)
+    }
   } catch (error) {
     // field errors stay on their tiles; the message goes through the alert funnel
     const details = error?.response?.data?.error?.details || {}
     for (const [key, messages] of Object.entries(details)) errors[key] = tdc([].concat(messages)[0])
   } finally {
     saving.value = false
+    printing.value = false
   }
 }
 </script>

@@ -24,6 +24,15 @@
       >
         <s-tooltip>{{ tdc('Vital signs chart') }}</s-tooltip>
       </s-btn>
+      <!-- the print dialog of this record (saude.vital_signs: half an A6,
+           lying down); shown where the page asks for it (the consultation) -->
+      <s-print-btn
+        v-if="printable && record?.id"
+        document="saude.vital_signs"
+        :object-id="record.id"
+        flat round size="md" icon="print"
+        data-test="latest-vital-signs-print"
+      />
       <s-btn flat round size="md" icon="refresh" :loading="loading" @click="load">
         <s-tooltip>{{ tdc('Refresh') }}</s-tooltip>
       </s-btn>
@@ -120,7 +129,9 @@ import {
 } from './vitalSigns'
 
 const props = defineProps({
-  pacienteId: { type: [String, Number], default: null }
+  pacienteId: { type: [String, Number], default: null },
+  // a "print" button for the record shown (the consultation pages)
+  printable: { type: Boolean, default: false }
 })
 const emit = defineEmits(['loaded'])
 

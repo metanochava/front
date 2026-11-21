@@ -17,7 +17,7 @@
     </s-card>
 
     <template v-else>
-      <LatestVitalSigns :paciente-id="patientId" />
+      <LatestVitalSigns :paciente-id="patientId" printable />
       <!-- no Laboratory card on add_consulta nor change_consulta (owner's call) -->
 
       <s-card flat bordered class="consultation-card" data-test="consultation-form">
