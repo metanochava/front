@@ -3,6 +3,7 @@ import {  MainLayout, CrudPage } from 'quasar_resaas'
 import { academicaRoutes } from './../pages/academica/routes'
 import { pedagogicaRoutes } from './../pages/pedagogica/routes'
 import { laboratorioRoutes } from './../pages/laboratorio/routes'
+import { platformRoutes } from './../pages/platform/routes'
 
 import { amalSiteRoutes } from 'src/sites/amal/routes'
 import { docodelaSiteRoutes } from 'src/sites/docodela/routes'
@@ -56,7 +57,7 @@ const host = window.location.hostname
 
 // computed once: the module routes, then the add_/change_ routes they lack
 const formRoutesFor = missingFormRoutes(
-  [...restRoutes, ...stockRoutes, ...hrRoutes, ...saudeRoutes, ...vendasRoutes, ...farmaciaRoutes,
+  [...restRoutes, ...platformRoutes, ...stockRoutes, ...hrRoutes, ...saudeRoutes, ...vendasRoutes, ...farmaciaRoutes,
     ...purchasesRoutes, ...accountingRoutes, ...crmRoutes, ...workflowRoutes, ...academicaRoutes,
     ...pedagogicaRoutes, ...laboratorioRoutes, ...hospitalityRoutes],
   FORM_SOURCES
