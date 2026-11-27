@@ -3,7 +3,7 @@
     <!-- full width and height: the card fills the dialog (s-modal-card fullscreen);
          header and footer stay in place, only the body scrolls -->
     <s-modal-card
-      :title="editingId ? tdc('Edit last record') : tdc('Record vital signs')"
+      :title="editingId ? tdc('Edit record') : tdc('Record vital signs')"
       icon="monitor_heart"
       fullscreen
       data-test="vital-signs-dialog"
@@ -140,7 +140,6 @@
                       :min="limit(f.key)?.min"
                       :max="limit(f.key)?.max"
                       :suffix="limit(f.key)?.unit || undefined"
-                      borderless
                       dense
                       input-class="vital-tile__value"
                       :error="!!errors[f.key]"
@@ -200,6 +199,29 @@
               </div>
               <div class="col-12">
                 <s-input v-model="values.observacao" type="textarea" autogrow label="Notes" data-test="vital-observacao" />
+              </div>
+              <!-- earlier records of this patient: the author may correct one within the edit window -->
+              <div v-if="(ctx?.history || []).length" class="col-12" data-test="vital-signs-history">
+                <div class="text-subtitle2 q-mb-xs">{{ tdc('Earlier records') }}</div>
+                <div
+                  v-for="record in ctx.history"
+                  :key="record.id"
+                  class="row items-center q-py-xs"
+                  :data-test="`vital-history-${record.id}`"
+                >
+                  <div class="col">{{ dateTimeOf(record.created_at) }} · {{ record.tipo }}</div>
+                  <s-btn
+                    v-if="record.editable && editingId !== record.id"
+                    flat dense no-caps size="sm" color="primary" icon="edit"
+                    :label="tdc('Edit this record')"
+                    data-test="vital-history-edit"
+                    @click="editRecord(record)"
+                  >
+                    <s-tooltip>{{ tdc('Edit this record') }}</s-tooltip>
+                  </s-btn>
+                  <span v-else-if="editingId === record.id" class="text-caption text-primary">{{ tdc('Editing') }}</span>
+                  <span v-else class="text-caption text-grey-7">{{ tdc('Not editable') }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -426,7 +448,11 @@ const alerts = computed(() => vitalAlerts(values, calculations.value, statusOf))
 
 // ------------------------------------------------------------ edit the last record
 function editPrevious() {
-  const previous = ctx.value?.previous
+  editRecord(ctx.value?.previous)
+}
+
+// fills the form with an earlier record (the last one or one from the history list)
+function editRecord(previous) {
   if (!previous) return
   blank()
   for (const key of MEASURED) {

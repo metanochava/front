@@ -251,6 +251,18 @@
               <q-item-section>
                 <q-item-label>{{ a.medico?.label || '—' }}</q-item-label>
                 <q-item-label caption>{{ a.motivo || '—' }}</q-item-label>
+                <!-- the consultation was charged (a draft sale): shown to the
+                     reception; the sale opens only for who may see sales -->
+                <q-item-label v-if="a.charge?.sale_id" caption>
+                  <q-badge
+                    color="positive"
+                    :class="User.can('view_sale') ? 'cursor-pointer' : ''"
+                    data-test="appointment-charged"
+                    @click="openChargedSale(a)"
+                  >
+                    {{ tdc('Charged') }}
+                  </q-badge>
+                </q-item-label>
               </q-item-section>
               <q-item-section side>
                 <q-item-label caption>{{ a.data }} {{ a.hora_inicio?.slice(0, 5) }}</q-item-label>
@@ -276,6 +288,17 @@
                     @click="checkOut(a)"
                   >
                     <s-tooltip>{{ tdc('Check out (patient leaves)') }}</s-tooltip>
+                  </s-btn>
+                  <!-- completed: the billing (the sale, or why not) -->
+                  <s-btn
+                    v-if="isCompleted(a)"
+                    flat round size="md"
+                    :icon="a.charge?.sale_id ? 'receipt_long' : 'request_quote'"
+                    :color="a.charge?.sale_id ? 'positive' : 'grey'"
+                    data-test="appointment-billing"
+                    @click="openBillingStatus(a)"
+                  >
+                    <s-tooltip>{{ a.charge?.sale_id ? tdc('Open the charged sale') : tdc('Billing status') }}</s-tooltip>
                   </s-btn>
                   <s-btn
                     flat round size="md" icon="edit" color="primary"
@@ -517,7 +540,8 @@ const estadoOf = (a) => a.estado?.value || a.estado
 const isToday = (a) => a.data === new Date().toLocaleDateString('en-CA')
 
 const canCheckIn = (a) => User.can('check_in_agenda') && isToday(a) && ['marcada', 'confirmada'].includes(estadoOf(a))
-const canCheckOut = (a) => User.can('check_out_agenda') && ['em_espera', 'em_atendimento'].includes(estadoOf(a))
+const canCheckOut = (a) => User.can('check_out_agenda') && ['em_espera', 'em_atendimento', 'concluida'].includes(estadoOf(a))
+const isCompleted = (a) => estadoOf(a) === 'concluida'
 
 const flowRouter = useRouter()
 
@@ -532,6 +556,30 @@ function announceCharge(charge) {
     actions: User.can('view_sale')
       ? [{ label: tdc('Open the sale'), color: 'white',
            handler: () => flowRouter.push({ name: 'view_sale', params: { id: charge.sale_id } }) }]
+      : []
+  })
+}
+
+// the charge shown on an appointment row opens its sale (who may view sales)
+function openChargedSale(a) {
+  if (!a.charge?.sale_id || !User.can('view_sale')) return
+  flowRouter.push({ name: 'view_sale', params: { id: a.charge.sale_id } })
+}
+
+// the billing button of a completed appointment: charged -> its sale; not
+// charged -> say why, and offer the billing rules to who may configure them
+function openBillingStatus(a) {
+  if (a.charge?.sale_id) {
+    openChargedSale(a)
+    return
+  }
+  $q.notify({
+    type: 'info',
+    message: tdc('Not charged: only a consultation of a patient who checked in is charged, and only when the Entity has a consultation billing rule.'),
+    timeout: 10000,
+    actions: User.can('list_clinicalbillingrule')
+      ? [{ label: tdc('Billing rules'), color: 'white',
+           handler: () => flowRouter.push({ name: 'list_clinicalbillingrule' }) }]
       : []
   })
 }
