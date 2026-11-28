@@ -180,12 +180,24 @@ const values = computed(() => {
   }
 })
 
+// the measurement's name with the qualifier recorded with it (temperature site, glucose moment)
+function qualifiedLabel(key) {
+  const label = FIELD_LABELS[key]
+  if (key === 'temperatura' && record.value?.temperatura_local) {
+    return `${label} (${tdc(displayValue(record.value.temperatura_local))})`
+  }
+  if (key === 'glicemia' && record.value?.glicemia_momento) {
+    return `${label} (${tdc(displayValue(record.value.glicemia_momento))})`
+  }
+  return label
+}
+
 const measurements = computed(() => {
   const list = Object.keys(FIELD_LABELS)
     .filter(key => values.value[key] !== null)
     .map(key => ({
       key,
-      label: FIELD_LABELS[key],
+      label: qualifiedLabel(key),
       icon: ICONS[key] || 'sentiment_dissatisfied',
       value: values.value[key],
       unit: key === 'dor' ? '/10' : (UNITS[key] || ''),
@@ -198,6 +210,14 @@ const measurements = computed(() => {
       key: 'estado_consciencia', label: 'Level of consciousness', icon: 'visibility',
       value: tdc(option?.label || consciousness), unit: '',
       status: { level: consciousness === 'alerta' ? 'normal' : 'warning', label: '' }
+    })
+  }
+  // the internment flag is recorded with the vital signs too
+  if (record.value) {
+    list.push({
+      key: 'is_internment', label: 'Internment', icon: 'hotel',
+      value: tdc(rawValue(record.value.is_internment) ? 'Yes' : 'No'), unit: '',
+      status: { level: 'none', label: '' }
     })
   }
   return list
