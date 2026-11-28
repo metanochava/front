@@ -133,6 +133,7 @@ if(siteRoutes.length !== 0 ){
           name: 'crud_route',
         },
         ...restRoutes,
+        ...platformRoutes,
         ...stockRoutes,
         ...hrRoutes,
         ...saudeRoutes,
